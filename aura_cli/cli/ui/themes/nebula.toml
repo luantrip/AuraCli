@@ -1,0 +1,226 @@
+# =============================================================================
+# Nebula Theme for Aura CLI
+# =============================================================================
+#
+# A deep, retro-futuristic aesthetic inspired by high-end terminal displays,
+# cosmic nebulae, and the Tokyo Night color palette.
+#
+# Design Philosophy:
+# - Deep void backgrounds for immersive experience
+# - Electric neon accents for visual hierarchy
+# - Cosmic color palette with blues, purples, and cyans
+# - High readability with carefully balanced contrast
+#
+# =============================================================================
+
+[metadata]
+name = "nebula"
+version = "2.0.0"
+author = "Aura CLI Team"
+description = "Deep void aesthetic with electric neon accents - Tokyo Night inspired"
+
+[colors]
+# =============================================================================
+# Primary Colors - Electric Spectrum
+# =============================================================================
+primary = "#7aa2f7"         # Electric Blue - Main interactive elements
+secondary = "#bb9af7"       # Plasma Violet - Secondary accents
+accent = "#7dcfff"          # Cyan Neon - Highlights and focus
+
+# =============================================================================
+# Semantic/Functional Colors
+# =============================================================================
+success = "#9ece6a"         # Terminal Green - Success states
+warning = "#e0af68"         # Amber Warning - Caution states
+error = "#f7768e"           # Critical Red - Error states
+info = "#7aa2f7"            # Info Blue - Informational content
+
+# =============================================================================
+# UI Surface Colors - Depth Hierarchy
+# =============================================================================
+background = "#1a1b26"      # Deep Night - Main background
+surface = "#24283b"         # Panel Background - Elevated surfaces
+muted = "#565f89"           # Dimmed Text - Secondary content
+highlight = "#e0af68"       # Attention Text - Highlighted elements
+
+# =============================================================================
+# Extended Palette - Cosmic Spectrum
+# =============================================================================
+background_alt = "#16161e"  # Deeper background variant
+surface_bright = "#292e42"  # Brighter surface for hover
+foreground = "#c0caf5"      # Main text color
+foreground_muted = "#565f89" # Secondary text
+foreground_bright = "#c0caf5" # Emphasized text
+
+# Cosmic Accents
+nebula_blue = "#7aa2f7"     # Core nebula blue
+nebula_violet = "#bb9af7"   # Nebula violet
+nebula_cyan = "#7dcfff"     # Nebula cyan
+nebula_magenta = "#ff007c"  # Hot magenta
+nebula_teal = "#1abc9c"     # Deep teal
+nebula_orange = "#ff9e64"   # Warm orange
+
+[styles]
+# =============================================================================
+# Typography - Futuristic Terminal Feel
+# =============================================================================
+title = "bold #7aa2f7"               # Primary headings
+subtitle = "bold #bb9af7"            # Secondary headings
+body = "#c0caf5"                     # Body text
+label = "#565f89"                    # Labels and metadata
+caption = "dim italic #9aa5ce"       # Captions and timestamps
+code = "#9ece6a"                     # Inline code
+
+# =============================================================================
+# Status Indicators - Clear Visual States
+# =============================================================================
+status_idle = "#565f89"              # Idle/waiting
+status_thinking = "#bb9af7"          # Processing (violet pulse)
+status_working = "#7aa2f7"           # Active work (blue)
+status_success = "#9ece6a"           # Completed successfully
+status_error = "#f7768e"             # Error occurred
+status_warning = "#e0af68"           # Warning state
+
+# =============================================================================
+# Component Specific Styles
+# =============================================================================
+loading = "#7dcfff"                  # Loading indicators
+spinner = "#bb9af7"                  # Spinner animation
+progress = "#9ece6a"                 # Progress bars
+
+# =============================================================================
+# Agent Personas - Distinct Visual Identity
+# =============================================================================
+agent_agi = "bold #bb9af7"           # The Brain (Violet - intelligence)
+agent_ops = "bold #7dcfff"           # The Hand (Cyan - execution)
+agent_chat = "bold #9ece6a"          # The Voice (Green - communication)
+
+# =============================================================================
+# Interactive Elements
+# =============================================================================
+link = "#7dcfff"                     # Clickable links
+link_hover = "#89ddff"               # Link hover state
+selected = "bold #7aa2f7"            # Selected item
+focused = "#7aa2f7"                  # Focused element
+disabled = "#414868"                 # Disabled state
+
+# =============================================================================
+# Message Bubbles
+# =============================================================================
+user_message = "#7aa2f7"             # User message accent
+assistant_message = "#bb9af7"        # Assistant message accent
+system_message = "#565f89"           # System message accent
+
+[borders]
+# =============================================================================
+# Border Colors - Glowing Edges
+# =============================================================================
+border_primary = "#7aa2f7"           # Primary borders (Blue)
+border_secondary = "#bb9af7"         # Secondary borders (Violet)
+border_success = "#9ece6a"           # Success state
+border_warning = "#e0af68"           # Warning state
+border_error = "#f7768e"             # Error state
+border_muted = "#414868"             # Subtle borders
+border_accent = "#7dcfff"            # Accent/focus borders
+border_focus = "#7dcfff"             # Focus ring
+
+[layout]
+# =============================================================================
+# Spacing - Comfortable Spacing
+# =============================================================================
+panel_padding = [1, 2]               # Standard panel padding
+
+# Chat Layout
+chat_padding = [0, 1]                # Message internal padding
+chat_margin = [0, 0, 1, 0]           # Message external margin
+chat_width_ratio = 0.85              # Max width for messages
+
+# Component Specific Layout
+lcd_padding = [0, 0]                 # LCD-style displays (edge-to-edge)
+dialog_padding = [1, 2]              # Dialog boxes
+compact_padding = [0, 1]             # Compact elements
+
+[appearance]
+# =============================================================================
+# Visual Characteristics
+# =============================================================================
+panel_border_type = "heavy"          # Heavy borders for terminal feel
+syntax_theme = "tokyo_night"         # Matching syntax theme
+
+# Nebula-specific appearance
+glow_enabled = true                  # Enable glow effects (where supported)
+animate_spinners = true              # Animated spinners
+show_timestamps = true               # Show message timestamps
+
+[icons]
+# =============================================================================
+# Nebula Icon Set - Technical/Retro-Futuristic
+# =============================================================================
+# Using geometric and technical Unicode symbols
+
+# Status Icons
+status_success = "✔"                 # Heavy checkmark
+status_error = "✖"                   # Heavy X
+status_warning = "▲"                 # Triangle
+status_info = "ℹ"                    # Info
+status_pending = "⬡"                 # Hexagon empty
+status_active = "⬢"                  # Hexagon filled
+
+# File Icons
+file_default = "◈"                   # Diamond with dot
+file_folder = "▣"                    # Square filled
+file_code = "◇"                      # Diamond
+file_config = "◉"                    # Circle with dot
+file_image = "◎"                     # Bullseye
+
+# Action Icons
+action_add = "✚"                     # Heavy plus
+action_remove = "✖"                  # Heavy X
+action_edit = "✎"                    # Pencil
+action_search = "⚲"                  # Loop/search
+action_refresh = "⟳"                 # Circular arrow
+
+# Navigation
+arrow_right = "➔"                    # Heavy arrow
+arrow_left = "←"                     # Arrow left
+arrow_up = "⇧"                       # Arrow up
+arrow_down = "⇩"                     # Arrow down
+
+# Spinner Frames
+spinner_frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+
+[syntax]
+# =============================================================================
+# Syntax Highlighting - Tokyo Night Colors
+# =============================================================================
+keyword = "#bb9af7"                  # Keywords (Violet)
+string = "#9ece6a"                   # Strings (Green)
+number = "#ff9e64"                   # Numbers (Orange)
+comment = "#565f89"                  # Comments (Muted)
+function = "#7aa2f7"                 # Functions (Blue)
+variable = "#c0caf5"                 # Variables (Foreground)
+type = "#7dcfff"                     # Types (Cyan)
+operator = "#89ddff"                 # Operators (Light cyan)
+constant = "#ff9e64"                 # Constants (Orange)
+
+[markdown]
+# =============================================================================
+# Markdown Styling - Rich Markdown Theme Colors
+# =============================================================================
+# These styles are applied to Rich Markdown rendering
+heading_1 = "bold #7aa2f7"          # H1 - Primary blue, bold
+heading_2 = "bold #7dcfff"          # H2 - Cyan accent, bold
+heading_3 = "bold #7aa2f7"          # H3 - Primary blue, bold
+heading_4 = "#7dcfff"               # H4 - Cyan accent
+heading_5 = "dim #7dcfff"           # H5 - Cyan accent, dim
+heading_6 = "dim #7dcfff"           # H6 - Cyan accent, dim
+code = "bold #9ece6a on #24283b"    # Inline code - Green on surface
+code_block = "bold #9ece6a"         # Code blocks - Green
+link = "underline #7dcfff"          # Links - Cyan, underlined
+strong = "bold #7aa2f7"             # Bold text - Primary blue
+emphasis = "italic #7dcfff"         # Italic text - Cyan accent
+blockquote = "dim #7dcfff"          # Blockquotes - Cyan, dim
+list_bullet = "#7aa2f7"             # Bullet points - Primary blue
+list_number = "#7aa2f7"             # Numbered lists - Primary blue
+table_header = "bold #7aa2f7"       # Table headers - Primary blue
+table_border = "#565f89"            # Table borders - Muted

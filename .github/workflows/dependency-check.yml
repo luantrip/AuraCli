@@ -1,0 +1,56 @@
+name: Dependency Warnings Check
+
+on:
+  schedule:
+    # Executar toda segunda-feira às 9h UTC
+    - cron: '0 9 * * 1'
+  workflow_dispatch: # Permitir execução manual
+  pull_request:
+    paths:
+      - 'pyproject.toml'
+      - 'requirements*.txt'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-warnings:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ".[dev]" pytest-timeout
+    
+    - name: Check for dependency updates
+      id: updates
+      run: |
+        echo "## 📦 Dependency Updates" >> $GITHUB_STEP_SUMMARY
+        pip list --outdated | grep -E "(litellm|autogen|ag2|jsonschema|pydantic)" >> $GITHUB_STEP_SUMMARY || echo "✓ All dependencies up to date" >> $GITHUB_STEP_SUMMARY
+    
+    - name: Exercise dependency-facing unit tests with warnings visible
+      run: |
+        python -m pytest tests/unit/core tests/unit/application -q --timeout=120 \
+          -W default 2>&1 | tee test_output.txt
+        warning_count=$(grep -Ec "DeprecationWarning|PydanticDeprecatedSince20" test_output.txt || true)
+        echo "## Dependency warnings: ${warning_count}" >> "$GITHUB_STEP_SUMMARY"
+    
+    - name: Upload test output
+      if: always() && hashFiles('test_output.txt') != ''
+      uses: actions/upload-artifact@v4
+      with:
+        name: warning-check-output
+        path: test_output.txt
+        retention-days: 30

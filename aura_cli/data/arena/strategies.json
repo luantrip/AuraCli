@@ -1,0 +1,205 @@
+{
+  "version": 1,
+  "about": "Strategy cards for /arena and diversified subagent execution. Every agent gets exactly one card: one reasoning mode, one workflow, one strategy. 15 × 12 × 12 = 2,160 distinct cards. The dealer spreads them with no repeats and covers every axis before repeating. Add entries freely — IDs must be unique within each list.",
+  "reasoning": [
+    {
+      "id": "first-principles",
+      "name": "First principles",
+      "how": "Strip the task down to the facts and requirements nobody can argue with. Rebuild the answer from those alone, and keep a convention only if it earns its place again."
+    },
+    {
+      "id": "inversion",
+      "name": "Inversion",
+      "how": "Ask what would make this answer fail. List every way it could, then build the answer that makes each of those failures impossible."
+    },
+    {
+      "id": "analogy",
+      "name": "Analogy",
+      "how": "Find a problem in a different field that has already been solved and has the same shape. Port its solution over, then fix every place where the analogy breaks."
+    },
+    {
+      "id": "adversarial",
+      "name": "Adversarial",
+      "how": "Picture the harshest expert reviewer trying to tear the answer apart. Write their attacks down first and build the answer backwards from them."
+    },
+    {
+      "id": "constraint-first",
+      "name": "Constraint first",
+      "how": "List every hard constraint, stated and implied: time, budget, tools, format, audience, platform. Solve strictly inside that box and let the tightest constraint drive the design."
+    },
+    {
+      "id": "worked-example",
+      "name": "Worked example",
+      "how": "Solve one concrete, realistic instance end to end first, with real values. Generalise only from what that example actually taught you."
+    },
+    {
+      "id": "socratic",
+      "name": "Socratic",
+      "how": "Interrogate the task with the questions a sharp expert would ask before starting. Answer each one explicitly and let the answers decide the shape of the solution."
+    },
+    {
+      "id": "contrarian",
+      "name": "Contrarian",
+      "how": "Write down the obvious default answer, then argue seriously against it. Keep only what survives the argument, even if that takes you the unpopular way."
+    },
+    {
+      "id": "systems-thinking",
+      "name": "Systems thinking",
+      "how": "Map the moving parts, how they affect each other, and what happens second and third order. Optimise the whole system, not just the one part the task points at."
+    },
+    {
+      "id": "decomposition",
+      "name": "Decomposition",
+      "how": "Break the task into independent sub-problems. Solve each one completely, then integrate them and test the seams where they meet."
+    },
+    {
+      "id": "working-backwards",
+      "name": "Working backwards",
+      "how": "Describe the finished result precisely, as if it already exists. Then work backwards, step by step, to where the user is right now."
+    },
+    {
+      "id": "probabilistic",
+      "name": "Probabilistic",
+      "how": "Assign rough probabilities to assumptions and outcomes. Commit to the highest-expected-value path. Flag assumptions whose probability matters most."
+    },
+    {
+      "id": "red-team",
+      "name": "Red team",
+      "how": "Become an adversary trying to break, exploit, or misuse the solution. Fix every vulnerability the adversary finds before submitting."
+    },
+    {
+      "id": "bayesian-update",
+      "name": "Bayesian update",
+      "how": "Start with a prior answer, then update it systematically as each new piece of information or constraint comes in. Show which updates mattered most."
+    },
+    {
+      "id": "opportunistic",
+      "name": "Opportunistic",
+      "how": "Scan for the highest-leverage intervention — the one change that solves the most problems or unlocks the most value. Build the solution around that leverage point."
+    }
+  ],
+  "workflows": [
+    {
+      "id": "tdd",
+      "name": "TDD",
+      "how": "Write the test or acceptance criterion first. Then write the minimum implementation to pass it. Refactor only after it passes."
+    },
+    {
+      "id": "scratch-and-refine",
+      "name": "Scratch and refine",
+      "how": "Produce a rough first draft at speed. Then make a dedicated second pass to fix gaps, tighten the prose, and raise quality."
+    },
+    {
+      "id": "outside-in",
+      "name": "Outside-in",
+      "how": "Start from the user-facing interface or output. Work inward toward implementation, letting the interface drive every design decision."
+    },
+    {
+      "id": "bottom-up",
+      "name": "Bottom-up",
+      "how": "Build and verify the smallest primitives first. Compose them into larger structures only once each primitive is solid."
+    },
+    {
+      "id": "spike-and-stabilise",
+      "name": "Spike and stabilise",
+      "how": "Explore the riskiest unknown with a throwaway spike. Once the unknown is resolved, implement the real solution cleanly."
+    },
+    {
+      "id": "checklist",
+      "name": "Checklist driven",
+      "how": "Build an explicit checklist of every requirement before writing a word of the answer. Tick off each item as it is addressed."
+    },
+    {
+      "id": "structured-debate",
+      "name": "Structured debate",
+      "how": "Produce two or three candidate solutions. Argue for and against each. Commit to the winner and justify the choice."
+    },
+    {
+      "id": "iterative-refinement",
+      "name": "Iterative refinement",
+      "how": "Write a version 1, evaluate it against the requirements, write version 2 incorporating those findings. Stop when quality plateaus."
+    },
+    {
+      "id": "domain-model-first",
+      "name": "Domain model first",
+      "how": "Define the core concepts and their relationships before writing any logic or prose. Let the model drive the structure."
+    },
+    {
+      "id": "prototype-validate",
+      "name": "Prototype and validate",
+      "how": "Build the minimal prototype that can be shown or tested. Validate it. Then extend based only on what the validation revealed."
+    },
+    {
+      "id": "feature-slicing",
+      "name": "Feature slicing",
+      "how": "Cut the work into thin vertical slices, each delivering end-to-end value. Complete one slice fully before starting the next."
+    },
+    {
+      "id": "constraint-propagation",
+      "name": "Constraint propagation",
+      "how": "Propagate every constraint through the solution space to eliminate impossible options early. Solve in the remaining space."
+    }
+  ],
+  "strategies": [
+    {
+      "id": "simple-first",
+      "name": "Simplest first",
+      "how": "Choose the simplest solution that meets every requirement. Add complexity only when simplicity provably fails."
+    },
+    {
+      "id": "defensive",
+      "name": "Defensive",
+      "how": "Prefer explicit error handling, safe defaults, and conservative assumptions. Never rely on the caller to do the right thing."
+    },
+    {
+      "id": "explicit-over-implicit",
+      "name": "Explicit over implicit",
+      "how": "Name everything. Make every assumption visible. Prefer verbose-but-clear over terse-but-ambiguous."
+    },
+    {
+      "id": "fail-fast",
+      "name": "Fail fast",
+      "how": "Validate inputs at the boundary. Raise an error immediately when a precondition is violated rather than propagating bad state."
+    },
+    {
+      "id": "optimise-for-change",
+      "name": "Optimise for change",
+      "how": "Design so that the most likely future changes are cheap. Prefer interfaces that hide implementation details."
+    },
+    {
+      "id": "data-driven",
+      "name": "Data driven",
+      "how": "Derive every decision from data, metrics, or evidence already in the problem. State the data source for every claim."
+    },
+    {
+      "id": "minimise-surface",
+      "name": "Minimise surface",
+      "how": "Expose the smallest public surface that satisfies the requirements. Hide everything else."
+    },
+    {
+      "id": "composition-over-inheritance",
+      "name": "Composition over inheritance",
+      "how": "Prefer small composable pieces over deep hierarchies. Assemble behaviour at the call site."
+    },
+    {
+      "id": "make-it-reversible",
+      "name": "Make it reversible",
+      "how": "Prefer actions that can be undone. When an irreversible step is unavoidable, make it explicit and gated."
+    },
+    {
+      "id": "locality",
+      "name": "Locality",
+      "how": "Keep things that change together close together. Minimise the distance between a decision and its effects."
+    },
+    {
+      "id": "progressive-disclosure",
+      "name": "Progressive disclosure",
+      "how": "Present the simple case first and the full detail only when the user needs it. Never front-load complexity."
+    },
+    {
+      "id": "pessimistic-locking",
+      "name": "Pessimistic by default",
+      "how": "When uncertain between a safe and a risky option, choose the safe one. Optimise later only with evidence."
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: python -m pip install ruff pyyaml
+      - run: ruff check aura_cli tests scripts
+      - run: ruff format --check aura_cli tests scripts
+      - run: python scripts/check_docs.py
+      - run: python scripts/check_workflow_security.py
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -e ".[dev]" pytest-timeout
+      - run: python -m pytest tests/ -q --tb=short -x --timeout=120 --cov=aura_cli --cov-report=xml
+        env:
+          PYTHONDONTWRITEBYTECODE: 1
+      - uses: codecov/codecov-action@v4
+        if: matrix.python-version == '3.11'
+        with:
+          files: coverage.xml
+          fail_ci_if_error: false
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -e ".[dev]"
+      - run: mypy aura_cli/ --exclude aura_cli/tui/tools
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pip-audit
+      - run: pip install -e .
+      - name: Audit dependencies for known vulnerabilities
+        run: pip-audit
+        # NOTE: Failures here block the pipeline intentionally.
+        # If a vulnerability has no fix yet, add it to pip-audit's ignore list
+        # instead of suppressing all errors with `|| true`.
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install build
+      - run: test -f README.md
+      - run: python -m build
+      - run: pip install dist/*.whl
+      - run: aura --help

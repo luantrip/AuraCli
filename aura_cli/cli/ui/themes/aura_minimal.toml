@@ -1,0 +1,224 @@
+# =============================================================================
+# Aura Minimal Theme
+# =============================================================================
+#
+# A clean, modern, and focused theme inspired by the "Classe A minimalist"
+# philosophy. It prioritizes clarity, whitespace, and a professional aesthetic.
+#
+# Design Philosophy:
+# - Pure black background for maximum contrast and focus.
+# - A single, clear primary accent color for interactive elements.
+# - Generous whitespace and light borders for a clean, uncluttered feel.
+# - Simple, universally understood icons.
+#
+# =============================================================================
+
+[metadata]
+name = "aura-minimal"
+version = "1.0.0"
+author = "Gemini"
+description = "A clean, modern, and minimalist theme for Aura CLI."
+
+[colors]
+# =============================================================================
+# Primary Colors - Focused & Refined
+# =============================================================================
+primary = "#007AFF"           # A modern, standard blue for interactive elements
+secondary = "#8A8A8E"         # Neutral gray for secondary accents
+accent = "#007AFF"            # Using primary for accent for consistency
+
+# =============================================================================
+# Semantic/Functional Colors
+# =============================================================================
+success = "#34C759"           # Apple HIG Green
+warning = "#FF9500"           # Apple HIG Orange
+error = "#FF3B30"             # Apple HIG Red
+info = "#5856D6"              # Apple HIG Indigo
+
+# =============================================================================
+# UI Surface Colors - Clear Hierarchy
+# =============================================================================
+background = "#000000"      # Pure black for maximum contrast
+surface = "#1C1C1E"         # Dark gray for panels (standard iOS Dark Mode)
+muted = "#8A8A8E"           # Gray for secondary text
+highlight = "#FF9500"       # Using warning color for highlights
+
+# =============================================================================
+# Extended Palette - Not needed for this theme to maintain minimalism
+# =============================================================================
+foreground = "#FFFFFF"        # Pure white for main text
+foreground_muted = "#8A8A8E"  # Muted gray for secondary text
+
+# Apple System Grays (Dark Mode adapted)
+gray1 = "#8E8E93"             # System Gray
+gray2 = "#636366"             # System Gray 2
+gray3 = "#48484A"             # System Gray 3
+gray4 = "#3A3A3C"             # System Gray 4
+gray5 = "#2C2C2E"             # System Gray 5
+gray6 = "#1C1C1E"             # System Gray 6
+
+# Additional Apple System Colors
+pink = "#FF2D55"              # Apple Pink
+purple = "#AF52DE"            # Apple Purple
+teal = "#5AC8FA"              # Apple Teal
+cyan = "#32ADE6"              # Apple Cyan
+mint = "#00C7BE"              # Apple Mint
+
+[styles]
+# =============================================================================
+# Typography - Clean & Legible
+# =============================================================================
+title = "bold #007AFF"               # Primary headings
+subtitle = "bold #FFFFFF"            # Secondary headings (pure white)
+body = "#FFFFFF"                     # Body text
+label = "#8A8A8E"                    # Labels and metadata
+caption = "dim italic #8A8A8E"       # Captions and timestamps
+code = "#34C759"                     # Inline code
+
+# =============================================================================
+# Status Indicators - Clear Visual States
+# =============================================================================
+status_idle = "#8A8A8E"              # Idle/waiting
+status_thinking = "#8A8A8E"          # Processing (gray pulse)
+status_working = "#007AFF"           # Active work (blue)
+status_success = "#34C759"           # Completed successfully
+status_error = "#FF3B30"             # Error occurred
+status_warning = "#FF9500"           # Warning state
+
+# =============================================================================
+# Component Specific Styles
+# =============================================================================
+loading = "#007AFF"                  # Loading indicators
+spinner = "#007AFF"                  # Spinner animation
+progress = "#34C759"                 # Progress bars
+
+# =============================================================================
+# Agent Personas - Distinct Visual Identity
+# =============================================================================
+agent_agi = "bold #5856D6"           # The Brain (Indigo - intelligence)
+agent_ops = "bold #007AFF"           # The Hand (Blue - execution)
+agent_chat = "bold #34C759"          # The Voice (Green - communication)
+
+# =============================================================================
+# Interactive Elements
+# =============================================================================
+link = "#007AFF"                     # Clickable links
+link_hover = "#5EADFF"               # Lighter blue for hover
+selected = "bold #007AFF"            # Selected item
+focused = "#007AFF"                  # Focused element
+disabled = "#3A3A3C"                 # Disabled state (darker gray)
+
+# =============================================================================
+# Message Bubbles
+# =============================================================================
+user_message = "#007AFF"             # User message accent
+assistant_message = "#8A8A8E"        # Assistant message accent
+system_message = "#8A8A8E"           # System message accent
+
+[borders]
+# =============================================================================
+# Border Colors - Subtle & Modern
+# =============================================================================
+border_primary = "#007AFF"           # Primary borders (Blue)
+border_secondary = "#8A8A8E"         # Secondary borders (Gray)
+border_success = "#34C759"           # Success state
+border_warning = "#FF9500"           # Warning state
+border_error = "#FF3B30"             # Error state
+border_muted = "#3A3A3C"             # Subtle borders (standard iOS Dark Mode)
+border_accent = "#007AFF"            # Accent/focus borders
+border_focus = "#007AFF"             # Focus ring
+
+[layout]
+# =============================================================================
+# Spacing - Generous & Consistent
+# =============================================================================
+panel_padding = [1, 3]               # Increased horizontal padding
+chat_padding = [1, 2]                # Added vertical padding to messages
+chat_margin = [0, 0, 1, 0]           # Message external margin
+chat_width_ratio = 0.85              # Max width for messages
+dialog_padding = [1, 2]              # Dialog boxes
+compact_padding = [0, 1]             # Compact elements
+
+[appearance]
+# =============================================================================
+# Visual Characteristics
+# =============================================================================
+panel_border_type = "round"          # Round, lighter borders
+syntax_theme = "one-dark"            # A clean, modern syntax theme
+
+# Minimal-specific appearance
+glow_enabled = false                 # Disable glow for a cleaner look
+animate_spinners = true              # Animated spinners
+show_timestamps = true               # Show message timestamps
+
+[icons]
+# =============================================================================
+# Minimal Icon Set - Geometric Unicode (No Emoji)
+# =============================================================================
+# Clean geometric symbols inspired by SF Symbols / Apple HIG
+
+# Status Icons
+status_success = "✓"                 # Clean checkmark
+status_error = "✕"                   # Clean X
+status_warning = "!"                 # Exclamation
+status_info = "ℹ"                    # Info
+status_pending = "○"                 # Empty circle
+status_active = "●"                  # Filled circle
+
+# File Icons (Geometric)
+file_default = "□"                   # Document
+file_folder = "▢"                    # Folder
+file_code = "◇"                      # Code file
+file_config = "◈"                    # Config file
+file_image = "◉"                     # Image file
+
+# Action Icons
+action_add = "+"                     # Add/create
+action_remove = "−"                  # Remove/delete
+action_edit = "✎"                    # Edit/modify
+action_search = "⌕"                  # Search
+action_refresh = "↻"                 # Refresh
+
+# Navigation (Chevrons)
+arrow_right = "›"                    # Chevron right
+arrow_left = "‹"                     # Chevron left
+arrow_up = "▴"                       # Small arrow up
+arrow_down = "▾"                     # Small arrow down
+
+# Spinner Frames (Smooth geometric animation)
+spinner_frames = ["◐", "◓", "◑", "◒"]
+
+[syntax]
+# =============================================================================
+# Syntax Highlighting - Based on 'one-dark'
+# =============================================================================
+keyword = "#C678DD"                  # Violet
+string = "#98C379"                   # Green
+number = "#D19A66"                   # Orange
+comment = "#5C6370"                  # Gray
+function = "#61AFEF"                 # Blue
+variable = "#ABB2BF"                 # Light Gray
+type = "#56B6C2"                     # Cyan
+operator = "#56B6C2"                 # Cyan
+constant = "#D19A66"                 # Orange
+
+[markdown]
+# =============================================================================
+# Markdown Styling - Clean & Legible
+# =============================================================================
+heading_1 = "bold #007AFF"          # H1 - Primary blue, bold
+heading_2 = "bold #FFFFFF"          # H2 - White, bold
+heading_3 = "bold #007AFF"          # H3 - Primary blue, bold
+heading_4 = "#FFFFFF"               # H4 - White
+heading_5 = "dim #8A8A8E"           # H5 - Muted gray, dim
+heading_6 = "dim #8A8A8E"           # H6 - Muted gray, dim
+code = "bold #34C759 on #1C1C1E"    # Inline code - Green on surface
+code_block = "bold #34C759"         # Code blocks - Green
+link = "underline #007AFF"          # Links - Blue, underlined
+strong = "bold #FFFFFF"             # Bold text - White
+emphasis = "italic #FFFFFF"         # Italic text - White
+blockquote = "dim #8A8A8E"          # Blockquotes - Muted gray, dim
+list_bullet = "•"                    # Simple bullet
+list_number = "#8A8A8E"             # Muted gray for numbers
+table_header = "bold #FFFFFF"       # Table headers - White
+table_border = "#3A3A3C"            # Table borders - Subtle gray

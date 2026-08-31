@@ -1,0 +1,31 @@
+{
+  "stream_resize": [
+    {"type": "agi_task_start", "task_id": "task", "timestamp": 100, "data": {"description": "Responder", "status": "running"}},
+    {"type": "thinking", "task_id": "task", "timestamp": 102, "data": {"message": "Analisando"}},
+    {"type": "agi_task_update", "task_id": "task", "timestamp": 104, "data": {"status": "streaming", "message": "Transmitindo"}},
+    {"type": "agi_task_complete", "task_id": "task", "timestamp": 108, "data": {"success": true, "result": "Pronto"}}
+  ],
+  "failure": [
+    {"type": "agi_task_start", "task_id": "fail", "timestamp": 100, "data": {"description": "Testar"}},
+    {"type": "agi_task_error", "task_id": "fail", "timestamp": 103, "data": {"status": "failed", "error": "Falha real"}}
+  ],
+  "cancel": [
+    {"type": "agi_task_start", "task_id": "cancel", "timestamp": 100, "data": {"description": "Indexar"}},
+    {"type": "task_cancelled", "task_id": "cancel", "timestamp": 101, "data": {"status": "cancelled", "message": "Cancelado"}}
+  ],
+  "resume": [
+    {"type": "agi_task_start", "task_id": "resume", "timestamp": 100, "data": {"description": "Construir"}},
+    {"type": "task_interrupted", "task_id": "resume", "timestamp": 102, "data": {"status": "interrupted", "message": "Pausado", "resumable": true}},
+    {"type": "agi_task_start", "task_id": "resume", "timestamp": 105, "data": {"description": "Retomar"}},
+    {"type": "agi_task_complete", "task_id": "resume", "timestamp": 107, "data": {"success": true, "result": "Retomado"}}
+  ],
+  "child_approval": [
+    {"type": "agi_task_start", "task_id": "child", "parent_task_id": "parent", "timestamp": 100, "data": {"description": "Editar"}},
+    {"type": "approval_requested", "task_id": "child", "parent_task_id": "parent", "timestamp": 101, "data": {"status": "awaiting_user", "request_id": "a1", "action": "edit_file", "message": "Aplicar alteração?"}},
+    {"type": "approval_resolved", "task_id": "child", "parent_task_id": "parent", "timestamp": 102, "data": {"status": "running", "request_id": "a1", "message": "Aprovado"}}
+  ],
+  "background": [
+    {"type": "agi_task_start", "task_id": "bg", "timestamp": 100, "data": {"description": "Indexar", "background": true}},
+    {"type": "agi_task_complete", "task_id": "bg", "timestamp": 104, "data": {"success": true, "result": "Índice pronto", "background": true}}
+  ]
+}

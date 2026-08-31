@@ -1,0 +1,163 @@
+# =============================================================================
+# Default Theme for Aura CLI
+# =============================================================================
+#
+# Classic cyberpunk/hacker aesthetic with high contrast neon colors.
+# The original Aura CLI look inspired by retro terminal interfaces.
+#
+# Design Philosophy:
+# - High contrast for maximum visibility
+# - Classic cyan/magenta/green color scheme
+# - Retro terminal vibes
+# - Aggressive, energetic appearance
+#
+# =============================================================================
+
+[metadata]
+name = "cyberpunk"
+version = "2.0.0"
+author = "Aura CLI Team"
+description = "Classic high-contrast cyberpunk terminal aesthetic"
+
+[colors]
+# =============================================================================
+# Primary Colors - Classic Cyberpunk
+# =============================================================================
+primary = "cyan"            # Cyan - Primary elements
+secondary = "magenta"       # Magenta - Secondary elements
+accent = "bright_green"     # Green - Accents
+
+# =============================================================================
+# Semantic/Functional Colors
+# =============================================================================
+success = "bright_green"    # Green - Success
+warning = "bright_yellow"   # Yellow - Warnings
+error = "bright_red"        # Red - Errors
+info = "bright_blue"        # Blue - Information
+
+# =============================================================================
+# UI Surface Colors
+# =============================================================================
+background = "#000000"      # Pure Black
+surface = "#121212"         # Very Dark Grey
+muted = "grey50"            # Standard Grey
+highlight = "bright_white"  # White highlights
+
+# =============================================================================
+# Extended Palette
+# =============================================================================
+foreground = "white"
+foreground_muted = "grey50"
+foreground_bright = "bright_white"
+
+[styles]
+# =============================================================================
+# Typography
+# =============================================================================
+title = "bold cyan"                  # Primary headings
+subtitle = "bold magenta"            # Secondary headings
+body = "white"                       # Body text
+label = "grey50"                     # Labels
+caption = "dim white"                # Captions
+code = "bright_green"                # Inline code
+
+# =============================================================================
+# Status Indicators
+# =============================================================================
+status_idle = "grey50"               # Idle
+status_thinking = "magenta"          # Processing
+status_working = "cyan"              # Working
+status_success = "bright_green"      # Success
+status_error = "bright_red"          # Error
+status_warning = "bright_yellow"     # Warning
+
+# =============================================================================
+# Component Specific
+# =============================================================================
+loading = "cyan"
+spinner = "bright_magenta"
+progress = "green"
+
+# =============================================================================
+# Agent Personas
+# =============================================================================
+agent_agi = "bold magenta"           # The Brain
+agent_ops = "bold cyan"              # The Hand
+agent_chat = "bold green"            # The Voice
+
+# =============================================================================
+# Interactive Elements
+# =============================================================================
+link = "cyan"
+link_hover = "bright_cyan"
+selected = "bold cyan"
+focused = "cyan"
+disabled = "grey30"
+
+[borders]
+# =============================================================================
+# Border Colors
+# =============================================================================
+border_primary = "cyan"
+border_secondary = "magenta"
+border_success = "bright_green"
+border_warning = "bright_yellow"
+border_error = "bright_red"
+border_muted = "grey30"
+border_accent = "bright_white"
+border_focus = "cyan"
+
+[layout]
+panel_padding = [1, 2]
+chat_padding = [0, 1]
+chat_margin = [0, 0, 1, 0]
+chat_width_ratio = 0.85
+lcd_padding = [0, 0]
+dialog_padding = [1, 2]
+compact_padding = [0, 1]
+
+[appearance]
+panel_border_type = "round"
+syntax_theme = "monokai"
+
+[icons]
+status_success = "✔"
+status_error = "✖"
+status_warning = "▲"
+status_info = "ℹ"
+status_pending = "○"
+status_active = "●"
+
+spinner_frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+
+[syntax]
+keyword = "magenta"
+string = "green"
+number = "cyan"
+comment = "grey50"
+function = "bright_cyan"
+variable = "white"
+type = "bright_magenta"
+operator = "bright_white"
+constant = "bright_yellow"
+
+[markdown]
+# =============================================================================
+# Markdown Styling - Default Theme
+# =============================================================================
+heading_1 = "bold cyan"              # H1 - Cyan, bold
+heading_2 = "bold bright_green"       # H2 - Green, bold
+heading_3 = "bold cyan"               # H3 - Cyan, bold
+heading_4 = "bright_green"            # H4 - Green
+heading_5 = "dim bright_green"       # H5 - Green, dim
+heading_6 = "dim bright_green"       # H6 - Green, dim
+code = "bold bright_green on #121212" # Inline code - Green on surface
+code_block = "bold bright_green"      # Code blocks - Green
+link = "underline bright_green"       # Links - Green, underlined
+strong = "bold cyan"                 # Bold text - Cyan
+emphasis = "italic bright_green"      # Italic text - Green
+blockquote = "dim bright_green"       # Blockquotes - Green, dim
+list_bullet = "cyan"                 # Bullet points - Cyan
+list_number = "cyan"                 # Numbered lists - Cyan
+table_header = "bold cyan"           # Table headers - Cyan
+table_border = "grey50"              # Table borders - Grey

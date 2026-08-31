@@ -1,0 +1,2481 @@
+/* =============================================================================
+ * Nebula TUI Theme - Aura CLI
+ * 
+ * A modern, elegant theme for the Aura CLI interface.
+ * Following Textual CSS best practices and semantic variable naming.
+ * 
+ * Color Palette: Tokyo Night inspired with cosmic nebula aesthetics
+ * =============================================================================
+ */
+
+/* CSS VARIABLES - Spacing System
+   Define CSS variables using $var-name: value syntax for Textual
+   ============================================================================= */
+$spacing-0: 0;
+$spacing-1: 1;
+$spacing-2: 2;
+$spacing-3: 3;
+$spacing-4: 4;
+$spacing-5: 5;
+$spacing-6: 6;
+$spacing-7: 7;
+$spacing-8: 8;
+$bubble-indent: 8;
+
+/* CSS VARIABLES - Theme Color System (Nebula Dark defaults)
+   ============================================================================= */
+$theme-background: #111111;
+$theme-background-secondary: #181818;
+$theme-background-tertiary: #0b0b0b;
+$theme-foreground: #e7e7e7;
+$theme-foreground-muted: #8f8f8f;
+$theme-primary: #8fb4ff;
+$theme-primary-muted: #6f8fc8;
+$theme-secondary: #b9a0ff;
+$theme-secondary-muted: #8f79c6;
+$theme-success: #10b981;
+$theme-warning: #f59e0b;
+$theme-error: #ef4444;
+$theme-info: #3b82f6;
+$theme-border: #333333;
+$theme-border-active: #8fb4ff;
+$theme-surface: #1b1b1b;
+$theme-surface-hover: #252525;
+$theme-code-background: #0f0f23;
+$theme-code-keyword: #c678dd;
+$theme-code-string: #98c379;
+$theme-code-number: #d19a66;
+$theme-code-comment: #5c6370;
+$theme-code-function: #61afef;
+$theme-chat-user: #3b82f6;
+$theme-chat-assistant: #10b981;
+$theme-chat-system: #f59e0b;
+$theme-diff-add-bg: #1e3a1e;
+$theme-diff-add-fg: #51cf66;
+$theme-diff-remove-bg: #3a1e1e;
+$theme-diff-remove-fg: #ff6b6b;
+$theme-task-border: #f59e0b;
+$theme-task-active: #fbbf24;
+$theme-task-done: #10b981;
+$theme-thought-fg: #94a3b8;
+$theme-tree-line: #475569;
+
+/* =============================================================================
+   GLOBAL SCROLLBAR STYLING
+   ============================================================================= */
+
+* {
+    scrollbar-background: $theme-surface;
+    scrollbar-background-hover: $theme-surface;
+    scrollbar-background-active: $theme-surface-hover;
+    scrollbar-corner-color: $theme-surface;
+    scrollbar-color: $theme-border;
+    scrollbar-color-hover: $theme-primary;
+    scrollbar-color-active: $theme-primary-muted;
+    scrollbar-size: $spacing-1 $spacing-1;
+}
+
+/* =============================================================================
+   SCREEN - Base Layout
+   ============================================================================= */
+
+Screen {
+    background: $theme-background;
+    color: $theme-foreground;
+    layers: base content overlay notification dialog palette imagination;
+}
+
+Screen:inline {
+    height: auto;
+}
+
+/* =============================================================================
+   MAIN GRID LAYOUT
+   ============================================================================= */
+
+#main_grid {
+    layout: grid;
+    grid-size: 1 1;
+    grid-columns: 1fr;
+    grid-rows: 1fr;
+    height: 1fr;
+    width: 100%;
+}
+
+#main_grid.drawer-open {
+    grid-size: 2 1;
+}
+
+#main_grid.drawer-overlay {
+    grid-size: 1 1;
+}
+
+.panel-container {
+    height: 100%;
+    border: none;
+    padding: $spacing-1;
+    background: $theme-surface;
+}
+
+.panel-title {
+    height: 1;
+    background: transparent;
+    color: $theme-foreground-muted;
+    text-style: bold;
+    text-align: left;
+    padding: $spacing-0 $spacing-1;
+    border-bottom: none;
+    content-align: left middle;
+}
+
+#left_panel {
+    display: none;
+    border-right: solid $theme-border;
+}
+
+#left_panel.drawer-visible,
+#right_panel.drawer-visible {
+    background: $theme-surface;
+}
+
+#center_panel {
+    border-left: solid $theme-border;
+    border-right: solid $theme-border;
+}
+
+#right_panel {
+    display: none;
+    border-left: solid $theme-border;
+}
+
+#left_panel.drawer-visible, #right_panel.drawer-visible {
+    display: block;
+}
+
+#main_grid.drawer-overlay #left_panel.drawer-visible,
+#main_grid.drawer-overlay #right_panel.drawer-visible {
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+    padding: $spacing-1;
+    background: $theme-surface;
+    border: round $theme-border;
+}
+
+/* =============================================================================
+   LEFT PANEL - Sidebar
+   ============================================================================= */
+
+#left_panel_content {
+    padding: $spacing-1;
+    width: 100%;
+    overflow-y: auto;
+    background: $theme-surface;
+}
+
+.status-header {
+    text-align: center;
+    color: $theme-primary-muted;
+    text-style: bold;
+    padding: $spacing-1 $spacing-0;
+    border-bottom: solid $theme-border;
+    margin-bottom: $spacing-1;
+}
+
+.task-tree {
+    margin-top: $spacing-1;
+    background: transparent;
+    color: $theme-foreground;
+}
+
+.directory-tree {
+    height: 1fr;
+    padding: $spacing-1;
+    overflow-y: auto;
+    background: $theme-background;
+}
+
+/* --- Metrics Panel --- */
+MetricsPanel {
+    width: 100%;
+    height: auto;
+    padding: $spacing-0;
+    margin-bottom: $spacing-1;
+}
+
+#metrics_display {
+    width: 100%;
+    height: auto;
+    padding: $spacing-0 $spacing-1;
+}
+
+/* =============================================================================
+   CENTER PANEL - Main Content
+   ============================================================================= */
+
+Vertical#main_content {
+    layout: vertical;
+    background: $theme-background;
+    height: 100%;
+    min-width: 40;
+}
+
+/* --- Chat Log --- */
+AuraChatLog {
+    background: $theme-background;
+    padding: $spacing-1 $spacing-2;
+    overflow-y: scroll;
+    height: 1fr;
+    min-height: 10;
+}
+
+AuraChatLog .chat-divider {
+    text-align: center;
+    color: $theme-foreground-muted;
+    margin: $spacing-1 $spacing-0;
+    text-style: dim;
+}
+
+/* =============================================================================
+   MESSAGE BUBBLES
+   ============================================================================= */
+
+MessageBubble {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin: 0 0 1 0;
+    padding: 0 $spacing-1;
+    border: none;
+    background: transparent;
+}
+
+MessageBubble.message-user {
+    margin-left: 0;
+    padding: $spacing-1 $spacing-2;
+    border-left: wide $theme-border-active;
+    background: $theme-surface;
+}
+
+MessageBubble.message-assistant {
+    margin-right: 0;
+    padding: 0 $spacing-1;
+    border: none;
+    background: transparent;
+}
+
+MessageBubble.message-system {
+    margin: $spacing-0 $spacing-2;
+    border: none;
+    background: transparent;
+    text-style: dim;
+}
+
+MessageBubble.message-error {
+    border: round $theme-error;
+    background: $theme-error 15%;
+}
+
+MessageBubble.message-success {
+    border: round $theme-success;
+    background: $theme-success 15%;
+}
+
+MessageBubble.message-tool {
+    border: round $theme-warning;
+    background: $theme-warning 15%;
+}
+
+MessageBubble.message-thinking,
+MessageBubble.message-tool {
+    margin: 0 0 1 0;
+    padding: 0 $spacing-1;
+    text-style: dim;
+    border: none;
+    background: transparent;
+}
+
+MessageBubble.message-streaming {
+    border-left: wide $theme-primary;
+    background: $theme-primary 5%;
+}
+
+MessageBubble .message-header {
+    width: 100%;
+    height: auto;
+    margin-bottom: $spacing-0;
+}
+
+MessageBubble .message-sender {
+    text-style: bold;
+    color: $theme-primary-muted;
+}
+
+MessageBubble .message-user-title {
+    width: 1fr;
+    color: $theme-foreground;
+}
+
+MessageBubble .message-thinking-title,
+MessageBubble .message-tool-title {
+    color: $theme-foreground-muted;
+}
+
+MessageBubble .message-thinking-content {
+    color: $theme-thought-fg;
+    padding-left: $spacing-1;
+}
+
+MessageBubble .message-streaming-indicator {
+    color: $theme-primary;
+    text-style: bold;
+}
+
+MessageBubble .message-timestamp {
+    dock: right;
+}
+
+MessageBubble.message-user .message-sender {
+    color: $theme-primary;
+    text-align: right;
+}
+
+MessageBubble.message-assistant .message-sender {
+    color: $theme-primary-muted;
+}
+
+MessageBubble.message-error .message-sender {
+    color: $theme-error;
+}
+
+MessageBubble.message-success .message-sender {
+    color: $theme-success;
+}
+
+MessageBubble.message-tool .message-sender {
+    color: $theme-warning;
+}
+
+MessageBubble .message-timestamp {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin: $spacing-0 $spacing-1;
+}
+
+#main_grid.density-compact MessageBubble .message-timestamp,
+#main_grid.density-comfortable MessageBubble .message-timestamp {
+    display: none;
+}
+
+#main_grid.density-compact AuraChatLog {
+    padding: $spacing-0;
+}
+
+#main_grid.density-compact MessageBubble {
+    margin-bottom: $spacing-0;
+    padding: $spacing-0 $spacing-1;
+}
+
+MessageBubble .message-body {
+    width: 100%;
+    padding: $spacing-0;
+    color: $theme-foreground;
+}
+
+MessageBubble .message-footer {
+    margin-top: $spacing-0;
+    padding-top: $spacing-0;
+    border-top: none;
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+MessageBubble .message-reactions {
+    margin-top: $spacing-1;
+}
+
+MessageBubble .message-reaction {
+    background: $theme-surface-hover;
+    padding: $spacing-0 $spacing-1;
+    margin: $spacing-0 $spacing-1;
+    border: round $theme-border;
+}
+
+/* =============================================================================
+   INPUT BAR
+   ============================================================================= */
+
+AuraInputBar {
+    dock: bottom;
+    height: auto;
+    max-height: 8;
+    background: $theme-background;
+    padding: $spacing-0 $spacing-2;
+    border-top: none;
+}
+
+AuraInputBar > Vertical {
+    height: auto;
+}
+
+AuraInputBar .command-suggestions {
+    dock: bottom;
+    width: 100%;
+    max-height: 6;
+    height: auto;
+    background: $theme-surface;
+    border: round $theme-border;
+    margin-bottom: $spacing-1;
+}
+
+AuraInputBar .command-suggestions.-hidden {
+    display: none;
+}
+
+AuraInputBar OptionList {
+    background: $theme-surface;
+    border: none;
+}
+
+Input {
+    border: round $theme-border;
+    background: $theme-background;
+    color: $theme-foreground;
+    padding: $spacing-0 $spacing-1;
+}
+
+Input:focus {
+    border: round $theme-primary-muted;
+    background: $theme-background;
+}
+
+Input.-invalid {
+    border: round $theme-error;
+}
+
+/* =============================================================================
+   FOOTER
+   ============================================================================= */
+
+AuraFooter {
+    dock: bottom;
+    height: 1;
+    background: $theme-background;
+    border-top: none;
+    padding: $spacing-0 $spacing-2;
+}
+
+AuraFooter #footer-icon {
+    color: $theme-primary;
+    text-style: bold;
+    margin-right: $spacing-1;
+}
+
+AuraFooter #footer-mode {
+    width: auto;
+    background: transparent;
+    color: $theme-foreground-muted;
+    padding: $spacing-0;
+    text-style: bold;
+}
+
+AuraFooter #footer-mode.footer-mode-insert {
+    background: transparent;
+    color: $theme-primary-muted;
+}
+
+AuraFooter #footer-mode.footer-mode-agi {
+    background: transparent;
+    color: $theme-secondary;
+}
+
+AuraFooter #footer-mode.footer-mode-ops {
+    background: transparent;
+    color: $theme-warning;
+}
+
+AuraFooter .footer-keybindings {
+    width: auto;
+    margin: $spacing-0 $spacing-1;
+}
+
+AuraFooter.compact .footer-keybindings,
+AuraFooter.compact .footer-agent,
+AuraFooter.compact .footer-model {
+    display: none;
+}
+
+AuraFooter .footer-keybinding {
+    color: $theme-foreground-muted;
+    margin-right: $spacing-2;
+}
+
+AuraFooter .footer-agent {
+    color: $theme-secondary;
+    margin-left: $spacing-1;
+}
+
+AuraFooter .footer-model {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+AuraFooter .footer-key {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+AuraFooter .footer-action {
+    color: $theme-foreground-muted;
+}
+
+AuraFooter .footer-separator {
+    color: $theme-border;
+    margin: $spacing-0 $spacing-1;
+}
+
+AuraFooter .footer-status {
+    color: $theme-foreground-muted;
+    text-style: italic dim;
+}
+AuraFooter .footer-external-tool {
+    color: $theme-secondary;
+    text-style: bold;
+    width: auto;
+    max-width: 32;
+    overflow: hidden;
+}
+AuraFooter .footer-external-tool.external-tool-failed {
+    color: $theme-error;
+}
+AuraFooter .footer-external-tool.external-tool-interrupted {
+    color: $theme-warning;
+}
+AuraFooter .footer-external-tool.external-tool-completed {
+    color: $theme-success;
+}
+
+AuraKeyHint {
+    width: auto;
+    height: 1;
+}
+
+AuraKeyHint .key {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+AuraKeyHint .action {
+    color: $theme-foreground-muted;
+}
+
+/* =============================================================================
+   LOADING INDICATORS
+   ============================================================================= */
+
+AuraLoadingIndicator {
+    width: auto;
+    height: 1;
+    padding: $spacing-0 $spacing-1;
+}
+
+AuraLoadingIndicator.-hidden {
+    display: none;
+}
+
+AuraLoadingIndicator .spinner {
+    color: $theme-primary;
+    text-style: bold;
+    margin-right: $spacing-1;
+}
+
+AuraLoadingIndicator .message {
+    color: $theme-primary-muted;
+}
+
+AuraLoadingIndicator .dots {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+/* --- Progress Bar --- */
+AuraProgressBar {
+    width: 100%;
+    height: 1;
+    padding: $spacing-0 $spacing-1;
+}
+
+AuraProgressBar .progress-label {
+    color: $theme-foreground-muted;
+    margin-right: $spacing-1;
+}
+
+AuraProgressBar .progress-bar-container {
+    width: 30;
+    height: 1;
+    border: solid $theme-border;
+}
+
+AuraProgressBar .progress-bar-fill {
+    background: $theme-primary;
+    height: 1;
+}
+
+AuraProgressBar .progress-bar-fill.complete {
+    background: $theme-success;
+}
+
+AuraProgressBar .progress-percentage {
+    margin-left: $spacing-1;
+    color: $theme-foreground-muted;
+}
+
+AuraProgressBar .progress-percentage.complete {
+    color: $theme-success;
+    text-style: bold;
+}
+
+/* =============================================================================
+   TOAST NOTIFICATIONS
+   ============================================================================= */
+
+AuraToastContainer {
+    dock: top;
+    layer: notification;
+    align: right top;
+    width: auto;
+    height: auto;
+    offset: -2 2;
+}
+
+AuraToast {
+    width: 60;
+    height: auto;
+    padding: $spacing-1;
+    border: round $theme-border;
+    background: $theme-surface;
+    margin: $spacing-0 $spacing-0 $spacing-1 $spacing-0;
+}
+
+AuraToast.toast-success {
+    border-left: wide $theme-success;
+    background: $theme-success 10%;
+}
+
+AuraToast.toast-error {
+    border-left: wide $theme-error;
+    background: $theme-error 10%;
+}
+
+AuraToast.toast-warning {
+    border-left: wide $theme-warning;
+    background: $theme-warning 10%;
+}
+
+AuraToast.toast-info {
+    border-left: wide $theme-primary;
+    background: $theme-primary 10%;
+}
+
+AuraToast .toast-icon {
+    margin-right: $spacing-1;
+    text-style: bold;
+}
+
+AuraToast.toast-success .toast-icon {
+    color: $theme-success;
+}
+
+AuraToast.toast-error .toast-icon {
+    color: $theme-error;
+}
+
+AuraToast.toast-warning .toast-icon {
+    color: $theme-warning;
+}
+
+AuraToast.toast-info .toast-icon {
+    color: $theme-primary;
+}
+
+AuraToast .toast-title {
+    text-style: bold;
+    margin-bottom: $spacing-1;
+}
+
+AuraToast .toast-message {
+    color: $theme-foreground;
+}
+
+/* Built-in Toast styling */
+Toast {
+    width: auto;
+    background: $theme-surface;
+    color: $theme-foreground;
+    border-left: wide $theme-primary;
+    padding: $spacing-0 $spacing-1;
+    margin: $spacing-0 $spacing-0 $spacing-1 $spacing-0;
+}
+
+Toast.-information {
+    border-left: wide $theme-primary;
+}
+
+Toast.-warning {
+    border-left: wide $theme-warning;
+}
+
+Toast.-error {
+    border-left: wide $theme-error;
+}
+
+Toast .toast--title {
+    color: $theme-primary;
+    text-style: bold;
+}
+
+/* =============================================================================
+   RIGHT PANEL - Tabbed Content
+   ============================================================================= */
+
+#right_panel TabbedContent {
+    height: 1fr;
+    width: 100%;
+    background: $theme-surface;
+}
+
+TabbedContent {
+    height: 1fr;
+}
+
+TabbedContent > Tabs {
+    background: transparent;
+    border-bottom: solid $theme-border;
+}
+
+Tabs {
+    background: transparent;
+}
+
+Tab {
+    padding: $spacing-0 $spacing-1;
+    color: $theme-foreground-muted;
+    background: transparent;
+}
+
+Tab:hover {
+    color: $theme-foreground;
+    background: $theme-surface-hover;
+}
+
+Tab.-active {
+    color: $theme-primary-muted;
+    text-style: bold;
+    background: transparent;
+}
+
+Underline {
+    background: $theme-primary-muted;
+}
+
+TabPane {
+    padding: $spacing-0 $spacing-1;
+    overflow-y: auto;
+    background: transparent;
+}
+
+/* =============================================================================
+   EVENT STREAM PANEL
+   ============================================================================= */
+
+EventStreamPanel {
+    width: 100%;
+    height: 100%;
+    padding: $spacing-0 $spacing-1;
+    overflow-y: scroll;
+    background: transparent;
+}
+
+EventStreamPanel .event-entry {
+    margin-bottom: $spacing-0;
+    padding: $spacing-0 $spacing-1;
+    border-left: solid $theme-border;
+    background: transparent;
+}
+
+EventStreamPanel .event-timestamp {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin-right: $spacing-1;
+}
+
+EventStreamPanel .event-task-start {
+    border-left: solid $theme-primary;
+}
+
+EventStreamPanel .event-task-update {
+    border-left: solid $theme-primary-muted;
+}
+
+EventStreamPanel .event-task-complete {
+    border-left: solid $theme-success;
+}
+
+EventStreamPanel .event-task-failed {
+    border-left: solid $theme-error;
+}
+
+EventStreamPanel .event-tool-executing {
+    border-left: solid $theme-warning;
+}
+
+EventStreamPanel .event-tool-result {
+    border-left: solid $theme-success;
+}
+
+EventStreamPanel .event-tool-error {
+    border-left: solid $theme-error;
+}
+
+EventStreamPanel .event-capability-evaluation {
+    border-left: solid $theme-primary-muted;
+}
+
+EventStreamPanel .event-capability-confirmation {
+    border-left: solid $theme-warning;
+}
+
+EventStreamPanel .event-capability-blocked {
+    border-left: solid $theme-error;
+}
+
+EventStreamPanel .event-capability-commit {
+    border-left: solid $theme-success;
+}
+
+EventStreamPanel .event-chat-message {
+    border-left: solid $theme-primary;
+}
+
+EventStreamPanel .event-type-label {
+    text-style: bold;
+    margin-right: $spacing-1;
+}
+
+EventStreamPanel .event-content {
+    color: $theme-foreground;
+}
+
+/* =============================================================================
+   CODE ANALYSIS PANEL
+   ============================================================================= */
+
+CodeAnalysisPanel {
+    height: 100%;
+    width: 100%;
+    padding: $spacing-1;
+    overflow-y: auto;
+}
+
+CodeAnalysisPanel .panel-header {
+    text-align: left;
+    color: $theme-primary-muted;
+    text-style: bold;
+    padding-bottom: $spacing-1;
+    border-bottom: solid $theme-border;
+}
+
+#code_viewer_container {
+    height: 50%;
+    min-height: 10;
+    overflow-y: scroll;
+    border: round $theme-border;
+    margin-bottom: $spacing-1;
+}
+
+#code_viewer {
+    width: 100%;
+    height: auto;
+    padding: $spacing-1;
+    background: $theme-background;
+}
+
+#issues_header {
+    color: $theme-warning;
+    margin-top: $spacing-1;
+    text-style: bold;
+}
+
+#issues_table {
+    height: auto;
+    max-height: 30%;
+    margin: $spacing-1 $spacing-0;
+}
+
+/* =============================================================================
+   TREE WIDGET
+   ============================================================================= */
+
+Tree {
+    background: transparent;
+    color: $theme-foreground;
+    padding: $spacing-0;
+    scrollbar-gutter: stable;
+}
+
+Tree:focus {
+    border: round $theme-primary-muted;
+}
+
+Tree > .tree--guides {
+    color: $theme-border;
+}
+
+Tree > .tree--guides-hover {
+    color: $theme-primary;
+}
+
+Tree > .tree--guides-selected {
+    color: $theme-primary-muted;
+}
+
+Tree > .tree--cursor {
+    background: $theme-primary 30%;
+    color: $theme-foreground;
+}
+
+Tree:focus > .tree--cursor {
+    background: $theme-primary;
+    color: $theme-background;
+    text-style: bold;
+}
+
+Tree > .tree--highlight {
+    text-style: bold;
+}
+
+Tree > .tree--highlight-line {
+    background: $theme-surface-hover;
+}
+
+.directory-tree--folder {
+    text-style: bold;
+}
+
+.directory-tree--file {
+    color: $theme-foreground;
+}
+
+.directory-tree--hidden {
+    text-style: dim italic;
+}
+
+/* =============================================================================
+   DATATABLE
+   ============================================================================= */
+
+DataTable {
+    background: $theme-surface;
+    height: auto;
+    border: round $theme-border;
+}
+
+DataTable:focus {
+    border: round $theme-primary-muted;
+}
+
+DataTable > .datatable--header {
+    background: $theme-surface-hover;
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+DataTable > .datatable--header-hover {
+    background: $theme-border;
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+DataTable > .datatable--cursor {
+    background: $theme-primary 30%;
+    color: $theme-foreground;
+}
+
+DataTable:focus > .datatable--cursor {
+    background: $theme-primary;
+    color: $theme-background;
+}
+
+DataTable > .datatable--hover {
+    background: $theme-surface-hover;
+}
+
+DataTable > .datatable--even-row {
+    background: $theme-surface;
+}
+
+DataTable > .datatable--odd-row {
+    background: $theme-background;
+}
+
+/* =============================================================================
+   OPTION LIST
+   ============================================================================= */
+
+OptionList {
+    background: $theme-surface;
+    border: round $theme-border;
+    padding: $spacing-0;
+}
+
+OptionList:focus {
+    border: round $theme-primary-muted;
+}
+
+OptionList > .option-list--option {
+    padding: $spacing-0 $spacing-1;
+}
+
+OptionList > .option-list--option-hover {
+    background: $theme-surface-hover;
+}
+
+OptionList > .option-list--option-highlighted {
+    background: $theme-primary;
+    color: $theme-background;
+    text-style: bold;
+}
+
+OptionList > .option-list--option-hover-highlighted {
+    background: $theme-primary-muted;
+    color: $theme-background;
+}
+
+/* =============================================================================
+   SELECT WIDGET
+   ============================================================================= */
+
+Select {
+    border: round $theme-border;
+    background: $theme-surface;
+}
+
+Select:focus {
+    border: round $theme-primary-muted;
+}
+
+Select > SelectCurrent {
+    background: $theme-surface;
+    color: $theme-foreground;
+}
+
+Select > SelectOverlay {
+    border: round $theme-primary-muted;
+    background: $theme-surface;
+}
+
+SelectOverlay > OptionList {
+    border: none;
+}
+
+/* =============================================================================
+   BUTTONS
+   ============================================================================= */
+
+Button {
+    min-width: 10;
+    height: $spacing-3;
+    background: $theme-surface;
+    color: $theme-foreground;
+    border: tall $theme-border;
+    text-style: bold;
+}
+
+Button:hover {
+    background: $theme-surface-hover;
+    border: tall $theme-primary;
+}
+
+Button:focus {
+    border: tall $theme-primary-muted;
+    text-style: bold reverse;
+}
+
+Button.-primary {
+    background: $theme-primary;
+    color: $theme-background;
+    border: tall $theme-primary;
+}
+
+Button.-primary:hover {
+    background: $theme-primary-muted;
+    border: tall $theme-primary-muted;
+}
+
+Button.-success {
+    background: $theme-success;
+    color: $theme-background;
+    border: tall $theme-success;
+}
+
+Button.-warning {
+    background: $theme-warning;
+    color: $theme-background;
+    border: tall $theme-warning;
+}
+
+Button.-error {
+    background: $theme-error;
+    color: $theme-background;
+    border: tall $theme-error;
+}
+
+Button:disabled {
+    background: $theme-border;
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+/* =============================================================================
+   CHECKBOX & SWITCH
+   ============================================================================= */
+
+Checkbox {
+    background: transparent;
+    border: none;
+    padding: $spacing-0;
+}
+
+Checkbox:focus {
+    background: $theme-surface-hover;
+}
+
+Checkbox > .toggle--button {
+    background: $theme-border;
+}
+
+Checkbox.-on > .toggle--button {
+    color: $theme-primary;
+}
+
+Checkbox:hover > .toggle--button {
+    background: $theme-primary 30%;
+}
+
+Switch {
+    background: transparent;
+    border: none;
+}
+
+Switch:focus {
+    border: tall $theme-primary-muted;
+}
+
+Switch > .switch--slider {
+    background: $theme-border;
+    color: $theme-foreground-muted;
+}
+
+Switch.-on > .switch--slider {
+    color: $theme-primary;
+}
+
+/* =============================================================================
+   COMMAND PALETTE
+   ============================================================================= */
+
+CommandPalette {
+    layer: palette;
+    position: absolute;
+    align: center middle;
+    display: none;
+    width: 70%;
+    max-width: 80;
+    height: auto;
+    max-height: 60%;
+    background: $theme-surface;
+    border: round $theme-border;
+    padding: $spacing-1 $spacing-2;
+    margin: $spacing-1 $spacing-2;
+}
+
+CommandPalette.-visible {
+    display: block;
+}
+
+CommandPalette > .palette-input {
+    width: 100%;
+    margin-bottom: $spacing-1;
+}
+
+CommandPalette > .palette-input > Input {
+    border: round $theme-primary;
+}
+
+CommandPalette > .palette-input > Input:focus {
+    border: round $theme-primary-muted;
+}
+
+CommandPalette > .palette-list {
+    height: auto;
+    max-height: 20;
+    background: $theme-background;
+    border: none;
+}
+
+CommandPalette > .palette-hint {
+    height: 1;
+    padding-top: $spacing-1;
+    color: $theme-foreground-muted;
+    text-align: center;
+}
+
+/* =============================================================================
+   SPINNERS
+   ============================================================================= */
+
+KnightRiderSpinner {
+    height: 1;
+    padding: $spacing-0 $spacing-1;
+    background: transparent;
+}
+
+KnightRiderSpinner .spinner-bar {
+    width: auto;
+}
+
+KnightRiderSpinner .spinner-message {
+    padding-left: $spacing-1;
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+KnightRiderSpinner .spinner-char-full {
+    color: $theme-primary-muted;
+}
+
+KnightRiderSpinner .spinner-char-high {
+    color: $theme-primary-muted 80%;
+}
+
+KnightRiderSpinner .spinner-char-medium {
+    color: $theme-primary-muted 60%;
+}
+
+KnightRiderSpinner .spinner-char-low {
+    color: $theme-primary-muted 40%;
+}
+
+KnightRiderSpinner .spinner-char-fade {
+    color: $theme-primary-muted 20%;
+}
+
+CompactSpinner {
+    width: auto;
+    height: 1;
+}
+
+CompactSpinner .spinner-char {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+CompactSpinner .spinner-message {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+ProgressSpinner {
+    height: 1;
+    width: 100%;
+}
+
+ProgressSpinner .spinner-char {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+ProgressSpinner .progress-bar-filled {
+    color: $theme-primary-muted;
+}
+
+ProgressSpinner .progress-bar-empty {
+    color: $theme-border;
+    text-style: dim;
+}
+
+ProgressSpinner .progress-percent {
+    color: $theme-foreground;
+    text-style: bold;
+}
+
+ProgressSpinner .progress-message {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+/* =============================================================================
+   RICH PROMPT INPUT
+   ============================================================================= */
+
+RichPromptInput {
+    height: auto;
+    min-height: 3;
+    max-height: 10;
+    background: $theme-surface;
+    border: round $theme-primary;
+    padding: $spacing-0 $spacing-1;
+}
+
+RichPromptInput:focus-within {
+    border: round $theme-primary-muted;
+}
+
+RichPromptInput > .prompt-prefix {
+    width: 3;
+    color: $theme-primary-muted;
+}
+
+RichPromptInput > .prompt-input {
+    width: 1fr;
+}
+
+RichPromptInput > .prompt-parts {
+    height: auto;
+    padding-top: $spacing-1;
+    color: $theme-foreground-muted;
+}
+
+RichPromptInput .part-attached-label {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+RichPromptInput .part-separator {
+    color: $theme-border;
+}
+
+RichPromptInput .part-label {
+    color: $theme-primary-muted;
+}
+
+RichPromptInput.-multiline {
+    min-height: 5;
+    max-height: 15;
+}
+
+/* =============================================================================
+   DIALOGS
+   ============================================================================= */
+
+BaseDialog {
+    layer: dialog;
+    align: center middle;
+    width: 60;
+    height: auto;
+    max-height: 80%;
+    background: $theme-surface;
+    border: round $theme-border;
+    padding: $spacing-0;
+}
+
+BaseDialog > .dialog-title-bar {
+    width: 100%;
+    height: $spacing-3;
+    background: transparent;
+    border-bottom: solid $theme-border;
+    padding: $spacing-1 $spacing-2;
+}
+
+BaseDialog > .dialog-title-bar > .dialog-title {
+    text-style: bold;
+    color: $theme-primary-muted;
+}
+
+BaseDialog > .dialog-content {
+    width: 100%;
+    height: auto;
+    padding: $spacing-1 $spacing-2;
+}
+
+BaseDialog > .dialog-actions {
+    width: 100%;
+    height: $spacing-3;
+    padding: $spacing-0 $spacing-2;
+    border-top: solid $theme-border;
+    align: right middle;
+}
+
+BaseDialog > .dialog-actions > Button {
+    margin-left: $spacing-1;
+}
+
+/* --- Confirm Dialog --- */
+ConfirmDialog {
+    width: 50;
+}
+
+ConfirmDialog > .dialog-content > .confirm-message {
+    padding: $spacing-1 $spacing-0;
+}
+
+/* --- Input Dialog --- */
+InputDialog {
+    width: 50;
+}
+
+InputDialog > .dialog-content > .input-prompt {
+    padding-bottom: $spacing-1;
+}
+
+InputDialog > .dialog-content > Input {
+    width: 100%;
+}
+
+InputDialog > .dialog-content > .input-error {
+    color: $theme-error;
+    padding-top: $spacing-1;
+}
+
+/* --- Select Dialog --- */
+SelectDialog {
+    width: 60;
+    height: auto;
+    max-height: 70%;
+}
+
+SelectDialog > .dialog-content > .select-prompt {
+    padding-bottom: $spacing-1;
+}
+
+SelectDialog > .dialog-content > OptionList {
+    height: auto;
+    max-height: 15;
+    background: $theme-background;
+    border: round $theme-border;
+}
+
+/* --- Fatal Error Dialog --- */
+FatalErrorDialog {
+    width: 70;
+    height: auto;
+    max-height: 80%;
+    border: round $theme-error;
+}
+
+FatalErrorDialog > .dialog-title-bar {
+    background: $theme-error 30%;
+}
+
+FatalErrorDialog > .dialog-title-bar > .dialog-title {
+    color: $theme-error;
+}
+
+FatalErrorDialog > .dialog-content > .error-icon {
+    text-align: center;
+    padding: $spacing-1;
+}
+
+FatalErrorDialog > .dialog-content > .error-type {
+    color: $theme-error;
+    text-style: bold;
+    padding-bottom: $spacing-1;
+}
+
+FatalErrorDialog > .dialog-content > .error-message {
+    padding-bottom: $spacing-1;
+}
+
+FatalErrorDialog > .dialog-content > .error-traceback {
+    background: $theme-background;
+    border: round $theme-border;
+    padding: $spacing-1;
+    max-height: 10;
+    overflow-y: scroll;
+}
+
+FatalErrorDialog > .dialog-content > .error-traceback > Static {
+    color: $theme-foreground-muted;
+}
+
+FatalErrorDialog > .dialog-content > .error-help {
+    padding-top: $spacing-1;
+    color: $theme-foreground-muted;
+}
+
+ErrorNotification {
+    width: 100%;
+    height: auto;
+    background: $theme-error 20%;
+    border: round $theme-error;
+    padding: $spacing-1;
+    display: none;
+}
+
+ErrorNotification.-visible {
+    display: block;
+}
+
+ErrorNotification > .error-content {
+    color: $theme-error;
+}
+
+ErrorNotification > .error-dismiss {
+    dock: right;
+    width: auto;
+    color: $theme-foreground-muted;
+}
+
+/* =============================================================================
+   LEADER KEY INDICATOR
+   ============================================================================= */
+
+.leader-indicator {
+    dock: bottom;
+    height: 1;
+    background: $theme-primary 30%;
+    color: $theme-primary-muted;
+    text-align: center;
+    padding: $spacing-0 $spacing-2;
+}
+
+/* =============================================================================
+   IMAGINATION PANEL
+   ============================================================================= */
+
+ImaginationPanel {
+    layer: imagination;
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 3;
+    grid-columns: 60% 40%;
+    grid-rows: auto 1fr auto;
+    background: $theme-background;
+}
+
+ImaginationPanel > .imag-header {
+    column-span: 2;
+    height: $spacing-3;
+    background: $theme-surface;
+    border-bottom: solid $theme-primary-muted;
+}
+
+ImaginationPanel > .imag-left-pane {
+    row-span: 1;
+    height: 100%;
+    padding: $spacing-1;
+    border-right: solid $theme-primary;
+    overflow-y: auto;
+}
+
+ImaginationPanel > .imag-right-pane {
+    row-span: 1;
+    height: 100%;
+    padding: $spacing-1;
+    overflow-y: auto;
+}
+
+ImaginationPanel > .imag-footer {
+    column-span: 2;
+    height: auto;
+    padding: $spacing-1;
+    border-top: solid $theme-primary;
+    background: $theme-surface;
+}
+
+ImaginationPanel .section-header {
+    margin: $spacing-1 $spacing-0;
+    padding: $spacing-0 $spacing-1;
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+ImaginationPanel .stats-row {
+    height: auto;
+    margin-bottom: $spacing-1;
+    background: $theme-surface;
+    border: round $theme-primary;
+    padding: $spacing-1;
+}
+
+ImaginationPanel .category-section {
+    height: auto;
+    margin-bottom: $spacing-1;
+}
+
+CategoryBreakdown {
+    width: 100%;
+    height: auto;
+    padding: $spacing-1;
+    background: transparent;
+}
+
+ImaginationPanel .extension-section {
+    height: auto;
+    margin-bottom: $spacing-1;
+    padding: $spacing-1;
+    background: $theme-surface;
+    border: round $theme-border;
+}
+
+ExtensionCloud {
+    width: 100%;
+    height: auto;
+    padding: $spacing-0;
+}
+
+ImaginationPanel .file-tree {
+    height: 1fr;
+    min-height: 15;
+    background: $theme-background;
+    border: round $theme-border;
+    padding: $spacing-1;
+}
+
+ImaginationPanel .file-tree > Tree {
+    background: transparent;
+}
+
+ImaginationPanel .activity-section {
+    height: 100%;
+}
+
+RecentActivity {
+    width: 100%;
+    height: 100%;
+    padding: $spacing-1;
+    background: $theme-background;
+    border: round $theme-primary-muted;
+}
+
+ImaginationPanel .action-bar {
+    height: $spacing-3;
+    align: center middle;
+}
+
+ImaginationPanel .action-bar > Button {
+    margin: $spacing-0 $spacing-1;
+    min-width: 12;
+}
+
+HolographicHeader {
+    width: 100%;
+    height: $spacing-3;
+    background: $theme-surface;
+    border-bottom: solid $theme-primary-muted;
+    padding: $spacing-0 $spacing-2;
+    content-align: center middle;
+}
+
+ScanStats {
+    width: 100%;
+    height: auto;
+    padding: $spacing-1;
+    background: $theme-surface;
+    border: round $theme-primary;
+}
+
+ImaginationCompact {
+    width: 100%;
+    height: auto;
+    padding: $spacing-1;
+    border: round $theme-primary-muted;
+    background: $theme-surface;
+}
+
+ImaginationPanel *:focus {
+    border: double $theme-primary-muted;
+}
+
+#imagination_panel {
+    layer: imagination;
+    width: 100%;
+    height: 100%;
+    background: $theme-background;
+}
+
+#imagination_panel.-hidden {
+    display: none;
+}
+
+#main_content.-hidden {
+    display: none;
+}
+
+/* --- Holographic Effects --- */
+.holo-pulse {
+    text-style: bold;
+}
+
+.holo-scanning {
+    color: $theme-secondary;
+    text-style: bold;
+}
+
+.holo-watching {
+    color: $theme-success;
+    text-style: bold;
+}
+
+.holo-error {
+    color: $theme-error;
+    text-style: bold;
+}
+
+.holo-border {
+    border: double $theme-primary-muted;
+    background: $theme-surface;
+}
+
+.neon-cyan {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+.neon-magenta {
+    color: $theme-secondary;
+    text-style: bold;
+}
+
+.neon-green {
+    color: $theme-success;
+    text-style: bold;
+}
+
+.neon-amber {
+    color: $theme-warning;
+    text-style: bold;
+}
+
+/* =============================================================================
+   MEMORY BROWSER
+   ============================================================================= */
+
+MemoryBrowser {
+    width: 100%;
+    height: 100%;
+    padding: $spacing-0;
+}
+
+MemoryBrowser .memory-header {
+    text-align: center;
+    color: $theme-primary-muted;
+    text-style: bold;
+    padding: $spacing-1;
+    border-bottom: solid $theme-border;
+}
+
+MemoryBrowser .search-bar {
+    height: $spacing-3;
+    padding: $spacing-0 $spacing-1;
+    border-bottom: solid $theme-border;
+}
+
+MemoryBrowser .search-input {
+    width: 1fr;
+}
+
+MemoryBrowser .search-button {
+    width: auto;
+    margin-left: $spacing-1;
+}
+
+MemoryBrowser .memory-content {
+    height: 1fr;
+}
+
+MemoryBrowser .message-detail {
+    padding: $spacing-1;
+    background: $theme-surface;
+    border: round $theme-border;
+    margin: $spacing-1;
+    height: 1fr;
+}
+
+MemoryBrowser .message-role {
+    color: $theme-primary;
+    text-style: bold;
+}
+
+MemoryBrowser .message-content {
+    margin-top: $spacing-1;
+}
+
+MemoryBrowser .message-meta {
+    color: $theme-foreground-muted;
+    text-style: italic;
+    margin-top: $spacing-1;
+}
+
+MemoryBrowser .state-tree {
+    height: 100%;
+}
+
+MemoryBrowser .action-bar {
+    height: $spacing-3;
+    padding: $spacing-1;
+    border-top: solid $theme-border;
+    align: center middle;
+}
+
+MemoryBrowser .log-entry {
+    margin-bottom: $spacing-1;
+}
+
+MemoryBrowser .log-label {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+MemoryBrowser .log-content {
+    color: $theme-foreground;
+}
+
+/* =============================================================================
+   TEST RUNNER PANEL
+   ============================================================================= */
+
+TestRunnerPanel {
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 40% 1fr;
+}
+
+TestRunnerPanel .test-list-pane {
+    height: 100%;
+    border-right: solid $theme-primary;
+    padding: $spacing-1;
+}
+
+TestRunnerPanel .test-output-pane {
+    height: 100%;
+    padding: $spacing-1;
+}
+
+TestRunnerPanel .pane-header {
+    color: $theme-primary-muted;
+    text-style: bold;
+    padding-bottom: $spacing-1;
+    border-bottom: solid $theme-border;
+    margin-bottom: $spacing-1;
+}
+
+TestRunnerPanel .summary-bar {
+    height: $spacing-3;
+    padding: $spacing-1;
+    border-bottom: solid $theme-border;
+}
+
+TestRunnerPanel .summary-passed {
+    color: $theme-success;
+}
+
+TestRunnerPanel .summary-failed {
+    color: $theme-error;
+}
+
+TestRunnerPanel .summary-skipped {
+    color: $theme-warning;
+}
+
+TestRunnerPanel .test-tree {
+    height: 1fr;
+}
+
+TestRunnerPanel .output-log {
+    height: 1fr;
+    background: $theme-background;
+    border: round $theme-border;
+    padding: $spacing-1;
+}
+
+TestRunnerPanel .log-entry {
+    margin-bottom: $spacing-1;
+}
+
+TestRunnerPanel .log-start {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+TestRunnerPanel .log-success {
+    color: $theme-success;
+}
+
+TestRunnerPanel .log-error {
+    color: $theme-error;
+    text-style: bold;
+}
+
+TestRunnerPanel .log-warning {
+    color: $theme-warning;
+}
+
+TestRunnerPanel .log-info {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+/* =============================================================================
+   TOOL REGISTRY PANEL
+   ============================================================================= */
+
+ToolRegistryPanel {
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 35% 1fr;
+}
+
+ToolRegistryPanel .tool-list-pane {
+    height: 100%;
+    border-right: solid $theme-primary;
+    padding: $spacing-1;
+}
+
+ToolRegistryPanel .tool-output-pane {
+    height: 100%;
+    padding: $spacing-1;
+}
+
+ToolRegistryPanel .pane-header {
+    color: $theme-primary-muted;
+    text-style: bold;
+    padding-bottom: $spacing-1;
+    border-bottom: solid $theme-border;
+    margin-bottom: $spacing-1;
+}
+
+ToolRegistryPanel .tool-search {
+    margin-bottom: $spacing-1;
+}
+
+ToolRegistryPanel .tool-table {
+    height: 1fr;
+}
+
+ToolRegistryPanel .output-log {
+    height: 1fr;
+    background: $theme-background;
+    border: round $theme-border;
+    padding: $spacing-1;
+}
+
+ToolRegistryPanel .log-entry {
+    margin-bottom: $spacing-1;
+}
+
+ToolRegistryPanel .log-start {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+ToolRegistryPanel .log-success {
+    color: $theme-success;
+}
+
+ToolRegistryPanel .log-error {
+    color: $theme-error;
+    text-style: bold;
+}
+
+ToolRegistryPanel .log-warning {
+    color: $theme-warning;
+}
+
+ToolRegistryPanel .log-info {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+ToolRegistryPanel .log-label {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+ToolRegistryPanel .tool-actions {
+    height: $spacing-3;
+    margin-top: $spacing-1;
+    align: center middle;
+}
+
+/* =============================================================================
+   IDE PANEL - Refactoring Panel
+   ============================================================================= */
+
+IDEPanel {
+    width: 100%;
+    height: 100%;
+}
+
+RefactoringPanel {
+    width: 100%;
+    height: 100%;
+    padding: $spacing-1;
+}
+
+RefactoringPanel .refactor-header {
+    color: $theme-primary-muted;
+    text-style: bold;
+    padding-bottom: $spacing-1;
+    border-bottom: solid $theme-border;
+    margin-bottom: $spacing-1;
+}
+
+RefactoringPanel .refactor-list {
+    height: 40%;
+}
+
+RefactoringPanel .refactor-preview {
+    height: 50%;
+    background: $theme-background;
+    border: round $theme-border;
+    margin-top: $spacing-1;
+    padding: $spacing-1;
+}
+
+RefactoringPanel .refactor-preview .log-entry {
+    margin-bottom: $spacing-1;
+}
+
+RefactoringPanel .refactor-preview .log-label {
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+RefactoringPanel .refactor-preview .log-content {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+RefactoringPanel .refactor-preview .log-warning {
+    color: $theme-warning;
+}
+
+RefactoringPanel .refactor-actions {
+    height: $spacing-3;
+    margin-top: $spacing-1;
+    align: center middle;
+}
+
+/* =============================================================================
+   CHARTS
+   ============================================================================= */
+
+ASCIILineChart {
+    width: 100%;
+    height: auto;
+    min-height: 8;
+    padding: $spacing-1;
+}
+
+ASCIILineChart .chart-title {
+    color: $theme-primary-muted;
+    text-style: bold;
+    margin-bottom: $spacing-1;
+}
+
+ASCIILineChart .chart-empty {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+BarChart {
+    width: 100%;
+    height: auto;
+    padding: $spacing-1;
+}
+
+BarChart .chart-title {
+    color: $theme-primary-muted;
+    text-style: bold;
+    margin-bottom: $spacing-1;
+}
+
+BarChart .chart-empty {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+BarChart .bar-label {
+    color: $theme-foreground;
+    text-style: bold;
+}
+
+BarChart .bar-value {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+VerticalBarChart {
+    width: 100%;
+    height: auto;
+    min-height: 10;
+    padding: $spacing-1;
+}
+
+VerticalBarChart .chart-title {
+    color: $theme-primary-muted;
+    text-style: bold;
+    margin-bottom: $spacing-1;
+}
+
+VerticalBarChart .chart-empty {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+MetricGauge {
+    width: auto;
+    height: $spacing-3;
+    padding: $spacing-0 $spacing-1;
+}
+
+MetricGauge .gauge-label {
+    color: $theme-foreground;
+    text-style: bold;
+}
+
+MetricGauge .gauge-value {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+
+MetricGauge .gauge-bar-filled {
+    color: $theme-primary-muted;
+}
+
+MetricGauge .gauge-bar-empty {
+    color: $theme-border;
+    text-style: dim;
+}
+
+MetricGauge .gauge-bar-critical {
+    color: $theme-error;
+}
+
+MetricGauge .gauge-bar-warning {
+    color: $theme-warning;
+}
+
+/* =============================================================================
+   TOOLS MENU
+   ============================================================================= */
+.tools-container {
+    width: 70;
+    height: auto;
+}
+
+.header-container {
+
+    height: auto;
+    width: 100%;
+    align: center middle;
+    margin-bottom: $spacing-2;
+}
+
+.screen-header-text {
+    width: auto;
+    padding: $spacing-1 $spacing-2;
+    border: thick $theme-primary;
+    text-style: bold;
+    color: $theme-primary;
+    background: $theme-surface;
+    text-align: center;
+}
+
+.tools-availability-summary {
+    width: 100%;
+    height: 1;
+    margin: 0 2;
+    color: $theme-foreground-muted;
+    text-align: center;
+    text-style: dim;
+}
+
+.tools-grid {
+    grid-size: 3;
+    grid-columns: 1fr 1fr 1fr;
+    grid-gutter: 1 2;
+    padding: 0 2;
+    width: 100%;
+    height: auto;
+    align: center middle;
+}
+
+.tool-card {
+    width: 32;
+    height: 12;
+    border: round $theme-border;
+    background: $theme-surface;
+    padding: 1;
+}
+
+.tool-card.selected {
+    border: round $theme-primary;
+    background: $theme-surface-hover;
+}
+
+.tool-card.unavailable {
+    opacity: 0.5;
+
+}
+
+.tool-icon-large {
+    width: 5;
+    height: auto;
+    text-align: center;
+    content-align: center middle;
+    text-style: bold;
+
+    color: $theme-primary;
+    margin-right: 1;
+}
+
+.tool-card .horizontalgroup > VerticalGroup {
+    width: 1fr;
+    height: auto;
+}
+
+.tool-card-name {
+    width: 1fr;
+    text-style: bold;
+    color: $theme-foreground;
+}
+
+.tool-card-description {
+    width: 1fr;
+    color: $theme-foreground-muted;
+}
+
+.tool-card-footer {
+    dock: bottom;
+    height: 1;
+    align: center middle;
+}
+
+.tool-status-badge.available {
+    color: $theme-success;
+}
+
+.tool-status-badge.unavailable {
+    color: $theme-error;
+}
+
+.action-hint {
+    margin-top: 2;
+    align: center middle;
+    color: $theme-foreground-muted;
+}
+
+.action-hint-text {
+    width: auto;
+    height: 1;
+}
+
+.action-key {
+    width: auto;
+    height: 1;
+    color: $theme-primary-muted;
+    text-style: bold;
+}
+
+
+/* =============================================================================
+   CONSTITUTION SCREEN
+   ============================================================================= */
+
+ConstitutionScreen {
+    align: center middle;
+}
+
+ConstitutionScreen #dialog {
+    width: 80;
+    max-height: 90vh;
+    background: $theme-surface;
+    border: round $theme-border-active;
+    padding: $spacing-1 $spacing-2;
+}
+
+ConstitutionScreen #title {
+    text-align: center;
+    color: $theme-primary;
+    text-style: bold;
+    margin-bottom: $spacing-1;
+}
+
+ConstitutionScreen #step-label {
+    color: $theme-foreground-muted;
+    margin-bottom: $spacing-1;
+}
+
+ConstitutionScreen .question-label {
+    color: $theme-foreground;
+    margin-top: $spacing-1;
+}
+
+ConstitutionScreen #stage-select {
+    margin-bottom: $spacing-1;
+}
+
+ConstitutionScreen #answer-input {
+    margin-bottom: $spacing-1;
+}
+
+ConstitutionScreen #buttons {
+    margin-top: $spacing-1;
+    height: $spacing-3;
+}
+
+ConstitutionScreen #btn-next {
+    dock: right;
+}
+
+ConstitutionScreen #btn-cancel {
+    dock: left;
+}
+
+/* =============================================================================
+   MONITOR SCREEN (Browser)
+   ============================================================================= */
+
+MonitorScreen {
+    background: $theme-background;
+    color: $theme-foreground;
+}
+
+MonitorScreen #browser-container {
+    height: 1fr;
+    border: round $theme-border;
+}
+
+MonitorScreen #browser-container > Vertical {
+    width: 100%;
+    height: 100%;
+}
+
+MonitorStatusBar {
+    height: $spacing-3;
+    background: $theme-surface;
+    border-top: solid $theme-border;
+}
+
+TabBar {
+    height: $spacing-3;
+    background: $theme-surface;
+    border-bottom: solid $theme-border;
+}
+
+TabBar .active-tab {
+    background: $theme-primary 20%;
+    color: $theme-primary;
+    text-style: bold;
+}
+
+TabBar .new-tab-btn {
+    color: $theme-foreground-muted;
+    min-width: $spacing-3;
+}
+
+AddressBar {
+    height: $spacing-3;
+    background: $theme-background-secondary;
+    border-bottom: solid $theme-border;
+    padding: $spacing-0 $spacing-1;
+}
+
+AddressBar .nav-btn {
+    min-width: $spacing-4;
+    background: $theme-surface;
+    color: $theme-foreground;
+    border: none;
+}
+
+AddressBar .nav-btn:hover {
+    background: $theme-surface-hover;
+    color: $theme-primary;
+}
+
+AddressBar .url-input {
+    width: 1fr;
+    margin: $spacing-0 $spacing-1;
+}
+
+AddressBar .status {
+    color: $theme-foreground-muted;
+    width: 20;
+    text-align: right;
+}
+
+ContentViewer {
+    background: $theme-background-tertiary;
+    padding: $spacing-1 $spacing-2;
+}
+
+ContentViewer .loading-message {
+    color: $theme-primary;
+    text-style: italic;
+}
+
+ContentViewer .error-message {
+    color: $theme-error;
+}
+
+ContentViewer .empty-message {
+    color: $theme-foreground-muted;
+    text-style: italic;
+}
+
+/* =============================================================================
+   AURA SHELL — modal & tool screen layout (tui/shell/)
+   ============================================================================= */
+
+BaseAuraModalScreen, ConstitutionScreen, DiffConfirmationScreen, TokenUsageScreen {
+    align: center middle;
+}
+
+.aura-modal-root, ConstitutionScreen #dialog, DiffConfirmationScreen #diff-dialog-root {
+    width: 80;
+    max-height: 90vh;
+    background: $theme-surface;
+    border: round $theme-border-active;
+    padding: $spacing-1 $spacing-2;
+}
+
+.aura-modal-title {
+    text-align: center;
+}
+
+.aura-tool-screen {
+    width: 100%;
+    height: 100%;
+}
+
+.aura-tool-chrome {
+    width: 100%;
+    margin-bottom: $spacing-1;
+}
+
+DiffConfirmationScreen #diff-dialog {
+    width: 100%;
+    max-height: 70vh;
+    border: none;
+    padding: 0;
+}
+
+/* Token Usage keeps the shared modal frame but avoids an inner second frame. */
+TokenUsageScreen #token_usage_modal {
+    width: 68;
+}
+
+TokenUsageScreen #token_usage_dialog {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+}

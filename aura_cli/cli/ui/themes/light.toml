@@ -1,0 +1,196 @@
+# =============================================================================
+# Light Theme for Aura CLI
+# =============================================================================
+#
+# A clean, professional light theme for bright environments.
+# Inspired by GitHub Light, VS Code Light, and modern documentation sites.
+#
+# Design Philosophy:
+# - High contrast for excellent readability
+# - Warm, inviting color palette
+# - Subtle use of color for emphasis
+# - Professional, distraction-free appearance
+#
+# =============================================================================
+
+[metadata]
+name = "light"
+version = "2.0.0"
+author = "Aura CLI Team"
+description = "Clean, professional light theme for bright environments"
+
+[colors]
+# =============================================================================
+# Primary Colors
+# =============================================================================
+primary = "#0969da"         # GitHub Blue - Primary actions
+secondary = "#57606a"       # Gray - Secondary elements
+accent = "#0550ae"          # Dark Blue - Accents
+
+# =============================================================================
+# Semantic/Functional Colors
+# =============================================================================
+success = "#1a7f37"         # Green - Success states
+warning = "#9a6700"         # Gold/Brown - Warnings
+error = "#cf222e"           # Red - Errors
+info = "#0969da"            # Blue - Information
+
+# =============================================================================
+# UI Surface Colors
+# =============================================================================
+background = "#ffffff"      # Pure white background
+surface = "#f6f8fa"         # Light gray surface
+muted = "#8c959f"           # Muted text
+highlight = "#0969da"       # Highlighted elements
+
+# =============================================================================
+# Extended Palette
+# =============================================================================
+background_alt = "#f6f8fa"  # Alternative background
+surface_bright = "#ffffff"  # Bright surface
+foreground = "#1f2328"      # Main text (Almost black)
+foreground_muted = "#57606a" # Secondary text
+foreground_bright = "#1f2328" # Emphasized text
+
+# Accent Colors
+blue = "#0969da"
+green = "#1a7f37"
+yellow = "#9a6700"
+orange = "#bc4c00"
+red = "#cf222e"
+purple = "#8250df"
+pink = "#bf3989"
+cyan = "#0550ae"
+
+[styles]
+# =============================================================================
+# Typography
+# =============================================================================
+title = "bold #1f2328"               # Primary headings
+subtitle = "bold #57606a"            # Secondary headings
+body = "#1f2328"                     # Body text
+label = "#57606a"                    # Labels
+caption = "dim #8c959f"              # Captions
+code = "#0550ae"                     # Inline code
+
+# =============================================================================
+# Status Indicators
+# =============================================================================
+status_idle = "#8c959f"              # Idle state
+status_thinking = "#8250df"          # Processing (Purple)
+status_working = "#0969da"           # Working (Blue)
+status_success = "#1a7f37"           # Success (Green)
+status_error = "#cf222e"             # Error (Red)
+status_warning = "#9a6700"           # Warning (Gold)
+
+# =============================================================================
+# Component Specific
+# =============================================================================
+loading = "#0969da"                  # Loading indicators
+spinner = "#8250df"                  # Spinner
+progress = "#1a7f37"                 # Progress bars
+
+# =============================================================================
+# Agent Personas
+# =============================================================================
+agent_agi = "bold #8250df"           # The Brain (Purple)
+agent_ops = "bold #0969da"           # The Hand (Blue)
+agent_chat = "bold #1a7f37"          # The Voice (Green)
+
+# =============================================================================
+# Interactive Elements
+# =============================================================================
+link = "#0969da"                     # Links
+link_hover = "#0550ae"               # Link hover
+selected = "bold #0969da"            # Selected
+focused = "#0969da"                  # Focused
+disabled = "#8c959f"                 # Disabled
+
+[borders]
+# =============================================================================
+# Border Colors
+# =============================================================================
+border_primary = "#d0d7de"           # Primary borders
+border_secondary = "#d8dee4"         # Secondary borders
+border_success = "#1a7f37"           # Success borders
+border_warning = "#9a6700"           # Warning borders
+border_error = "#cf222e"             # Error borders
+border_muted = "#eaeef2"             # Muted borders
+border_accent = "#0969da"            # Accent borders
+border_focus = "#0969da"             # Focus ring
+
+[layout]
+# =============================================================================
+# Spacing
+# =============================================================================
+panel_padding = [1, 2]
+
+chat_padding = [0, 1]
+chat_margin = [0, 0, 1, 0]
+chat_width_ratio = 0.85
+
+lcd_padding = [0, 0]
+dialog_padding = [1, 2]
+compact_padding = [0, 1]
+
+[appearance]
+# =============================================================================
+# Visual Characteristics
+# =============================================================================
+panel_border_type = "round"
+syntax_theme = "github-light"
+
+[icons]
+# =============================================================================
+# Icon Set - Clean Modern
+# =============================================================================
+status_success = "✓"
+status_error = "✕"
+status_warning = "!"
+status_info = "i"
+status_pending = "○"
+status_active = "●"
+
+file_default = "◇"
+file_folder = "▢"
+file_code = "◈"
+
+arrow_right = "›"
+arrow_down = "▾"
+
+spinner_frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+
+[syntax]
+# =============================================================================
+# Syntax Highlighting - Light Mode
+# =============================================================================
+keyword = "#cf222e"                  # Keywords (Red)
+string = "#0a3069"                   # Strings (Dark Blue)
+number = "#0550ae"                   # Numbers (Blue)
+comment = "#8c959f"                  # Comments (Gray)
+function = "#8250df"                 # Functions (Purple)
+variable = "#953800"                 # Variables (Brown)
+type = "#0550ae"                     # Types (Blue)
+operator = "#cf222e"                 # Operators (Red)
+constant = "#0550ae"                 # Constants (Blue)
+
+[markdown]
+# =============================================================================
+# Markdown Styling - Light Theme
+# =============================================================================
+heading_1 = "bold #1f2328"           # H1 - Dark, bold
+heading_2 = "bold #0969da"           # H2 - Blue, bold
+heading_3 = "bold #0550ae"           # H3 - Dark blue, bold
+heading_4 = "#0969da"                # H4 - Blue
+heading_5 = "dim #0969da"            # H5 - Blue, dim
+heading_6 = "dim #0969da"            # H6 - Blue, dim
+code = "bold #0550ae on #f6f8fa"     # Inline code - Blue on surface
+code_block = "bold #0550ae"          # Code blocks - Blue
+link = "underline #0969da"           # Links - Blue, underlined
+strong = "bold #1f2328"              # Bold text - Dark
+emphasis = "italic #0969da"         # Italic text - Blue
+blockquote = "dim #0969da"           # Blockquotes - Blue, dim
+list_bullet = "#0969da"              # Bullet points - Blue
+list_number = "#0969da"              # Numbered lists - Blue
+table_header = "bold #0969da"        # Table headers - Blue
+table_border = "#d0d7de"             # Table borders - Light grey

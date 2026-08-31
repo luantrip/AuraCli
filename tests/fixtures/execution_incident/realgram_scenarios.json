@@ -1,0 +1,34 @@
+{
+  "source": "sanitized Realgram execution, 2026-08-12",
+  "scenarios": [
+    {
+      "id": "failed_test_claimed_success",
+      "request": "execute pytest and fix the backend",
+      "operation": {"tool": "run_shell_command", "exit_code": 4},
+      "unsupported_claim": "Todos os testes passaram."
+    },
+    {
+      "id": "mutation_without_tool",
+      "request": "create App.tsx",
+      "operations": [],
+      "unsupported_claim": "Criei App.tsx."
+    },
+    {
+      "id": "delegation_lifecycle",
+      "states": ["accepted", "running", "completed"]
+    },
+    {
+      "id": "provider_timeout_retry",
+      "attempts": [
+        {"started_at": 0, "finished_at": 60, "outcome": "timed_out"},
+        {"started_at": 60, "finished_at": 120, "outcome": "timed_out"}
+      ]
+    }
+  ],
+  "artifact_tree_before": [],
+  "artifact_tree_after": [
+    ".aura/model_preferences/preferences.json",
+    ".aura/notebooks/<session>/"
+  ],
+  "visual_widths": [60, 80, 100, 120, 160]
+}

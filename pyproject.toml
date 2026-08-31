@@ -1,0 +1,362 @@
+[project]
+name = "aura-cli"
+version = "0.1.0"
+description = "Aura CLI - Your AI code assistant."
+readme = "README.md"
+requires-python = ">=3.10,<3.15"
+license = "BSD-3-Clause"
+authors = [{ name = "Aura Core Team", email = "aura-dev@googlegroups.com" }]
+urls = { repository = "https://github.com/luantrip/AuraCli", issues = "https://github.com/luantrip/AuraCli/issues" }
+
+# ============================================================================
+# Core Dependencies (Required for basic functionality)
+# ============================================================================
+dependencies = [
+    # CLI Framework
+    "typer>=0.20.0",
+    "rich>=13.9.0",
+    "rich-click>=1.7.0",
+    "click>=8.1.0",
+    "prompt-toolkit>=3.0.0",
+    "questionary>=2.0.0",
+    
+    # TUI Framework (Textual-based interface)
+    "textual>=0.80.0",
+    # textual-textarea removed: replaced by textual.widgets.TextArea (native since textual 0.47)
+    
+    # LLM Integration
+    "litellm>=1.80.0,<1.90.0",
+    "tiktoken>=0.8.0,<1.0.0",
+    
+    # Configuration & Serialization
+    "pyyaml>=6.0.2",
+    "toml>=0.10.2",
+    "tomlkit>=0.12.0",
+    "tomli>=2.0.0",
+    "tomli-w>=1.0.0",
+    "pydantic>=2.10.0",
+    "pydantic-settings>=2.6.0",
+    
+    # System & Utilities
+    "psutil>=7.2.0",
+    "requests>=2.32.0",
+    "aiohttp>=3.11.0",
+    "websockets>=14.0",
+    "keyring>=25.0.0",
+    "pyperclip>=1.9.0",
+    "watchdog>=6.0.0",
+    "networkx>=3.3.0",
+    "pathspec>=0.12.0",
+    "platformdirs>=4.3.0",
+    "typing-extensions>=4.12.0",
+    
+    # Text Processing & Display
+    "stransi>=0.3.0",
+    "ochre>=0.2.0",
+    "shandy-sqlfmt>=0.20.0",
+    "pyfiglet>=1.0.2",
+    "pillow>=10.4.0",
+    
+    # Code Analysis
+    "tree-sitter>=0.21.0",
+    "tree-sitter-python>=0.21.0",
+    
+    # AI / vectors
+    "numpy>=1.24.0",
+    # fastembed needs onnxruntime>=1.17 (no wheel on macOS 10.15 / Darwin < 20).
+    # Installed automatically on Windows, Linux, and macOS 11+ (Darwin >= 20).
+    "fastembed>=0.4.0,<1.0.0; platform_system != 'Darwin' or platform_release >= '20'",
+    
+    # Vector Search — chromadb is now optional (see [vector] extra).
+    # The base install uses the lightweight KeywordVectorStore fallback.
+    # Install with: pip install -e ".[vector]"
+    
+    # Database (essencial)
+    "sqlalchemy>=2.0.36",
+    
+    # DevOps (essencial)
+    "docker>=7.1.0",
+    
+    # Cloud (essencial)
+    "boto3>=1.35.0",
+    "botocore>=1.35.0",
+    
+    # Security (essencial)
+    "cryptography>=43.0.0",
+    "defusedxml>=0.7.1",
+    
+    # Web Search (essencial)
+    "ddgs>=8.0.0",
+    "googlesearch-python>=1.2.0",
+]
+
+[build-system]
+requires = ["setuptools>=64.0"]
+build-backend = "setuptools.build_meta"
+
+# ============================================================================
+# Optional Dependencies
+# ============================================================================
+[project.optional-dependencies]
+
+# Development Tools
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-cov>=4.0",
+    "pytest-xdist>=3.0.0",
+    "coverage>=7.0.0",
+    "ruff>=0.12.0",
+    "mypy>=1.0",
+    "vcrpy>=6.0",
+]
+
+# --- Vector Search ---
+# ChromaDB: full semantic search with persistent vector index.
+# Pulls heavy deps (onnxruntime, grpcio, kubernetes, opentelemetry, uvicorn).
+# The base install uses KeywordVectorStore (no extra deps, good enough for most).
+# Used strictly in embedded (PersistentClient) mode — HTTP server CVEs don't apply.
+vector = [
+    "chromadb>=0.5.0",
+    # Catalina (Darwin < 20) needs grpcio < 1.70 (no newer wheel available).
+    "grpcio<1.70; platform_system == 'Darwin' and platform_release < '20'",
+]
+
+# FAISS: faster ANN search, lighter than chromadb but requires compilation.
+vector-faiss = [
+    "numpy>=2.0.0,<3.0.0",
+    "faiss-cpu>=1.7.4",
+]
+
+# --- AI/ML ---
+# Local ONNX embeddings (fastembed). On macOS 10.15, use base install only (Chroma default embeddings).
+embeddings = [
+    "fastembed>=0.4.0,<1.0.0",
+    "faiss-cpu>=1.7.4",
+]
+
+local-llm = [
+    "torch>=2.5.0",
+    "transformers>=4.40.0",
+]
+
+ml = [
+    "transformers>=4.40.0",
+    "fastembed>=0.4.0,<1.0.0; platform_system != 'Darwin' or platform_release >= '20'",
+]
+
+# --- Database ---
+# NOTE: sqlalchemy is now in main dependencies
+# database = ["sqlalchemy>=2.0.0"]  # DEPRECATED - moved to main
+
+# PostgreSQL support
+# NOTE: sqlalchemy is now in main dependencies
+database-postgresql = [
+    "psycopg2-binary>=2.9.9",
+]
+
+# MySQL support
+# NOTE: sqlalchemy is now in main dependencies
+database-mysql = [
+    "mysql-connector-python>=9.0.0",
+]
+
+# All database drivers
+# NOTE: sqlalchemy is now in main dependencies
+database-all = [
+    "psycopg2-binary>=2.9.9",
+    "mysql-connector-python>=9.0.0",
+]
+
+# --- Cloud & DevOps (SDK-based) ---
+# NOTE: docker and boto3 are now in main dependencies
+# docker = ["docker>=7.0.0"]  # DEPRECATED - moved to main
+# aws = ["boto3>=1.34.0", "botocore>=1.34.0"]  # DEPRECATED - boto3 moved to main
+
+gcp = [
+    "google-cloud-compute>=1.20.0",
+    "google-cloud-storage>=2.20.0",
+]
+
+azure = [
+    "azure-identity>=1.20.0",
+    "azure-mgmt-compute>=35.0.0",
+]
+
+# cloud = ["boto3>=1.34.0"]  # DEPRECATED - moved to main
+
+# --- Tools ---
+# NOTE: search and security are now in main dependencies
+# search = ["googlesearch-python>=1.2.0"]  # DEPRECATED - moved to main
+# security = ["cryptography>=41.0.0"]  # DEPRECATED - moved to main
+
+visualization = [
+    "plotly>=5.24.0",
+    "dash>=2.18.0",
+    "flask>=3.1.0",
+]
+tui = [
+    # Reserved for future TUI-specific optional deps
+]
+
+# --- Nim Powerpack ---
+nim = ["aura-cli-nim>=0.1.0"]
+
+# --- Platform-Specific ---
+macos = [
+    "pyobjc-framework-Quartz>=10.0",
+    "appscript>=1.2.0",
+]
+
+linux = [
+    "PyGObject>=3.40.0",
+    "pyxdg>=0.28",
+]
+
+# --- Bundle Groups ---
+# Full DevOps capabilities
+# NOTE: docker, boto3, and sqlalchemy are now in main dependencies
+ops = [
+    # All moved to main dependencies
+]
+
+# Complete installation (recommended for full experience)
+# Includes vector search, embeddings and all optional extras
+all = [
+    "chromadb>=0.5.0",
+    "grpcio<1.70; platform_system == 'Darwin' and platform_release < '20'",
+    "fastembed>=0.4.0,<1.0.0; platform_system != 'Darwin' or platform_release >= '20'",
+    "faiss-cpu>=1.7.4",
+]
+
+# ============================================================================
+# Entry Points
+# ============================================================================
+[project.scripts]
+aura = "aura_cli.cli.main:app"
+aura-paint = "aura_cli.tui.tools.paint.paint:main"
+
+# ============================================================================
+# Package Configuration
+# ============================================================================
+[tool.setuptools.package-data]
+"aura_cli" = ["py.typed"]
+"aura_cli.cli.ui.themes" = ["*.toml"]
+# Native Notebook libraries belong exclusively to the optional aura-cli-nim wheel.
+# The base wheel always retains the Python fallback.
+"aura_cli.application.paint" = [
+    "localization/**/*.js",
+    "localization/**/*.rc",
+]
+"aura_cli.tui.styles" = ["*.tcss"]
+"aura_cli.tui.tools.paint" = ["*.css"]
+"aura_cli.core.skills.founder" = ["SKILL.md", "playbooks/*.md"]
+
+[tool.setuptools.packages.find]
+include = ["aura_cli*"]
+
+# ============================================================================
+# Tool Configuration
+# ============================================================================
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    "A",     # flake8-builtins
+    "B",     # flake8-bugbear
+    "C4",    # flake8-comprehensions
+    "C90",   # mccabe complexity
+    "E",     # pycodestyle errors
+    "F",     # pyflakes
+    "I",     # isort
+    "PIE",   # flake8-pie
+    "RUF",   # ruff-specific
+    "SIM",   # flake8-simplify
+    "TID",   # flake8-tidy-imports
+    "UP",    # pyupgrade
+    "W",     # pycodestyle warnings
+]
+ignore = [
+    "E402",   # module-level import not at top — needed for conditional imports
+    "E501",   # line too long — handled by formatter
+    "UP006",  # use `list` instead of `List` — gradual migration
+    "UP007",  # use `X | Y` instead of `Optional[X]` — gradual migration
+    "UP035",  # deprecated typing imports — gradual migration
+    "UP045",  # use `X | None` instead of `Optional[X]` — gradual migration
+    "RUF001", # ambiguous unicode in string — intentional in UI strings
+    "RUF002", # ambiguous unicode in docstring
+    "RUF003", # ambiguous unicode in comment
+    "SIM117", # nested with — intentional in Textual DSL
+    "B008",   # function call in default arg — used in typer/fastapi patterns
+    "N802", "N803", "N806", "N812", "N815", "N816",  # naming — legacy code
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 15
+
+[tool.ruff.lint.isort]
+force-sort-within-sections = true
+known-first-party = ["aura_cli", "tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # re-exports in package __init__ files
+# Textual constructors mirror the framework's public `id=` keyword.
+"aura_cli/tui/screens/diff_confirmation_screen.py" = ["A002"]
+"aura_cli/tui/screens/token_usage_screen.py" = ["A002"]
+"aura_cli/tui/widgets/history/browser_panel.py" = ["A002"]
+"aura_cli/tui/widgets/todo_panel.py" = ["A002"]
+
+[tool.mypy]
+pretty = true
+ignore_missing_imports = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+show_column_numbers = true
+# Note: aura_cli/tui/tools/paint/__init__.py triggers a mypy namespace warning
+# ("Source file found twice") because it is imported by core modules while also
+# being discovered via directory crawl. This is a mypy limitation with nested
+# packages and does not affect runtime. Use `mypy aura_cli/ --exclude aura_cli/tui/tools`
+# for a clean run that skips third-party tool code.
+exclude = ["^build/", "^dist/", ".venv/", "aura_cli/tui/tools/"]
+
+[[tool.mypy.overrides]]
+module = "aura_cli.tui.tools.*"
+ignore_errors = true
+follow_imports = "skip"
+
+[tool.deptry]
+# Package name to import name mappings
+package_module_name_map = { "faiss-cpu" = "faiss", "pyobjc-framework-Quartz" = "Quartz", "PyGObject" = "gi", "pyxdg" = "xdg", "psycopg2-binary" = "psycopg2", "mysql-connector-python" = "mysql", "docker" = "docker", "google-cloud-compute" = "google", "google-cloud-storage" = "google", "azure-identity" = "azure", "azure-mgmt-compute" = "azure", "sqlalchemy" = "sqlalchemy" }
+# chromadb is now optional ([vector] extra) — suppress DEP002 for it
+ignore = ["DEP002"]
+# Directories to exclude from scanning
+extend_exclude = ["extensions", "packages", "scripts", "tests"]
+# Known first-party modules
+known_first_party = ["paint_background_extension"]
+
+[tool.pytest.ini_options]
+markers = [
+    "asyncio: marks tests as async (deselect with '-m \"not asyncio\"')",
+]
+norecursedirs = ["_paint_tests_disabled"]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests"]
+python_classes = ["Test*"]
+python_files = ["test_*.py", "*_test.py"]
+filterwarnings = [
+    "ignore::pytest.PytestCollectionWarning",
+    "ignore::RuntimeWarning:importlib",
+    "ignore:coroutine .* was never awaited:RuntimeWarning",
+    "ignore:unclosed event loop:ResourceWarning",
+    "ignore::DeprecationWarning:transformers",
+    "ignore::FutureWarning:transformers",
+    "ignore::DeprecationWarning:pathspec",
+    "ignore:Item 'summary' on TypedDict class 'ChatCompletionReasoningItem' is using the `ReadOnly` qualifier.*:UserWarning:pydantic._internal._generate_schema",
+    "ignore:install .ipywidgets.:UserWarning:rich",
+    "ignore::pytest.PytestUnhandledThreadExceptionWarning",
+]

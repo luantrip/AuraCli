@@ -1,0 +1,180 @@
+name: Nim Build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      nim_version:
+        description: "Nim version to use"
+        default: "stable"
+        type: string
+
+concurrency:
+  group: nim-build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            platform: linux-x86_64
+            lib_ext: so
+            archive: tar.gz
+            deps: "sudo apt-get update && sudo apt-get install -y libpcre3-dev libssl-dev"
+          - os: windows-2022
+            platform: windows-x86_64
+            lib_ext: dll
+            archive: zip
+            deps: "echo 'No extra deps needed (MinGW bundles PCRE)'"
+          - os: macos-14
+            platform: macos-aarch64
+            lib_ext: dylib
+            archive: tar.gz
+            deps: "brew install pcre openssl@3"
+          - os: macos-13
+            platform: macos-x86_64
+            lib_ext: dylib
+            archive: tar.gz
+            deps: "brew install pcre openssl@3"
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        shell: bash
+        run: ${{ matrix.deps }}
+
+      - name: Install Nim
+        uses: jiro4989/setup-nim-action@v2
+        with:
+          nim-version: ${{ inputs.nim_version || 'stable' }}
+
+      - name: Verify Nim
+        shell: bash
+        run: |
+          nim --version
+          echo "Platform: ${{ matrix.platform }}"
+
+      - name: Prepare clean target directories
+        shell: bash
+        run: |
+          python3 - "${{ matrix.platform }}" <<'PY'
+          from pathlib import Path
+          import shutil
+          import sys
+          tag = sys.argv[1]
+          for root in (Path("bin"), Path("packages/aura-cli-nim/aura_cli_nim/bin")):
+              root.mkdir(parents=True, exist_ok=True)
+              for candidate in root.iterdir():
+                  if candidate.is_dir() and candidate.name != tag:
+                      shutil.rmtree(candidate)
+          PY
+
+      - name: Build all targets
+        shell: bash
+        run: |
+          chmod +x scripts/build_nim.sh
+          ./scripts/build_nim.sh --release
+
+      - name: List outputs and verify exact target
+        shell: bash
+        run: |
+          python3 scripts/verify_nim_release.py "${{ matrix.platform }}" --smoke
+          find "bin/${{ matrix.platform }}" -maxdepth 1 -type f -print
+
+      - name: Keep only this platform in the wheel payload
+        shell: bash
+        run: |
+          python3 - "${{ matrix.platform }}" <<'PY'
+          from pathlib import Path
+          import shutil
+          import sys
+
+          root = Path("packages/aura-cli-nim/aura_cli_nim/bin")
+          for candidate in root.iterdir():
+              if candidate.is_dir() and candidate.name != sys.argv[1]:
+                  shutil.rmtree(candidate)
+          PY
+
+      - name: Build platform wheel
+        shell: bash
+        run: python3 -m pip wheel --no-deps packages/aura-cli-nim --wheel-dir wheelhouse
+
+      - name: Smoke-test clean package install
+        shell: bash
+        run: |
+          python3 -m venv .nim-smoke-venv
+          if [[ -x .nim-smoke-venv/bin/python ]]; then
+            SMOKE_PYTHON=.nim-smoke-venv/bin/python
+          else
+            SMOKE_PYTHON=.nim-smoke-venv/Scripts/python.exe
+          fi
+          "$SMOKE_PYTHON" -m pip install wheelhouse/*.whl
+          "$SMOKE_PYTHON" - <<'PY'
+          import os
+          from aura_cli_nim import get_all_binaries
+          artifacts = get_all_binaries()
+          assert set(artifacts) == {"imagination", "nexus", "sentinel", "prism", "forge", "aura-monitor", "notebook"}
+          assert all(path is not None and path.is_file() for path in artifacts.values())
+          for name, path in artifacts.items():
+              if name != "notebook":
+                  assert os.access(path, os.X_OK)
+          PY
+
+      - name: Package (tar.gz)
+        if: matrix.archive == 'tar.gz'
+        shell: bash
+        run: |
+          cd bin
+          tar -czf ../aura-cli-nim-${{ matrix.platform }}.tar.gz *
+          cd ..
+          echo "ARTIFACT=aura-cli-nim-${{ matrix.platform }}.tar.gz" >> $GITHUB_ENV
+
+      - name: Package (zip)
+        if: matrix.archive == 'zip'
+        shell: bash
+        run: |
+          cd bin
+          7z a ../aura-cli-nim-${{ matrix.platform }}.zip *
+          cd ..
+          echo "ARTIFACT=aura-cli-nim-${{ matrix.platform }}.zip" >> $GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nim-${{ matrix.platform }}
+          path: ${{ env.ARTIFACT }}
+
+      - name: Upload platform wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: nim-wheel-${{ matrix.platform }}
+          path: wheelhouse/*.whl
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          merge-multiple: true
+
+      - name: List all artifacts
+        run: ls -lah artifacts/
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: artifacts/*

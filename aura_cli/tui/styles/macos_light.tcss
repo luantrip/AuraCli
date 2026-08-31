@@ -1,0 +1,4411 @@
+/* =============================================================================
+ * macOS Light Theme - Aura CLI
+ * 
+ * A clean, elegant light theme inspired by Apple's macOS design language.
+ * Features the signature Apple aesthetic: subtle gradients, soft shadows,
+ * refined typography, and the iconic San Francisco color palette.
+ * 
+ * Design Principles:
+ * - Clean and minimal interface
+ * - Subtle depth through layering
+ * - High contrast for readability
+ * - Warm neutral tones with vibrant accents
+ * - Consistent visual hierarchy
+ * =============================================================================
+ */
+
+/* =============================================================================
+   CSS VARIABLES - macOS-Inspired Color System
+   Based on Apple's Human Interface Guidelines
+   ============================================================================= */
+
+/* Primary Colors - Apple Blue Accent */
+$primary: #007AFF;
+$primary-light: #409CFF;
+$primary-dark: #0062CC;
+
+/* Secondary Colors - Purple Accent */
+$secondary: #AF52DE;
+$secondary-light: #DA8FFF;
+$secondary-dark: #8944AB;
+
+/* Accent - macOS Teal */
+$accent: #5AC8FA;
+
+/* Semantic Colors - Apple System Colors */
+$success: #34C759;
+$warning: #FF9500;
+$error: #FF3B30;
+$info: #5856D6;
+
+/* Background Hierarchy - macOS Window Levels */
+$background: #FFFFFF;
+$background-secondary: #F5F5F7;
+$background-tertiary: #E8E8ED;
+$background-elevated: #FFFFFF;
+
+/* Surface Colors */
+$surface: #FFFFFF;
+$surface-secondary: #F5F5F7;
+$surface-elevated: #FFFFFF;
+
+/* Text Colors - Apple Typography */
+$foreground: #1D1D1F;
+$foreground-secondary: #3D3D3F;
+$foreground-muted: #86868B;
+$foreground-placeholder: #AEAEB2;
+
+/* Border Colors - Subtle Separators */
+$border-color: #D2D2D7;
+$border-color-light: #E5E5EA;
+$border-color-dark: #C7C7CC;
+
+/* Boost/Hover State */
+$boost: #F0F0F5;
+
+$muted: $foreground-muted;
+$text: $foreground;
+$body: $foreground;
+$highlight: $warning;
+
+/* =============================================================================
+   GLOBAL SCROLLBAR STYLING - macOS Style
+   ============================================================================= */
+
+* {
+    scrollbar-background: transparent;
+    scrollbar-background-hover: $background-secondary;
+    scrollbar-background-active: $background-tertiary;
+    scrollbar-corner-color: $background;
+    scrollbar-color: $border-color;
+    scrollbar-color-hover: $foreground-muted;
+    scrollbar-color-active: $foreground-secondary;
+    scrollbar-size: 1 1;
+}
+
+/* =============================================================================
+   SCREEN - Base Layout
+   ============================================================================= */
+
+Screen {
+    background: $background-secondary;
+    color: $foreground;
+    layers: base content overlay notification dialog palette imagination;
+}
+
+Screen:inline {
+    height: auto;
+}
+
+/* =============================================================================
+   MAIN GRID LAYOUT
+   ============================================================================= */
+
+#main_grid {
+    layout: grid;
+    grid-size: 1 1;
+    grid-columns: 1fr;
+    grid-rows: 1fr;
+    height: 1fr;
+    width: 100%;
+}
+
+#main_grid.drawer-open {
+    grid-size: 2 1;
+}
+
+#main_grid.drawer-overlay {
+    grid-size: 1 1;
+}
+
+.panel-container {
+    height: 100%;
+    border: round $border-color-light;
+    padding: 0;
+    background: $surface;
+}
+
+.panel-title {
+    height: 1;
+    background: transparent;
+    color: $foreground-muted;
+    text-style: bold;
+    text-align: left;
+    padding: 0 1;
+    border-bottom: none;
+    content-align: left middle;
+}
+
+#left_panel {
+    display: none;
+    border-right: solid $border-color-light;
+    background: $surface;
+}
+
+#left_panel.drawer-visible,
+#right_panel.drawer-visible {
+    background: $surface;
+}
+
+#center_panel {
+    border-left: solid $border-color-light;
+    border-right: solid $border-color-light;
+    background: $background;
+}
+
+#right_panel {
+    display: none;
+    border-left: solid $border-color-light;
+    background: $surface;
+}
+
+#left_panel.drawer-visible, #right_panel.drawer-visible {
+    display: block;
+}
+
+#main_grid.drawer-overlay #left_panel.drawer-visible,
+#main_grid.drawer-overlay #right_panel.drawer-visible {
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+    padding: 1;
+    background: $surface;
+    border: round $border-color-light;
+}
+
+/* =============================================================================
+   LEFT PANEL - Sidebar (Finder-style)
+   ============================================================================= */
+
+AuraStatusSidebar {
+    height: 1fr;
+    padding: 1;
+    width: 100%;
+    overflow-y: auto;
+    background: $surface;
+}
+
+.status-header {
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+    padding: 1 0;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+.task-tree {
+    margin-top: 1;
+    background: transparent;
+    color: $foreground;
+}
+
+.directory-tree {
+    height: 1fr;
+    padding: 1;
+    overflow-y: auto;
+    background: $surface;
+}
+
+/* --- Metrics Panel --- */
+MetricsPanel {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    margin-bottom: 1;
+}
+
+MetricsPanel #metrics_display {
+    width: 100%;
+    height: auto;
+    padding: 0 1;
+}
+
+MetricsPanel .metric-row {
+    height: 1;
+    margin-bottom: 1;
+}
+
+MetricsPanel .metric-key {
+    width: 20;
+    text-align: right;
+    color: $foreground-muted;
+    text-style: dim;
+    padding-right: 1;
+}
+
+MetricsPanel .metric-value {
+    width: 1fr;
+    text-align: left;
+    color: $success;
+    text-style: bold;
+}
+
+/* =============================================================================
+   CENTER PANEL - Main Content
+   ============================================================================= */
+
+Vertical#main_content {
+    layout: vertical;
+    background: $background;
+    height: 100%;
+    min-width: 40;
+}
+
+/* --- Chat Log --- */
+AuraChatLog {
+    background: $background;
+    padding: 1 2;
+    overflow-y: scroll;
+    height: 1fr;
+    min-height: 10;
+}
+
+AuraChatLog .chat-divider {
+    text-align: center;
+    color: $foreground-muted;
+    margin: 1 0;
+    text-style: dim;
+}
+
+/* =============================================================================
+   MESSAGE BUBBLES - iMessage Style
+   ============================================================================= */
+
+MessageBubble {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 0 1 0;
+    padding: 0 1;
+    border: none;
+    background: transparent;
+}
+
+MessageBubble.message-user {
+    margin-left: 0;
+    padding: 1 2;
+    border-left: wide $primary;
+    background: $surface-secondary;
+    color: $foreground;
+}
+
+MessageBubble.message-user .message-sender {
+    color: $primary;
+}
+
+MessageBubble.message-user .message-body {
+    color: $foreground;
+}
+
+MessageBubble.message-user .message-timestamp {
+    color: $foreground-muted;
+}
+
+MessageBubble.message-assistant {
+    margin-right: 0;
+    padding: 0 1;
+    border: none;
+    background: transparent;
+    color: $foreground;
+}
+
+MessageBubble.message-system {
+    margin: 0 2;
+    border: none;
+    background: transparent;
+    text-style: dim;
+}
+
+MessageBubble.message-error {
+    border: round $error;
+    background: #FFEBEE;
+    color: $error;
+}
+
+MessageBubble.message-success {
+    border: round $success;
+    background: #E8F5E9;
+    color: #1B5E20;
+}
+
+MessageBubble.message-tool {
+    border: round $warning;
+    background: #FFF3E0;
+    color: #E65100;
+}
+
+MessageBubble.message-thinking,
+MessageBubble.message-tool {
+    margin: 0 0 1 0;
+    padding: 0 1;
+    text-style: italic dim;
+    border: none;
+    background: transparent;
+}
+
+MessageBubble.message-streaming {
+    border-left: wide $primary;
+    background: $primary 8%;
+}
+
+MessageBubble .message-header {
+    width: 100%;
+    height: auto;
+    margin-bottom: 0;
+}
+
+MessageBubble .message-sender {
+    text-style: bold;
+    color: $primary-dark;
+}
+
+MessageBubble .message-user-title {
+    width: 1fr;
+    color: $foreground;
+}
+
+MessageBubble .message-thinking-title,
+MessageBubble .message-tool-title {
+    color: $foreground-muted;
+}
+
+MessageBubble .message-thinking-content {
+    color: $foreground-secondary;
+    padding-left: 1;
+}
+
+MessageBubble .message-streaming-indicator {
+    color: $primary-dark;
+    text-style: bold;
+}
+
+MessageBubble .message-timestamp {
+    dock: right;
+}
+
+MessageBubble.message-assistant .message-sender {
+    color: $foreground-secondary;
+}
+
+MessageBubble.message-error .message-sender {
+    color: $error;
+}
+
+MessageBubble.message-success .message-sender {
+    color: $success;
+}
+
+MessageBubble.message-tool .message-sender {
+    color: $warning;
+}
+
+MessageBubble .message-timestamp {
+    color: $foreground-muted;
+    text-style: dim;
+    margin: 0 1;
+}
+
+#main_grid.density-compact MessageBubble .message-timestamp,
+#main_grid.density-comfortable MessageBubble .message-timestamp {
+    display: none;
+}
+
+#main_grid.density-compact AuraChatLog {
+    padding: 0;
+}
+
+#main_grid.density-compact MessageBubble {
+    margin-bottom: 0;
+    padding: 0 1;
+}
+
+MessageBubble .message-body {
+    width: 100%;
+    padding: 0;
+    color: $foreground;
+}
+
+MessageBubble .message-footer {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+MessageBubble .message-reactions {
+    margin-top: 1;
+}
+
+MessageBubble .message-reaction {
+    background: $background-secondary;
+    padding: 0 1;
+    margin: 0 1;
+    border: round $border-color-light;
+}
+
+/* =============================================================================
+   INPUT BAR - Spotlight/Search Style
+   ============================================================================= */
+
+AuraInputBar {
+    dock: bottom;
+    height: auto;
+    max-height: 8;
+    background: $background;
+    padding: 1 2;
+    border-top: none;
+}
+
+AuraInputBar .command-suggestions {
+    dock: bottom;
+    width: 100%;
+    max-height: 6;
+    height: auto;
+    background: $surface;
+    border: round $border-color-light;
+    margin-bottom: 1;
+}
+
+AuraInputBar .command-suggestions.-hidden {
+    display: none;
+}
+
+AuraInputBar OptionList {
+    background: $surface;
+    border: none;
+}
+
+Input {
+    border: round $border-color;
+    background: $background;
+    color: $foreground;
+    padding: 0 1;
+}
+
+Input:focus {
+    border: round $primary;
+    background: $background;
+}
+
+Input.-invalid {
+    border: round $error;
+    background: #FFEBEE;
+}
+
+/* =============================================================================
+   FOOTER - macOS Toolbar Style
+   ============================================================================= */
+
+AuraFooter {
+    dock: bottom;
+    height: 1;
+    background: $background;
+    border-top: none;
+    padding: 0 2;
+}
+
+AuraFooter #footer-icon {
+    color: $primary;
+    text-style: bold;
+    margin-right: 1;
+}
+
+AuraFooter #footer-mode {
+    background: transparent;
+    color: $foreground-muted;
+    padding: 0;
+    text-style: bold;
+}
+
+AuraFooter #footer-mode.footer-mode-insert {
+    background: transparent;
+    color: $primary;
+}
+
+AuraFooter .footer-keybindings {
+    margin: 0 1;
+}
+
+AuraFooter.compact .footer-keybindings,
+AuraFooter.compact .footer-agent,
+AuraFooter.compact .footer-model {
+    display: none;
+}
+
+AuraFooter .footer-key {
+    color: $primary;
+    text-style: bold;
+}
+
+AuraFooter .footer-action {
+    color: $foreground-muted;
+}
+
+AuraFooter .footer-separator {
+    color: $border-color;
+    margin: 0 1;
+}
+
+AuraFooter .footer-status {
+    color: $foreground-muted;
+    text-style: italic dim;
+}
+AuraFooter .footer-external-tool {
+    color: $secondary;
+    text-style: bold;
+    width: auto;
+    max-width: 32;
+    overflow: hidden;
+}
+AuraFooter .footer-external-tool.external-tool-failed {
+    color: $error;
+}
+AuraFooter .footer-external-tool.external-tool-interrupted {
+    color: $warning;
+}
+AuraFooter .footer-external-tool.external-tool-completed {
+    color: $success;
+}
+
+AuraKeyHint {
+    width: auto;
+    height: 1;
+}
+
+AuraKeyHint .key {
+    color: $primary;
+    text-style: bold;
+}
+
+AuraKeyHint .action {
+    color: $foreground-muted;
+}
+
+/* =============================================================================
+   LOADING INDICATORS
+   ============================================================================= */
+
+AuraLoadingIndicator {
+    width: auto;
+    height: 1;
+    padding: 0 1;
+}
+
+AuraLoadingIndicator.-hidden {
+    display: none;
+}
+
+AuraLoadingIndicator .spinner {
+    color: $primary;
+    text-style: bold;
+    margin-right: 1;
+}
+
+AuraLoadingIndicator .message {
+    color: $foreground-secondary;
+}
+
+AuraLoadingIndicator .dots {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+/* --- Progress Bar --- */
+AuraProgressBar {
+    width: 100%;
+    height: 1;
+    padding: 0 1;
+}
+
+AuraProgressBar .progress-label {
+    color: $foreground-muted;
+    margin-right: 1;
+}
+
+AuraProgressBar .progress-bar-container {
+    width: 30;
+    height: 1;
+    border: solid $border-color-light;
+    background: $background-secondary;
+}
+
+AuraProgressBar .progress-bar-fill {
+    background: $primary;
+    height: 1;
+}
+
+AuraProgressBar .progress-bar-fill.complete {
+    background: $success;
+}
+
+AuraProgressBar .progress-percentage {
+    margin-left: 1;
+    color: $foreground-muted;
+}
+
+AuraProgressBar .progress-percentage.complete {
+    color: $success;
+    text-style: bold;
+}
+
+/* =============================================================================
+   TOAST NOTIFICATIONS - macOS Notification Center Style
+   ============================================================================= */
+
+AuraToastContainer {
+    dock: top;
+    layer: notification;
+    align: right top;
+    width: auto;
+    height: auto;
+    offset: -2 2;
+}
+
+AuraToast {
+    width: 60;
+    height: auto;
+    padding: 1;
+    border: round $border-color-light;
+    background: $surface;
+    margin: 0 0 1 0;
+}
+
+AuraToast.toast-success {
+    border-left: wide $success;
+    background: #E8F5E9;
+}
+
+AuraToast.toast-error {
+    border-left: wide $error;
+    background: #FFEBEE;
+}
+
+AuraToast.toast-warning {
+    border-left: wide $warning;
+    background: #FFF3E0;
+}
+
+AuraToast.toast-info {
+    border-left: wide $primary;
+    background: #E3F2FD;
+}
+
+AuraToast .toast-icon {
+    margin-right: 1;
+    text-style: bold;
+}
+
+AuraToast.toast-success .toast-icon {
+    color: $success;
+}
+
+AuraToast.toast-error .toast-icon {
+    color: $error;
+}
+
+AuraToast.toast-warning .toast-icon {
+    color: $warning;
+}
+
+AuraToast.toast-info .toast-icon {
+    color: $primary;
+}
+
+AuraToast .toast-title {
+    text-style: bold;
+    color: $foreground;
+    margin-bottom: 1;
+}
+
+AuraToast .toast-message {
+    color: $foreground-secondary;
+}
+
+/* Built-in Toast styling */
+Toast {
+    width: auto;
+    background: $surface;
+    color: $foreground;
+    border-left: wide $primary;
+    padding: 0 1;
+    margin: 0 0 1 0;
+}
+
+Toast.-information {
+    border-left: wide $primary;
+}
+
+Toast.-warning {
+    border-left: wide $warning;
+}
+
+Toast.-error {
+    border-left: wide $error;
+}
+
+Toast .toast--title {
+    color: $foreground;
+    text-style: bold;
+}
+
+/* =============================================================================
+   RIGHT PANEL - Tabbed Content (Safari Tab Style)
+   ============================================================================= */
+
+#right_panel TabbedContent {
+    height: 1fr;
+    width: 100%;
+    background: $surface;
+}
+
+TabbedContent {
+    height: 1fr;
+}
+
+TabbedContent > Tabs {
+    background: transparent;
+    border-bottom: solid $border-color-light;
+}
+
+Tabs {
+    background: transparent;
+}
+
+Tab {
+    padding: 0 1;
+    color: $foreground-muted;
+    background: transparent;
+}
+
+Tab:hover {
+    color: $foreground;
+    background: $background-tertiary;
+}
+
+Tab.-active {
+    color: $primary;
+    text-style: bold;
+    background: transparent;
+}
+
+Underline {
+    background: $primary;
+}
+
+TabPane {
+    height: 1fr;
+    padding: 0 1;
+    overflow-y: auto;
+    background: transparent;
+}
+
+/* =============================================================================
+   EVENT STREAM PANEL
+   ============================================================================= */
+
+EventStreamPanel {
+    width: 100%;
+    height: 100%;
+    padding: 0 1;
+    overflow-y: scroll;
+    background: transparent;
+}
+
+EventStreamPanel .event-entry {
+    margin-bottom: 0;
+    padding: 0 1;
+    border-left: solid $border-color;
+    background: transparent;
+    border: none;
+}
+
+EventStreamPanel .event-timestamp {
+    color: $foreground-muted;
+    text-style: dim;
+    margin-right: 1;
+}
+
+EventStreamPanel .event-task-start {
+    border-left: solid $primary;
+}
+
+EventStreamPanel .event-task-update {
+    border-left: solid $info;
+}
+
+EventStreamPanel .event-task-complete {
+    border-left: solid $success;
+}
+
+EventStreamPanel .event-task-failed {
+    border-left: solid $error;
+}
+
+EventStreamPanel .event-tool-executing {
+    border-left: solid $warning;
+}
+
+EventStreamPanel .event-tool-result {
+    border-left: solid $success;
+}
+
+EventStreamPanel .event-tool-error {
+    border-left: solid $error;
+}
+
+EventStreamPanel .event-capability-evaluation {
+    border-left: solid $info;
+}
+
+EventStreamPanel .event-capability-confirmation {
+    border-left: solid $warning;
+}
+
+EventStreamPanel .event-capability-blocked {
+    border-left: solid $error;
+}
+
+EventStreamPanel .event-capability-commit {
+    border-left: solid $success;
+}
+
+EventStreamPanel .event-chat-message {
+    border-left: solid $primary;
+}
+
+EventStreamPanel .event-type-label {
+    text-style: bold;
+    margin-right: 1;
+}
+
+EventStreamPanel .event-content {
+    color: $foreground;
+}
+
+/* =============================================================================
+   CODE ANALYSIS PANEL
+   ============================================================================= */
+
+CodeAnalysisPanel {
+    height: 100%;
+    width: 100%;
+    padding: 1;
+    overflow-y: auto;
+}
+
+CodeAnalysisPanel .panel-header {
+    text-align: left;
+    color: $primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+}
+
+#code_viewer_container {
+    height: 50%;
+    min-height: 10;
+    overflow-y: scroll;
+    border: round $border-color-light;
+    margin-bottom: 1;
+    background: $background-secondary;
+}
+
+#code_viewer {
+    width: 100%;
+    height: auto;
+    padding: 1;
+    background: $background-secondary;
+}
+
+#issues_header {
+    color: $warning;
+    margin-top: 1;
+    text-style: bold;
+}
+
+#issues_table {
+    height: auto;
+    max-height: 30%;
+    margin: 1 0;
+}
+
+/* =============================================================================
+   TREE WIDGET - Finder Sidebar Style
+   ============================================================================= */
+
+Tree {
+    background: transparent;
+    color: $foreground;
+    padding: 0;
+    scrollbar-gutter: stable;
+}
+
+Tree:focus {
+    border: round $primary;
+}
+
+Tree > .tree--guides {
+    color: $border-color-light;
+}
+
+Tree > .tree--guides-hover {
+    color: $primary-light;
+}
+
+Tree > .tree--guides-selected {
+    color: $primary;
+}
+
+Tree > .tree--cursor {
+    background: $primary 15%;
+    color: $foreground;
+}
+
+Tree:focus > .tree--cursor {
+    background: $primary;
+    color: white;
+    text-style: bold;
+}
+
+Tree > .tree--highlight {
+    text-style: bold;
+}
+
+Tree > .tree--highlight-line {
+    background: $boost;
+}
+
+.directory-tree--folder {
+    text-style: bold;
+    color: $foreground;
+}
+
+.directory-tree--file {
+    color: $foreground-secondary;
+}
+
+.directory-tree--hidden {
+    text-style: dim italic;
+    color: $foreground-muted;
+}
+
+/* =============================================================================
+   DATATABLE - Numbers/Keynote Table Style
+   ============================================================================= */
+
+DataTable {
+    background: $surface;
+    height: auto;
+    border: round $border-color-light;
+}
+
+DataTable:focus {
+    border: round $primary;
+}
+
+DataTable > .datatable--header {
+    background: $background-secondary;
+    color: $foreground;
+    text-style: bold;
+    border-bottom: solid $border-color-light;
+}
+
+DataTable > .datatable--header-hover {
+    background: $background-tertiary;
+    color: $foreground;
+    text-style: bold;
+}
+
+DataTable > .datatable--cursor {
+    background: $primary 15%;
+    color: $foreground;
+}
+
+DataTable:focus > .datatable--cursor {
+    background: $primary;
+    color: white;
+}
+
+DataTable > .datatable--hover {
+    background: $boost;
+}
+
+DataTable > .datatable--even-row {
+    background: $surface;
+}
+
+DataTable > .datatable--odd-row {
+    background: $background-secondary;
+}
+
+/* =============================================================================
+   OPTION LIST
+   ============================================================================= */
+
+OptionList {
+    background: $surface;
+    border: round $border-color-light;
+    padding: 0;
+}
+
+OptionList:focus {
+    border: round $primary;
+}
+
+OptionList > .option-list--option {
+    padding: 0 1;
+}
+
+OptionList > .option-list--option-hover {
+    background: $boost;
+}
+
+OptionList > .option-list--option-highlighted {
+    background: $primary;
+    color: white;
+    text-style: bold;
+}
+
+OptionList > .option-list--option-hover-highlighted {
+    background: $primary-light;
+    color: white;
+}
+
+/* =============================================================================
+   SELECT WIDGET
+   ============================================================================= */
+
+Select {
+    border: round $border-color;
+    background: $surface;
+}
+
+Select:focus {
+    border: round $primary;
+}
+
+Select > SelectCurrent {
+    background: $surface;
+    color: $foreground;
+}
+
+Select > SelectOverlay {
+    border: round $primary;
+    background: $surface;
+}
+
+SelectOverlay > OptionList {
+    border: none;
+}
+
+/* =============================================================================
+   BUTTONS - macOS Button Style
+   ============================================================================= */
+
+Button {
+    min-width: 10;
+    height: 3;
+    background: $surface;
+    color: $foreground;
+    border: tall $border-color;
+    text-style: bold;
+}
+
+Button:hover {
+    background: $boost;
+    border: tall $border-color-dark;
+}
+
+Button:focus {
+    border: tall $primary;
+}
+
+Button.-primary {
+    background: $primary;
+    color: white;
+    border: tall $primary-dark;
+}
+
+Button.-primary:hover {
+    background: $primary-light;
+    border: tall $primary;
+}
+
+Button.-success {
+    background: $success;
+    color: white;
+    border: tall #2E7D32;
+}
+
+Button.-warning {
+    background: $warning;
+    color: white;
+    border: tall #E65100;
+}
+
+Button.-error {
+    background: $error;
+    color: white;
+    border: tall #C62828;
+}
+
+Button:disabled {
+    background: $background-secondary;
+    color: $foreground-muted;
+    text-style: dim;
+    border: tall $border-color-light;
+}
+
+/* =============================================================================
+   CHECKBOX & SWITCH - macOS Toggle Style
+   ============================================================================= */
+
+Checkbox {
+    background: transparent;
+    border: none;
+    padding: 0;
+}
+
+Checkbox:focus {
+    background: $boost;
+}
+
+Checkbox > .toggle--button {
+    background: $border-color;
+}
+
+Checkbox.-on > .toggle--button {
+    color: $primary;
+    background: $primary 20%;
+}
+
+Checkbox:hover > .toggle--button {
+    background: $primary 30%;
+}
+
+Switch {
+    background: transparent;
+    border: none;
+}
+
+Switch:focus {
+    border: tall $primary;
+}
+
+Switch > .switch--slider {
+    background: $border-color;
+    color: $foreground-muted;
+}
+
+Switch.-on > .switch--slider {
+    color: white;
+    background: $success;
+}
+
+/* =============================================================================
+   COMMAND PALETTE - Spotlight Style
+   ============================================================================= */
+
+CommandPalette {
+    layer: palette;
+    position: absolute;
+    align: center middle;
+    display: none;
+    width: 70%;
+    max-width: 80;
+    height: auto;
+    max-height: 60%;
+    background: $surface;
+    border: round $border-color-light;
+    padding: 1 2;
+    margin: 1 2;
+}
+
+CommandPalette.-visible {
+    display: block;
+}
+
+CommandPalette > .palette-input {
+    width: 100%;
+    margin-bottom: 1;
+}
+
+CommandPalette > .palette-input > Input {
+    border: round $border-color;
+    background: $background-secondary;
+}
+
+CommandPalette > .palette-input > Input:focus {
+    border: round $primary;
+}
+
+CommandPalette > .palette-list {
+    height: auto;
+    max-height: 20;
+    background: $background;
+    border: none;
+}
+
+CommandPalette > .palette-hint {
+    height: 1;
+    padding-top: 1;
+    color: $foreground-muted;
+    text-align: center;
+}
+
+/* =============================================================================
+   SPINNERS
+   ============================================================================= */
+
+KnightRiderSpinner {
+    height: 1;
+    padding: 0 1;
+    background: transparent;
+}
+
+KnightRiderSpinner .spinner-bar {
+    width: auto;
+}
+
+KnightRiderSpinner .spinner-message {
+    padding-left: 1;
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+KnightRiderSpinner .spinner-char-full {
+    color: $primary;
+}
+
+KnightRiderSpinner .spinner-char-high {
+    color: $primary-light;
+}
+
+KnightRiderSpinner .spinner-char-medium {
+    color: $primary 60%;
+}
+
+KnightRiderSpinner .spinner-char-low {
+    color: $primary 40%;
+}
+
+KnightRiderSpinner .spinner-char-fade {
+    color: $primary 20%;
+}
+
+CompactSpinner {
+    width: auto;
+    height: 1;
+}
+
+CompactSpinner .spinner-char {
+    color: $primary;
+    text-style: bold;
+}
+
+CompactSpinner .spinner-message {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+ProgressSpinner {
+    height: 1;
+    width: 100%;
+}
+
+ProgressSpinner .spinner-char {
+    color: $primary;
+    text-style: bold;
+}
+
+ProgressSpinner .progress-bar-filled {
+    color: $primary;
+}
+
+ProgressSpinner .progress-bar-empty {
+    color: $border-color-light;
+    text-style: dim;
+}
+
+ProgressSpinner .progress-percent {
+    color: $foreground;
+    text-style: bold;
+}
+
+ProgressSpinner .progress-message {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+/* =============================================================================
+   RICH PROMPT INPUT
+   ============================================================================= */
+
+RichPromptInput {
+    height: auto;
+    min-height: 3;
+    max-height: 10;
+    background: $surface;
+    border: round $border-color;
+    padding: 0 1;
+}
+
+RichPromptInput:focus-within {
+    border: round $primary;
+}
+
+RichPromptInput > .prompt-prefix {
+    width: 3;
+    color: $primary;
+}
+
+RichPromptInput > .prompt-input {
+    width: 1fr;
+}
+
+RichPromptInput > .prompt-parts {
+    height: auto;
+    padding-top: 1;
+    color: $foreground-muted;
+}
+
+RichPromptInput .part-attached-label {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+RichPromptInput .part-separator {
+    color: $border-color;
+}
+
+RichPromptInput .part-label {
+    color: $primary;
+}
+
+RichPromptInput.-multiline {
+    min-height: 5;
+    max-height: 15;
+}
+
+/* =============================================================================
+   DIALOGS - macOS Sheet Style
+   ============================================================================= */
+
+BaseDialog {
+    layer: dialog;
+    align: center middle;
+    width: 60;
+    height: auto;
+    max-height: 80%;
+    background: $surface;
+    border: round $border-color-light;
+    padding: 0;
+}
+
+BaseDialog > .dialog-title-bar {
+    width: 100%;
+    height: 3;
+    background: transparent;
+    padding: 1 2;
+    border-bottom: solid $border-color-light;
+}
+
+BaseDialog > .dialog-title-bar > .dialog-title {
+    text-style: bold;
+    color: $foreground;
+}
+
+BaseDialog > .dialog-content {
+    width: 100%;
+    height: auto;
+    padding: 1 2;
+}
+
+BaseDialog > .dialog-actions {
+    width: 100%;
+    height: 3;
+    padding: 0 2;
+    border-top: solid $border-color-light;
+    align: right middle;
+    background: $background-secondary;
+}
+
+BaseDialog > .dialog-actions > Button {
+    margin-left: 1;
+}
+
+/* --- Confirm Dialog --- */
+ConfirmDialog {
+    width: 50;
+}
+
+ConfirmDialog > .dialog-content > .confirm-message {
+    padding: 1 0;
+}
+
+/* --- Input Dialog --- */
+InputDialog {
+    width: 50;
+}
+
+InputDialog > .dialog-content > .input-prompt {
+    padding-bottom: 1;
+}
+
+InputDialog > .dialog-content > Input {
+    width: 100%;
+}
+
+InputDialog > .dialog-content > .input-error {
+    color: $error;
+    padding-top: 1;
+}
+
+/* --- Select Dialog --- */
+SelectDialog {
+    width: 60;
+    height: auto;
+    max-height: 70%;
+}
+
+SelectDialog > .dialog-content > .select-prompt {
+    padding-bottom: 1;
+}
+
+SelectDialog > .dialog-content > OptionList {
+    height: auto;
+    max-height: 15;
+    background: $background-secondary;
+    border: round $border-color-light;
+}
+
+/* --- Fatal Error Dialog --- */
+FatalErrorDialog {
+    width: 70;
+    height: auto;
+    max-height: 80%;
+    border: round $error;
+}
+
+FatalErrorDialog > .dialog-title-bar {
+    background: #FFEBEE;
+}
+
+FatalErrorDialog > .dialog-title-bar > .dialog-title {
+    color: $error;
+}
+
+FatalErrorDialog > .dialog-content > .error-icon {
+    text-align: center;
+    padding: 1;
+}
+
+FatalErrorDialog > .dialog-content > .error-type {
+    color: $error;
+    text-style: bold;
+    padding-bottom: 1;
+}
+
+FatalErrorDialog > .dialog-content > .error-message {
+    padding-bottom: 1;
+}
+
+FatalErrorDialog > .dialog-content > .error-traceback {
+    background: $background-secondary;
+    border: round $border-color-light;
+    padding: 1;
+    max-height: 10;
+    overflow-y: scroll;
+}
+
+FatalErrorDialog > .dialog-content > .error-traceback > Static {
+    color: $foreground-muted;
+}
+
+FatalErrorDialog > .dialog-content > .error-help {
+    padding-top: 1;
+    color: $foreground-muted;
+}
+
+ErrorNotification {
+    width: 100%;
+    height: auto;
+    background: #FFEBEE;
+    border: round $error;
+    padding: 1;
+    display: none;
+}
+
+ErrorNotification.-visible {
+    display: block;
+}
+
+ErrorNotification > .error-content {
+    color: $error;
+}
+
+ErrorNotification > .error-dismiss {
+    dock: right;
+    width: auto;
+    color: $foreground-muted;
+}
+
+/* =============================================================================
+   LEADER KEY INDICATOR
+   ============================================================================= */
+
+.leader-indicator {
+    dock: bottom;
+    height: 1;
+    background: $primary 15%;
+    color: $primary;
+    text-align: center;
+    padding: 0 2;
+}
+
+/* =============================================================================
+   IMAGINATION PANEL
+   ============================================================================= */
+
+ImaginationPanel {
+    layer: imagination;
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 3;
+    grid-columns: 60% 40%;
+    grid-rows: auto 1fr auto;
+    background: $background;
+}
+
+ImaginationPanel > .imag-header {
+    column-span: 2;
+    height: 3;
+    background: $surface;
+    border-bottom: solid $border-color-light;
+}
+
+ImaginationPanel > .imag-left-pane {
+    row-span: 1;
+    height: 100%;
+    padding: 1;
+    border-right: solid $border-color-light;
+    overflow-y: auto;
+}
+
+ImaginationPanel > .imag-right-pane {
+    row-span: 1;
+    height: 100%;
+    padding: 1;
+    overflow-y: auto;
+}
+
+ImaginationPanel > .imag-footer {
+    column-span: 2;
+    height: auto;
+    padding: 1;
+    border-top: solid $border-color-light;
+    background: $surface;
+}
+
+ImaginationPanel .section-header {
+    margin: 1 0;
+    padding: 0 1;
+    color: $primary;
+    text-style: bold;
+}
+
+ImaginationPanel .stats-row {
+    height: auto;
+    margin-bottom: 1;
+    background: $surface;
+    border: round $border-color-light;
+    padding: 1;
+}
+
+ImaginationPanel .category-section {
+    height: auto;
+    margin-bottom: 1;
+}
+
+CategoryBreakdown {
+    width: 100%;
+    height: auto;
+    padding: 1;
+    background: transparent;
+}
+
+ImaginationPanel .extension-section {
+    height: auto;
+    margin-bottom: 1;
+    padding: 1;
+    background: $surface;
+    border: round $border-color-light;
+}
+
+ExtensionCloud {
+    width: 100%;
+    height: auto;
+    padding: 0;
+}
+
+ImaginationPanel .file-tree {
+    height: 1fr;
+    min-height: 15;
+    background: $surface;
+    border: round $border-color-light;
+    padding: 1;
+}
+
+ImaginationPanel .file-tree > Tree {
+    background: transparent;
+}
+
+ImaginationPanel .activity-section {
+    height: 100%;
+}
+
+RecentActivity {
+    width: 100%;
+    height: 100%;
+    padding: 1;
+    background: $surface;
+    border: round $primary 30%;
+}
+
+ImaginationPanel .action-bar {
+    height: 3;
+    align: center middle;
+}
+
+ImaginationPanel .action-bar > Button {
+    margin: 0 1;
+    min-width: 12;
+}
+
+HolographicHeader {
+    width: 100%;
+    height: 3;
+    background: $surface;
+    border-bottom: solid $border-color-light;
+    padding: 0 2;
+}
+
+HolographicHeader .scan-indicator {
+    color: $primary;
+    text-style: bold;
+    margin: 0 1;
+}
+
+HolographicHeader .title {
+    color: $primary;
+    text-style: bold;
+}
+
+HolographicHeader .status-idle {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+HolographicHeader .status-scanning {
+    color: $secondary;
+    text-style: bold;
+}
+
+HolographicHeader .status-watching {
+    color: $success;
+    text-style: bold;
+}
+
+HolographicHeader .status-error {
+    color: $error;
+    text-style: bold;
+}
+
+CategoryBreakdown {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+
+CategoryBreakdown .category-row {
+    height: 1;
+    margin-bottom: 1;
+}
+
+CategoryBreakdown .category-icon {
+    margin-right: 1;
+    text-style: bold;
+}
+
+CategoryBreakdown .category-name {
+    width: 10;
+    text-style: bold;
+}
+
+CategoryBreakdown .category-bar-fill {
+    background: $primary;
+    height: 1;
+}
+
+CategoryBreakdown .category-bar-empty {
+    background: $foreground-muted;
+    height: 1;
+    opacity: 0.3;
+}
+
+CategoryBreakdown .category-count {
+    margin-left: 1;
+    text-style: bold;
+}
+
+CategoryBreakdown .category-percent {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+RecentActivity {
+    width: 100%;
+    height: 100%;
+    padding: 1;
+    background: $surface;
+    border: round $primary;
+}
+
+RecentActivity .activity-header {
+    color: $primary;
+    text-style: bold;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+    padding-bottom: 1;
+}
+
+RecentActivity .activity-item {
+    margin-bottom: 1;
+    padding: 0 1;
+}
+
+RecentActivity .activity-icon {
+    margin-right: 1;
+    text-style: bold;
+}
+
+RecentActivity .activity-name {
+    text-style: bold;
+    width: 25;
+}
+
+RecentActivity .activity-time {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+ExtensionCloud {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+
+ExtensionCloud .extension-item {
+    margin: 0 1;
+}
+
+ExtensionCloud .extension-high {
+    color: $primary;
+    text-style: bold;
+}
+
+ExtensionCloud .extension-medium {
+    color: $primary;
+}
+
+ExtensionCloud .extension-low {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+ScanStats {
+    width: 100%;
+    height: auto;
+    padding: 1;
+    background: $surface;
+    border: round $border-color-light;
+}
+
+ScanStats .stat-item {
+    margin: 0 1;
+}
+
+ScanStats .stat-label {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+ScanStats .stat-value {
+    color: $primary;
+    text-style: bold;
+}
+
+ScanStats .stat-separator {
+    color: $foreground-muted;
+    margin: 0 1;
+}
+
+ImaginationCompact {
+    width: 100%;
+    height: auto;
+    padding: 1;
+    border: round $primary;
+    background: $surface;
+}
+
+AuraToastContainer {
+    dock: top;
+    layer: notification;
+    align: right top;
+    width: auto;
+    height: auto;
+}
+
+ImaginationPanel *:focus {
+    border: double $primary;
+}
+
+#imagination_panel {
+    layer: imagination;
+    width: 100%;
+    height: 100%;
+    background: $background;
+}
+
+#imagination_panel.-hidden {
+    display: none;
+}
+
+#main_content.-hidden {
+    display: none;
+}
+
+/* --- Visual Effects --- */
+.holo-pulse {
+    text-style: bold;
+}
+
+.holo-scanning {
+    color: $secondary;
+    text-style: bold;
+}
+
+.holo-watching {
+    color: $success;
+    text-style: bold;
+}
+
+.holo-error {
+    color: $error;
+    text-style: bold;
+}
+
+.holo-border {
+    border: double $primary;
+    background: $surface;
+}
+
+.neon-cyan {
+    color: $accent;
+    text-style: bold;
+}
+
+.neon-magenta {
+    color: $secondary;
+    text-style: bold;
+}
+
+.neon-green {
+    color: $success;
+    text-style: bold;
+}
+
+.neon-amber {
+    color: $warning;
+    text-style: bold;
+}
+
+/* =============================================================================
+   MEMORY BROWSER
+   ============================================================================= */
+
+MemoryBrowser {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+MemoryBrowser .memory-header {
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+    padding: 1;
+    border-bottom: solid $border-color-light;
+}
+
+MemoryBrowser .search-bar {
+    height: 3;
+    padding: 0 1;
+    border-bottom: solid $border-color-light;
+    background: $background-secondary;
+}
+
+MemoryBrowser .search-input {
+    width: 1fr;
+}
+
+MemoryBrowser .search-button {
+    width: auto;
+    margin-left: 1;
+}
+
+MemoryBrowser .memory-content {
+    height: 1fr;
+}
+
+MemoryBrowser .message-detail {
+    padding: 1;
+    background: $surface;
+    border: round $border-color-light;
+    margin: 1;
+    height: 1fr;
+}
+
+MemoryBrowser .message-role {
+    color: $primary;
+    text-style: bold;
+}
+
+MemoryBrowser .message-content {
+    margin-top: 1;
+}
+
+MemoryBrowser .message-meta {
+    color: $foreground-muted;
+    text-style: italic;
+    margin-top: 1;
+}
+
+MemoryBrowser .state-tree {
+    height: 100%;
+}
+
+MemoryBrowser .action-bar {
+    height: 3;
+    padding: 1;
+    border-top: solid $border-color-light;
+    align: center middle;
+}
+
+MemoryBrowser .log-entry {
+    margin-bottom: 1;
+}
+
+MemoryBrowser .log-label {
+    color: $primary;
+    text-style: bold;
+}
+
+MemoryBrowser .log-content {
+    color: $foreground;
+}
+
+/* =============================================================================
+   TEST RUNNER PANEL
+   ============================================================================= */
+
+TestRunnerPanel {
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 40% 1fr;
+}
+
+TestRunnerPanel .test-list-pane {
+    height: 100%;
+    border-right: solid $border-color-light;
+    padding: 1;
+}
+
+TestRunnerPanel .test-output-pane {
+    height: 100%;
+    padding: 1;
+}
+
+TestRunnerPanel .pane-header {
+    color: $primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+TestRunnerPanel .summary-bar {
+    height: 3;
+    padding: 1;
+    border-bottom: solid $border-color-light;
+    background: $background-secondary;
+}
+
+TestRunnerPanel .summary-passed {
+    color: $success;
+}
+
+TestRunnerPanel .summary-failed {
+    color: $error;
+}
+
+TestRunnerPanel .summary-skipped {
+    color: $warning;
+}
+
+TestRunnerPanel .test-tree {
+    height: 1fr;
+}
+
+TestRunnerPanel .output-log {
+    height: 1fr;
+    background: $background-secondary;
+    border: round $border-color-light;
+    padding: 1;
+}
+
+TestRunnerPanel .log-entry {
+    margin-bottom: 1;
+}
+
+TestRunnerPanel .log-start {
+    color: $primary;
+    text-style: bold;
+}
+
+TestRunnerPanel .log-success {
+    color: $success;
+}
+
+TestRunnerPanel .log-error {
+    color: $error;
+    text-style: bold;
+}
+
+TestRunnerPanel .log-warning {
+    color: $warning;
+}
+
+TestRunnerPanel .log-info {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+TestRunnerPanel .action-bar {
+    height: 3;
+    margin-top: 1;
+    align: center middle;
+}
+
+TestRunnerPanel .progress-container {
+    height: 1;
+    margin: 1 0;
+}
+
+/* =============================================================================
+   TOOL REGISTRY PANEL
+   ============================================================================= */
+
+ToolRegistryPanel {
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 35% 1fr;
+}
+
+ToolRegistryPanel .tool-list-pane {
+    height: 100%;
+    border-right: solid $border-color-light;
+    padding: 1;
+}
+
+ToolRegistryPanel .tool-output-pane {
+    height: 100%;
+    padding: 1;
+}
+
+ToolRegistryPanel .pane-header {
+    color: $primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+ToolRegistryPanel .tool-search {
+    margin-bottom: 1;
+}
+
+ToolRegistryPanel .tool-table {
+    height: 1fr;
+}
+
+ToolRegistryPanel .output-log {
+    height: 1fr;
+    background: $background-secondary;
+    border: round $border-color-light;
+    padding: 1;
+}
+
+ToolRegistryPanel .log-entry {
+    margin-bottom: 1;
+}
+
+ToolRegistryPanel .log-start {
+    color: $primary;
+    text-style: bold;
+}
+
+ToolRegistryPanel .log-success {
+    color: $success;
+}
+
+ToolRegistryPanel .log-error {
+    color: $error;
+    text-style: bold;
+}
+
+ToolRegistryPanel .log-warning {
+    color: $warning;
+}
+
+ToolRegistryPanel .log-info {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+ToolRegistryPanel .log-label {
+    color: $primary;
+    text-style: bold;
+}
+
+ToolRegistryPanel .tool-actions {
+    height: 3;
+    margin-top: 1;
+    align: center middle;
+}
+
+ToolRegistryPanel .status-idle {
+    color: $foreground-muted;
+}
+
+ToolRegistryPanel .status-running {
+    color: $warning;
+}
+
+ToolRegistryPanel .status-success {
+    color: $success;
+}
+
+ToolRegistryPanel .status-failed {
+    color: $error;
+}
+
+ToolRegistryPanel .progress-container {
+    height: 1;
+    margin-bottom: 1;
+}
+
+/* =============================================================================
+   IDE PANEL
+   ============================================================================= */
+
+IDEPanel {
+    width: 100%;
+    height: 100%;
+}
+
+FileTreePanel {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+RefactoringPanel {
+    width: 100%;
+    height: 100%;
+    padding: 1;
+}
+
+RefactoringPanel .refactor-header {
+    color: $primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+RefactoringPanel .refactor-list {
+    height: 40%;
+}
+
+RefactoringPanel .refactor-preview {
+    height: 50%;
+    background: $background-secondary;
+    border: round $border-color-light;
+    margin-top: 1;
+    padding: 1;
+}
+
+RefactoringPanel .refactor-preview .log-entry {
+    margin-bottom: 1;
+}
+
+RefactoringPanel .refactor-preview .log-label {
+    color: $primary;
+    text-style: bold;
+}
+
+RefactoringPanel .refactor-preview .log-content {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+RefactoringPanel .refactor-preview .log-warning {
+    color: $warning;
+}
+
+RefactoringPanel .refactor-actions {
+    height: 3;
+    margin-top: 1;
+    align: center middle;
+}
+
+/* =============================================================================
+   CHARTS
+   ============================================================================= */
+
+ASCIILineChart {
+    width: 100%;
+    height: auto;
+    min-height: 8;
+    padding: 1;
+}
+
+ASCIILineChart .chart-title {
+    color: $primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+ASCIILineChart .chart-empty {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+BarChart {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+
+BarChart .chart-title {
+    color: $primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+BarChart .chart-empty {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+BarChart .bar-label {
+    color: $foreground;
+    text-style: bold;
+}
+
+BarChart .bar-value {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+VerticalBarChart {
+    width: 100%;
+    height: auto;
+    min-height: 10;
+    padding: 1;
+}
+
+VerticalBarChart .chart-title {
+    color: $primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+VerticalBarChart .chart-empty {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+MetricGauge {
+    width: auto;
+    height: 3;
+    padding: 0 1;
+}
+
+MetricGauge .gauge-label {
+    color: $foreground;
+    text-style: bold;
+}
+
+MetricGauge .gauge-value {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+MetricGauge .gauge-bar-filled {
+    color: $primary;
+}
+
+MetricGauge .gauge-bar-empty {
+    color: $border-color-light;
+    text-style: dim;
+}
+
+MetricGauge .gauge-bar-critical {
+    color: $error;
+}
+
+MetricGauge .gauge-bar-warning {
+    color: $warning;
+}
+
+StatsDisplay {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+
+StatsDisplay .stats-title {
+    color: $primary;
+    text-style: bold;
+}
+
+StatsDisplay .stats-border {
+    color: $border-color-light;
+}
+
+StatsDisplay .stats-key {
+    color: $foreground;
+    text-style: bold;
+}
+
+MiniSparkline {
+    width: auto;
+    height: 1;
+}
+
+/* =============================================================================
+   SCREEN COMPONENTS (Code, Paint, Files)
+   ============================================================================= */
+
+CodeScreen {
+    background: $background;
+}
+
+CodeScreen .screen-header {
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+    margin-bottom: 2;
+}
+
+CodeScreen .status-available {
+    color: $success;
+    text-style: bold;
+}
+
+CodeScreen .status-unavailable {
+    color: $error;
+    text-style: bold;
+}
+
+CodeScreen .description-text {
+    color: $foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+
+CodeScreen .features-label {
+    color: $warning;
+    text-style: bold;
+    margin-top: 1;
+}
+
+CodeScreen .action-hint {
+    color: $success;
+    margin: 1 0;
+}
+
+CodeScreen .action-key {
+    color: $primary;
+    text-style: bold;
+}
+
+CodeScreen .install-hint {
+    color: $warning;
+    margin: 1 0;
+}
+
+CodeScreen .install-command {
+    color: $primary;
+}
+
+PaintScreen {
+    background: $background;
+}
+
+PaintScreen .screen-header {
+    text-align: center;
+    color: $secondary;
+    text-style: bold;
+    margin-bottom: 2;
+}
+
+PaintScreen .status-available {
+    color: $success;
+    text-style: bold;
+}
+
+PaintScreen .status-unavailable {
+    color: $error;
+    text-style: bold;
+}
+
+PaintScreen .description-text {
+    color: $foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+
+PaintScreen .features-label {
+    color: $warning;
+    text-style: bold;
+    margin-top: 1;
+}
+
+PaintScreen .action-hint {
+    color: $success;
+    margin: 1 0;
+}
+
+PaintScreen .action-key {
+    color: $primary;
+    text-style: bold;
+}
+
+PaintScreen .install-hint {
+    color: $warning;
+    margin: 1 0;
+}
+
+PaintScreen .install-command {
+    color: $primary;
+}
+
+FilesScreen {
+    background: $background;
+}
+
+FilesScreen .screen-header {
+    text-align: center;
+    color: $success;
+    text-style: bold;
+    margin-bottom: 2;
+}
+
+FilesScreen .status-available {
+    color: $success;
+    text-style: bold;
+}
+
+FilesScreen .status-unavailable {
+    color: $error;
+    text-style: bold;
+}
+
+FilesScreen .description-text {
+    color: $foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+
+FilesScreen .features-label {
+    color: $warning;
+    text-style: bold;
+    margin-top: 1;
+}
+
+FilesScreen .action-hint {
+    color: $success;
+    margin: 1 0;
+}
+
+FilesScreen .action-key {
+    color: $primary;
+    text-style: bold;
+}
+
+FilesScreen .install-hint {
+    color: $warning;
+    margin: 1 0;
+}
+
+FilesScreen .install-command {
+    color: $primary;
+}
+
+.screen-header {
+    color: $primary;
+    text-style: bold;
+    text-align: center;
+}
+
+.status-available {
+    color: $success;
+    text-style: bold;
+}
+
+.status-unavailable {
+    color: $error;
+    text-style: bold;
+}
+
+.description-text {
+    color: $foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+
+.features-label {
+    color: $warning;
+    text-style: bold;
+    margin-top: 1;
+}
+
+.action-hint {
+    color: $success;
+    margin: 1 0;
+}
+
+.action-key {
+    width: auto;
+    height: 1;
+    color: $primary;
+    text-style: bold;
+}
+
+.install-hint {
+    color: $warning;
+    margin: 1 0;
+}
+
+.install-command {
+    color: $primary;
+}
+
+ToolsMenuScreen {
+    background: $background;
+}
+
+ToolsMenuScreen .tools-container {
+    width: 70;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: $background;
+}
+
+ToolsMenuScreen .header-container {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: round $border-color-light;
+    background: $surface;
+}
+
+ToolsMenuScreen .screen-header {
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+    margin: 0;
+    padding: 0;
+}
+
+ToolsMenuScreen .tools-availability-summary {
+    width: 100%;
+    height: 1;
+    margin: 0 2;
+    color: $foreground-muted;
+    text-align: center;
+    text-style: dim;
+}
+
+ToolsMenuScreen .tools-grid {
+    layout: grid;
+    grid-size: 3;
+    grid-columns: 1fr 1fr 1fr;
+    grid-rows: auto;
+    grid-gutter: 1;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 1;
+}
+
+ToolsMenuScreen .tool-card {
+    width: 100%;
+    height: auto;
+    min-height: 5;
+    padding: 0 1;
+    margin: 0;
+    border: round $border-color-light;
+    background: $surface;
+}
+
+ToolsMenuScreen .tool-card:hover,
+ToolsMenuScreen .tool-card.hover {
+    background: $primary 10%;
+    border: round $primary;
+}
+
+ToolsMenuScreen .tool-card.selected {
+    background: $primary 15%;
+    border: heavy $accent;
+}
+
+ToolsMenuScreen .tool-card.unavailable {
+    opacity: 0.6;
+}
+
+ToolsMenuScreen .tool-card.unavailable:hover,
+ToolsMenuScreen .tool-card.unavailable.hover {
+    background: $error 10%;
+    border: round $error;
+}
+
+ToolsMenuScreen .tool-icon-large {
+    width: 2;
+    height: 1;
+    text-align: center;
+    content-align: center middle;
+    margin-right: 0;
+    color: $primary;
+    text-style: bold;
+}
+
+ToolsMenuScreen .tool-card.selected .tool-icon-large {
+    color: $accent;
+}
+
+ToolsMenuScreen .tool-card-name {
+    color: $text;
+    text-style: bold;
+    margin-bottom: 0;
+    margin-top: 0;
+    width: 100%;
+    height: 1;
+}
+
+ToolsMenuScreen .tool-card.selected .tool-card-name {
+    color: $accent;
+}
+
+ToolsMenuScreen .tool-card-description {
+    color: $foreground-muted;
+    text-style: dim;
+    margin-bottom: 0;
+    margin-top: 0;
+    width: 100%;
+    height: 1;
+    text-align: left;
+}
+
+ToolsMenuScreen .tool-card-footer {
+    width: 100%;
+    height: 1;
+    margin-top: 0;
+    align: right middle;
+}
+
+ToolsMenuScreen .tool-status-badge {
+    padding: 0;
+    border: none;
+    text-style: bold;
+    width: auto;
+}
+
+ToolsMenuScreen .tool-status-badge.available {
+    color: $success;
+}
+
+ToolsMenuScreen .tool-status-badge.unavailable {
+    color: $error;
+}
+
+ToolsMenuScreen .action-hint {
+    text-align: center;
+    color: $foreground-muted;
+    margin-top: 0;
+    padding: 0 1;
+    height: 1;
+}
+
+ToolsMenuScreen .action-hint-text {
+    width: auto;
+    height: 1;
+}
+
+ToolsMenuScreen .action-key {
+    width: auto;
+    height: 1;
+    color: $accent;
+    text-style: bold;
+    background: $surface;
+    padding: 0;
+    border: none;
+}
+
+ToolsMenuScreen .status-available {
+    color: $success;
+}
+
+ToolsMenuScreen .status-unavailable {
+    color: $error;
+}
+
+/* =============================================================================
+   DIFF CONFIRMATION SCREEN
+   ============================================================================= */
+
+DiffConfirmationScreen {
+    align: center middle;
+}
+
+DiffConfirmationScreen #diff-dialog {
+    width: 90%;
+    height: 85%;
+    background: $surface;
+    border: heavy $primary;
+    padding: 1;
+}
+
+DiffConfirmationScreen #diff-header {
+    height: 3;
+    border-bottom: solid $border-color-light;
+    content-align: center middle;
+    background: $surface;
+    padding: 0 1;
+}
+
+DiffConfirmationScreen #diff-header Label {
+    width: 100%;
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+}
+
+DiffConfirmationScreen #diff-stats {
+    height: 2;
+    padding: 0 1;
+    background: $background-secondary;
+}
+
+DiffConfirmationScreen .stat-added {
+    color: $success;
+    text-style: bold;
+}
+
+DiffConfirmationScreen .stat-removed {
+    color: $error;
+    text-style: bold;
+}
+
+DiffConfirmationScreen #diff-display {
+    height: 1fr;
+    background: $surface;
+    border: round $border-color-light;
+    padding: 1;
+}
+
+DiffConfirmationScreen .diff-line {
+    margin-bottom: 0;
+}
+
+DiffConfirmationScreen .line-added {
+    color: #1B5E20;
+    background: #E8F5E9;
+}
+
+DiffConfirmationScreen .line-removed {
+    color: #B71C1C;
+    background: #FFEBEE;
+}
+
+DiffConfirmationScreen .line-header {
+    color: $primary;
+    background: #E3F2FD;
+    text-style: bold;
+}
+
+DiffConfirmationScreen .line-context {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+DiffConfirmationScreen #button-bar {
+    height: 4;
+    align: center middle;
+    padding: 1;
+    background: $surface;
+    border-top: solid $primary;
+}
+
+DiffConfirmationScreen #button-bar Button {
+    margin: 0 1;
+    min-width: 16;
+}
+
+DiffConfirmationScreen Button.accept {
+    background: $success;
+    color: white;
+}
+
+DiffConfirmationScreen Button.reject {
+    background: $error;
+    color: white;
+}
+
+DiffConfirmationScreen Button.edit {
+    background: $primary;
+    color: white;
+}
+
+DiffConfirmationScreen Button.accept-all {
+    background: $warning;
+    color: white;
+}
+
+/* =============================================================================
+   HISTORY APP & SCREEN
+   ============================================================================= */
+
+HistoryApp Screen, HistoryScreen, HistoryBrowserPanel {
+    background: $background;
+}
+
+HistoryApp #search-container, HistoryScreen #search-container, HistoryBrowserPanel #search-container {
+    height: 4;
+    padding: 1;
+    background: $surface;
+}
+
+HistoryApp #search-input, HistoryScreen #search-input, HistoryBrowserPanel #search-input {
+    width: 100%;
+}
+
+HistoryApp #content-container, HistoryScreen #content-container, HistoryBrowserPanel #content-container {
+    height: 1fr;
+}
+
+HistoryApp #session-table, HistoryScreen #session-table, HistoryBrowserPanel #session-table {
+    height: 2fr;
+}
+
+HistoryOption .history-timestamp {
+    color: $primary;
+    text-style: bold;
+}
+
+HistoryOption .history-result {
+    color: $success;
+    text-style: bold;
+}
+
+HistoryOption .history-result-error {
+    color: $error;
+    text-style: bold;
+}
+
+HistoryOption .history-query {
+    color: $foreground;
+    margin-top: 1;
+}
+
+HistoryOption .history-continuation {
+    color: $foreground-muted;
+    text-style: dim;
+    margin-top: 1;
+}
+
+HistoryApp #detail-panel, HistoryScreen #detail-panel, HistoryBrowserPanel #detail-panel {
+    height: 1fr;
+    border: solid $border-color-light;
+    padding: 1;
+    background: $surface;
+}
+
+HistoryApp #detail-panel .detail-path {
+    color: $primary;
+    text-style: bold;
+}
+
+HistoryApp #detail-panel .detail-timestamp {
+    color: $warning;
+}
+
+HistoryApp #detail-panel .detail-cwd {
+    color: $success;
+}
+
+HistoryApp #detail-panel .detail-count {
+    color: $foreground;
+}
+
+HistoryApp #detail-panel .detail-label {
+    color: $primary;
+    text-style: bold;
+}
+
+HistoryApp #detail-panel .detail-content {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+HistoryApp #detail-panel .detail-separator {
+    height: 1;
+}
+
+HistoryApp #filter-status, HistoryScreen #filter-status, HistoryBrowserPanel #filter-status {
+    height: 2;
+    padding: 0 1;
+    background: $background-secondary;
+}
+
+HistoryApp .highlight {
+    background: $primary 20%;
+}
+
+HistoryApp DataTable > .datatable--header {
+    background: $background-secondary;
+    color: $foreground;
+}
+
+HistoryApp DataTable > .datatable--cursor {
+    background: $primary 20%;
+}
+
+/* =============================================================================
+   LLM SETTINGS PANEL
+   ============================================================================= */
+
+LLMSettingsPanel {
+    width: 100%;
+    height: 100%;
+    padding: 1;
+}
+
+LLMSettingsPanel .settings-header {
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+    padding: 1;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+LLMSettingsPanel .settings-section {
+    margin: 1 0;
+    padding: 1;
+    border: round $border-color-light;
+    background: $surface;
+}
+
+LLMSettingsPanel .section-title {
+    color: $primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+LLMSettingsPanel .field-row {
+    height: auto;
+    margin: 1 0;
+}
+
+LLMSettingsPanel .field-label {
+    width: 20;
+    color: $foreground;
+}
+
+LLMSettingsPanel .field-help {
+    color: $foreground-muted;
+    text-style: italic;
+    margin-left: 2;
+}
+
+LLMSettingsPanel .button-row {
+    margin-top: 2;
+    align: center middle;
+}
+
+LLMSettingsPanel .save-button {
+    margin-right: 2;
+}
+
+/* =============================================================================
+   AUTOCOMPLETE INPUT
+   ============================================================================= */
+
+AutocompleteInput {
+    height: auto;
+}
+
+AutocompleteInput > Input {
+    width: 100%;
+}
+
+AutocompleteInput > .completion-list {
+    layer: overlay;
+    width: 100%;
+    max-height: 10;
+    background: $surface;
+    border: round $border-color;
+    padding: 0;
+}
+
+AutocompleteInput > .completion-list.-hidden {
+    display: none;
+}
+
+AutocompleteInput .completion-item {
+    padding: 0 1;
+}
+
+AutocompleteInput .completion-item:hover {
+    background: $primary 20%;
+}
+
+AutocompleteInput .completion-hint {
+    height: 1;
+    color: $foreground-muted;
+    padding: 0 1;
+    text-style: dim;
+}
+
+/* =============================================================================
+   MONITOR & LSP WIDGETS
+   ============================================================================= */
+
+MonitorViewer .monitor-title-text {
+    text-style: bold;
+    color: $primary;
+}
+
+MonitorViewer .monitor-status-text {
+    color: $foreground-muted;
+}
+
+MonitorViewer .monitor-status-text.status-connected {
+    color: $success;
+}
+
+MonitorViewer .monitor-status-text.status-checking {
+    color: $warning;
+}
+
+MonitorViewer .monitor-info-content {
+    padding: 1;
+}
+
+MonitorViewer .monitor-url {
+    color: $primary;
+    text-style: bold;
+}
+
+MonitorViewer .monitor-description {
+    color: $foreground;
+}
+
+MonitorViewer .monitor-hint {
+    color: $foreground-muted;
+}
+
+LSPManagerWidget .status-row {
+    width: 100%;
+    height: 2;
+    padding: 0 1;
+    color: $foreground-muted;
+}
+
+LSPManagerWidget .status-row.status-success {
+    color: $success;
+}
+
+LSPManagerWidget .status-row.status-error {
+    color: $error;
+}
+
+LSPManagerWidget DataTable .datatable--cell:first-child {
+    text-align: center;
+}
+
+/* =============================================================================
+   SHELL CONSOLE WIDGET
+   ============================================================================= */
+
+ShellConsoleWidget .console-status {
+    color: $foreground-muted;
+}
+
+ShellConsoleWidget .console-status.status-running {
+    color: $warning;
+}
+
+ShellConsoleWidget .console-status.status-ready {
+    color: $success;
+}
+
+ShellConsoleWidget .monitor-status {
+    color: $foreground-muted;
+}
+
+ShellConsoleWidget .monitor-status.stream-on {
+    color: $success;
+}
+
+ShellConsoleWidget .monitor-status.stream-streaming {
+    color: $success;
+}
+
+ShellConsoleWidget .monitor-status.stream-off {
+    color: $foreground-muted;
+}
+
+ShellConsoleWidget #console-title {
+    text-style: bold;
+    color: $primary;
+}
+
+ShellConsoleWidget #console-output.console-error-output {
+    color: $error;
+}
+
+/* =============================================================================
+   INTELLISENSE COMPLETION
+   ============================================================================= */
+
+IntelliSenseCompletionWidget .completion-detail {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+IntelliSenseCompletionWidget .completion-kind {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+/* =============================================================================
+   FILE MANAGER SCREEN
+   ============================================================================= */
+
+FileManagerScreen .quick-action-item {
+    color: $foreground;
+}
+
+FileManagerScreen .quick-action-item .shortcut {
+    color: $primary;
+    text-style: bold;
+}
+
+/* =============================================================================
+   BUILT-IN FOOTER
+   ============================================================================= */
+
+Footer {
+    background: $background-secondary;
+    color: $foreground;
+}
+
+FooterKey {
+    text-style: none;
+    background: $background-secondary;
+    color: $foreground;
+}
+
+FooterKey > .footer-key--key {
+    color: $primary;
+    background: $background-secondary;
+    text-style: bold;
+}
+
+FooterKey > .footer-key--description {
+    padding: 0 1 0 0;
+    color: $foreground-muted;
+    background: $background-secondary;
+}
+
+FooterKey:hover {
+    background: $boost;
+}
+
+FooterKey:hover > .footer-key--key {
+    background: $boost;
+}
+
+/* =============================================================================
+   UTILITY CLASSES
+   ============================================================================= */
+
+.-hidden {
+    display: none;
+}
+
+.panel-header {
+    text-align: center;
+    color: $primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+}
+
+/* =============================================================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================================================= */
+
+Screen.-compact #main_grid {
+    grid-columns: 30% 1fr 0;
+}
+
+Screen.-compact CodeAnalysisPanel,
+Screen.-compact EventStreamPanel {
+    display: none;
+}
+
+Screen.-minimal #main_grid {
+    grid-columns: 0 1fr 0;
+}
+
+Screen.-minimal AuraStatusSidebar {
+    display: none;
+}
+
+Screen.-compact ImaginationPanel {
+    grid-columns: 100% 0;
+}
+
+Screen.-compact ImaginationPanel > .imag-right-pane {
+    display: none;
+}
+
+Screen.-minimal ImaginationPanel {
+    grid-rows: auto 1fr 0;
+}
+
+Screen.-minimal ImaginationPanel > .imag-footer {
+    display: none;
+}
+
+/* =============================================================================
+   TEXT AREA
+   ============================================================================= */
+
+TextArea {
+    background: $surface;
+    border: round $border-color;
+}
+
+TextArea:focus {
+    border: round $primary;
+}
+
+TextArea > .text-area--cursor {
+    color: white;
+    background: $foreground;
+}
+
+/* =============================================================================
+   RICH LOG
+   ============================================================================= */
+
+RichLog {
+    background: $surface;
+    scrollbar-gutter: stable;
+}
+
+RichLog:focus {
+    border: round $primary;
+}
+
+/* =============================================================================
+   LOADING INDICATOR (Built-in)
+   ============================================================================= */
+
+LoadingIndicator {
+    background: $surface;
+    color: $primary;
+}
+
+/* =============================================================================
+   PLACEHOLDER
+   ============================================================================= */
+
+Placeholder {
+    background: $background-secondary;
+    color: $foreground-muted;
+    border: dashed $border-color-light;
+}
+
+/* =============================================================================
+   MARKDOWN - Clean Apple-style Typography
+   ============================================================================= */
+
+Markdown {
+    background: transparent;
+    padding: 0 1;
+}
+
+Markdown .code_inline {
+    background: $background-tertiary;
+    color: $error;
+}
+
+MarkdownFence {
+    background: $background-secondary;
+    border: round $border-color-light;
+    padding: 1;
+    margin: 1 0;
+}
+
+MarkdownH1 {
+    color: $foreground;
+    text-style: bold;
+    border-bottom: solid $border-color-light;
+    padding-bottom: 1;
+    margin: 1 0;
+}
+
+MarkdownH2 {
+    color: $foreground;
+    text-style: bold;
+    margin: 1 0;
+}
+
+MarkdownH3 {
+    color: $foreground-secondary;
+    text-style: bold;
+    margin: 1 0;
+}
+
+MarkdownBlockQuote {
+    border-left: wide $primary;
+    padding-left: 1;
+    color: $foreground-muted;
+    background: $background-secondary;
+}
+
+MarkdownBulletList, MarkdownOrderedList {
+    margin: 0 0 0 2;
+}
+
+/* =============================================================================
+   WORKFLOW MONITOR
+   ============================================================================= */
+
+WorkflowMonitor {
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 35% 1fr;
+}
+
+WorkflowMonitor .workflow-list-pane {
+    height: 100%;
+    border-right: solid $border-color-light;
+    padding: 1;
+}
+
+WorkflowMonitor .workflow-detail-pane {
+    height: 100%;
+    padding: 1;
+}
+
+WorkflowMonitor .pane-header {
+    color: $primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+WorkflowMonitor .workflow-table {
+    height: 40%;
+}
+
+WorkflowMonitor .step-tree {
+    height: 50%;
+    border-top: solid $border-color-light;
+    margin-top: 1;
+    padding-top: 1;
+}
+
+WorkflowMonitor .detail-header {
+    height: auto;
+    padding: 1;
+    background: $surface;
+    border: round $border-color-light;
+    margin-bottom: 1;
+}
+
+WorkflowMonitor .progress-section {
+    height: 3;
+    margin-bottom: 1;
+}
+
+WorkflowMonitor .output-log {
+    height: 1fr;
+    background: $background-secondary;
+    border: round $border-color-light;
+    padding: 1;
+}
+
+WorkflowMonitor .log-entry {
+    margin-bottom: 1;
+}
+
+WorkflowMonitor .log-start {
+    color: $primary;
+    text-style: bold;
+}
+
+WorkflowMonitor .log-success {
+    color: $success;
+}
+
+WorkflowMonitor .log-error {
+    color: $error;
+    text-style: bold;
+}
+
+WorkflowMonitor .log-warning {
+    color: $warning;
+}
+
+WorkflowMonitor .log-info {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+WorkflowMonitor .action-bar {
+    height: 3;
+    margin-top: 1;
+    align: center middle;
+}
+
+WorkflowMonitor .sparkline-container {
+    height: 3;
+    margin: 1 0;
+}
+
+/* =============================================================================
+   AUTocomplete INPUT
+   ============================================================================= */
+
+AutocompleteInput {
+    height: auto;
+}
+
+AutocompleteInput > Input {
+    width: 100%;
+}
+
+AutocompleteInput > .completion-list {
+    layer: overlay;
+    width: 100%;
+    max-height: 10;
+    background: $surface;
+    border: round $border-color;
+    padding: 0;
+}
+
+AutocompleteInput > .completion-list.-hidden {
+    display: none;
+}
+
+.completion-item {
+    padding: 0 1;
+}
+
+.completion-item:hover {
+    background: $primary 20%;
+}
+
+.completion-hint {
+    height: 1;
+    color: $foreground-muted;
+    padding: 0 1;
+}
+
+/* =============================================================================
+   MONITOR WIDGET
+   ============================================================================= */
+
+MonitorHeader {
+    width: 100%;
+    height: 3;
+    background: $surface;
+    padding: 0 1;
+}
+
+MonitorHeader .nav-btn {
+    width: 3;
+    min-width: 3;
+    margin: 0;
+    padding: 0;
+}
+
+MonitorHeader .url-input {
+    width: 1fr;
+    margin: 0 1;
+}
+
+MonitorHeader .status-icon {
+    width: 3;
+    content-align: center middle;
+}
+
+MonitorContent {
+    width: 100%;
+    height: 1fr;
+    background: $background;
+    padding: 1;
+}
+
+MonitorContent .content-display {
+    width: 100%;
+}
+
+MonitorFooter {
+    width: 100%;
+    height: 1;
+    background: $primary;
+    color: white;
+    padding: 0 1;
+}
+
+MonitorFooter .status-text {
+    text-style: bold;
+}
+
+MonitorFooter .separator {
+    color: white 60%;
+    margin: 0 1;
+}
+
+MonitorFooter .key {
+    color: white;
+    text-style: bold;
+}
+
+MonitorFooter .action {
+    color: white 80%;
+    text-style: dim;
+}
+
+MonitorWidget {
+    width: 100%;
+    height: 100%;
+    background: $background;
+    border: round $primary;
+}
+
+MonitorWidget > Vertical {
+    width: 100%;
+    height: 100%;
+}
+
+MonitorCompact {
+    width: 100%;
+    height: auto;
+    min-height: 5;
+    padding: 1;
+    border: round $primary;
+}
+
+MonitorCompact .monitor-header {
+    color: $primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+
+MonitorCompact .monitor-status {
+    margin: 0 1;
+}
+
+MonitorCompact .status-idle {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+MonitorCompact .status-loading {
+    color: $warning;
+    text-style: bold;
+}
+
+MonitorCompact .status-ok {
+    color: $success;
+}
+
+MonitorCompact .status-error {
+    color: $error;
+    text-style: bold;
+}
+
+MonitorCompact .monitor-url {
+    color: $foreground-muted;
+    text-style: dim;
+    margin-top: 1;
+}
+
+MonitorCompact .monitor-preview {
+    color: $foreground-muted;
+    text-style: italic dim;
+    margin-top: 1;
+}
+
+/* =============================================================================
+   MONITOR SCREEN COMPONENTS
+   ============================================================================= */
+
+TabBar {
+    width: 100%;
+    height: 1;
+    background: $surface;
+    padding: 0;
+}
+
+TabBar Button {
+    min-width: auto;
+    height: 1;
+    margin-right: 0;
+    padding: 0 1;
+}
+
+TabBar .active-tab {
+    background: $primary;
+    color: white;
+}
+
+TabBar .new-tab-btn {
+    min-width: 3;
+    width: 3;
+}
+
+AddressBar {
+    width: 100%;
+    height: 1;
+    background: $surface;
+    padding: 0;
+}
+
+AddressBar .nav-btn {
+    width: 3;
+    min-width: 3;
+    height: 1;
+    margin: 0;
+    padding: 0;
+}
+
+AddressBar .url-input {
+    width: 1fr;
+    margin: 0 1;
+}
+
+AddressBar .status {
+    width: auto;
+    padding: 0 1;
+}
+
+ContentViewer {
+    width: 100%;
+    height: 1fr;
+    background: $background;
+    padding: 1 2;
+}
+
+ContentViewer .content-area {
+    width: 100%;
+}
+
+ContentViewer .error-message {
+    color: $error;
+    padding: 2;
+    text-align: center;
+    border: round $error;
+    background: #FFEBEE;
+}
+
+ContentViewer .loading-message {
+    color: $primary;
+    padding: 2;
+    text-align: center;
+    text-style: bold;
+}
+
+ContentViewer .empty-message {
+    color: $foreground-muted;
+    padding: 2;
+    text-align: center;
+    text-style: dim;
+}
+
+MonitorScreen {
+    background: $background;
+}
+
+MonitorScreen > Vertical {
+    width: 100%;
+    height: 100%;
+}
+
+MonitorScreen #browser-container > Vertical {
+    width: 100%;
+    height: 100%;
+}
+
+.unavailable-message {
+    width: 100%;
+    height: 100%;
+    content-align: center middle;
+    background: $background;
+}
+
+.unavailable-message Static {
+    text-align: center;
+}
+
+/* =============================================================================
+   COMPONENTS - LOADING
+   ============================================================================= */
+
+LoadingSpinner {
+    width: auto;
+    height: 1;
+}
+
+LoadingSpinner > Horizontal {
+    width: auto;
+    height: 100%;
+}
+
+LoadingSpinner .spinner-frame {
+    width: 2;
+    color: $primary;
+}
+
+LoadingSpinner .spinner-message {
+    padding-left: 1;
+    color: $foreground-muted;
+}
+
+ProgressIndicator {
+    width: 100%;
+    height: auto;
+}
+
+ProgressIndicator .progress-label {
+    padding-bottom: 1;
+}
+
+ProgressIndicator ProgressBar {
+    width: 100%;
+}
+
+ProgressIndicator .progress-status {
+    padding-top: 1;
+    color: $foreground-muted;
+    text-align: center;
+}
+
+PulseAnimation {
+    width: auto;
+    height: 1;
+}
+
+PulseAnimation .pulse-text {
+    color: $primary;
+}
+
+PulseAnimation .pulse-dim {
+    color: $foreground-muted;
+}
+
+/* =============================================================================
+   COMPONENTS - STATUS
+   ============================================================================= */
+
+StatusBar {
+    width: 100%;
+    height: 1;
+    background: $surface;
+    color: $foreground-muted;
+}
+
+StatusBar > Horizontal {
+    width: 100%;
+    height: 100%;
+}
+
+StatusBar .status-item {
+    padding: 0 1;
+}
+
+StatusBar .status-item-left {
+    content-align: left middle;
+}
+
+StatusBar .status-item-right {
+    content-align: right middle;
+}
+
+StatusBar .status-spacer {
+    width: 1fr;
+}
+
+MiniStatusBar {
+    width: 100%;
+    height: 1;
+    background: $surface;
+    color: $foreground-muted;
+    padding: 0 1;
+}
+
+MiniStatusBar .mini-status-icon {
+    width: auto;
+}
+
+MiniStatusBar .mini-status-text {
+    width: 1fr;
+}
+
+MiniStatusBar .mini-status-extra {
+    width: auto;
+    color: $foreground-muted;
+}
+
+/* =============================================================================
+   COMPONENTS - PANELS
+   ============================================================================= */
+
+CollapsiblePanel {
+    width: 100%;
+    height: auto;
+    background: $surface;
+    border: solid $primary;
+}
+
+CollapsiblePanel .panel-header {
+    width: 100%;
+    height: 3;
+    background: $surface;
+    border-bottom: solid $primary;
+}
+
+CollapsiblePanel .panel-toggle {
+    width: 3;
+    min-width: 3;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+CollapsiblePanel .panel-title {
+    width: 1fr;
+    padding: 0 1;
+    text-style: bold;
+}
+
+CollapsiblePanel .panel-content {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+
+CollapsiblePanel .panel-content-collapsed {
+    display: none;
+}
+
+CollapsiblePanel .panel-collapsed .panel-header {
+    border-bottom: none;
+}
+
+SplitPanel {
+    width: 100%;
+    height: 100%;
+}
+
+SplitPanel > Horizontal,
+SplitPanel > Vertical {
+    width: 100%;
+    height: 100%;
+}
+
+SplitPanel .split-pane {
+    overflow: auto;
+}
+
+SplitPanel .split-pane-first {
+    width: 1fr;
+    height: 1fr;
+}
+
+SplitPanel .split-pane-second {
+    width: 2fr;
+    height: 2fr;
+}
+
+SplitPanel .split-divider {
+    background: $primary;
+}
+
+SplitPanel .split-divider-horizontal {
+    width: 1;
+    height: 100%;
+}
+
+SplitPanel .split-divider-vertical {
+    width: 100%;
+    height: 1;
+}
+
+SplitPanel .split-divider:hover {
+    background: $primary-light;
+}
+
+/* =============================================================================
+   COMPONENTS - NOTIFICATIONS
+   ============================================================================= */
+
+Toast {
+    width: 40;
+    height: auto;
+    background: $surface;
+    border: solid $primary;
+    padding: 1;
+    margin: 1;
+}
+
+Toast.toast-info {
+    border: solid $primary;
+}
+
+Toast.toast-success {
+    border: solid $success;
+}
+
+Toast.toast-warning {
+    border: solid $warning;
+}
+
+Toast.toast-error {
+    border: solid $error;
+}
+
+Toast .toast-header {
+    width: 100%;
+    height: 1;
+}
+
+Toast .toast-icon {
+    width: 3;
+}
+
+Toast .toast-title {
+    width: 1fr;
+    text-style: bold;
+}
+
+Toast .toast-close {
+    width: 3;
+    min-width: 3;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+Toast .toast-message {
+    padding-top: 1;
+}
+
+Toast .toast-action {
+    margin-top: 1;
+}
+
+NotificationCenter {
+    dock: right;
+    width: auto;
+    height: 100%;
+    layer: notification;
+}
+
+NotificationCenter > Vertical {
+    width: auto;
+    height: auto;
+    align: right top;
+    padding: 1;
+}
+
+/* =============================================================================
+   COMPONENTS - DATA DISPLAY
+   ============================================================================= */
+
+KeyValueTable {
+    width: 100%;
+    height: auto;
+}
+
+KeyValueTable DataTable {
+    width: 100%;
+    height: auto;
+}
+
+TreeView {
+    width: 100%;
+    height: 100%;
+}
+
+TreeView Tree {
+    width: 100%;
+    height: 100%;
+}
+
+/* =============================================================================
+   COMPONENTS - NAVIGATION
+   ============================================================================= */
+
+Breadcrumb {
+    width: 100%;
+    height: 1;
+    background: $surface;
+}
+
+Breadcrumb > Horizontal {
+    width: 100%;
+    height: 100%;
+}
+
+Breadcrumb .breadcrumb-item {
+    padding: 0 1;
+    color: $primary;
+}
+
+Breadcrumb .breadcrumb-item:hover {
+    background: $primary 20%;
+    color: $foreground;
+}
+
+Breadcrumb .breadcrumb-separator {
+    padding: 0;
+    color: $foreground-muted;
+}
+
+Breadcrumb .breadcrumb-current {
+    color: $foreground;
+    text-style: bold;
+}
+
+TabBar {
+    width: 100%;
+    height: 1;
+    background: $surface;
+}
+
+TabBar > Horizontal {
+    width: 100%;
+    height: 100%;
+}
+
+TabBar .tab {
+    padding: 0 1;
+    height: 1;
+    background: $surface;
+    border: none;
+}
+
+TabBar .tab:hover {
+    background: $boost;
+}
+
+TabBar .tab-active {
+    background: $primary;
+    color: white;
+    text-style: bold;
+    border: none;
+}
+
+TabBar .tab-close {
+    width: 2;
+    min-width: 2;
+    height: 1;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+TabBar .tab-close:hover {
+    color: $error;
+}
+
+TabBar .tab-spacer {
+    width: 1fr;
+}
+
+/* =============================================================================
+   COMPONENTS - DIALOGS
+   ============================================================================= */
+
+BaseDialog {
+    align: center middle;
+}
+
+BaseDialog > Container {
+    width: auto;
+    max-width: 80%;
+    height: auto;
+    max-height: 80%;
+    background: $surface;
+    border: round $border-color-light;
+    padding: 1 2;
+}
+
+BaseDialog .dialog-title {
+    text-style: bold;
+    color: $foreground;
+    padding-bottom: 1;
+    border-bottom: solid $border-color-light;
+    margin-bottom: 1;
+}
+
+BaseDialog .dialog-content {
+    padding: 1 0;
+}
+
+BaseDialog .dialog-buttons {
+    padding-top: 1;
+    border-top: solid $border-color-light;
+    margin-top: 1;
+    align: center middle;
+}
+
+BaseDialog Button {
+    margin: 0 1;
+}
+
+InputDialog Input {
+    width: 100%;
+    margin: 1 0;
+}
+
+SelectDialog Select {
+    width: 100%;
+    margin: 1 0;
+}
+
+ProgressDialog ProgressBar {
+    width: 100%;
+    margin: 1 0;
+}
+
+ConfirmDialog {
+    width: 50;
+}
+
+ConfirmDialog > .dialog-content > .confirm-message {
+    padding: 1 0;
+}
+
+InputDialog {
+    width: 50;
+}
+
+InputDialog > .dialog-content > .input-prompt {
+    padding-bottom: 1;
+}
+
+InputDialog > .dialog-content > Input {
+    width: 100%;
+}
+
+InputDialog > .dialog-content > .input-error {
+    color: $error;
+    padding-top: 1;
+}
+
+SelectDialog {
+    width: 60;
+    height: auto;
+    max-height: 70%;
+}
+
+SelectDialog > .dialog-content > .select-prompt {
+    padding-bottom: 1;
+}
+
+SelectDialog > .dialog-content > OptionList {
+    height: auto;
+    max-height: 15;
+    background: $background-secondary;
+    border: round $border-color-light;
+}
+
+FatalErrorDialog {
+    width: 70;
+    height: auto;
+    max-height: 80%;
+    border: round $error;
+}
+
+FatalErrorDialog > .dialog-title-bar {
+    background: #FFEBEE;
+}
+
+FatalErrorDialog > .dialog-title-bar > .dialog-title {
+    color: $error;
+}
+
+FatalErrorDialog > .dialog-content > .error-icon {
+    text-align: center;
+    padding: 1;
+}
+
+FatalErrorDialog > .dialog-content > .error-type {
+    color: $error;
+    text-style: bold;
+    padding-bottom: 1;
+}
+
+FatalErrorDialog > .dialog-content > .error-message {
+    padding-bottom: 1;
+}
+
+FatalErrorDialog > .dialog-content > .error-traceback {
+    background: $background-secondary;
+    border: round $border-color-light;
+    padding: 1;
+    max-height: 10;
+    overflow-y: scroll;
+}
+
+FatalErrorDialog > .dialog-content > .error-traceback > Static {
+    color: $foreground-muted;
+}
+
+FatalErrorDialog > .dialog-content > .error-help {
+    padding-top: 1;
+    color: $foreground-muted;
+}
+
+ErrorNotification {
+    width: 100%;
+    height: auto;
+    background: #FFEBEE;
+    border: round $error;
+    padding: 1;
+    display: none;
+}
+
+ErrorNotification.-visible {
+    display: block;
+}
+
+ErrorNotification > .error-content {
+    color: $error;
+}
+
+ErrorNotification > .error-dismiss {
+    dock: right;
+    width: auto;
+    color: $foreground-muted;
+}
+
+/* =============================================================================
+   FILE TREE PANEL & ISSUES PANEL
+   ============================================================================= */
+
+FileTreePanel {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+.tree-header {
+    color: $primary;
+    text-style: bold;
+    padding: 1;
+    border-bottom: solid $border-color-light;
+}
+
+.tree-filter {
+    padding: 0 1;
+    margin-bottom: 1;
+}
+
+.file-tree {
+    height: 1fr;
+    padding: 0 1;
+}
+
+IssuesPanel {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+.issues-header {
+    height: 3;
+    padding: 1;
+    border-bottom: solid $border-color-light;
+}
+
+.issues-summary {
+    color: $foreground-muted;
+}
+
+.issues-table {
+    height: 1fr;
+}
+
+/* Token Usage keeps the shared modal frame but avoids an inner second frame. */
+TokenUsageScreen #token_usage_modal {
+    width: 68;
+}
+
+TokenUsageScreen #token_usage_dialog {
+    width: 100%;
+    height: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+
+/* =============================================================================
+   END OF MACOS_LIGHT.TCSS
+   ============================================================================= */

@@ -1,0 +1,172 @@
+# =============================================================================
+# Mono Theme for Aura CLI
+# =============================================================================
+#
+# A strict monochrome theme for purists and accessibility.
+# Uses only grayscale colors for a classic terminal feel.
+#
+# Design Philosophy:
+# - Pure grayscale palette (no colors)
+# - Maximum compatibility with all terminals
+# - Reduced visual noise
+# - Accessibility-friendly (no color dependency)
+#
+# =============================================================================
+
+[metadata]
+name = "mono"
+version = "2.0.0"
+author = "Aura CLI Team"
+description = "Strict monochrome theme for purists and accessibility"
+
+[colors]
+# =============================================================================
+# Primary Colors - Grayscale Only
+# =============================================================================
+primary = "white"           # Primary elements
+secondary = "grey70"        # Secondary elements
+accent = "grey85"           # Accents
+
+# =============================================================================
+# Semantic/Functional Colors - Grayscale Mapping
+# =============================================================================
+# All semantic colors mapped to grayscale for accessibility
+success = "white"           # Success (Bright)
+warning = "grey85"          # Warning (Light gray)
+error = "grey70"            # Error (Medium gray)
+info = "grey85"             # Info (Light gray)
+
+# =============================================================================
+# UI Surface Colors
+# =============================================================================
+background = "#000000"      # Absolute Black
+surface = "#0a0a0a"         # Deepest Grey
+muted = "grey42"            # Muted elements
+highlight = "white"         # Highlights
+
+# =============================================================================
+# Extended Palette
+# =============================================================================
+foreground = "grey70"       # Main text
+foreground_muted = "grey42" # Secondary text
+foreground_bright = "white" # Emphasized text
+
+[styles]
+# =============================================================================
+# Typography
+# =============================================================================
+title = "bold white"                 # Primary headings
+subtitle = "bold grey70"             # Secondary headings
+body = "grey70"                      # Body text
+label = "grey42"                     # Labels
+caption = "dim grey30"               # Captions
+code = "grey85"                      # Inline code
+
+# =============================================================================
+# Status Indicators
+# =============================================================================
+status_idle = "grey50"               # Idle
+status_thinking = "grey70"           # Processing
+status_working = "white"             # Working
+status_success = "white"             # Success
+status_error = "grey50"              # Error
+status_warning = "grey70"            # Warning
+
+# =============================================================================
+# Component Specific
+# =============================================================================
+loading = "grey42"
+spinner = "white"
+progress = "grey50"
+
+# =============================================================================
+# Agent Personas
+# =============================================================================
+agent_agi = "bold white"             # The Brain
+agent_ops = "bold grey85"            # The Hand
+agent_chat = "bold grey70"           # The Voice
+
+# =============================================================================
+# Interactive Elements
+# =============================================================================
+link = "white"
+link_hover = "bold white"
+selected = "bold white"
+focused = "white"
+disabled = "grey30"
+
+[borders]
+# =============================================================================
+# Border Colors - Grayscale
+# =============================================================================
+border_primary = "grey42"
+border_secondary = "grey30"
+border_success = "grey50"
+border_warning = "grey46"
+border_error = "grey38"
+border_muted = "grey23"
+border_accent = "grey50"
+border_focus = "white"
+
+[layout]
+panel_padding = [1, 2]
+chat_padding = [0, 1]
+chat_margin = [0, 0, 1, 0]
+chat_width_ratio = 0.85
+lcd_padding = [0, 0]
+dialog_padding = [1, 2]
+compact_padding = [0, 1]
+
+[appearance]
+panel_border_type = "heavy"
+syntax_theme = "bw"                  # Black and white syntax
+
+[icons]
+# Using simple ASCII-compatible icons for maximum compatibility
+status_success = "[OK]"
+status_error = "[!!]"
+status_warning = "[!]"
+status_info = "[i]"
+status_pending = "[ ]"
+status_active = "[*]"
+
+file_default = "[-]"
+file_folder = "[+]"
+
+arrow_right = ">"
+arrow_down = "v"
+
+spinner_frames = ["|", "/", "-", "\\"]
+
+[syntax]
+# All syntax in grayscale
+keyword = "white"
+string = "grey85"
+number = "grey70"
+comment = "grey42"
+function = "white"
+variable = "grey70"
+type = "grey85"
+operator = "white"
+constant = "grey85"
+
+[markdown]
+# =============================================================================
+# Markdown Styling - Mono Theme (Grayscale)
+# =============================================================================
+heading_1 = "bold white"              # H1 - White, bold
+heading_2 = "bold grey85"             # H2 - Light grey, bold
+heading_3 = "bold white"               # H3 - White, bold
+heading_4 = "grey85"                   # H4 - Light grey
+heading_5 = "dim grey85"              # H5 - Light grey, dim
+heading_6 = "dim grey85"              # H6 - Light grey, dim
+code = "bold grey85 on #0a0a0a"       # Inline code - Light grey on surface
+code_block = "bold grey85"            # Code blocks - Light grey
+link = "underline grey70"              # Links - Medium grey, underlined
+strong = "bold white"                 # Bold text - White
+emphasis = "italic grey85"            # Italic text - Light grey
+blockquote = "dim grey70"             # Blockquotes - Medium grey, dim
+list_bullet = "white"                 # Bullet points - White
+list_number = "white"                 # Numbered lists - White
+table_header = "bold white"           # Table headers - White
+table_border = "grey42"               # Table borders - Medium grey

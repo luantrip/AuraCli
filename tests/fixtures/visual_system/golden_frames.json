@@ -1,0 +1,311 @@
+{
+  "stream_resize": [
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:task"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "thinking",
+      "width": 160,
+      "height": 40,
+      "active_keys": [
+        "task:task"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "agi_task_update",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:task"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "agi_task_complete",
+      "width": 160,
+      "height": 40,
+      "active_keys": [],
+      "completed_keys": [
+        "task:task"
+      ],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "agi task complete · completed\nPronto"
+      ],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    }
+  ],
+  "failure": [
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:fail"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "agi_task_error",
+      "width": 160,
+      "height": 40,
+      "active_keys": [],
+      "completed_keys": [
+        "task:fail"
+      ],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "agi task error · falhou\nFalha real",
+        "Falha real"
+      ],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "error",
+      "loading_visible": false
+    }
+  ],
+  "cancel": [
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:cancel"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "task_cancelled",
+      "width": 160,
+      "height": 40,
+      "active_keys": [],
+      "completed_keys": [
+        "task:cancel"
+      ],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "Cancelado · cancelled\nCancelado"
+      ],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    }
+  ],
+  "resume": [
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:resume"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "task_interrupted",
+      "width": 160,
+      "height": 40,
+      "active_keys": [],
+      "completed_keys": [
+        "task:resume"
+      ],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "Pausado · interrupted\nPausado"
+      ],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:resume"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "Pausado · interrupted\nPausado"
+      ],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "agi_task_complete",
+      "width": 160,
+      "height": 40,
+      "active_keys": [],
+      "completed_keys": [
+        "task:resume"
+      ],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "Pausado · interrupted\nPausado",
+        "agi task complete · completed\nRetomado"
+      ],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    }
+  ],
+  "child_approval": [
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:child"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "approval_requested",
+      "width": 160,
+      "height": 40,
+      "active_keys": [
+        "task:child",
+        "task:child/execution:a1"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [
+        "task:child/execution:a1"
+      ],
+      "announcements": [],
+      "conversation": [],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "waiting_input",
+      "loading_visible": false
+    },
+    {
+      "event_type": "approval_resolved",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:child"
+      ],
+      "completed_keys": [
+        "task:child/execution:a1"
+      ],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [
+        "Aprovado · completed"
+      ],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    }
+  ],
+  "background": [
+    {
+      "event_type": "agi_task_start",
+      "width": 80,
+      "height": 24,
+      "active_keys": [
+        "task:bg"
+      ],
+      "completed_keys": [],
+      "blocking_keys": [],
+      "announcements": [],
+      "conversation": [],
+      "density": "comfortable",
+      "drawer_mode": "overlay",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    },
+    {
+      "event_type": "agi_task_complete",
+      "width": 160,
+      "height": 40,
+      "active_keys": [],
+      "completed_keys": [
+        "task:bg"
+      ],
+      "blocking_keys": [],
+      "announcements": [
+        "[bg] agi task complete · completed — Índice pronto · 4s"
+      ],
+      "conversation": [
+        "agi task complete · completed\nÍndice pronto"
+      ],
+      "density": "spacious",
+      "drawer_mode": "split",
+      "runtime_phase": "executing",
+      "loading_visible": true
+    }
+  ]
+}

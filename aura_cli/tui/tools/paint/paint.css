@@ -1,0 +1,558 @@
+Screen {
+    layers: window menu-popup;
+    overflow: hidden;
+}
+
+/* :not() support would make this easier */
+Header HeaderIcon {
+    /* Show brush handles (middle row of 3-high icon) when header is collapsed */
+    /* offset: 0 -1; causes it to be invisible (bug?) */
+    margin-top: -1;
+    /* cut off the "~" shadow of the page curl, since the page curl won't be visible */
+    width: 5;
+}
+Header.-tall HeaderIcon {
+    /* offset: 0 0; */
+    margin-top: 0;
+    width: auto;
+}
+
+#paint {
+    layout: vertical;
+}
+
+#main_horizontal_split {
+    layout: horizontal;
+}
+
+/* NEW: Layer panel styling */
+#layer_panel {
+    display: block;
+}
+
+#editing_area {
+    width: 1fr;
+    background: $background; /* Use theme background */
+    overflow: auto;
+}
+#editing_area:dark {
+    background: $surface-lighten-2; /* Keep existing derivation for dark mode if $background is light */
+}
+.view_bitmap #editing_area {
+    background: $secondary; /* Use secondary accent color */
+    align: center middle;
+}
+
+
+#canvas {
+    width: auto;
+    height: auto;
+    /* Note: styles.margin is used in cursor position calculations (could be changed to use difference between absolute regions of parent and child or something...) */
+    margin: 1 2;
+}
+
+.view_bitmap #tools_box,
+.view_bitmap #colors_box,
+.view_bitmap #status_bar,
+.view_bitmap MenuBar,
+.view_bitmap Header {
+    display: none !important; /* doesn't work because it's an inline style; works differently from browser CSS */
+    width: 0 !important;
+    height: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#tools_box {
+    layout: grid;
+    grid-size: 2;
+    grid-gutter: 0 1;
+    grid-columns: 6;
+    grid-rows: 3;
+    padding: 0 1;
+    width: 15;
+    height: 100%;
+    /* can't have a border without taking up a whole cell, and it's more important to show as much of the tools as possible */
+    /* border-bottom: tall $panel-darken-2; */
+    background: $panel-darken-1;
+    overflow: hidden;
+}
+
+#tools_box Button {
+    text-style: none !important;
+}
+
+#tools_box Button.selected {
+    background: $panel-lighten-3;
+    border-bottom: tall $panel-lighten-2;
+    border-top: tall $panel-darken-2;
+}
+
+Tooltip {
+    background: $background;
+    color: $text;
+    padding: 0;
+}
+
+#colors_box {
+    height: 6;
+    layout: grid;
+    grid-size: 2;
+    grid-columns: 10 1fr;
+    border-top: tall $panel-lighten-2;
+    background: $panel-darken-1;
+}
+
+.color_well {
+    border-top: tall $panel-darken-2;
+    border-bottom: tall $panel-lighten-3;
+}
+
+#palette_selection_box {
+    max-height: 5;
+    overflow: hidden;
+}
+
+#selected_color_char_input {
+    width: 9;
+    height: 4;
+    padding-left: 3;
+    margin-left: 1;
+}
+
+#available_colors {
+    layout: grid;
+    grid-size: 14;
+    grid-gutter: 0 1;
+    grid-columns: 4;
+    grid-rows: 2;
+    height: auto;
+    width: auto;
+    overflow: hidden;
+}
+
+Menu {
+    background: $panel;
+}
+Menu.menu_popup {
+    layout: vertical;
+    dock: top;
+    layer: menu-popup;
+    width: auto;
+    height: auto;
+    min-width: 30;
+    overflow-y: auto;
+    /* width: auto doesn't account for the vertical scrollbar... */
+    /* which means it would make a horizontal scrollbar or cut off a character on the right, */
+    /* but I'm accounting for this with padding-right inside the menu item */
+    overflow-x: hidden;
+}
+MenuBar {
+    layout: horizontal;
+    width: 100%;
+    height: auto;
+    dock: top;
+    /* border-bottom: hkey $panel-darken-2; */
+    overflow: hidden;
+}
+MenuItem {
+    width: auto;
+    height: auto;
+    text-style: none;
+}
+MenuItem.grayed {
+    color: #777;
+}
+Separator {
+    width: 100%;
+    height: 1;
+}
+Menu Button {
+    border: none;
+    height: 3;
+}
+MenuBar Button {
+    width: auto;
+    min-width: 0;
+}
+Menu.menu_popup Button {
+    min-width: 1fr;
+    text-align: left;
+    /* This compensates for the scrollbar, so text isn't cut off (though it also applies when there's no scrollbar) */
+    padding-right: 1;
+}
+
+Window {
+    dock: top;
+    layer: window;
+    background: $surface-darken-1; /* match to DialogWindow .window_content */
+    border: outer $panel-darken-2;
+    layout: vertical;
+    align: center middle;
+    width: auto;
+    height: auto;
+}
+WindowTitleBar {
+    layout: horizontal;
+    width: 100%;
+    height: auto;
+    background: $accent;
+    color: auto;
+    text-style: bold;
+}
+WindowTitleBar Button {
+    max-width: 6;
+    height: 3;
+}
+.window_title {
+    width: 1fr;
+    height: 100%;
+    content-align: left middle;
+    padding-left: 1;
+}
+WindowTitleBar Button {
+    background: $panel;
+    border: inner $panel-darken-1;
+    border-top: inner $panel-lighten-1;
+    border-left: inner $panel-lighten-1;
+}
+WindowTitleBar Button:hover {
+    background: $panel-darken-1;
+    border: inner $panel-darken-3;
+    border-top: inner $panel-lighten-1;
+    border-left: inner $panel-lighten-1;
+}
+/* :active doesn't seem to be supported,
+and .-active doesn't apply until after click,
+at which point the window is closed, generally. */
+WindowTitleBar Button.-active {
+    border: inner $panel-lighten-1;
+    border-top: inner $panel-darken-3;
+    border-left: inner $panel-darken-3;
+}
+
+.window_content {
+    layout: vertical;
+    overflow: auto;
+    width: auto;
+    height: auto;
+    background: $background;
+}
+DialogWindow .window_content {
+    background: $surface-darken-1; /* match to Window */
+}
+
+FileDialogWindow .window_content {
+    padding: 2 4;
+    width: 80;
+    height: 30;
+}
+FileDialogWindow .window_content Input {
+    width: 1fr;
+    margin-bottom: 1;
+}
+FileDialogWindow .window_content Label {
+    height: 1fr;
+    content-align-vertical: middle;
+    min-width: 12;
+}
+FileDialogWindow .window_content DirectoryTree {
+    height: 15;
+    margin-bottom: 1;
+}
+FileDialogWindow .window_content Button {
+    width: auto;
+    height: auto;
+}
+
+CharacterSelectorDialogWindow DataTable {
+    width: auto;
+    /* textual 0.31.0 adds `max-height: 100%` to DataTable */
+    /* `unset` is not supported */
+    max-height: 10000;
+}
+CharacterSelectorDialogWindow .ok,
+CharacterSelectorDialogWindow .cancel {
+    margin: 1;
+}
+
+#about_paint_dialog .window_content {
+    padding: 2 4;
+    width: 50;
+    height: auto;
+}
+
+#help_dialog {
+    width: 80;
+    height: 30;
+}
+#help_dialog .window_content {
+    padding: 2 4;
+    height: 1fr;
+}
+#help_dialog .help_text_container {
+    width: 1fr;
+    height: 1fr;
+    overflow: auto;
+    margin-bottom: 2;
+}
+
+#zoom_dialog .window_content {
+    padding: 2 4;
+    width: 50;
+    /* width: auto; */
+    height: auto;
+}
+#zoom_dialog .window_content Vertical {
+    height: auto;
+}
+#zoom_dialog .window_content Horizontal {
+    height: auto;
+    margin-bottom: 1;
+}
+#zoom_dialog .window_content Horizontal Static {
+    height: auto;
+    width: 1fr;
+}
+RadioSet {
+    layout: grid;
+    width: 35;
+    grid-size: 3;
+    grid-gutter: 0 1;
+    grid-columns: 10;
+    grid-rows: 2;
+    padding: 1 1;
+    height: auto;
+    /* Why is border-title-color not recognized? */
+    /* https://textual.textualize.io/styles/border_title_color/ */
+    /* It's documented, maybe it was removed from the library? */
+    /* border-title-color: $text; */
+    /* Also this isn't accepting $text */
+    /* border: round $text; */
+    border: round $primary; /* Use primary color for borders */
+}
+RadioSet:dark {
+    border: round $primary; /* Use primary color for borders */
+}
+
+DialogWindow .buttons {
+    layout: horizontal;
+    width: auto;
+    height: auto;
+}
+DialogWindow .buttons Button {
+    width: auto;
+    margin: 1;
+}
+DialogWindow Input:light {
+    background: $background; /* Use theme background */
+    border: tall $panel-darken-3;
+    /* can't really do good inset styles because of how the corners work */
+    /* border-right: tall $panel-lighten-1; */
+    /* border-bottom: tall $panel-lighten-1; */
+}
+DialogWindow Input:focus:light {
+    border: tall $primary; /* Use primary color for focus border */
+}
+
+#attributes_dialog .window_content {
+    padding: 1 4;
+    width: 50;
+    height: auto;
+}
+#attributes_dialog .window_content Horizontal,
+#attributes_dialog .window_content Vertical {
+    height: auto;
+    width: auto;
+}
+#attributes_dialog .window_content Horizontal {
+    margin: 1;
+    margin-left: 4;
+}
+#attributes_dialog .window_content Horizontal Static {
+    width: 10;
+    height: 3; /* matching Input height; 1fr or auto didn't work */
+    /* TODO: what's different between this and the FileDialogWindow, where 1fr works? */
+    content-align-vertical: middle;
+}
+#attributes_dialog .window_content Input {
+    width: 20;
+}
+
+.fieldset {
+    width: auto;
+    height: auto;
+    border: round $primary; /* Use primary color for borders */
+}
+.fieldset:dark {
+    border: round $primary; /* Use primary color for borders */
+}
+
+#flip_rotate_dialog RadioSet {
+    layout: vertical;
+    border: none;
+}
+#flip_rotate_dialog RadioSet#angle {
+    padding-left: 4;
+}
+
+#stretch_skew_dialog .window_content Horizontal,
+#stretch_skew_dialog .window_content Vertical {
+    height: auto;
+    width: auto;
+}
+#stretch_skew_dialog .window_content Horizontal {
+    margin: 1;
+}
+#stretch_skew_dialog .window_content Horizontal Static {
+    height: 3;
+    content-align-vertical: middle;
+}
+#stretch_skew_dialog .window_content Input {
+    width: 10;
+}
+#stretch_skew_dialog .window_content .stretch_skew_icon {
+    width: auto;
+    margin-right: 3;
+}
+#stretch_skew_dialog .window_content .left-label {
+    width: 15;
+}
+#stretch_skew_dialog .window_content .right-label {
+    width: 10;
+}
+
+#stretch_skew_icons {
+    dock: left;
+    width: 5;
+    offset: 5 4;
+}
+
+EditColorsDialogWindow .window_content {
+    padding: 1;
+    padding-top: 0;
+    padding-bottom: 0;
+    /* width: 65; */
+    width: auto;
+    /* align-horizontal: center; */
+    height: auto;
+}
+EditColorsDialogWindow ColorGrid {
+    layout: grid;
+    grid-size: 8;
+    grid-gutter: 1 2;
+    grid-columns: 5;
+    grid-rows: 2;
+    height: auto;
+    width: auto;
+    overflow: hidden;
+    margin-bottom: 2;
+}
+EditColorsDialogWindow ColorGrid Button.focused {
+    border: dashed $primary; /* Use primary theme color */
+}
+EditColorsDialogWindow ColorGrid Button.selected,
+EditColorsDialogWindow ColorGrid Button.selected.focused {
+    border: outer $primary; /* Use primary theme color */
+}
+EditColorsDialogWindow Horizontal,
+EditColorsDialogWindow Vertical {
+    height: auto;
+    width: auto;
+}
+EditColorsDialogWindow .input_container {
+    width: 17;
+    height: auto;
+    margin-bottom: 1;
+    layout: horizontal;
+}
+EditColorsDialogWindow .input_container Input {
+    width: 10; /* minimum! 3 digits + 1 for the cursor + 2 for padding + 2 for border */
+}
+EditColorsDialogWindow .input_container Label {
+    width: 1fr;
+    height: auto;
+    text-align: right;
+    margin-top: 1; /* content-align-vertical: middle; not working */
+    margin-left: 1;
+}
+EditColorsDialogWindow LuminosityRamp {
+    width: 3;
+    /* height: 1fr; */
+    height: 10;
+    margin: 1;
+}
+EditColorsDialogWindow ColorField {
+    width: 40;
+    height: 10;
+    margin: 1;
+}
+EditColorsDialogWindow .color_preview_area {
+    margin: 1;
+    margin-top: 0;
+    width: 10;
+}
+EditColorsDialogWindow .color_preview_area Label {
+    width: 1fr;
+    text-align: center;
+}
+EditColorsDialogWindow ColorPreview {
+    width: 1fr;
+    height: 3;
+}
+EditColorsDialogWindow .buttons Button {
+    /* margin: 0; */
+}
+EditColorsDialogWindow .add_to_custom_colors {
+    margin-left: 1;
+    width: 100%;
+}
+
+
+MessageBox .window_content {
+    width: 50;
+    height: auto;
+}
+MessageBox .window_content Button {
+    width: auto;
+    min-width: 10;
+    height: auto;
+    margin-right: 1;
+    margin-top: 1;
+}
+MessageBox .message_box_icon {
+    width: auto;
+    height: auto;
+    padding-left: 2;
+}
+MessageBox .main_content {
+    padding: 1 2;
+    width: 1fr;
+    height: auto;
+}
+MessageBox .window_content Horizontal {
+    height: auto;
+}
+
+#status_bar {
+    background: $panel;
+    height: 3;
+    layout: horizontal;
+}
+#status_bar > Static {
+    width: 20;
+    height: 100%;
+    content-align: left middle;
+    border: none;
+    border-top: outer $panel-darken-2;
+    border-bottom: outer $panel-lighten-1;
+    border-left: outer $panel-darken-1;
+}
+#status_bar > #status_text {
+    width: 1fr;
+}
+#status_bar > #status_dimensions {
+    /* this is the last division */
+    border-right: outer $panel-darken-1;
+}

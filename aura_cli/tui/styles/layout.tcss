@@ -1,0 +1,225 @@
+/* Shared structural authority for every Aura TUI theme. No color tokens here. */
+
+Screen {
+    layers: base content overlay notification dialog palette imagination;
+}
+
+#main_grid {
+    layout: grid;
+    grid-size: 1 1;
+    grid-columns: 1fr;
+    grid-rows: 1fr;
+    width: 100%;
+    height: 1fr;
+}
+
+#main_grid.drawer-open {
+    grid-size: 2 1;
+}
+
+#main_grid.drawer-overlay {
+    grid-size: 1 1;
+}
+
+.panel-container {
+    height: 100%;
+}
+
+.panel-title {
+    height: 1;
+    content-align: center middle;
+}
+
+#main_grid .panel-container {
+    padding: 0 1;
+    background: transparent;
+}
+
+#main_grid .panel-title {
+    height: 1;
+    background: transparent;
+    border: none;
+    padding: 0 1;
+    text-align: left;
+    content-align: left middle;
+}
+
+#center_panel {
+    border-left: none;
+    border-right: none;
+}
+
+AuraFooter.runtime-ready #footer-status {
+    color: $foreground-muted;
+    text-style: dim;
+}
+
+AuraFooter.runtime-loading #footer-status,
+AuraFooter.runtime-thinking #footer-status {
+    color: $primary;
+}
+
+AuraFooter.runtime-executing #footer-status {
+    color: $warning;
+    text-style: bold;
+}
+
+AuraFooter.runtime-waiting_input #footer-status {
+    color: $warning;
+    text-style: bold;
+}
+
+AuraFooter.runtime-error #footer-status {
+    color: $error;
+    text-style: bold;
+}
+
+AuraFooter.runtime-completed #footer-status {
+    color: $success;
+}
+
+AuraFooter.runtime-cancelled #footer-status,
+AuraFooter.runtime-stopped #footer-status {
+    color: $foreground-muted;
+}
+
+.empty-state {
+    width: 100%;
+    height: 1fr;
+    padding: 2;
+    align: center middle;
+    color: $foreground-muted;
+}
+
+.empty-state Label {
+    width: 100%;
+    content-align: center middle;
+    text-style: bold;
+    color: $foreground;
+}
+
+.empty-state-actions {
+    width: auto;
+    height: auto;
+    align: center middle;
+}
+
+.empty-state-actions Button {
+    width: auto;
+    min-width: 14;
+    margin: 0 1;
+}
+
+#left_panel, #right_panel {
+    display: none;
+}
+
+#left_panel.drawer-visible, #right_panel.drawer-visible {
+    display: block;
+}
+
+#main_grid.drawer-overlay #left_panel.drawer-visible,
+#main_grid.drawer-overlay #right_panel.drawer-visible {
+    layer: overlay;
+    width: 100%;
+    height: 100%;
+}
+
+#center_panel, Vertical#main_content {
+    width: 100%;
+    height: 100%;
+    min-width: 40;
+}
+
+AuraChatLog {
+    height: 1fr;
+    min-height: 10;
+    overflow-y: scroll;
+    padding: 1 2;
+}
+
+AuraInputBar {
+    dock: bottom;
+    height: auto;
+    max-height: 8;
+    padding: 0 2 1 2;
+    border-top: none;
+}
+
+#analysis_panel_slot, #memory_panel_slot {
+    width: 100%;
+    height: 1fr;
+}
+
+#main_grid.density-compact MessageBubble .message-timestamp,
+#main_grid.density-comfortable MessageBubble .message-timestamp {
+    display: none;
+}
+
+#main_grid.density-compact AuraChatLog {
+    padding: 0;
+}
+
+AuraFooter.compact .footer-keybindings,
+AuraFooter.compact .footer-agent,
+AuraFooter.compact .footer-model {
+    display: none;
+}
+
+
+/* Shared chrome kept intentionally quiet; colors remain in theme files. */
+AuraFooter {
+    border-top: none;
+}
+
+AuraFooter .footer-separator {
+    width: auto;
+    color: $theme-border;
+}
+
+AuraTodoPanel {
+    margin: 0 2 1 2;
+    padding: 0;
+}
+
+CommandPalette {
+    margin: 1 2;
+}
+
+
+#main_grid.density-compact AuraChatLog {
+    padding: 1 1;
+}
+
+#main_grid.density-compact MessageBubble.message-user {
+    margin-bottom: 1;
+    padding: 1 1;
+}
+
+#main_grid.density-compact AuraInputBar {
+    padding: 0 1 1 1;
+    max-height: 6;
+}
+
+#main_grid.density-compact AuraInputBar Input {
+    height: 3;
+    padding: 0 1;
+}
+
+#main_grid.density-compact AuraInputBar .command-suggestions {
+    max-height: 4;
+    margin-bottom: 0;
+}
+
+#main_grid.density-compact AuraTodoPanel {
+    margin: 0 1 1 1;
+    max-height: 6;
+}
+
+AuraFooter.compact {
+    padding: 0 1;
+}
+
+AuraFooter.compact #footer-icon {
+    margin-right: 0;
+}
