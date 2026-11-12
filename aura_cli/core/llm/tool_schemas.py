@@ -71,7 +71,7 @@ def extract_function_schema(func: Callable) -> Dict[str, Any]:
             param_type = _json_type_for(param.annotation)
 
         param_description = _param_desc_from_doc(doc, param_name) if doc else None
-        param_description = param_description or f"Parâmetro {param_name}"
+        param_description = param_description or f"Parameter {param_name}"
 
         param_schema: Dict[str, Any] = {
             "type": param_type,

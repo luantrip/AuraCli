@@ -9,7 +9,6 @@ from typing import Any, Dict, List, Optional, Union
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
 
 from aura_cli.core.logger import get_logger
 from aura_cli.core.ui import display_tool_call
@@ -71,7 +70,7 @@ def docker_ps(show_all: bool = False) -> Union[List[Dict[str, Any]], str]:
     client = _get_docker_client()
     if client is None:
         error_msg = (
-            "Docker não disponível. Verifique se o Docker está instalado e rodando."
+            "Docker not available. Check that Docker is installed and running."
         )
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
@@ -80,25 +79,13 @@ def docker_ps(show_all: bool = False) -> Union[List[Dict[str, Any]], str]:
         containers = client.containers.list(all=show_all)
 
         if not containers:
-            msg = "Nenhum container encontrado."
-            console.print(f"[yellow]{msg}[/yellow]")
+            logger.info("Docker ps: no containers found")
             return []
 
         results = []
-        table = Table(title="🐳 Docker Containers")
-        table.add_column("ID", style="cyan")
-        table.add_column("Nome", style="green")
-        table.add_column("Status")
-        table.add_column("Imagem", style="blue")
-        table.add_column("Portas", style="magenta")
 
         for container in containers:
             status = container.status
-            status_styled = (
-                f"[green]{status}[/green]"
-                if status == "running"
-                else f"[red]{status}[/red]"
-            )
 
             ports = container.ports or {}
             port_mappings = []
@@ -127,17 +114,6 @@ def docker_ps(show_all: bool = False) -> Union[List[Dict[str, Any]], str]:
             }
             results.append(result)
 
-            table.add_row(
-                container.short_id,
-                container.name,
-                status_styled,
-                image_name,
-                ports_str,
-            )
-
-        console.print(table)
-        summary = f"Total: {len(results)} container(s)"
-        console.print(f"[green]{summary}[/green]")
         logger.info(f"Docker ps: {len(results)} containers")
 
         return results
@@ -168,7 +144,7 @@ def docker_images(
     client = _get_docker_client()
     if client is None:
         error_msg = (
-            "Docker não disponível. Verifique se o Docker está instalado e rodando."
+            "Docker not available. Check that Docker is installed and running."
         )
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
@@ -177,16 +153,11 @@ def docker_images(
         images = client.images.list(name=name, all=show_all)
 
         if not images:
-            msg = "Nenhuma imagem encontrada."
+            msg = "No images found."
             console.print(f"[yellow]{msg}[/yellow]")
             return []
 
         results = []
-        table = Table(title="🐳 Docker Images")
-        table.add_column("Repositório", style="cyan")
-        table.add_column("Tag", style="yellow")
-        table.add_column("ID", style="dim")
-        table.add_column("Tamanho", style="green")
 
         for image in images:
             size_bytes = image.attrs.get("Size", 0)
@@ -212,7 +183,6 @@ def docker_images(
                         "created": image.attrs.get("Created", ""),
                     }
                     results.append(result)
-                    table.add_row(repo, tag_name, image.short_id, size_str)
             else:
                 result = {
                     "id": image.short_id,
@@ -222,11 +192,7 @@ def docker_images(
                     "size_human": size_str,
                 }
                 results.append(result)
-                table.add_row("<none>", "<none>", image.short_id, size_str)
 
-        console.print(table)
-        summary = f"Total: {len(results)} imagem(ns)"
-        console.print(f"[green]{summary}[/green]")
         logger.info(f"Docker images: {len(results)} images")
 
         return results
@@ -265,7 +231,7 @@ def docker_logs(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 
@@ -350,7 +316,7 @@ def docker_exec(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 
@@ -358,7 +324,7 @@ def docker_exec(
         container_obj = client.containers.get(container)
 
         if container_obj.status != "running":
-            error_msg = f"Container '{container}' não está rodando (status: {container_obj.status})"
+            error_msg = f"Container '{container}' is not running (status: {container_obj.status})"
             console.print(f"[red]{error_msg}[/red]")
             return error_msg
 
@@ -449,7 +415,7 @@ def docker_build(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 
@@ -495,7 +461,7 @@ def docker_build(
             "size": image.attrs.get("Size", 0),
         }
 
-        success_msg = f"✅ Imagem {tag} construída com sucesso (ID: {image.short_id})"
+        success_msg = f"✅ Image {tag} built successfully (ID: {image.short_id})"
         logger.info(success_msg)
         console.print(f"[green]{success_msg}[/green]")
 
@@ -541,7 +507,7 @@ def docker_run(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 
@@ -609,7 +575,7 @@ def docker_stop(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 
@@ -657,7 +623,7 @@ def docker_rm(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 
@@ -759,7 +725,7 @@ def docker_compose(
         )
 
         if result.returncode == 0:
-            output = result.stdout or result.stderr or "Operação concluída"
+            output = result.stdout or result.stderr or "Operation completed"
             success_msg = f"✅ Docker Compose {action} executed successfully"
             logger.info(success_msg)
             console.print(f"[green]{success_msg}[/green]")
@@ -803,7 +769,7 @@ def docker_inspect(
 
     client = _get_docker_client()
     if client is None:
-        error_msg = "Docker não disponível."
+        error_msg = "Docker not available."
         console.print(f"[red]{error_msg}[/red]")
         return error_msg
 

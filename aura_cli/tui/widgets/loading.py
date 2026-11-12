@@ -29,7 +29,6 @@ class AuraLoadingIndicator(Static):
         """Posted to show the loading indicator."""
 
         def __init__(self, message: Optional[str] = None) -> None:
-            """Initialize the instance."""
             self.message = message
             super().__init__()
 
@@ -43,7 +42,6 @@ class AuraLoadingIndicator(Static):
     _frame_index: int = 0
 
     def __init__(self, message: str = "", **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._spinner_frames = self._build_spinner_frames()
         self._frame_index = 0
@@ -78,7 +76,7 @@ class AuraLoadingIndicator(Static):
         except NoMatches:
             return
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Advance animation frame."""
         if self.is_visible:
             self._frame_index = (self._frame_index + 1) % len(self._spinner_frames)
@@ -140,7 +138,6 @@ class AuraProgressBar(Static):
     BAR_WIDTH = 30
 
     def __init__(self, label: str = "", **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.label = label
 

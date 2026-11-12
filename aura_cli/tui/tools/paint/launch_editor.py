@@ -303,7 +303,7 @@ def is_list_of_strings(value: Any) -> TypeGuard[List[str]]:
     Returns:
         True if value is list containing only strings
     """
-    return isinstance(value, list) and all(isinstance(item, str) for item in value)  # type: ignore
+    return isinstance(value, list) and all(isinstance(item, str) for item in value)  # type: ignore[misc]  # runtime isinstance check
 
 
 def print_instructions(file_name: str, error_message: str | None = None) -> None:

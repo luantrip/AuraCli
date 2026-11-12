@@ -7,16 +7,16 @@ import re
 from typing import Any, Mapping
 
 _INVESTIGATION_INDICATORS = (
-    "investigar código",
+    "investigate code",
     "investigar codebase",
     "investigar projeto",
-    "análise de código",
-    "analisar código",
+    "code analysis",
+    "analyze code",
     "analisar projeto",
     "codebase",
-    "estrutura do código",
-    "arquitetura do código",
-    "investigar o código",
+    "code structure",
+    "code architecture",
+    "investigate the code",
     "investigar o projeto",
     "investigar",
 )
@@ -39,7 +39,7 @@ def codebase_investigation_objective(command: str) -> str:
     """Remove routing phrases while retaining the user's concrete objective."""
     objective = _OBJECTIVE_PREFIX.sub(" ", command)
     objective = " ".join(objective.split()).strip(" ,:;-—")
-    return objective or "Análise completa do codebase"
+    return objective or "Full codebase analysis"
 
 
 @dataclass(frozen=True)
@@ -71,28 +71,28 @@ def build_codebase_analysis_view(results: Mapping[str, Any]) -> CodebaseAnalysis
 
     suggestions = [
         f"Total de {files} arquivos analisados",
-        f"{lines:,} linhas de código processadas",
+        f"{lines:,} lines of code processed",
     ]
     if classes:
         suggestions.append(f"{classes} classes encontradas")
     if functions:
-        suggestions.append(f"{functions} funções encontradas")
+        suggestions.append(f"{functions} functions found")
 
     return CodebaseAnalysisView(
         chat_markdown=(
-            "# ▥ Análise do Codebase Concluída\n\n"
-            "**Estatísticas:**\n"
+            "# ▥ Codebase Analysis Completed\n\n"
+            "**Statistics:**\n"
             f"- Arquivos processados: {files}\n"
-            f"- Linhas de código: {lines:,}\n"
+            f"- Lines of code: {lines:,}\n"
             f"- Classes: {classes}\n"
-            f"- Funções: {functions}\n"
-            f"- Variáveis: {variables}\n\n"
-            "**Análise completa!** Veja detalhes no painel de análise (Ctrl+S).\n"
+            f"- Functions: {functions}\n"
+            f"- Variables: {variables}\n\n"
+            "**Analysis complete!** See details in the analysis panel (Ctrl+S).\n"
         ),
         panel_summary=(
-            "Análise do Codebase\n"
+            "Codebase Analysis\n"
             f"Arquivos: {files} | Linhas: {lines:,}\n"
-            f"Classes: {classes} | Funções: {functions}\n"
+            f"Classes: {classes} | Functions: {functions}\n"
         ),
         issues=(),
         suggestions=tuple(suggestions),

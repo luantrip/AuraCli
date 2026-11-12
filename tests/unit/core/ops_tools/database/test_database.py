@@ -300,7 +300,7 @@ ALTER TABLE users DROP COLUMN email;
         # Aplica migração
         result = db_migration.apply_migration(migration.id, ":memory:", "sqlite")
 
-        assert "sucesso" in result.lower() or "aplicada" in result.lower()
+        assert "successfully" in result.lower() or "applied" in result.lower()
 
     def test_rollback_migration(self, db_migration):
         """Verifica rollback de migração."""
@@ -314,7 +314,7 @@ ALTER TABLE users DROP COLUMN email;
         result = db_migration.rollback_migration(migration.id, ":memory:", "sqlite")
 
         assert (
-            "revertida" in result.lower()
+            "reverted" in result.lower()
             or "rollback" in result.lower()
             or "sucesso" in result.lower()
         )
@@ -596,8 +596,8 @@ DROP TABLE posts;
         result = db_migration.apply_migration(migration.id, ":memory:", "sqlite")
         assert (
             "sucesso" in result.lower()
-            or "aplicada" in result.lower()
-            or "aplicado" in result.lower()
+            or "applied" in result.lower()
+            or "applied" in result.lower()
         )
 
         # 4. Create backup (use SQLite for testing)

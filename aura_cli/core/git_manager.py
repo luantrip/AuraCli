@@ -4,9 +4,12 @@ Manages Git integration for dirty-state checks, checkpoints and safe writes.
 """
 
 from datetime import datetime
+import logging
 from pathlib import Path
 import subprocess
 from typing import Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 
 class GitManager:
@@ -119,8 +122,12 @@ class GitManager:
                     "date": parts[2],
                 }
 
-        except subprocess.CalledProcessError:
-            pass
+        except subprocess.CalledProcessError as exc:
+            logger.debug(
+                "git log failed (exit %s): %s",
+                exc.returncode,
+                (exc.stderr or b"").decode(errors="replace").strip() or "(no stderr)",
+            )
 
         return None
 
@@ -137,11 +144,11 @@ class GitManager:
                 files_list += f"\n  ... e mais {len(modified_files) - 10} arquivo(s)"
 
             warning = (
-                f"⚠️  Você tem {len(modified_files)} arquivo(s) "
-                f"com mudanças não commitadas:\n"
+                f"⚠️  You have {len(modified_files)} file(s) "
+                f"with uncommitted changes:\n"
                 f"  - {files_list}\n\n"
-                f"Recomendação: Faça commit ou stash antes de continuar.\n"
-                f"Posso criar um checkpoint automático? (aura-wip commit)"
+                f"Recommendation: Commit or stash before continuing.\n"
+                f"Shall I create an automatic checkpoint? (aura-wip commit)"
             )
             return False, warning
 

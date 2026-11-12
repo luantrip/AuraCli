@@ -1,6 +1,6 @@
 """Semantic result-refinement surface."""
 
-from aura_cli.core.memory_advanced.cognitive_refinement import (
+from aura_cli.core.memory.cognitive_refinement import (
     CognitiveRefinement,
     get_cognitive_refinement,
 )

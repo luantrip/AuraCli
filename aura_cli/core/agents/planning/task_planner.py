@@ -81,7 +81,7 @@ class TaskPlanner:
 
         logger.info(
             f"Plan {plan_id} created: {len(ordered_tasks)} tasks, "
-            f"duração estimada: {estimated_duration:.1f}s"
+            f"estimated duration: {estimated_duration:.1f}s"
         )
 
         return plan
@@ -123,8 +123,8 @@ class TaskPlanner:
 
         if len(result) != len(tasks):
             logger.warning(
-                "Ciclo detectado nas dependências ou tarefa órfã. "
-                "Algumas tarefas podem não ser executadas."
+                "Cycle detected in dependencies or orphan task. "
+                "Some tasks may not be executed."
             )
             remaining = [t for t in tasks if t not in result]
             result.extend(remaining)

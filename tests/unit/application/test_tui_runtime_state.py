@@ -22,36 +22,36 @@ def test_runtime_starts_ready_with_ready_footer() -> None:
 
     assert state.phase is RuntimePhase.READY
     assert state.is_busy is False
-    assert state.footer_message == "Pronto"
+    assert state.footer_message == "Ready"
 
 
 def test_progress_and_decision_are_distinct_busy_phases() -> None:
     running = reduce_runtime_state(
-        TuiRuntimeState(), _request(PresentationIntent.PROGRESS, "Analisando")
+        TuiRuntimeState(), _request(PresentationIntent.PROGRESS, "Analysing")
     )
     waiting = reduce_runtime_state(
-        running, _request(PresentationIntent.DECISION, "Aplicar alteração?")
+        running, _request(PresentationIntent.DECISION, "Apply change?")
     )
 
     assert running.phase is RuntimePhase.RUNNING
-    assert running.footer_message == "Analisando"
+    assert running.footer_message == "Analysing"
     assert waiting.phase is RuntimePhase.WAITING_USER
-    assert waiting.footer_message == "Aplicar alteração?"
+    assert waiting.footer_message == "Apply change?"
     assert waiting.is_busy is True
 
 
 def test_terminal_intents_are_explicit() -> None:
     success = reduce_runtime_state(
-        TuiRuntimeState(), _request(PresentationIntent.SUCCESS, "Concluído")
+        TuiRuntimeState(), _request(PresentationIntent.SUCCESS, "Completed")
     )
     failure = reduce_runtime_state(
-        TuiRuntimeState(), _request(PresentationIntent.ERROR, "Falhou")
+        TuiRuntimeState(), _request(PresentationIntent.ERROR, "Failed")
     )
 
     assert success.phase is RuntimePhase.SUCCEEDED
-    assert success.footer_message == "Concluído"
+    assert success.footer_message == "Completed"
     assert failure.phase is RuntimePhase.FAILED
-    assert failure.footer_message == "Falhou"
+    assert failure.footer_message == "Failed"
 
 
 def test_warning_does_not_replace_active_progress() -> None:
@@ -88,10 +88,10 @@ def test_local_actions_cover_loading_thinking_and_terminal_states() -> None:
     assert state.loading_visible is False
     assert state.is_busy is True
 
-    state = transition_runtime_state(state, RuntimeAction.ERROR, message="Falhou")
+    state = transition_runtime_state(state, RuntimeAction.ERROR, message="Failed")
     assert state.phase is RuntimePhase.ERROR
     assert state.loading_visible is False
-    assert state.footer_message == "Falhou"
+    assert state.footer_message == "Failed"
 
 
 def test_ready_transition_clears_stale_task_and_message() -> None:
@@ -104,4 +104,4 @@ def test_ready_transition_clears_stale_task_and_message() -> None:
     ready = transition_runtime_state(state, RuntimeAction.READY)
 
     assert ready == TuiRuntimeState()
-    assert ready.footer_message == "Pronto"
+    assert ready.footer_message == "Ready"

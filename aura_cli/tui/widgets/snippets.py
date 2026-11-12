@@ -63,7 +63,6 @@ class SnippetManager:
     }
 
     def __init__(self):
-        """Initialize the instance."""
         self._custom_snippets: Dict[str, SnippetInfo] = {}
         self._load_custom_snippets()
 

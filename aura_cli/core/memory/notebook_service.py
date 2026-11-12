@@ -114,7 +114,7 @@ class NotebookService:
             base_path: Base directory for storing notebooks.
                       Default: .aura/notebooks in current directory
         """
-        if hasattr(self, "_initialized") and self._initialized:  # type: ignore[has-type]
+        if hasattr(self, "_initialized") and self._initialized:  # type: ignore[has-type]  # sentinel attr
             return
 
         from aura_cli.core.paths import ArtifactLayout
@@ -410,7 +410,7 @@ class NotebookService:
                     else []
                 )
             except json.JSONDecodeError:
-                logger.warning("Resposta inválida do notebookListPages")
+                logger.warning("Invalid notebookListPages response")
                 return []
         else:
             return sorted([f.name for f in self.session_path.glob("pagina_*.txt")])
@@ -471,16 +471,16 @@ class NotebookService:
                 result = self._nim().notebookReadIndex(
                     str(self.session_path).encode("utf-8")
                 )
-            content = result.decode("utf-8") if result else "# Índice do Caderno\n\n"
+            content = result.decode("utf-8") if result else "# Notebook Index\n\n"
             if content.startswith("ERRO:"):
                 logger.warning(content)
-                return "# Índice do Caderno\n\n"
+                return "# Notebook Index\n\n"
             return content
         else:
             index_path = self.session_path / "index.md"
             if index_path.exists():
                 return index_path.read_text(encoding="utf-8")
-            return "# Índice do Caderno\n\n"
+            return "# Notebook Index\n\n"
 
     def get_session_info(self) -> Dict[str, Any]:
         """
@@ -503,7 +503,7 @@ class NotebookService:
                     payload.setdefault("session_path", str(self.session_path))
                     return payload
             except (json.JSONDecodeError, AttributeError, UnicodeDecodeError):
-                logger.warning("Resposta inválida do notebookGetSessionInfo")
+                logger.warning("Invalid notebookGetSessionInfo response")
 
         pages = list(self.session_path.glob("pagina_*.txt"))
         total_size = sum(p.stat().st_size for p in pages) if pages else 0
@@ -566,7 +566,7 @@ class NotebookService:
                     summary = f"Snapshot com {len(conversation_history)} mensagens"
             except Exception as e:
                 logger.warning(
-                    f"Erro no refinamento cognitivo, usando snapshot padrão: {e}"
+                    f"Error in cognitive refinement, using default snapshot: {e}"
                 )
                 content = self._format_snapshot(conversation_history)
                 summary = f"Snapshot com {len(conversation_history)} mensagens"
@@ -581,7 +581,7 @@ class NotebookService:
         lines = ["# Snapshot de Contexto", ""]
         lines.append(f"**Data:** {datetime.now().isoformat()}")
         lines.append(f"**Mensagens:** {len(conversation_history)}")
-        lines.append(f"**Sessão:** {self.session_id}")
+        lines.append(f"**Session:** {self.session_id}")
         lines.append("")
         lines.append("---")
         lines.append("")
@@ -608,7 +608,7 @@ class NotebookService:
         """Formata snapshot refinado cognitivamente."""
         lines = ["# Snapshot de Contexto (Refinado Cognitivamente)", ""]
         lines.append(f"**Data:** {datetime.now().isoformat()}")
-        lines.append(f"**Sessão:** {self.session_id}")
+        lines.append(f"**Session:** {self.session_id}")
         lines.append(f"**Mensagens Originais:** {len(original_history)}")
 
         metadata = refined.get("metadata", {})

@@ -10,14 +10,13 @@ from aura_cli.core.api_key_store import (
 
 @patch("aura_cli.core.api_key_store.clear_env_keys_for_provider")
 @patch("aura_cli.core.config.ConfigCompat")
-@patch("aura_cli.core.secure_config.secure_config_manager")
-def test_clear_api_key_calls_all_backends(mock_secure, mock_compat_cls, mock_clear_env):
+def test_clear_api_key_calls_all_backends(mock_compat_cls, mock_clear_env):
+    """clear_api_key_for_provider routes through ConfigCompat (which delegates to SecureConfig)."""
     compat = MagicMock()
     mock_compat_cls.return_value = compat
 
     clear_api_key_for_provider("google")
 
-    mock_secure.delete_api_key.assert_called_once_with("google")
     compat.set_api_key.assert_called_once_with("google", None)
     mock_clear_env.assert_called_once_with("google")
 

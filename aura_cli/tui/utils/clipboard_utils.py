@@ -178,8 +178,8 @@ class ClipboardManager:
             }
             if path.exists() and path.is_file():
                 mime, _ = mimetypes.guess_type(str(path))
-                metadata["mime_type"] = mime  # type: ignore[assignment]
-                metadata["size"] = path.stat().st_size  # type: ignore[assignment]
+                metadata["mime_type"] = mime  # type: ignore[assignment]  # TypedDict key narrowing
+                metadata["size"] = path.stat().st_size  # type: ignore[assignment]  # TypedDict key narrowing
 
                 # Check if it's an image
                 if mime and mime.startswith("image/"):

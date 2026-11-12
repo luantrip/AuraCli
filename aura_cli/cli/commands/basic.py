@@ -10,7 +10,6 @@ Handles commands:
 
 import sys
 
-from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
@@ -32,36 +31,36 @@ def handle_help() -> None:
         expand=True,
     )
     table.add_column("Comando", style=f"{UIStyles.ACCENT} bold", width=20)
-    table.add_column("Descrição", style=UIStyles.BODY)
+    table.add_column("Description", style=UIStyles.BODY)
     table.add_column("Categoria", style=f"{UIStyles.MUTED} italic", width=15)
 
     commands = [
         (
             "/agi <objetivo>",
-            "Inicia agente estratégico para tarefas complexas",
-            f"{UIIcons.AGENT} Agentes",
+            "Starts strategic agent for complex tasks",
+            f"{UIIcons.AGENT} Agents",
         ),
         (
-            "/ops <tarefa>",
-            "Inicia agente DevOps (git, docker, sistema)",
+            "/ops <task>",
+            "Start DevOps agent (git, docker, system)",
             f"{UIIcons.OPS} Ops",
         ),
         (
             "/tools",
-            "Lista todas as ferramentas disponíveis",
+            "Lists all available tools",
             f"{UIIcons.TOOL} Ferramentas",
         ),
         (
             "/tool <nome>",
-            "Mostra detalhes de uma ferramenta",
+            "Show details of a tool",
             f"{UIIcons.TOOL} Ferramentas",
         ),
         ("/todo", "Exibe quadro de tarefas do projeto", f"{UIIcons.PASTE} Projeto"),
         ("/init", "Indexa o projeto atual (cria .aura/)", f"{UIIcons.PASTE} Projeto"),
-        ("/notebook", "Gerencia memória de longo prazo", f"{UIIcons.AGI} Memória"),
+        ("/notebook", "Manages long-term memory", f"{UIIcons.AGI} Memory"),
         (
             "/model",
-            "Seleciona modelo de IA (Gemini, GPT, etc)",
+            "Select AI model (Gemini, GPT, etc)",
             f"{UIIcons.SYSTEM} Config",
         ),
         (
@@ -69,20 +68,20 @@ def handle_help() -> None:
             "Informa a disponibilidade de LLMs locais",
             f"{UIIcons.SYSTEM} Config",
         ),
-        ("/settings", "Menu interativo de configurações", f"{UIIcons.SYSTEM} Config"),
+        ("/settings", "Interactive settings menu", f"{UIIcons.SYSTEM} Config"),
         (
             "/theme",
             "Seleciona tema visual (Nebula, minimal, etc)",
             f"{UIIcons.SYSTEM} Config",
         ),
         ("/keyboard", "Mostra atalhos de teclado", f"{UIIcons.SYSTEM} Config"),
-        ("/extensions", "Gerencia extensões do Aura", f"{UIIcons.SPARKLES} Extensões"),
+        ("/extensions", "Manages Aura extensions", f"{UIIcons.SPARKLES} Extensions"),
         (
             "/history",
-            "Exibe histórico de interações da sessão",
-            f"{UIIcons.STATS} Gestão",
+            "Shows session interaction history",
+            f"{UIIcons.STATS} Management",
         ),
-        ("/session", "Gerencia sessões (salvar/carregar)", f"{UIIcons.SAVE} Gestão"),
+        ("/session", "Manage sessions (save/load)", f"{UIIcons.SAVE} Management"),
         (
             "/workflow",
             "Gerencia workflows automatizados",
@@ -99,9 +98,9 @@ def handle_help() -> None:
             "Checkpoints: init, create, list, restore (git)",
             f"{UIIcons.COMMIT} Contexto",
         ),
-        ("/tui", "Abre interface gráfica no terminal (Nebula)", f"{UIIcons.SYSTEM} UI"),
-        ("/welcome", "Exibe boas-vindas e comandos rápidos", f"{UIIcons.AURA} Sistema"),
-        ("/clear", "Limpa a tela do terminal", f"{UIIcons.AURA} Sistema"),
+        ("/tui", "Open graphical terminal interface (Nebula)", f"{UIIcons.SYSTEM} UI"),
+        ("/welcome", "Show welcome screen and quick commands", f"{UIIcons.AURA} System"),
+        ("/clear", "Clear the terminal screen", f"{UIIcons.AURA} Sistema"),
         ("/exit", "Encerra o Aura CLI", f"{UIIcons.AURA} Sistema"),
     ]
 
@@ -111,29 +110,29 @@ def handle_help() -> None:
     # Advanced commands section
     adv_table = Table(show_header=False, box=None, padding=(0, 2), expand=True)
     adv_table.add_column("Comando", style=f"dim {UIStyles.ACCENT}", width=20)
-    adv_table.add_column("Descrição", style=f"dim {UIStyles.BODY}")
+    adv_table.add_column("Description", style=f"dim {UIStyles.BODY}")
 
     advanced = [
-        ("/auto-run", "Ativa/desativa execução automática de ferramentas (Shift+Tab)"),
+        ("/auto-run", "Enable/disable automatic tool execution (Shift+Tab)"),
         ("/keyboard", "Mostra todos os atalhos de teclado"),
-        ("/welcome", "Reexibe boas-vindas e dicas rápidas"),
-        ("/tool <nome>", "Detalhes e schema de uma ferramenta específica"),
-        ("/memory", "Busca e lista memórias persistentes"),
-        ("/constitution", "Exibe ou edita a constituição do projeto"),
+        ("/welcome", "Re-display welcome screen and quick tips"),
+        ("/tool <name>", "Details and schema of a specific tool"),
+        ("/memory", "Search and list persistent memories"),
+        ("/constitution", "View or edit the project constitution"),
     ]
     for cmd, desc in advanced:
         adv_table.add_row(cmd, desc)
 
     adv_panel = Panel(
         adv_table,
-        title=f"[dim {UIStyles.MUTED}]Comandos Avançados[/]",
+        title=f"[dim {UIStyles.MUTED}]Advanced Commands[/]",
         border_style=UIStyles.BORDER_PRIMARY,
         padding=(0, 2),
     )
 
     panel = Panel(
         table,
-        title=f"[{UIStyles.TITLE}]{UIIcons.AURA} Comandos Disponíveis[/]",
+        title=f"[{UIStyles.TITLE}]{UIIcons.AURA} Available Commands[/]",
         border_style=UIStyles.BORDER_PRIMARY,
         padding=(1, 2),
     )
@@ -148,16 +147,16 @@ def handle_welcome() -> None:
     console = get_console()
     welcome_text = (
         f"[{UIStyles.TITLE}]Bem-vindo ao Aura CLI[/]\n\n"
-        f"[{UIStyles.BODY}]Comandos rápidos:[/]\n"
+        f"[{UIStyles.BODY}]Quick commands:[/]\n"
         f"  [cyan]/help[/]     — Lista todos os comandos\n"
         f"  [cyan]/keyboard[/] — Atalhos de teclado\n"
-        f"  [cyan]/tools[/]    — Ferramentas disponíveis\n"
+        f"  [cyan]/tools[/]    — Available tools\n"
         f"  [cyan]/model[/]    — Trocar modelo de IA\n\n"
         f"[{UIStyles.MUTED}]Digite uma pergunta ou use um comando acima.[/{UIStyles.MUTED}]"
     )
     panel = Panel(
         welcome_text,
-        title=f"[{UIStyles.TITLE}]{UIIcons.AURA} Olá![/]",
+        title=f"[{UIStyles.TITLE}]{UIIcons.AURA} Hello![/]",
         border_style=UIStyles.BORDER_PRIMARY,
         padding=(1, 2),
     )
@@ -170,11 +169,11 @@ def handle_history() -> None:
     """Display session interaction history using ConsoleHistory."""
     history = get_console_history()
     if not history.interactions:
-        Console().print(
+        get_console().print(
             Panel(
-                f"[{UIStyles.MUTED}]Nenhuma interação registrada nesta sessão.\n\n"
-                f"O histórico é populado automaticamente conforme você conversa com o Aura.[/{UIStyles.MUTED}]",
-                title=f"[{UIStyles.TITLE}]{UIIcons.STATS} Histórico da Sessão[/]",
+                f"[{UIStyles.MUTED}]No interactions recorded in this session.\n\n"
+                f"History is populated automatically as you chat with Aura.[/{UIStyles.MUTED}]",
+                title=f"[{UIStyles.TITLE}]{UIIcons.STATS} Session History[/]",
                 border_style=UIStyles.BORDER_MUTED,
             )
         )

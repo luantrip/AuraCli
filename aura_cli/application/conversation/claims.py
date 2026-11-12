@@ -57,20 +57,20 @@ def validate_completion_claims(
     requires_execution = request_requires_execution(request)
 
     if requires_execution and not turn.operations:
-        issues.append("o pedido exige execução, mas nenhuma ferramenta foi chamada")
+        issues.append("the request requires execution, but no tool was called")
     if _SUCCESS_CLAIM.search(response) and failed:
-        issues.append("há operações com falha no ledger")
+        issues.append("there are failed operations in the ledger")
     if _TEST_SUCCESS.search(response) and not _has_successful_test(successful):
-        issues.append("não há execução de testes aprovada")
+        issues.append("there is no approved test execution")
     if _FILE_SUCCESS.search(response) and not _has_existing_write(successful):
         issues.append("no created and existing file as post-condition")
     if _COMMIT_SUCCESS.search(response) and not _has_successful_commit(successful):
-        issues.append("não há commit Git comprovado")
+        issues.append("there is no proven Git commit")
 
     promises_action = requires_execution and bool(_PROMISE.search(response))
     if promises_action:
         issues.append(
-            "a resposta promete ação futura em vez de concluí-la ou executá-la"
+            "the response promises future action instead of completing or executing it"
         )
 
     return ClaimValidation(
@@ -88,10 +88,10 @@ def factual_fallback(turn: TurnExecution, issues: tuple[str, ...]) -> str:
     if failures:
         latest = failures[-1]
         detail = latest.result_summary or "falha sem detalhe"
-        return f"A execução não foi concluída: {latest.label} falhou — {detail}"
+        return f"Execution was not completed: {latest.label} failed — {detail}"
     if not turn.operations:
-        return "Nenhuma operação foi executada; não posso confirmar a ação solicitada."
-    return "Não posso confirmar a conclusão: " + "; ".join(issues)
+        return "No operation was executed; I cannot confirm the requested action."
+    return "Cannot confirm completion: " + "; ".join(issues)
 
 
 def repair_instruction(turn: TurnExecution, issues: tuple[str, ...]) -> str:
@@ -100,12 +100,12 @@ def repair_instruction(turn: TurnExecution, issues: tuple[str, ...]) -> str:
         for item in turn.operations
     ]
     return (
-        "A resposta proposta contém alegações sem evidência. Continue usando "
-        "ferramentas se ainda puder concluir; caso contrário, responda apenas com "
+        "The proposed response contains unsupported claims. Continue using "
+        "tools if you can still complete the task; otherwise respond only with "
         "os fatos e a falha/bloqueio. Problemas: "
         + "; ".join(issues)
         + ". Ledger: "
-        + (" | ".join(facts) if facts else "nenhuma operação")
+        + (" | ".join(facts) if facts else "no operation")
     )
 
 

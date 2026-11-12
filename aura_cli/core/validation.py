@@ -89,7 +89,7 @@ class ValidationResult:
     def get_summary(self) -> str:
         """Return a summary of validation results."""
         lines = []
-        lines.append(f"Validação: {'✅ PASSOU' if self.passed else '❌ FALHOU'}")
+        lines.append(f"Validation: {'✅ PASSED' if self.passed else '❌ FAILED'}")
         lines.append(
             f"Checks: {sum(1 for v in self.checks.values() if v)}/{len(self.checks)} passaram"
         )
@@ -179,8 +179,8 @@ def validate_syntax_file(file_path: str) -> Dict:
     except SyntaxError as e:
         error_msg = (
             f"Erro de sintaxe no arquivo {file_path}, linha {e.lineno}: {e.msg}. "
-            "Verifique se há parênteses, colchetes ou chaves não fechados, "
-            "ou se há palavras-chave mal posicionadas. "
+            "Check for unclosed parentheses, brackets or braces, "
+            "or misplaced keywords. "
             f"Contexto: {e.text.strip() if e.text else 'N/A'}"
         )
         return {
@@ -192,20 +192,20 @@ def validate_syntax_file(file_path: str) -> Dict:
     except FileNotFoundError:
         error_msg = (
             f"File not found: {file_path}. "
-            "Verifique se o caminho está correto e se o arquivo existe."
+            "Check that the path is correct and the file exists."
         )
         return {"passed": False, "error": error_msg, "message": error_msg}
     except PermissionError as e:
         error_msg = (
-            f"Erro de permissão ao ler arquivo {file_path}: {e}. "
-            "Verifique se você tem permissão de leitura no arquivo."
+            f"Permission error reading file {file_path}: {e}. "
+            "Check that you have read permission on the file."
         )
         return {"passed": False, "error": error_msg, "message": error_msg}
     except Exception as e:
         error_msg = (
             f"Erro inesperado ao validar sintaxe do arquivo {file_path}: {e}. "
             f"Tipo de erro: {type(e).__name__}. "
-            "Verifique se o arquivo está acessível e tem formato válido."
+            "Check that the file is accessible and has a valid format."
         )
         return {"passed": False, "error": error_msg, "message": error_msg}
 

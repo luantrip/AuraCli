@@ -59,13 +59,13 @@ def build_snapshot_history(
     """Build the fresh history that points the model to a persisted notebook page."""
     refinement = " refinado e " if refined else " "
     system_note = (
-        f"📓 **NOTA DE SISTEMA:** O contexto anterior foi{refinement}salvo no caderno de memória.\n\n"
-        f"**Página:** `{page_path}`\n\n"
-        "Se você precisar de informações de interações anteriores, use as seguintes ferramentas:\n"
-        "- `notebook_list()` - Listar todas as páginas disponíveis\n"
-        "- `notebook_read(page_path)` - Ler conteúdo de uma página específica\n"
-        "- `notebook_search(query)` - Buscar no índice do caderno\n\n"
-        f"O contexto salvo contém {saved_message_count} mensagens."
+        f"📓 **SYSTEM NOTE:** The previous context was{refinement}saved to the memory notebook.\n\n"
+        f"**Page:** `{page_path}`\n\n"
+        "If you need information from previous interactions, use the following tools:\n"
+        "- `notebook_list()` - List all available pages\n"
+        "- `notebook_read(page_path)` - Read the content of a specific page\n"
+        "- `notebook_search(query)` - Search the notebook index\n\n"
+        f"The saved context contains {saved_message_count} messages."
     )
     return [
         *[dict(message) for message in base_system_messages],

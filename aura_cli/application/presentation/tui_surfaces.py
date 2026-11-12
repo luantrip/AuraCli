@@ -7,6 +7,7 @@ from enum import Enum
 
 
 class SurfaceKind(str, Enum):
+    """Classifies the kind of TUI surface."""
     CONVERSATION = "conversation"
     ACTIVITY = "activity"
     NOTIFICATION = "notification"
@@ -15,6 +16,7 @@ class SurfaceKind(str, Enum):
 
 
 class PresentationIntent(str, Enum):
+    """Intent driving a surface presentation request."""
     RESPONSE = "response"
     INFORMATION = "information"
     SUCCESS = "success"
@@ -27,6 +29,7 @@ class PresentationIntent(str, Enum):
 
 
 class SurfacePriority(str, Enum):
+    """Priority ordering for competing surface requests."""
     PASSIVE = "passive"
     NORMAL = "normal"
     ATTENTION = "attention"
@@ -35,6 +38,7 @@ class SurfacePriority(str, Enum):
 
 @dataclass(frozen=True)
 class SurfaceRequest:
+    """Request to present a specific TUI surface."""
     intent: PresentationIntent
     content: str
     title: str | None = None

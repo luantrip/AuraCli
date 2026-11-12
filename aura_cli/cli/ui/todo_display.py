@@ -76,7 +76,7 @@ def create_progress_bar(tracker: TodoTracker, width: int = 30) -> Progress:
             BarColumn(bar_width=width),
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
         )
-        task = progress.add_task("Nenhuma tarefa", total=100)
+        task = progress.add_task("No tasks", total=100)
         progress.update(task, completed=0)
         return progress
 
@@ -121,7 +121,7 @@ def create_todo_panel(
     if stats["total"] == 0:
         text = Text()
         text.append(f"{UIIcons.WORKING} To-do", style=UIStyles.TITLE)
-        text.append(" Nenhuma tarefa", style=UIStyles.MUTED)
+        text.append(" No tasks", style=UIStyles.MUTED)
         return Group(
             Text("Lista de tarefas", style=f"bold {UIStyles.TITLE}"),
             text,
@@ -165,7 +165,7 @@ def create_todo_panel(
         if remaining_slots > 0:
             if len(tasks_to_show) > 0:
                 text.append("\n")
-            text.append("Concluídas:\n", style="dim")
+            text.append("Completed:\n", style="dim")
             for task in done_tasks[:remaining_slots]:
                 text.append(f"{UIIcons.SUCCESS} ", style=UIStyles.SUCCESS)
                 text.append(task.text, style=UIStyles.MUTED)
@@ -173,7 +173,7 @@ def create_todo_panel(
 
             if len(done_tasks) > remaining_slots:
                 text.append(
-                    f"... e mais {len(done_tasks) - remaining_slots} concluídas\n",
+                    f"... and {len(done_tasks) - remaining_slots} more completed\n",
                     style="dim",
                 )
 
@@ -263,7 +263,7 @@ def create_todo_table(
         width=get_terminal_size()[0],
     )
     table.add_column("Status", style=theme.get_style("primary"), width=8)
-    table.add_column("Tarefa", style=theme.get_style("body"), ratio=1)
+    table.add_column("Task", style=theme.get_style("body"), ratio=1)
 
     all_tasks = tracker.get_all_tasks()
     current_task = tracker.get_current_task()
@@ -423,7 +423,7 @@ def create_todo_summary_panel(tracker: Optional[TodoTracker] = None) -> Panel:
 
     text.append(f"Total: {total}  ", style=UIStyles.BODY)
     text.append(f"Pendentes: {pending}  ", style=theme.get_color("warning"))
-    text.append(f"Concluídas: {done}", style=theme.get_color("success"))
+    text.append(f"Completed: {done}", style=theme.get_color("success"))
     text.append("\n\n")
 
     progress_bar = create_progress_bar(tracker, width=40)

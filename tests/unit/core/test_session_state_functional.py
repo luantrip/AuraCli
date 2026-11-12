@@ -230,7 +230,7 @@ class TestSessionStateManager:
         stage = manager._extract_project_stage(constitution)
 
         assert stage is not None
-        assert "produção" in stage.lower()
+        assert "production" in stage.lower()
 
 
 class TestModuleFunctions:

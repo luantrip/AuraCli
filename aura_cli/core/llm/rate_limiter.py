@@ -267,7 +267,7 @@ class RateLimiter:
                 self.total_waits += 1
                 self.total_wait_time += actual_wait
 
-        logger.warning(f"Rate limit: tempo máximo de espera excedido para {provider}")
+        logger.warning(f"Rate limit: maximum wait time exceeded for {provider}")
         return False
 
     def set_limits(self, provider: str, limits: ProviderLimits):
@@ -336,6 +336,6 @@ def get_rate_limiter() -> RateLimiter:
         if container.has(Services.RATE_LIMITER):
             return container.resolve(Services.RATE_LIMITER)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_rate_limiter, using fallback", exc_info=True)
     # Simple fallback (no globals needed — container handles thread safety)
     return RateLimiter()

@@ -1,3 +1,5 @@
+"""Localisation preprocessor — transforms raw resource strings for AuraPaint."""
+
 import glob
 import json
 import os

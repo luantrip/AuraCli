@@ -26,11 +26,11 @@ def test_blocked_capability_is_presented_as_persistent_security_error() -> None:
     _, request = app.call_from_thread.call_args.args
     assert isinstance(request, SurfaceRequest)
     assert request.intent is PresentationIntent.ERROR
-    assert request.title == "Segurança"
+    assert request.title == "Security"
     assert request.persistent is True
     assert request.task_id == "task-42"
     assert request.content == (
-        "Operação bloqueada: `write_file`\nOperação bloqueada pela policy task-local."
+        "Operation blocked: `write_file`\nOperação bloqueada pela policy task-local."
     )
 
 

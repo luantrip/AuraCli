@@ -13,3 +13,7 @@ __all__ = [
     "ContractEnforcer",
     "ContractViolationError",
 ]
+
+from aura_cli.core.contracts.security import CapabilityAuditSink, ToolAccessDecision
+
+__all__ += ["CapabilityAuditSink", "ToolAccessDecision"]

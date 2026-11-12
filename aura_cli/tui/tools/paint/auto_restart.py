@@ -64,7 +64,7 @@ def restart_program() -> None:
     """Restart current program with clean terminal state."""
     if hasattr(_app, "discard_backup"):
         try:
-            _app.discard_backup()  # type: ignore
+            _app.discard_backup()  # type: ignore[attr-defined]  # AuraPaint app method, no formal stub
         except Exception as e:
             print("Error discarding backup:", e)
 
@@ -135,7 +135,7 @@ def restart_on_changes(app: PaintApp | GalleryApp) -> None:
             print("Reloading due to FS change:", event.event_type, event.src_path)
             with contextlib.suppress(ScreenStackError):
                 _app.screen.styles.background = "red"
-            if hasattr(app, "is_document_modified") and _app.is_document_modified():  # type: ignore
+            if hasattr(app, "is_document_modified") and _app.is_document_modified():  # type: ignore[attr-defined]  # guarded by hasattr
                 _app.call_from_thread(_app.action_reload)
             else:
                 restart_program()

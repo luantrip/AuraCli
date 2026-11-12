@@ -22,12 +22,12 @@ async def test_code_analysis_surfaces_empty_states_and_localized_copy() -> None:
         await pilot.pause()
         panel = app.query_one(CodeAnalysisPanel)
 
-        assert "Análise de código" in panel.query_one("#analysis_header").render().plain
+        assert "Code analysis" in panel.query_one("#analysis_header").render().plain
         assert "Problemas (0)" in panel.query_one("#issues_header").render().plain
         assert panel.query_one("#code-empty-state", Static).display is True
         assert panel.query_one("#issues-empty-state", Static).display is True
         assert (
-            "Nenhum resumo disponível"
+            "No summary available"
             in panel.query_one("#analysis_summary").render().plain
         )
 
@@ -51,7 +51,7 @@ async def test_code_analysis_surfaces_empty_states_and_localized_copy() -> None:
         assert panel.query_one("#issues_table", DataTable).row_count == 1
         assert panel.issues[0].severity == "warning"
         assert (
-            "Análise de código: example.py"
+            "Code analysis: example.py"
             in panel.query_one("#analysis_header").render().plain
         )
 

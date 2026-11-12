@@ -82,7 +82,7 @@ class TestHandleGenericException:
         ui = MagicMock()
         handle_generic_exception(error, "model", ui=ui)
         ui.display_error.assert_called()
-        assert "renderização" in ui.display_error.call_args[0][0]
+        assert "rendering" in ui.display_error.call_args[0][0].lower()
 
     @patch("aura_cli.core.error_handler.get_error_handler", return_value=MagicMock())
     def test_generic_error(self, mock_handler):

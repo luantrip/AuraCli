@@ -98,7 +98,7 @@ def apply_nebula_theme(app: App) -> None:
         _apply_inline_styles(app)
 
     except Exception as e:
-        _logger.debug(f"Aviso: não foi possível aplicar tema: {e}")
+        _logger.debug(f"Warning: could not apply theme: {e}")
 
 
 def _load_theme_colors() -> dict:

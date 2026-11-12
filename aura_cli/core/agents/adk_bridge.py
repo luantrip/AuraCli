@@ -121,7 +121,6 @@ class ADKAgentAdapter(AgentBackend):
     """
 
     def __init__(self, adk_agent: Agent):
-        """Initialize the widget."""
         self.adk_agent = adk_agent
         self._assistant: Any = None
         self._user_proxy: Any = None
@@ -204,8 +203,8 @@ class ADKBridgeFactory:
 
         if name not in cls._registry:
             raise ValueError(
-                f"ADK agent '{name}' não registrado. "
-                f"Disponíveis: {list(cls._registry.keys())}"
+                f"ADK agent '{name}' not registered. "
+                f"Available: {list(cls._registry.keys())}"
             )
 
         agent = cls._registry[name](**kwargs)
@@ -261,8 +260,8 @@ try:
     )
     from aura_cli.core.agents.adk_wrapper import ADKAgentWrapper
 except ImportError:
-    ADKAgentWrapper = None  # type: ignore[assignment,misc]
-    create_adk_wrapper = None  # type: ignore[assignment]
+    ADKAgentWrapper = None  # type: ignore[assignment,misc]  # optional dep
+    create_adk_wrapper = None  # type: ignore[assignment]  # optional dep
 
 __all__ = [
     "ADKAgentAdapter",

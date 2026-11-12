@@ -28,6 +28,7 @@ class EventDefinition(Generic[PayloadModel]):
     description: str = ""
 
     def create(self, **kwargs: Any) -> PayloadModel:
+        """Create a new event bus instance."""
         return self.schema(**kwargs)
 
 
@@ -61,6 +62,7 @@ class TypedEventBus:
         schema: type[PayloadModel],
         description: str = "",
     ) -> EventDefinition[PayloadModel]:
+        """Define a named event type on this bus."""
         if event_type in self._event_schemas:
             logger.warning("Event type %r already defined; overwriting", event_type)
         definition = EventDefinition(event_type, schema, description)
@@ -69,6 +71,7 @@ class TypedEventBus:
         return definition
 
     def publish(self, event_type: str, payload: Payload) -> bool:
+        """Publish an event to all subscribers of its type."""
         if self._paused:
             return False
 
@@ -101,12 +104,15 @@ class TypedEventBus:
         definition: EventDefinition[PayloadModel],
         payload: PayloadModel,
     ) -> bool:
+        """Publish a typed event, validating the payload against its schema."""
         return self.publish(definition.event_type, payload.model_dump())
 
     def subscribe(self, event_type: str, callback: EventHandler) -> Callable[[], None]:
+        """Subscribe a callback to events of a specific type."""
         self._subscribers[event_type].append(callback)
 
         def unsubscribe() -> None:
+            """Remove a subscriber callback from the given event type."""
             subscribers = self._subscribers[event_type]
             if callback in subscribers:
                 subscribers.remove(callback)
@@ -114,15 +120,18 @@ class TypedEventBus:
         return unsubscribe
 
     def subscribe_all(self, callback: WildcardEventHandler) -> Callable[[], None]:
+        """Subscribe a callback to all events on this bus."""
         self._wildcard_subscribers.append(callback)
 
         def unsubscribe() -> None:
+            """Remove a subscriber callback from the given event type."""
             if callback in self._wildcard_subscribers:
                 self._wildcard_subscribers.remove(callback)
 
         return unsubscribe
 
     def once(self, event_type: str, callback: EventHandler) -> Callable[[], None]:
+        """Subscribe a one-shot callback that fires at most once."""
         unsubscribe: Callable[[], None]
 
         def wrapper(payload: Payload) -> None:
@@ -134,12 +143,15 @@ class TypedEventBus:
         return unsubscribe
 
     def pause(self) -> None:
+        """Pause event delivery — events are queued until resumed."""
         self._paused = True
 
     def resume(self) -> None:
+        """Resume event delivery and flush any queued events."""
         self._paused = False
 
     def clear_subscribers(self, event_type: str | None = None) -> None:
+        """Remove all subscribers for the given event type."""
         if event_type is None:
             self._subscribers.clear()
             self._wildcard_subscribers.clear()
@@ -149,15 +161,18 @@ class TypedEventBus:
     def get_history(
         self, event_type: str | None = None, limit: int = 100
     ) -> list[EventRecord]:
+        """Return the recent event history for the given event type."""
         records = self._history
         if event_type is not None:
             records = [record for record in records if record.event_type == event_type]
         return records[-limit:] if limit > 0 else []
 
     def clear_history(self) -> None:
+        """Clear the stored event history."""
         self._history.clear()
 
     def get_defined_events(self) -> dict[str, EventDefinition[Any]]:
+        """Return the set of event types defined on this bus."""
         return self._event_definitions.copy()
 
     def _record_event(self, event_type: str, payload: Payload, validated: bool) -> None:

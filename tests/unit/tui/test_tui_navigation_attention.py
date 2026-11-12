@@ -70,7 +70,7 @@ def test_escape_cancels_only_the_active_textual_worker() -> None:
 
     worker.cancel.assert_called_once_with()
     host._transition_runtime.assert_called_once_with(
-        RuntimeAction.CANCELLED, "Operação cancelada"
+        RuntimeAction.CANCELLED, "Operation cancelled"
     )
     host._restore_composer_focus.assert_called_once_with()
     host.notify.assert_called_once()
@@ -92,7 +92,7 @@ def test_repeated_escape_does_not_recancel_terminal_runtime() -> None:
     worker = Mock(is_finished=False, is_cancelled=False)
     host = _cancel_host(TuiSurfaceState(), worker=worker)
     host.runtime_state = TuiRuntimeState(
-        phase=RuntimePhase.CANCELLED, message="Operação cancelada", task_id="task-1"
+        phase=RuntimePhase.CANCELLED, message="Operation cancelled", task_id="task-1"
     )
 
     AuraTUI._action_cancel(host)

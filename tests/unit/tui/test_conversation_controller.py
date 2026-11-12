@@ -7,8 +7,8 @@ from aura_cli.tui.widgets.message_bubble import MessageType
 def test_message_type_normalizes_legacy_sender_names() -> None:
     assert ConversationController.message_type("Sistema") is MessageType.SYSTEM
     assert ConversationController.message_type("System") is MessageType.SYSTEM
-    assert ConversationController.message_type("Ferramenta") is MessageType.TOOL
-    assert ConversationController.message_type("Erro") is MessageType.ERROR
+    assert ConversationController.message_type("Tool") is MessageType.TOOL
+    assert ConversationController.message_type("Error") is MessageType.ERROR
 
 
 def test_append_owns_history_and_rendering() -> None:

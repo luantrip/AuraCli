@@ -201,14 +201,14 @@ class BaseConfigManager:
             path_exists = False
 
         if not path_exists:
-            _get_logger().info("Arquivo de configuração não existe, criando padrão")
+            _get_logger().info("Config file does not exist, creating default")
             self.data = self.default_config.copy()
             try:
                 self.save()
             except (PermissionError, OSError) as e:
                 _get_logger().warning(
-                    f"Não foi possível persistir configuração inicial em {self.path}: {e}. "
-                    "Continuando com configuração em memória."
+                    f"Could not persist initial config at {self.path}: {e}. "
+                    "Continuing with in-memory configuration."
                 )
             return self.data
 
@@ -227,16 +227,16 @@ class BaseConfigManager:
             if "default_model" in data:
                 self._migrate_model(data)
 
-            _get_logger().debug("Configuração carregada com sucesso")
+            _get_logger().debug("Configuration loaded successfully")
             return data
         except json.JSONDecodeError as e:
             _get_logger().error(f"Error parsing configuration JSON: {e}")
             return self.default_config.copy()
         except PermissionError as e:
-            _get_logger().error(f"Sem permissão para ler configuração: {e}")
+            _get_logger().error(f"No permission to read configuration: {e}")
             return self.default_config.copy()
         except OSError as e:
-            _get_logger().error(f"Erro de sistema ao carregar configuração: {e}")
+            _get_logger().error(f"System error loading configuration: {e}")
             return self.default_config.copy()
 
     def _prepare_data_for_save(self) -> Dict[str, Any]:
@@ -263,12 +263,12 @@ class BaseConfigManager:
             data_to_save = self._prepare_data_for_save()
             with open(self.path, "w", encoding="utf-8") as f:
                 json.dump(data_to_save, f, indent=4)
-            _get_logger().debug("Configuração salva com sucesso")
+            _get_logger().debug("Configuration saved successfully")
         except PermissionError as e:
-            _get_logger().error(f"Sem permissão para salvar configuração: {e}")
+            _get_logger().error(f"No permission to save configuration: {e}")
             raise
         except OSError as e:
-            _get_logger().error(f"Erro de sistema ao salvar configuração: {e}")
+            _get_logger().error(f"System error saving configuration: {e}")
             raise
 
     def get(self, key: str) -> Optional[Any]:
@@ -396,7 +396,10 @@ def get_config_manager():
         if container.has(Services.CONFIG):
             return container.resolve(Services.CONFIG)
     except Exception:
-        pass
+        _get_logger().debug(
+            "DI container unavailable in get_config_manager, using fallback",
+            exc_info=True,
+        )
     # Simple fallback (no globals needed — container handles thread safety)
     try:
         from aura_cli.core.config import ConfigCompat
@@ -561,7 +564,10 @@ class JsonConfigRepository:
         self.path = Path(path or _PYDANTIC_CONFIG_FILE)
 
     def load(self) -> AppSettings:
-        """Load, validate and migrate settings; invalid files fail to defaults."""
+        """Load :class:`AppSettings` from ``~/.aura/config.json``.
+
+        Returns defaults if the file is missing or malformed.
+        """
         if not os.path.exists(self.path):
             return AppSettings()
         try:
@@ -574,11 +580,12 @@ class JsonConfigRepository:
             return settings
         except (OSError, json.JSONDecodeError, TypeError, ValueError) as exc:
             _get_pydantic_logger().warning(
-                "Configuração inválida em %s; usando defaults: %s", self.path, exc
+                "Invalid configuration in %s; using defaults: %s", self.path, exc
             )
             return AppSettings()
 
     def save(self, settings: AppSettings) -> None:
+        """Persist :class:`AppSettings` atomically to ``~/.aura/config.json``."""
         """Atomically persist one validated configuration snapshot."""
         self.path.parent.mkdir(parents=True, exist_ok=True)
         temporary = self.path.with_suffix(f"{self.path.suffix}.tmp")
@@ -647,8 +654,6 @@ class ConfigCompat:
         """Get a configuration value by key."""
         s = self._ensure_settings()
         _MAP = {
-            "auto_mode": lambda: False,
-            "auto_mode_prefer_local": lambda: False,
             "theme_name": lambda: s.theme_name,
             "accessibility": lambda: s.accessibility.model_dump(),
             "accessibility_mode": lambda: s.accessibility.enabled,
@@ -676,6 +681,9 @@ class ConfigCompat:
             "max_tokens": lambda: s.llm.max_tokens,
             "top_p": lambda: s.llm.top_p,
             "system_prompt": lambda: s.llm.system_prompt,
+            # Deprecated keys — always return False; no-op on set.
+            "auto_mode": lambda: False,
+            "auto_mode_prefer_local": lambda: False,
         }
         if key == "default_model":
             return normalize_model_name(s.default_model)
@@ -715,7 +723,12 @@ class ConfigCompat:
         if key == "default_model":
             s.default_model = normalize_model_name(value) or s.default_model
         elif key in ("auto_mode", "auto_mode_prefer_local"):
-            pass  # Deprecated, ignore silently
+            import warnings
+            warnings.warn(
+                f"Setting '{key}' is deprecated and has no effect since 0.1.0.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
         elif key == "api_keys" and isinstance(value, dict):
             _KEY_MAP = {
                 "google_api_key": "google",

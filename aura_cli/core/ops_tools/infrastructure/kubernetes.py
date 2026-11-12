@@ -10,13 +10,10 @@ import json
 import subprocess
 from typing import List, Optional, Tuple
 
-from rich.console import Console
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 @dataclass
@@ -67,16 +64,17 @@ class KubernetesManager:
         self.kubectl_available = shutil.which("kubectl") is not None
 
         if not self.kubectl_available:
-            logger.warning(
-                "kubectl not found. Kubernetes features limited."
-            )
+            logger.warning("kubectl not found. Kubernetes features limited.")
         else:
             logger.info("KubernetesManager initialized")
 
     def _run_kubectl(self, command: List[str], timeout: int = 30) -> Tuple[bool, str]:
         """Run a kubectl command and return (success, output)."""
         if not self.kubectl_available:
-            return False, "kubectl não disponível"
+            return (
+                False,
+                "kubectl not available. Install kubectl and ensure it is in PATH.",
+            )
 
         try:
             result = subprocess.run(
@@ -180,7 +178,6 @@ class KubernetesManager:
             Mensagem de resultado
         """
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call("apply_manifest", {"manifest_path": manifest_path})
 
@@ -188,16 +185,11 @@ class KubernetesManager:
 
         if success:
             logger.info(f"Manifest {manifest_path} aplicado com sucesso")
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Manifest aplicado[/{UIStyles.SUCCESS}]"
-            )
             self.stats.track_tool_usage("kubernetes_apply")
             return "Manifest aplicado com sucesso"
         else:
             error_msg = f"Error applying manifest: {output}"
             logger.error(error_msg)
-            console.print(f"[{UIStyles.ERROR}]{error_msg}[/{UIStyles.ERROR}]")
             return error_msg
 
     def scale_deployment(
@@ -216,7 +208,7 @@ class KubernetesManager:
         )
 
         if success:
-            return f"Deployment {deployment_name} escalado para {replicas} réplicas"
+            return f"Deployment {deployment_name} scaled to {replicas} replicas"
         else:
             return f"Error scaling: {output}"
 

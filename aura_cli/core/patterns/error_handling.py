@@ -48,7 +48,7 @@ def handle_exceptions(
                     raise
                 return default
 
-        return wrapper  # type: ignore[return-value]
+        return wrapper  # type: ignore[return-value]  # Callable → decorated type
 
     return decorator
 
@@ -74,6 +74,6 @@ def async_handle_exceptions(
                     raise
                 return default
 
-        return wrapper  # type: ignore[return-value]
+        return wrapper  # type: ignore[return-value]  # Callable → decorated type
 
     return decorator

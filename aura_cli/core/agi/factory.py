@@ -36,7 +36,7 @@ _AGENT_SPECS = [
     (
         "test",
         "test_agent",
-        "aura_cli.core.agents.specialized_agents.test_agent",
+        "aura_cli.core.agents.specialized_agents.tester_agent",
         "TestAgent",
     ),
 ]
@@ -97,7 +97,6 @@ class AgiAgentFactory:
         use_adk: bool = True,
         memory_synchronizer: Any = None,
     ):
-        """Initialize the instance."""
         self.orchestrator = orchestrator
         self.communication_manager = communication_manager
         self.agi_event_adapter = agi_event_adapter
@@ -154,7 +153,7 @@ class AgiAgentFactory:
                         if enhancement.get("relevant_skills"):
                             agent.consciousness_skills = enhancement["relevant_skills"]
                     except Exception as _e:
-                        pass  # silenced: {_e}
+                        logger.debug("Failed to apply skill enhancement: %s", _e)
 
                 if self.communication_manager:
                     self.communication_manager.register_agent(agent_id, "main_channel")
@@ -168,9 +167,9 @@ class AgiAgentFactory:
                 self.orchestrator.register_agent(agent)
 
             consciousness_status = (
-                "com consciência ativa"
+                "with active awareness"
                 if self.consciousness_manager
-                else "sem consciência"
+                else "without awareness"
             )
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",

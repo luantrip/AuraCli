@@ -20,12 +20,12 @@ from aura_cli.tui.widgets.layout.external_tool_launcher import ExternalToolLaunc
 class FilesScreen(BaseToolScreen):
     """Launcher for optional Files manager."""
 
-    SCREEN_TITLE = "Gerenciador de Arquivos"
-    SCREEN_SUBTITLE = "Explorador de arquivos do sistema"
+    SCREEN_TITLE = "File Manager"
+    SCREEN_SUBTITLE = "System file explorer"
 
     BINDINGS: ClassVar[list] = [
         *BaseToolScreen.BINDINGS,
-        Binding("enter", "launch", "Abrir arquivos"),
+        Binding("enter", "launch", "Open files"),
     ]
 
     def compose_tool_body(self) -> ComposeResult:
@@ -34,24 +34,24 @@ class FilesScreen(BaseToolScreen):
             yield ExternalToolLauncher(
                 available=availability.files,
                 description_lines=[
-                    "Gerenciador de arquivos para o terminal.",
+                    "File manager for the terminal.",
                     "Baseado no TUIFIManager.",
                 ],
                 features=[
-                    "Navegação de arquivos com ícones",
-                    "Reconhecimento de repositórios Git",
-                    "Operações de copiar, mover e excluir",
+                    "File navigation with icons",
+                    "Git repository recognition",
+                    "Copy, move and delete operations",
                     "Suporte a teclado e mouse",
                 ],
                 install_command="pip install TUIFIManager",
-                launch_button_label="Abrir arquivos",
+                launch_button_label="Open files",
                 id="files_launcher",
             )
 
     def action_launch(self) -> None:
         if get_tool_availability().files:
             pop_screen_and_restore_focus(self.app)
-            self.app.action_launch_files()  # type: ignore[attr-defined]
+            self.app.action_launch_files()  # type: ignore[attr-defined]  # Textual App subclass action
 
     @on(ExternalToolLauncher.LaunchRequested)
     def _on_launch(self, _event: ExternalToolLauncher.LaunchRequested) -> None:

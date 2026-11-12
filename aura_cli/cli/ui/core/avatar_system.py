@@ -99,7 +99,6 @@ class AvatarSystem:
     """
 
     def __init__(self):
-        """Initialize the instance."""
         self._avatars: Dict[str, Avatar] = {}
         self._render_cache: Dict[str, Text] = {}
         self._setup_default_avatars()
@@ -147,19 +146,19 @@ class AvatarSystem:
                     style=AvatarStyle.BADGE,
                 ),
                 "tool": Avatar(
-                    name="Ferramenta",
-                    icon="⚒",
+                    name="Tool",
+                    icon="⚙",
                     color=theme.get_color("warning"),
                     style=AvatarStyle.ICON,
                 ),
                 "error": Avatar(
-                    name="Erro",
+                    name="Error",
                     icon="✖",
                     color=theme.get_color("error"),
                     style=AvatarStyle.ICON,
                 ),
                 "success": Avatar(
-                    name="Sucesso",
+                    name="Success",
                     icon="✔",
                     color=theme.get_color("success"),
                     style=AvatarStyle.ICON,

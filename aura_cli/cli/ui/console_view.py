@@ -35,10 +35,10 @@ _console_history = ConsoleHistory()
 # Compatible and patchable alias; the source remains the unique facade.
 console = get_console()
 _STATUS_LABELS = {
-    "running": "executando",
-    "success": "concluída",
-    "error": "com erro",
-    "cancelled": "cancelada",
+    "running": "running",
+    "success": "completed",
+    "error": "with error",
+    "cancelled": "cancelled",
 }
 
 
@@ -92,12 +92,12 @@ def display_interaction_list(
 
     if not history.interactions:
         target_console.print(
-            f"[{UIStyles.MUTED}]Nenhuma interação ainda[/{UIStyles.MUTED}]"
+            f"[{UIStyles.MUTED}]No interactions yet[/{UIStyles.MUTED}]"
         )
         return
 
     header = Text(
-        f"{UIIcons.STATS} Histórico de interação",
+        f"{UIIcons.STATS} Interaction history",
         style=UIStyles.TITLE,
     )
     target_console.print(header)
@@ -154,14 +154,14 @@ def display_interaction_details(
 
     if not interaction:
         target_console.print(
-            f"[{UIStyles.ERROR}]{UIIcons.ERROR} Interação não encontrada[/{UIStyles.ERROR}]"
+            f"[{UIStyles.ERROR}]{UIIcons.ERROR} Interaction not found[/{UIStyles.ERROR}]"
         )
         return
 
     status_icon = get_status_icon(interaction.status)
     status_color = get_status_color(interaction.status)
 
-    header = f"{status_icon} Interação {interaction.id[:8]}"
+    header = f"{status_icon} Interaction {interaction.id[:8]}"
 
     content = Text()
 
@@ -196,7 +196,7 @@ def display_interaction_details(
 
     if interaction.prompt_tokens > 0 or interaction.generated_tokens > 0:
         content.append(
-            "Estatísticas:\n",
+            "Statistics:\n",
             style=UIStyles.SUBTITLE,
         )
         content.append(
@@ -207,7 +207,7 @@ def display_interaction_details(
         )
         if interaction.execution_time > 0:
             content.append(
-                f"Tempo de execução: {interaction.execution_time:.2f}s\n",
+                f"Execution time: {interaction.execution_time:.2f}s\n",
                 style=UIStyles.BODY,
             )
         content.append("\n")
@@ -249,7 +249,6 @@ class InteractiveConsoleDashboard:
     """Interactive dashboard for viewing interaction history."""
 
     def __init__(self, history: Optional[ConsoleHistory] = None):
-        """Initialize the instance."""
         self.history = history or get_console_history()
         self.search_query: str = ""
         self.status_filter: Optional[InteractionStatus] = None
@@ -298,7 +297,7 @@ class InteractiveConsoleDashboard:
     ) -> RenderableType:
         """Render the statistics panel with responsive padding."""
         stats_text = Text()
-        stats_text.append(f"{UIIcons.STATS} Estatísticas\n\n", style=UIStyles.TITLE)
+        stats_text.append(f"{UIIcons.STATS} Statistics\n\n", style=UIStyles.TITLE)
 
         stats_text.append("Total: ", style=UIStyles.LABEL)
         stats_text.append(f"{stats['total']}\n", style=UIStyles.PRIMARY + " bold")
@@ -326,7 +325,7 @@ class InteractiveConsoleDashboard:
             stats_text.append(f"{stats['total_tokens']:,}\n", style=UIStyles.PRIMARY)
 
         if stats["avg_execution_time"] > 0:
-            stats_text.append("Tempo médio: ", style=UIStyles.LABEL)
+            stats_text.append("Avg time: ", style=UIStyles.LABEL)
             stats_text.append(
                 f"{stats['avg_execution_time']:.2f}s\n", style=UIStyles.INFO
             )
@@ -341,7 +340,7 @@ class InteractiveConsoleDashboard:
     ) -> Union[Table, Group]:
         """Render the interaction list table with search and filters."""
         header = Text(
-            f"{UIIcons.STATS} Histórico de interação",
+            f"{UIIcons.STATS} Interaction history",
             style=UIStyles.TITLE,
         )
         table = Table(
@@ -396,7 +395,7 @@ class InteractiveConsoleDashboard:
         if len(interactions) > max_rows:
             footer = Text()
             footer.append(
-                f"\n[{UIStyles.MUTED}]Mostrando {max_rows} de {len(interactions)} interações",
+                f"\n[{UIStyles.MUTED}]Showing {max_rows} of {len(interactions)} interactions",
                 style=UIStyles.MUTED,
             )
             if (
@@ -420,7 +419,7 @@ class InteractiveConsoleDashboard:
         status_color = get_status_color(interaction.status)
 
         header_parts = []
-        header_parts.append(f"{status_icon} Interação {interaction.id[:8]}")
+        header_parts.append(f"{status_icon} Interaction {interaction.id[:8]}")
 
         if interaction.execution_time > 0:
             header_parts.append(f"({interaction.execution_time:.2f}s)")
@@ -476,7 +475,7 @@ class InteractiveConsoleDashboard:
         if interaction.error:
             error_text = Text()
             error_text.append(
-                f"{UIIcons.ERROR} Erro\n\n", style=UIStyles.ERROR + " bold"
+                f"{UIIcons.ERROR} Error\n\n", style=UIStyles.ERROR + " bold"
             )
             error_syntax = Syntax(
                 interaction.error, "python", theme="monokai", line_numbers=False
@@ -582,7 +581,7 @@ class InteractiveConsoleDashboard:
 
         header_text = Text()
         header_text.append(
-            f"{UIIcons.STATS} Dashboard do histórico", style=UIStyles.TITLE
+            f"{UIIcons.STATS} History dashboard", style=UIStyles.TITLE
         )
         if self.search_query:
             header_text.append(f" | Busca: {self.search_query}", style=UIStyles.ACCENT)
@@ -610,12 +609,12 @@ class InteractiveConsoleDashboard:
                 layout["footer"].update(preview)
             else:
                 layout["footer"].update(
-                    Text("Nenhuma interação selecionada", style=UIStyles.MUTED)
+                    Text("No interaction selected", style=UIStyles.MUTED)
                 )
         else:
             layout["footer"].update(
                 Text(
-                    "Selecione uma interação para ver os detalhes", style=UIStyles.MUTED
+                    "Select an interaction to see details", style=UIStyles.MUTED
                 )
             )
 

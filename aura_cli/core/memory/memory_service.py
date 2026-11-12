@@ -220,9 +220,12 @@ class MemoryService:
                     elif self._constitution_cache is not None:
                         force_reload = True
                 except OSError:
-                    pass
-
-            if not force_reload and self._constitution_loaded:
+                    # Cannot stat constitution file — force reload to avoid stale cache.
+                    force_reload = True
+                    logger.debug(
+                        "Cannot stat constitution file for mtime check, forcing reload",
+                        exc_info=True,
+                    )
                 return self._constitution_cache
 
             try:
@@ -236,9 +239,9 @@ class MemoryService:
                     if constitution_file.exists():
                         self._constitution_mtime = constitution_file.stat().st_mtime
                 except OSError:
-                    pass
-
-                if content:
+                    logger.debug(
+                        "Cannot update constitution mtime cache", exc_info=True
+                    )
                     self._constitution_validator = ConstitutionValidator(content)
                     logger.debug("Constitution loaded and validator updated")
                 else:
@@ -475,7 +478,7 @@ class MemoryService:
         Returns:
             Conversation history or None if not found
         """
-        return self.notebook_service.get_snapshot(snapshot_id)  # type: ignore[attr-defined]
+        return self.notebook_service.get_snapshot(snapshot_id)  # type: ignore[attr-defined]  # optional notebook service
 
     def list_snapshots(self, limit: int = 10) -> List[Dict[str, Any]]:
         """
@@ -734,7 +737,7 @@ def get_memory_service(project_root: Optional[Path] = None) -> MemoryService:
             registry = container.resolve(Services.MEMORY_SERVICE_REGISTRY)
             return registry.get(project_root)
     except Exception:
-        pass  # DI container unavailable at import time — fall through to direct instantiation
+        logger.debug("memory_service: DI container unavailable, using direct instantiation")
     # Simple fallback (no globals needed — container handles thread safety)
     resolved_root = (
         Path(project_root).expanduser().resolve()

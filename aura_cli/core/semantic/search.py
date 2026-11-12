@@ -1,6 +1,6 @@
 """Semantic code-search surface, distinct from product memory."""
 
-from aura_cli.core.memory_advanced.semantic_search import (
+from aura_cli.core.memory.semantic_search import (
     SearchQuery,
     SearchResult,
     SemanticSearch,

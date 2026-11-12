@@ -37,6 +37,7 @@ class ExtensionRegistry:
     def register(
         self, name: str, version: str, metadata: Optional[dict[str, Any]] = None
     ) -> ExtensionInfo:
+        """Register an extension by name and return its registration handle."""
         info = ExtensionInfo(
             name=name,
             version=version,
@@ -47,6 +48,7 @@ class ExtensionRegistry:
         return info
 
     def set_status(self, name: str, status: ExtensionStatus) -> bool:
+        """Update the activation status of a registered extension."""
         info = self.extensions.get(name)
         if info is None:
             return False
@@ -54,11 +56,13 @@ class ExtensionRegistry:
         return True
 
     def get_extension(self, name: str) -> Optional[ExtensionInfo]:
+        """Look up a registered extension by name."""
         return self.extensions.get(name)
 
     def list_extensions(
         self, status: Optional[ExtensionStatus] = None
     ) -> list[ExtensionInfo]:
+        """Return all registered extensions as a list."""
         items = list(self.extensions.values())
         return (
             items
@@ -67,6 +71,7 @@ class ExtensionRegistry:
         )
 
     def get_statistics(self) -> dict[str, Any]:
+        """Return aggregate statistics about registered extensions."""
         return {
             "total_extensions": len(self.extensions),
             "by_status": {

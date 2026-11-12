@@ -194,7 +194,7 @@ class ModelPreferenceLearner:
             )
 
             logger.info(
-                f"Preferências carregadas: {len(self.decision_history)} decisões"
+                f"Preferences loaded: {len(self.decision_history)} decisions"
             )
         except Exception as e:
             logger.warning(f"Error loading preferences: {e}")
@@ -301,12 +301,12 @@ class AdvancedMultiModelIntelligence(MultiModelIntelligence):
         if enable_cache:
             self.cache = ResponseCache()
         else:
-            self.cache = None  # type: ignore[assignment]
+            self.cache = None  # type: ignore[assignment]  # optional dep, assigned post-init
 
         if enable_learning:
             self.learner = ModelPreferenceLearner()
         else:
-            self.learner = None  # type: ignore[assignment]
+            self.learner = None  # type: ignore[assignment]  # optional dep, assigned post-init
 
     def smart_query_with_cache(
         self,

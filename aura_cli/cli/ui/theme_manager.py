@@ -7,7 +7,10 @@ failures. Access via get_theme_manager().
 """
 
 from importlib import resources
+import logging
 import os
+
+logger = logging.getLogger(__name__)
 from typing import Any, ClassVar, Dict, List, Optional
 
 import toml
@@ -67,7 +70,6 @@ class ThemeManager:
         return cls._instance
 
     def __init__(self, theme_name: Optional[str] = None):
-        """Initialize the instance."""
         if not hasattr(self, "_initialized"):
             self._init_themes_dir()
             self.colors: Dict[str, str] = {}
@@ -125,7 +127,7 @@ class ThemeManager:
             TypeError,
             AttributeError,
         ) as _e:
-            pass  # silenced: {_e}
+            logger.debug("theme_manager: ignored error: %s", _e)
 
         fallback_path = os.path.join(os.path.dirname(__file__), "themes")
         self.themes_dir = fallback_path
@@ -191,7 +193,7 @@ class ThemeManager:
             else:
                 raise FileNotFoundError(
                     f"Base theme 'aura_minimal.toml' not found. "
-                    f"Diretório de temas: {self.themes_dir}"
+                    f"Themes directory: {self.themes_dir}"
                 )
 
         try:
@@ -210,7 +212,7 @@ class ThemeManager:
 
                     UIStyles._reload_styles()
                 except (ImportError, AttributeError) as _e:
-                    pass  # silenced: {_e}
+                    logger.debug("theme_manager: ignored error: %s", _e)
                 except Exception as e:
                     import logging
 
@@ -259,7 +261,7 @@ class ThemeManager:
                         key,
                     )
         except Exception as _e:
-            pass  # silenced: {_e}
+            logger.debug("theme_manager: ignored error: %s", _e)
 
     def _get_theme_path(self, theme_name: str) -> Optional[str]:
         """Get theme file path using importlib.resources or filesystem."""
@@ -276,7 +278,7 @@ class ThemeManager:
             TypeError,
             AttributeError,
         ) as _e:
-            pass  # silenced: {_e}
+            logger.debug("theme_manager: ignored error: %s", _e)
 
         filesystem_path = os.path.join(self.themes_dir, filename)
         if os.path.exists(filesystem_path):
@@ -482,7 +484,7 @@ class ThemeManager:
                 luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255
                 return luminance < 0.5
             except (ValueError, IndexError) as _e:
-                pass  # silenced: {_e}
+                logger.debug("theme_manager: ignored error: %s", _e)
         dark_names = ["black", "grey", "gray"]
         return any(dark in bg.lower() for dark in dark_names)
 

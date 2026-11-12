@@ -280,7 +280,7 @@ class AgentRunner:
                     }
                     agent_cls = _adk_map.get(adk_name)
                     if agent_cls is not None:
-                        adk_agent = agent_cls()  # type: ignore[abstract]
+                        adk_agent = agent_cls()  # type: ignore[abstract]  # abstract methods resolved at runtime via ADK
                         try:
                             loop = asyncio.get_event_loop()
                         except RuntimeError:
@@ -356,7 +356,10 @@ def get_agent_runner() -> AgentRunner:
         if container.has(Services.AGENT_RUNNER):
             return container.resolve(Services.AGENT_RUNNER)
     except Exception:
-        pass
+        logger.warning(
+            "DI container unavailable in get_agent_runner, falling back to singleton",
+            exc_info=True,
+        )
 
     # Fallback to legacy singleton
     global _runner

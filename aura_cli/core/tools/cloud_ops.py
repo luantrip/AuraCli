@@ -148,11 +148,11 @@ def cloudflare_pages_deploy(
 
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(
-            f"[{success_style}]{UIIcons.SUCCESS} Publicação concluída![/{success_style}]"
+            f"[{success_style}]{UIIcons.SUCCESS} Publication complete![/{success_style}]"
         )
         rprint(f"[bold cyan]URL: {url}[/bold cyan]")
 
-        return f"Publicação concluída.\nURL: {url}\n\nSaída:\n{output}"
+        return f"Publication complete.\nURL: {url}\n\nOutput:\n{output}"
 
     except subprocess.CalledProcessError as e:
         error_msg = f"Error publishing to Pages: {e.stderr if e.stderr else str(e)}"

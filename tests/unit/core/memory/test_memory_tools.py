@@ -97,7 +97,7 @@ class TestListarPaginasCaderno:
 
         result = listar_paginas_caderno()
 
-        assert "nenhuma página" in result.lower() or "no pages" in result.lower()
+        assert "no pages" in result.lower()
         assert "test_session" in result
 
     @patch("aura_cli.core.tools.memory_tools.notebook_service")
@@ -123,7 +123,7 @@ class TestVerIndiceCaderno:
     def test_ver_indice_with_index(self, mock_stats, mock_display, mock_notebook):
         """Test viewing index when index exists."""
         mock_notebook.read_index.return_value = (
-            "# Índice do Caderno\n\n## Page 1\nContent"
+            "# Notebook Index\n\n## Page 1\nContent"
         )
         mock_notebook.session_id = "test_session"
         mock_notebook.session_path = Path("/test/path")
@@ -140,14 +140,14 @@ class TestVerIndiceCaderno:
     @patch("aura_cli.core.tools.memory_tools.get_stats")
     def test_ver_indice_empty(self, mock_stats, mock_display, mock_notebook):
         """Test viewing index when empty."""
-        mock_notebook.read_index.return_value = "# Índice do Caderno"
+        mock_notebook.read_index.return_value = "# Notebook Index"
         mock_notebook.session_id = "test_session"
         mock_stats_instance = Mock()
         mock_stats.return_value = mock_stats_instance
 
         result = ver_indice_caderno()
 
-        assert "nenhuma página" in result.lower() or "no pages" in result.lower()
+        assert "no pages" in result.lower()
         assert "test_session" in result
 
     @patch("aura_cli.core.tools.memory_tools.notebook_service")

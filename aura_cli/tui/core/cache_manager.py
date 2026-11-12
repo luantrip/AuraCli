@@ -49,7 +49,6 @@ class CacheManager:
     }
 
     def __init__(self):
-        """Initialize the instance."""
         self._ensure_cache_dir()
         self._settings: Dict[str, Dict[str, Any]] = {}
         self._load_all_settings()

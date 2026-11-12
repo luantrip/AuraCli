@@ -160,7 +160,7 @@ class DatabaseMonitor:
             if len(self.metrics_history) > 100:
                 self.metrics_history = self.metrics_history[-100:]
 
-            logger.debug(f"Métricas coletadas para {connection.database}")
+            logger.debug(f"Metrics collected for {connection.database}")
             self.stats.track_tool_usage("database_monitor")
 
             return metrics
@@ -212,7 +212,7 @@ class DatabaseMonitor:
 
             if connection.db_type.lower() in ("postgresql", "mysql"):
                 if metrics.connections > 100:
-                    issues.append("Alto número de conexões")
+                    issues.append("High number of connections")
                 if metrics.active_queries > 50:
                     issues.append("Muitas queries ativas")
                 if metrics.cache_hit_ratio < 0.8:
@@ -226,14 +226,14 @@ class DatabaseMonitor:
         else:
             health_result["checks"]["metrics"] = False
             health_result["status"] = "degraded"
-            health_result["issues"] = ["Não foi possível coletar métricas"]
+            health_result["issues"] = ["Could not collect metrics"]
 
         return health_result
 
     def get_performance_summary(self) -> Dict[str, Any]:
         """Return a performance summary as a dict."""
         if not self.metrics_history:
-            return {"message": "Nenhuma métrica coletada ainda"}
+            return {"message": "No metrics collected yet"}
 
         latest = self.metrics_history[-1]
 

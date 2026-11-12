@@ -31,15 +31,17 @@ TextEmbedding: Any = None
 np: Any = None
 
 try:
-    from fastembed import TextEmbedding  # type: ignore[no-redef]
+    from fastembed import (
+        TextEmbedding,  # type: ignore[no-redef]  # conditional re-import in try/except
+    )
     import numpy as np
 
     HAS_EMBEDDINGS = True
 except ImportError:
     HAS_EMBEDDINGS = False
     if not hasattr(logger, "_embeddings_warning_logged"):
-        logger.warning("fastembed não instalado. Embeddings avançados limitados.")
-        logger._embeddings_warning_logged = True  # type: ignore[attr-defined]
+        logger.warning("fastembed not installed. Advanced embeddings limited.")
+        logger._embeddings_warning_logged = True  # type: ignore[attr-defined]  # dynamic flag on logger instance
 
 
 class EmbeddingIndex:
@@ -58,7 +60,7 @@ class EmbeddingIndex:
             cache_dir: Cache directory
         """
         if not HAS_EMBEDDINGS:
-            raise ImportError("fastembed é necessário para embeddings avançados")
+            raise ImportError("fastembed is required for advanced embeddings")
 
         self.model_name = model_name
         self.cache_dir = (
@@ -115,7 +117,7 @@ class EmbeddingIndex:
     ) -> List[str]:
         """Add a batch of documents and embeddings."""
         if line_numbers is None:
-            line_numbers = [None] * len(texts)  # type: ignore[list-item]
+            line_numbers = [None] * len(texts)  # type: ignore[list-item]  # List[None] broadened to List[Optional[int]]
         if context_types is None:
             context_types = ["code"] * len(texts)
 
@@ -194,7 +196,7 @@ class EmbeddingIndex:
                 json.dump(cache_data, f, ensure_ascii=False)
 
             logger.info(
-                f"Índice de embeddings salvo: {len(self.embeddings)} documents"
+                f"Embeddings index saved: {len(self.embeddings)} documents"
             )
         except Exception as e:
             logger.warning(f"Error saving index: {e}")
@@ -208,12 +210,12 @@ class EmbeddingIndex:
             with open(self._index_file, encoding="utf-8") as f:
                 cache_data = json.load(f)
             if cache_data.get("format_version") != 1:
-                logger.warning("Versão desconhecida do índice de embeddings")
+                logger.warning("Unknown embeddings index version")
                 return
 
             if cache_data.get("model_name") != self.model_name:
                 logger.warning(
-                    f"Modelo no cache ({cache_data.get('model_name')}) diferente do atual ({self.model_name}). Recriando índice."
+                    f"Cached model ({cache_data.get('model_name')}) differs from current ({self.model_name}). Reindexing."
                 )
                 return
 
@@ -244,7 +246,7 @@ class CodebaseEmbeddings:
     def __init__(self, scope: str = ".", model_name: str = "BAAI/bge-small-en-v1.5"):
         """Initialise the codebase embeddings manager."""
         if not HAS_EMBEDDINGS:
-            raise ImportError("fastembed é necessário")
+            raise ImportError("fastembed is required")
 
         self.scope = Path(scope).resolve()
         self.index = EmbeddingIndex(
@@ -256,7 +258,7 @@ class CodebaseEmbeddings:
     def index_codebase(self, force_reindex: bool = False) -> Dict[str, Any]:
         """Index the full codebase with embeddings."""
         if self._indexed and not force_reindex and self.index.embeddings:
-            logger.info("Codebase já indexado. Use force_reindex=True para reindexar.")
+            logger.info("Codebase already indexed. Use force_reindex=True to reindex.")
             return {"total_documents": len(self.index.embeddings), "status": "cached"}
 
         logger.info(f"Indexando codebase com embeddings em {self.scope}")
@@ -280,7 +282,7 @@ class CodebaseEmbeddings:
         self.index.save()
         self._indexed = True
 
-        logger.info(f"Indexação concluída: {total_docs} documents indexados")
+        logger.info(f"Indexing complete: {total_docs} documents indexed")
 
         return {
             "total_files": len(python_files),
@@ -314,7 +316,7 @@ class CodebaseEmbeddings:
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
         except Exception as e:
-            logger.warning(f"Não foi possível ler {file_path}: {e}")
+            logger.warning(f"Could not read {file_path}: {e}")
             return 0
 
         relative_path = str(file_path.relative_to(self.scope))
@@ -397,7 +399,7 @@ def index_codebase_embeddings(
 ) -> Dict[str, Any]:
     """Index a codebase with semantic embeddings."""
     if not HAS_EMBEDDINGS:
-        raise ImportError("fastembed é necessário. Instale com: pip install fastembed")
+        raise ImportError("fastembed is required. Install with: pip install fastembed")
 
     embeddings = CodebaseEmbeddings(scope=scope, model_name=model_name)
     return embeddings.index_codebase(force_reindex=force_reindex)
@@ -408,7 +410,7 @@ def semantic_search_codebase(
 ) -> List[Dict[str, Any]]:
     """Semantic search across the codebase using embeddings."""
     if not HAS_EMBEDDINGS:
-        raise ImportError("fastembed é necessário. Instale com: pip install fastembed")
+        raise ImportError("fastembed is required. Install with: pip install fastembed")
 
     embeddings = CodebaseEmbeddings(scope=scope)
     return embeddings.semantic_search(query, top_k=top_k, threshold=threshold)

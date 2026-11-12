@@ -23,7 +23,7 @@ from typing import Any, Dict, Optional
 try:
     import tomllib
 except ImportError:
-    import tomli as tomllib  # type: ignore
+    import tomli as tomllib  # type: ignore[import-untyped]  # no stub for tomli
 
 try:
     import tomli_w

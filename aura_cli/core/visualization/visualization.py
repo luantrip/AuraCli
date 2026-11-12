@@ -269,7 +269,6 @@ class ProgressTracker:
     """Tracks and displays progress for multi-step operations."""
 
     def __init__(self, total_steps: int, description: str = "Processing"):
-        """Initialize the instance."""
         self.total_steps = total_steps
         self.description = description
         self.current_step = 0
@@ -371,7 +370,7 @@ def export_dependency_graph(
         content = json.dumps(dependencies, indent=2)
         output_file = output_file.with_suffix(".json")
     else:
-        raise ValueError(f"Formato não suportado: {output_format}")
+        raise ValueError(f"Unsupported format: {output_format}")
 
     output_file.write_text(content, encoding="utf-8")
     logger.info(f"Grafo exportado para: {output_file}")
@@ -394,10 +393,10 @@ def export_impact_analysis(
         content = _export_impact_csv(impact_data)
         output_file = output_file.with_suffix(".csv")
     else:
-        raise ValueError(f"Formato não suportado: {output_format}")
+        raise ValueError(f"Unsupported format: {output_format}")
 
     output_file.write_text(content, encoding="utf-8")
-    logger.info(f"Análise de impacto exportada para: {output_file}")
+    logger.info(f"Impact analysis exported to: {output_file}")
     return str(output_file)
 
 

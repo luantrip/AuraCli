@@ -22,7 +22,6 @@ class MonitorManager:
     """Manager for the aura-monitor binary."""
 
     def __init__(self, project_root: Optional[Path] = None):
-        """Initialize the manager."""
         self.project_root = (project_root or Path.cwd()).expanduser().resolve()
         self.executable_path = self._find_binary()
         self.last_error: Optional[str] = None
@@ -30,7 +29,7 @@ class MonitorManager:
         if not self.executable_path:
             self.last_error = "Monitor binary not found."
             logger.warning(
-                "Monitor binary not found. Navegação web/conteúdo desabilitada."
+                "Monitor binary not found. Web/content navigation disabled."
             )
 
     def _find_binary(self) -> Optional[Path]:
@@ -104,9 +103,9 @@ class MonitorManager:
                 max_output_bytes=4 * 1024 * 1024,
             )
             if result.timed_out:
-                raise TimeoutError("Monitor excedeu o timeout de 30 segundos")
+                raise TimeoutError("Monitor timed out after 30 seconds")
             if result.output_limited:
-                raise ValueError("Monitor excedeu o limite de saída")
+                raise ValueError("Monitor exceeded output limit")
             if result.returncode != 0:
                 stderr = result.stderr.decode("utf-8", errors="replace").strip()
                 raise RuntimeError(

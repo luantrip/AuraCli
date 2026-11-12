@@ -58,7 +58,7 @@ class ChainExecutor:
         for i, link in enumerate(chain.links):
             if link.condition and not link.condition(context):
                 logger.debug(
-                    f"Link {i + 1} ({link.tool_name}) pulado devido a condição"
+                    f"Link {i + 1} ({link.tool_name}) skipped due to condition"
                 )
                 continue
 
@@ -88,7 +88,7 @@ class ChainExecutor:
             except Exception as e:
                 error_msg = str(e)
                 logger.error(
-                    f"Link {i + 1} ({link.tool_name}) falhou: {error_msg}",
+                    f"Link {i + 1} ({link.tool_name}) failed: {error_msg}",
                     exc_info=True,
                 )
 
@@ -112,7 +112,7 @@ class ChainExecutor:
         self.stats.track_tool_usage("chain_executor")
 
         logger.info(
-            f"Chain '{chain.name}' concluída: "
+            f"Chain '{chain.name}' complete: "
             f"{execution_record['links_executed']}/{execution_record['total_links']} links"
         )
 

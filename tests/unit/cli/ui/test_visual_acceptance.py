@@ -1,7 +1,7 @@
 from rich.console import Console
 
 from aura_cli.application.execution import TurnExecution
-from aura_cli.cli.ui.components.agent_workspace import AgentWorkspacePanel
+from aura_cli.cli.ui.components.agent.agent_workspace import AgentWorkspacePanel
 
 
 def _operational_fixture(width: int) -> str:
@@ -20,7 +20,7 @@ def test_operational_group_adapts_at_supported_widths() -> None:
     for width, visible in ((60, 3), (80, 5), (100, 5), (120, 8), (160, 8)):
         rendered = _operational_fixture(width)
         assert rendered.count("read_file_") == visible
-        assert "Operações" in rendered
+        assert "Operations" in rendered
         assert max(map(len, rendered.splitlines())) <= width
         assert rendered.count("╭") == 1
         assert rendered.count("╰") == 1

@@ -17,12 +17,11 @@ from aura_cli.application.agents.worker_lifecycle import (
     summarize_worker_success,
 )
 from aura_cli.application.workspace import MemorySynchronizer
-from aura_cli.cli.ui.components.subagent_panel import SubAgentPanel
+from aura_cli.cli.ui.components.agent.subagent_panel import SubAgentPanel
 from aura_cli.cli.ui.composition import publish_agent_status, publish_subagent_panel
 from aura_cli.cli.ui.constants import UIIcons
 from aura_cli.cli.workers.advanced_runtime import initialize_advanced_worker_runtime
 from aura_cli.cli.workers.base_worker import BaseWorker
-from aura_cli.cli.workers.tool_panel_helper import tool_panel_context
 from aura_cli.core.agents.fallbacks import classify_fallback_reason
 from aura_cli.core.agi.context import AgiContextManager
 from aura_cli.core.agi.execution import AgiExecutionEngine
@@ -76,7 +75,7 @@ try:
     LOADING_AVAILABLE = _loading_states is not None
 except ImportError:
     LOADING_AVAILABLE = False
-    logger.debug("Loading states não disponível em AgiWorker")
+    logger.debug("Loading states not available in AgiWorker")
 
 try:
     from aura_cli.cli.workers.tester_worker import TesterWorker
@@ -84,8 +83,8 @@ try:
     TESTER_WORKER_AVAILABLE = True
 except ImportError:
     TESTER_WORKER_AVAILABLE = False
-    TesterWorker = None  # type: ignore[assignment,misc]
-    logger.debug("TesterWorker não disponível em AgiWorker")
+    TesterWorker = None  # type: ignore[assignment,misc]  # optional dep
+    logger.debug("TesterWorker not available in AgiWorker")
 
 
 class AgiWorker(BaseWorker):
@@ -152,8 +151,8 @@ class AgiWorker(BaseWorker):
             self.task_planner = TaskPlanner()
             self.problem_decomposer = ProblemDecomposer()
         else:
-            self.task_planner = None  # type: ignore[assignment]
-            self.problem_decomposer = None  # type: ignore[assignment]
+            self.task_planner = None  # type: ignore[assignment]  # assigned post-init
+            self.problem_decomposer = None  # type: ignore[assignment]  # assigned post-init
         self.agent_memory = None
         self.planner = None  # initialized in _initialize_advanced_components
         self.context_manager_service = None
@@ -206,22 +205,22 @@ class AgiWorker(BaseWorker):
                     self.constitution = self._memory_service.get_constitution()
                     if self.constitution:
                         logger.info(
-                            "Constituição carregada do serviço de memória unificado"
+                            "Constitution loaded from unified memory service"
                         )
 
                 if self.constitution and not self.headless:
                     self.agi_event_adapter.emit_chat_message(
                         sender="system",
-                        content=f"› [Aura AGI] {UIIcons.INFO} Constituição do Projeto carregada e ativa",
+                        content=f"› [Aura AGI] {UIIcons.INFO} Project Constitution loaded and active",
                     )
             except (OSError, KeyError) as e:
                 logger.debug(
-                    f"Não foi possível carregar a constituição para AgiWorker: {e}"
+                    f"Could not load constitution for AgiWorker: {e}"
                 )
                 self.constitution = None
             except Exception as e:
                 logger.warning(
-                    f"Erro inesperado ao carregar constituição: {e}", exc_info=True
+                    f"Unexpected error loading constitution: {e}", exc_info=True
                 )
                 self.constitution = None
 
@@ -303,7 +302,7 @@ class AgiWorker(BaseWorker):
             return
 
         try:
-            self.planner = AgiPlanner(  # type: ignore[assignment]
+            self.planner = AgiPlanner(  # type: ignore[assignment]  # narrowed from Optional
                 model=self.model,
                 project_root=self.project_root,
                 agi_event_adapter=self.agi_event_adapter,
@@ -313,7 +312,7 @@ class AgiWorker(BaseWorker):
                 use_advanced_features=self.use_advanced_features,
             )
 
-            self.context_manager_service = AgiContextManager(  # type: ignore[assignment]
+            self.context_manager_service = AgiContextManager(  # type: ignore[assignment]  # narrowed from Optional
                 project_root=self.project_root,
                 constitution=self.constitution,
                 agi_event_adapter=self.agi_event_adapter,
@@ -351,7 +350,7 @@ class AgiWorker(BaseWorker):
             self.workflow_executor = runtime.workflow_executor
             self.agent_memory = runtime.agent_memory
 
-            if hasattr(self.orchestrator, "context") and self.orchestrator.context:  # type: ignore
+            if hasattr(self.orchestrator, "context") and self.orchestrator.context:  # type: ignore[union-attr]  # guarded by hasattr
                 assert self.orchestrator is not None
                 self.orchestrator.context.shared_memory["agent_memory_service"] = (
                     self.agent_memory
@@ -386,7 +385,7 @@ class AgiWorker(BaseWorker):
                 progress_factory=lambda title: SubAgentPanel(title=title),
                 publish_progress=publish_subagent_panel,
                 publish_status=publish_agent_status,
-                tool_panel_context_factory=tool_panel_context,
+                tool_panel_context_factory=None,  # no-op; panel mode removed (G6)
             )
 
             self.factory.create_specialized_agents(self.prompt)
@@ -426,7 +425,7 @@ class AgiWorker(BaseWorker):
             try:
                 self.agi_event_adapter.emit_chat_message(
                     sender="system",
-                    content=f"› [Aura AGI] ❌ Erro crítico no worker: {error}",
+                    content=f"› [Aura AGI] ❌ Critical worker error: {error}",
                 )
             except Exception as emit_error:
                 logger.debug(f"Failed to emit error event: {emit_error}")
@@ -443,7 +442,7 @@ class AgiWorker(BaseWorker):
 
         self.agi_event_adapter.emit_chat_message(
             sender="agent",
-            content=f"› [Aura AGI] {UIIcons.THINKING} Iniciando análise de contexto...",
+            content=f"› [Aura AGI] {UIIcons.THINKING} Starting context analysis...",
         )
 
         if self.use_advanced_features:
@@ -457,7 +456,7 @@ class AgiWorker(BaseWorker):
             logger.error("AgiExecutionEngine not initialized!")
             self.agi_event_adapter.emit_chat_message(
                 sender="system",
-                content=f"› [Aura AGI] {UIIcons.ERROR} Falha crítica: Engine não inicializada.",
+                content=f"› [Aura AGI] {UIIcons.ERROR} Critical failure: Engine not initialized.",
             )
             self._record_final_error(
                 "AgiExecutionEngine not initialized",
@@ -485,7 +484,7 @@ class AgiWorker(BaseWorker):
             if not self.headless:
                 self.agi_event_adapter.emit_chat_message(
                     sender="system",
-                    content=f"› [Aura AGI] {UIIcons.SUCCESS} Análise salva no caderno: {Path(page_path).name}",
+                    content=f"› [Aura AGI] {UIIcons.SUCCESS} Analysis saved to notebook: {Path(page_path).name}",
                 )
         except Exception as e:
             logger.warning(f"Error saving AGI snapshot: {e}")

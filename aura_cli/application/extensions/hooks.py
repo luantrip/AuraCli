@@ -49,6 +49,7 @@ class ExtensionHookManager:
         priority: int = 100,
         extension_name: str = "system",
     ) -> str:
+        """Register a callback for the given hook event type."""
         hook_id = self._id_factory()
         self.hooks[hook_type].append(
             ExtensionHook(
@@ -63,6 +64,7 @@ class ExtensionHookManager:
         return hook_id
 
     def execute_hooks(self, hook_type: HookType, context: Any = None) -> list[Any]:
+        """Execute all callbacks registered for the given hook event."""
         results: list[Any] = []
         for hook in self.hooks.get(hook_type, []):
             try:
@@ -74,6 +76,7 @@ class ExtensionHookManager:
         return results
 
     def unregister_hook(self, hook_id: str) -> bool:
+        """Remove a specific callback from a hook event."""
         for hooks in self.hooks.values():
             for hook in hooks:
                 if hook.hook_id == hook_id:
@@ -82,6 +85,7 @@ class ExtensionHookManager:
         return False
 
     def unregister_extension_hooks(self, extension_name: str) -> int:
+        """Remove all hooks registered by a specific extension."""
         removed = 0
         for hook_type, hooks in self.hooks.items():
             retained = [hook for hook in hooks if hook.extension_name != extension_name]
@@ -90,11 +94,13 @@ class ExtensionHookManager:
         return removed
 
     def get_hooks_count(self, hook_type: Optional[HookType] = None) -> int:
+        """Return the total number of registered hook callbacks."""
         if hook_type is not None:
             return len(self.hooks.get(hook_type, []))
         return sum(len(hooks) for hooks in self.hooks.values())
 
     def list_hooks(self) -> dict[str, list[dict[str, Any]]]:
+        """Return a mapping of hook event types to their registered callbacks."""
         return {
             hook_type.value: [
                 {

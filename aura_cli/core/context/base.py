@@ -2,48 +2,15 @@
 
 compress_conversation_history() reduces token usage by summarising old
 messages (NLP when available) while preserving system messages and recent
-interactions. Uses per-model context window sizes from _MODEL_CONTEXT_WINDOWS
-instead of a hardcoded 4 000-token threshold.
+interactions. Uses per-model context window sizes from
+``application.workspace.context_usage`` instead of a hardcoded 4 000-token threshold.
 """
 
 from datetime import datetime
 import re
 from typing import Dict, List, Optional
 
-# Model context window sizes (tokens).  Used to set a sensible compression
-# threshold instead of the old hardcoded 4 000-token value, which caused
-# premature compaction on models with 128K+ context windows.
-_MODEL_CONTEXT_WINDOWS: dict[str, int] = {
-    # Google
-    "gemini-2.5-flash": 1_048_576,
-    "gemini-2.5-pro": 1_048_576,
-    "gemini-1.5-pro": 1_048_576,
-    "gemini-1.5-flash": 1_048_576,
-    # Cerebras / OpenRouter / NVIDIA
-    "gpt-oss-120b": 131_072,
-    "nemotron": 131_072,
-    "llama": 131_072,
-    "qwen": 131_072,
-    # OpenAI
-    "gpt-4o": 128_000,
-    "gpt-4o-mini": 128_000,
-    "gpt-4-turbo": 128_000,
-    # Anthropic
-    "claude-3": 200_000,
-    "claude-sonnet": 200_000,
-    "claude-haiku": 200_000,
-    "claude-opus": 200_000,
-}
-_DEFAULT_CONTEXT_WINDOW = 32_000  # conservative fallback
-
-
-def _context_window_for_model(model: str) -> int:
-    """Return the approximate context window (tokens) for the given model string."""
-    model_lower = model.lower()
-    for key, size in _MODEL_CONTEXT_WINDOWS.items():
-        if key in model_lower:
-            return size
-    return _DEFAULT_CONTEXT_WINDOW
+from aura_cli.application.workspace.context_usage import context_window_for_model
 
 
 def compression_threshold_for_model(model: str) -> int:
@@ -53,7 +20,7 @@ def compression_threshold_for_model(model: str) -> int:
     60 % headroom for tool results and the next response.  The minimum is
     8 000 tokens to avoid compressing on every turn for large-context models.
     """
-    window = _context_window_for_model(model)
+    window = context_window_for_model(model)
     return max(8_000, window // 10 * 4)  # 40 % of window, minimum 8 000
 
 
@@ -116,7 +83,7 @@ def compress_conversation_history(
                     else None
                 )
                 if user_summary:
-                    summary = f"Tópicos principais: {user_summary.summary}"
+                    summary = f"Main topics: {user_summary.summary}"
                 else:
                     summary = summarize_messages(middle_messages)
             else:
@@ -149,7 +116,7 @@ def summarize_messages(messages: List[Dict]) -> str:
     if user_messages:
         topics = extract_topics(user_messages)
         if topics:
-            summary_parts.append(f"Tópicos: {', '.join(topics[:5])}")
+            summary_parts.append(f"Topics: {', '.join(topics[:5])}")
         else:
             all_content = " ".join(
                 [m.get("content", "") for m in user_messages]
@@ -165,7 +132,7 @@ def summarize_messages(messages: List[Dict]) -> str:
     if assistant_messages:
         actions = extract_actions(assistant_messages)
         if actions:
-            summary_parts.append(f"Ações: {', '.join(actions[:5])}")
+            summary_parts.append(f"Actions: {', '.join(actions[:5])}")
         else:
             all_content = " ".join([m.get("content", "") for m in assistant_messages])
             tool_mentions = [
@@ -195,7 +162,7 @@ def extract_topics(messages: List[Dict]) -> List[str]:
     topics = []
 
     keywords = {
-        "código": ["código", "code", "programação", "programming"],
+        "code": ["código", "code", "programação", "programming"],
         "arquivo": ["arquivo", "file", "criar", "create", "editar", "edit"],
         "projeto": ["projeto", "project", "estrutura", "structure"],
         "bug": ["bug", "erro", "error", "problema", "issue"],

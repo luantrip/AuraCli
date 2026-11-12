@@ -13,17 +13,17 @@ class MonitorUnavailablePanel(Container):
     def compose(self) -> ComposeResult:
         with Container(id="monitor-unavailable-state", classes="unavailable-message"):
             with Vertical(classes="unavailable-content"):
-                yield Static("Monitor indisponível", classes="unavailable-title")
+                yield Static("Monitor unavailable", classes="unavailable-title")
                 yield Static(
-                    "Esta instalação não encontrou a dependência necessária.",
+                    "This installation could not find the required dependency.",
                     classes="unavailable-text",
                 )
-                yield Static("Dependência: Chawan (cha)", classes="unavailable-label")
+                yield Static("Dependency: Chawan (cha)", classes="unavailable-label")
                 yield Static(
                     "cd tools_tui/monitor && make", classes="unavailable-command"
                 )
                 yield Static(
-                    "Ou instale o binário pelo gerenciador de pacotes do sistema.",
+                    "Or install the binary via your system package manager.",
                     classes="unavailable-text",
                 )
-                yield Static("Pressione Esc para voltar.", classes="unavailable-hint")
+                yield Static("Press Esc to go back.", classes="unavailable-hint")

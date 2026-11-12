@@ -147,7 +147,7 @@ class TestDatabaseBackup:
         result = self.backup.create_backup(config)
 
         assert result.success is False
-        assert "não suportado" in result.error
+        assert "not supported" in result.error
         assert result.duration >= 0  # Apenas verificar que duração foi calculada
 
     @patch("shutil.which")

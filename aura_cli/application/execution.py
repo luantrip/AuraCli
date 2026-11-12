@@ -11,6 +11,7 @@ from uuid import uuid4
 
 
 class OperationStatus(str, Enum):
+    """Lifecycle status of a single agent operation."""
     PLANNED = "planned"
     AWAITING_CONFIRMATION = "awaiting_confirmation"
     RUNNING = "running"
@@ -20,6 +21,7 @@ class OperationStatus(str, Enum):
 
 
 class TurnPhase(str, Enum):
+    """Phase of a conversation turn execution."""
     THINKING = "thinking"
     EXECUTING = "executing"
     VERIFYING = "verifying"
@@ -33,6 +35,7 @@ _SENSITIVE_PARTS = ("key", "token", "secret", "password", "authorization")
 
 
 def utc_now() -> datetime:
+    """Return the current UTC datetime with timezone info."""
     return datetime.now(timezone.utc)
 
 
@@ -56,6 +59,7 @@ def sanitize_arguments(arguments: Mapping[str, Any]) -> dict[str, Any]:
 
 @dataclass
 class OperationEvidence:
+    """Evidence record attached to an operation for audit."""
     exit_code: int | None = None
     paths: list[str] = field(default_factory=list)
     existing_paths: list[str] = field(default_factory=list)
@@ -67,6 +71,7 @@ class OperationEvidence:
 
 @dataclass
 class OperationRecord:
+    """Complete record of a single operation execution."""
     operation_id: str
     tool_call_id: str
     category: str
@@ -167,16 +172,19 @@ class TurnExecution:
 
     @property
     def files_read(self) -> list[str]:
+        """Return the list of files read during this operation."""
         return _unique_targets(self.operations, {"read_file"})
 
     @property
     def files_created(self) -> list[str]:
+        """Return the list of files created during this operation."""
         return _unique_evidence_paths(
             self.operations, {"write_file"}, existed_before=False
         )
 
     @property
     def files_edited(self) -> list[str]:
+        """Return the list of files edited during this operation."""
         explicit_edits = _unique_evidence_paths(
             self.operations, {"edit_file", "replace_in_file"}
         )
@@ -187,6 +195,7 @@ class TurnExecution:
 
     @property
     def failures(self) -> list[OperationRecord]:
+        """Return the list of failure records for this operation."""
         return [
             item for item in self.operations if item.status is OperationStatus.FAILED
         ]
@@ -194,6 +203,7 @@ class TurnExecution:
     def plan_operation(
         self, tool_call_id: str, name: str, arguments: Mapping[str, Any]
     ) -> OperationRecord:
+        """Build an OperationRecord representing a planned operation."""
         if any(item.tool_call_id == tool_call_id for item in self.operations):
             raise ValueError(f"duplicate tool_call_id: {tool_call_id}")
         target = next(

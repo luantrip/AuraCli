@@ -48,7 +48,7 @@ class TestEditFileExtra:
         f = tmp_path / "f.py"
         f.write_text("old")
         result = self._run(f, "old", "new", confirm=False)
-        assert "cancelada" in result
+        assert "cancelled" in result
 
     def test_edit_file_not_found(self, tmp_path):
         from aura_cli.core.tools.dev_tools import edit_file
@@ -113,7 +113,7 @@ class TestTreeView:
 
     def test_not_found(self):
         result = self._run("/no/such/path/xyz")
-        assert "Erro" in result or "não encontrado" in result
+        assert "error" in result.lower() or "não encontrado" in result
 
 
 # ── backup_file / restore_backup ─────────────────────────────────────────────
@@ -172,7 +172,7 @@ class TestBackupFile:
             from aura_cli.core.tools.dev_tools import backup_file
 
             result = backup_file(str(f))
-        assert "Erro" in result
+        assert "error" in result.lower()
 
 
 class TestRestoreBackup:
@@ -192,7 +192,7 @@ class TestRestoreBackup:
                 result = restore_backup("file.py")
         finally:
             os.chdir(old)
-        assert "Erro" in result or "não encontrado" in result
+        assert "error" in result.lower() or "não encontrado" in result
 
     def test_no_backup_found_for_file(self, tmp_path):
         from aura_cli.core.tools.dev_tools import restore_backup
@@ -240,7 +240,7 @@ class TestValidateSyntax:
 
     def test_invalid_json(self):
         result = self._run("{bad json}", "json")
-        assert "Erro" in result or "JSON" in result
+        assert "error" in result.lower() or "JSON" in result
 
     def test_valid_yaml(self):
         result = self._run("key: value\n", "yaml")
@@ -316,7 +316,7 @@ class TestHeavyDepFunctions:
             ),
         ):
             result = analyze_code_nlp(str(f))
-        assert "Erro" in result
+        assert "error" in result.lower()
 
     def test_classify_code_exception(self, tmp_path):
         from aura_cli.core.tools.dev_tools import classify_code
@@ -333,7 +333,7 @@ class TestHeavyDepFunctions:
             ),
         ):
             result = classify_code(str(f))
-        assert "Erro" in result
+        assert "error" in result.lower()
 
     def test_summarize_code_exception(self, tmp_path):
         from aura_cli.core.tools.dev_tools import summarize_code
@@ -350,7 +350,7 @@ class TestHeavyDepFunctions:
             ),
         ):
             result = summarize_code(str(f))
-        assert "Erro" in result
+        assert "error" in result.lower()
 
 
     def test_find_duplicate_code_exception(self, tmp_path):
@@ -362,6 +362,6 @@ class TestHeavyDepFunctions:
             patch("os.walk", side_effect=RuntimeError("fail")),
         ):
             result = find_duplicate_code(str(tmp_path))
-        assert "Erro" in result
+        assert "error" in result.lower()
 
 

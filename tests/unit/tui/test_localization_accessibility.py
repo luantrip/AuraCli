@@ -22,7 +22,7 @@ class ScreenHostHarness(App[None]):
 
 
 @pytest.mark.asyncio
-async def test_monitor_unavailable_panel_explains_dependency_in_portuguese() -> None:
+async def test_monitor_unavailable_panel_explains_dependency() -> None:
     app = UnavailableHarness()
 
     async with app.run_test() as pilot:
@@ -30,8 +30,8 @@ async def test_monitor_unavailable_panel_explains_dependency_in_portuguese() -> 
         state = app.query_one("#monitor-unavailable-state")
 
         assert state.has_class("unavailable-message")
-        assert str(title.render()) == "Monitor indisponível"
-        assert "Dependência: Chawan" in str(
+        assert str(title.render()) == "Monitor unavailable"
+        assert "Dependency: Chawan" in str(
             app.query_one(".unavailable-label", Static).render()
         )
         await pilot.pause()

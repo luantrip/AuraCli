@@ -70,14 +70,14 @@ class PolicyManager:
         """Register a tool policy for an agent."""
         self.policies[policy.tool_name] = policy
         logger.info(
-            f"Política adicionada para ferramenta '{policy.tool_name}': "
+            f"Policy added for tool '{policy.tool_name}': "
             f"{policy.access_level.value}"
         )
 
     def add_rule(self, rule: PolicyRule) -> None:
         """Add a rule to an existing policy."""
         self.rules.append(rule)
-        logger.info(f"Regra de política '{rule.name}' adicionada")
+        logger.info(f"Policy rule '{rule.name}' added")
 
     def check_access(
         self, tool_name: str, agent_id: str, parameters: Optional[Dict[str, Any]] = None
@@ -123,18 +123,18 @@ class PolicyManager:
 
             if policy.access_level == AccessLevel.DENIED:
                 return ToolAccessDecision(
-                    False, f"Acesso negado à ferramenta '{tool_name}'"
+                    False, f"Access denied to tool '{tool_name}'"
                 )
 
             if policy.allowed_agents and agent_id not in policy.allowed_agents:
                 return ToolAccessDecision(
                     False,
-                    f"Agente '{agent_id}' não tem permissão para '{tool_name}'",
+                    f"Agent '{agent_id}' has no permission for '{tool_name}'",
                 )
 
             if agent_id in policy.denied_agents:
                 return ToolAccessDecision(
-                    False, f"Agente '{agent_id}' está bloqueado para '{tool_name}'"
+                    False, f"Agent '{agent_id}' is blocked for '{tool_name}'"
                 )
 
             if policy.rate_limit:

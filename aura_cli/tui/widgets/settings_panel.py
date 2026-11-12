@@ -53,7 +53,6 @@ class SettingsField(Static):
     """A single settings field with label and input."""
 
     def __init__(self, label: str, field_id: str, help_text: str = "", **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.label_text = label
         self.field_id = field_id
@@ -82,7 +81,6 @@ class LLMSettingsPanel(Static):
         """Emitted when settings are saved."""
 
         def __init__(self, settings: LLMSettings):
-            """Initialize the instance."""
             super().__init__()
             self.settings = settings
 
@@ -90,7 +88,6 @@ class LLMSettingsPanel(Static):
         """Emitted when settings are reset."""
 
     def __init__(self, initial_settings: Optional[LLMSettings] = None, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._ensure_provider_catalog()
         self.settings = initial_settings or self._load_settings_from_config()
@@ -190,18 +187,18 @@ class LLMSettingsPanel(Static):
 
     def compose(self) -> ComposeResult:
         """Compose the widget layout."""
-        yield Static("⚙ Configuração LLM", classes="settings-header")
+        yield Static("⚙ LLM Configuration", classes="settings-header")
         yield Static(
-            "Configuração canônica: provedor, modelo e chave API. Parâmetros avançados são apenas pré-visualização local.",
+            "Canonical configuration: provider, model and API key. Advanced parameters are local preview only.",
             classes="field-help",
         )
 
         with ScrollableContainer():
             with Vertical(classes="settings-section"):
-                yield Static("Provedor & Modelo", classes="section-title")
+                yield Static("Provider & Model", classes="section-title")
 
                 with Horizontal(classes="field-row"):
-                    yield Label("Provedor:", classes="field-label")
+                    yield Label("Provider:", classes="field-label")
                     yield Select(
                         [(p.title(), p) for p in self.PROVIDERS],
                         value=self.settings.provider,
@@ -209,7 +206,7 @@ class LLMSettingsPanel(Static):
                     )
 
                 with Horizontal(classes="field-row"):
-                    yield Label("Modelo:", classes="field-label")
+                    yield Label("Model:", classes="field-label")
                     yield Select(
                         [(m, m) for m in self.PROVIDERS[self.settings.provider]],
                         value=self.settings.model,
@@ -218,7 +215,7 @@ class LLMSettingsPanel(Static):
 
             with Vertical(classes="settings-section"):
                 yield Static(
-                    "Parâmetros de Geração (Pré-visualização)", classes="section-title"
+                    "Generation Parameters (Preview)", classes="section-title"
                 )
 
                 with Horizontal(classes="field-row"):
@@ -232,7 +229,7 @@ class LLMSettingsPanel(Static):
                     yield Static("(criatividade)", classes="field-help")
 
                 with Horizontal(classes="field-row"):
-                    yield Label("Máx. Tokens:", classes="field-label")
+                    yield Label("Max. Tokens:", classes="field-label")
                     yield Input(
                         str(self.settings.max_tokens),
                         id="max_tokens_input",
@@ -268,10 +265,10 @@ class LLMSettingsPanel(Static):
                     )
 
             with Vertical(classes="settings-section"):
-                yield Static("Configuração da API", classes="section-title")
+                yield Static("API Configuration", classes="section-title")
 
                 with Horizontal(classes="field-row"):
-                    yield Label("Chave API:", classes="field-label")
+                    yield Label("API Key:", classes="field-label")
                     yield Input(
                         self.settings.api_key,
                         id="api_key_input",
@@ -324,7 +321,7 @@ class LLMSettingsPanel(Static):
                 )
 
             with Vertical(classes="settings-section"):
-                yield Static("Aparência", classes="section-title")
+                yield Static("Appearance", classes="section-title")
                 with Horizontal(classes="field-row"):
                     yield Label("Tema:", classes="field-label")
                     yield Select(
@@ -362,11 +359,11 @@ class LLMSettingsPanel(Static):
                 from aura_cli.tui.styles.themes import get_theme_manager
 
                 get_theme_manager().set_theme(str(event.value))
-                self.notify(f"Tema alterado para {event.value}", title="Tema")
+                self.notify(f"Tema alterado para {event.value}", title="Theme")
             except Exception as error:
                 logger.warning("Unable to apply TUI theme %r: %s", event.value, error)
                 self.notify(
-                    "Não foi possível aplicar o tema.", title="Tema", severity="error"
+                    "Could not apply theme.", title="Theme", severity="error"
                 )
 
     def on_input_changed(self, event: Input.Changed) -> None:
@@ -411,7 +408,7 @@ class LLMSettingsPanel(Static):
             self.notify("Insira uma chave API primeiro", title="Erro", severity="error")
             return
 
-        self.notify(f"Testando conexão com {provider}...", title="Testando")
+        self.notify(f"Testing connection with {provider}...", title="Testing")
         self.run_worker(self._test_connection_async(provider, api_key))
 
     async def _test_connection_async(self, provider: str, api_key: str) -> None:
@@ -426,13 +423,13 @@ class LLMSettingsPanel(Static):
             if result.status == ValidationStatus.SUCCESS:
                 self.notify(
                     f"Sucesso: {result.message}",
-                    title="Conexão verificada",
+                    title="Connection verified",
                     severity="information",
                 )
             else:
                 self.notify(
                     f"Falha: {result.message}",
-                    title="Conexão falhou",
+                    title="Connection failed",
                     severity="error",
                 )
         except Exception as error:
@@ -476,8 +473,8 @@ class LLMSettingsPanel(Static):
 
             self.post_message(self.SettingsSaved(self.settings))
             self.notify(
-                "Configurações canônicas salvas. Parâmetros avançados permanecem locais.",
-                title="Configurações",
+                "Canonical settings saved. Advanced parameters remain local.",
+                title="Settings",
                 severity="information",
             )
 
@@ -490,7 +487,7 @@ class LLMSettingsPanel(Static):
         self._populate_fields()
         self.settings_modified = False
         self.notify(
-            "Configurações resetadas para valores originais", title="Configurações"
+            "Settings reset to original values", title="Settings"
         )
 
     def _populate_fields(self) -> None:

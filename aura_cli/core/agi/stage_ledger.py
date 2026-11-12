@@ -26,6 +26,7 @@ class Stage:
 
     def complete(self, *, usd_cost: float = 0.0, input_tokens: int = 0,
                  output_tokens: int = 0) -> Stage:
+        """Mark the current stage as completed and record its duration."""
         self.completed_at = time.time()
         self.usd_cost = usd_cost
         self.input_tokens = input_tokens
@@ -41,16 +42,20 @@ class StageLedger:
         self.stages: list[Stage] = []
 
     def record_stage(self, stage: Stage) -> Stage:
+        """Record a completed stage with its metadata."""
         self.stages.append(stage)
         return stage
 
     def start(self, label: str, description: str = "") -> Stage:
+        """Start the ledger timer for a new execution run."""
         return self.record_stage(Stage(label=label, description=description))
 
     def total_cost(self) -> float:
+        """Return the total token cost accumulated across all stages."""
         return sum(stage.usd_cost for stage in self.stages)
 
     def summary(self) -> dict:
+        """Return a human-readable summary of all recorded stages."""
         return {
             "task_id": self.task_id,
             "stages": len(self.stages),
@@ -63,6 +68,7 @@ class StageLedger:
         }
 
     def save(self, path: Path) -> None:
+        """Persist the stage ledger to disk."""
         target = Path(path)
         target.parent.mkdir(parents=True, exist_ok=True)
         payload = {"summary": self.summary(), "stages": [asdict(stage) for stage in self.stages]}
@@ -70,6 +76,7 @@ class StageLedger:
 
     @classmethod
     def load(cls, path: Path) -> StageLedger:
+        """Load a previously persisted stage ledger from disk."""
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         ledger = cls(payload["summary"]["task_id"])
         ledger.stages = [Stage(**item) for item in payload.get("stages", [])]

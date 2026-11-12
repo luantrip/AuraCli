@@ -31,7 +31,7 @@ def publish_worker_feed_batch(status_queue: Any, messages: List[Any]) -> None:
     """Parse a batch of status messages and publish one combined feed renderable."""
     if status_queue is None or not messages:
         return
-    from aura_cli.cli.ui.components.worker_feed import parse_status_messages
+    from aura_cli.cli.ui.components.agent.worker_feed import parse_status_messages
 
     feeds = parse_status_messages(messages)
     if feeds:
@@ -63,17 +63,12 @@ def publish_subagent_panel(status_queue: Any, panel: Any) -> None:
     publish_status_renderable(status_queue, panel.render())
 
 
-def publish_tool_execution_panel(panel: Any = None) -> None:
-    """Display grouped tool panel (wraps tool_execution_panel.display_tool_panel)."""
-    from aura_cli.cli.ui.components.tool_execution_panel import display_tool_panel
-
-    display_tool_panel(panel)
 
 
 def publish_worker_feeds(status_queue: Any, feeds: Any) -> None:
     """Publish WorkerActivityFeed group renderable."""
     if feeds is None or status_queue is None:
         return
-    from aura_cli.cli.ui.components.worker_feed import render_worker_feeds
+    from aura_cli.cli.ui.components.agent.worker_feed import render_worker_feeds
 
     publish_status_renderable(status_queue, render_worker_feeds(feeds))

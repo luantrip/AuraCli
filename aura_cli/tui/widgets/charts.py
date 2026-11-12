@@ -47,7 +47,6 @@ class ASCIILineChart(Static):
         show_axis: bool = True,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.data = data or []
         self.chart_height = height
@@ -155,7 +154,6 @@ class BarChart(Static):
         show_values: bool = True,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.data = data or {}
         self.title = title
@@ -208,7 +206,6 @@ class VerticalBarChart(Static):
         color: str = "cyan",
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.data = data or []
         self.title = title
@@ -276,7 +273,6 @@ class MetricGauge(Static):
         critical_threshold: float = 0.9,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.label = label
         self.value = value
@@ -310,11 +306,10 @@ class StatsDisplay(Static):
 
     def __init__(
         self,
-        title: str = "Estatísticas",
+        title: str = "Statistics",
         stats: Optional[Dict[str, Any]] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.title = title
         self.stats = stats or {}
@@ -359,7 +354,6 @@ class MiniSparkline(Static):
         color: str = "cyan",
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.data = data or []
         self.spark_width = width

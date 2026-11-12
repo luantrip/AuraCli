@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
 
 from aura_cli.core.logger import get_logger
-from aura_cli.core.semantic.embeddings import EmbeddingGenerator, EmbeddingModel
+from aura_cli.core.semantic import EmbeddingGenerator, EmbeddingModel
 
 logger = get_logger(__name__)
 
@@ -62,7 +62,7 @@ class SemanticSimilarityAnalyzer:
         if len(code_snippets) < 2:
             return []
 
-        logger.info(f"Analisando {len(code_snippets)} trechos para duplicação")
+        logger.info(f"Analyzing {len(code_snippets)} snippets for duplication")
 
         import numpy as np
 
@@ -75,7 +75,7 @@ class SemanticSimilarityAnalyzer:
         if batch_embeddings is not None:
             embeddings = [np.array(emb, dtype="float32") for emb in batch_embeddings]
         else:
-            embeddings = self.embedding_generator.generate_batch(codes)  # type: ignore[assignment]
+            embeddings = self.embedding_generator.generate_batch(codes)  # type: ignore[assignment]  # List[Any] narrowed
 
         similarities = []
         for i in range(len(code_snippets)):
@@ -126,7 +126,7 @@ class SemanticSimilarityAnalyzer:
         if batch_embeddings is not None:
             embeddings = [np.array(emb, dtype="float32") for emb in batch_embeddings]
         else:
-            embeddings = self.embedding_generator.generate_batch(codes)  # type: ignore[assignment]
+            embeddings = self.embedding_generator.generate_batch(codes)  # type: ignore[assignment]  # List[Any] narrowed
 
         similarities = []
         for i, snippet in enumerate(code_snippets):

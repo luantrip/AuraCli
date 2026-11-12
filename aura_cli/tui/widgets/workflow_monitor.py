@@ -40,17 +40,17 @@ class WorkflowMonitor(Static):
         with Vertical():
             yield Static("⟳ Trilha operacional", classes="pane-header")
             yield Static(
-                "Atividade AGI/Ops em tempo real. Esta superfície é somente leitura e nunca executa workflows.",
+                "Real-time AGI/Ops activity. This surface is read-only and never executes workflows.",
                 classes="field-help",
             )
             yield Static(
-                "Nenhuma atividade operacional ainda. Inicie uma tarefa para acompanhar os eventos.",
+                "No operational activity yet. Start a task to trackr os eventos.",
                 id="workflow-empty-state",
                 classes="empty-state",
             )
             yield VerticalScroll(id="workflow_activity_log", classes="output-log")
             with Horizontal(classes="action-bar"):
-                yield Button("✖ Limpar", id="clear_btn")
+                yield Button("✖ Clear", id="clear_btn")
                 yield Button("⊞ Exportar", id="export_btn")
 
     def _set_empty_state_visible(self, visible: bool) -> None:

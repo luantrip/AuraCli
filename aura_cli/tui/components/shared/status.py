@@ -53,7 +53,6 @@ class StatusBar(Widget):
         right_items: Optional[List[StatusItem]] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._left_items = left_items or items or []
         self._right_items = right_items or []

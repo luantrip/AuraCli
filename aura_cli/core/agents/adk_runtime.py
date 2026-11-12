@@ -17,7 +17,7 @@ def _build_tool_schemas(tool_names: Sequence[str]) -> list[dict[str, Any]]:
 
     available = get_tools_dict()
     selected = [available[name] for name in tool_names if name in available]
-    return create_tool_schemas(selected) if selected else []  # type: ignore[arg-type]
+    return create_tool_schemas(selected) if selected else []  # type: ignore[arg-type]  # List[Any] narrowing
 
 
 def configure_core_agent_runtime() -> None:

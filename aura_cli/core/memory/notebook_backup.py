@@ -55,7 +55,7 @@ class NotebookBackupManager:
             metadata_path = self.backup_dir / f"{backup_name}.meta.json"
             metadata_path.write_text(json.dumps(metadata, indent=2), encoding="utf-8")
 
-            self._last_backup_page_count = int(metadata["page_count"])  # type: ignore[call-overload]
+            self._last_backup_page_count = int(metadata["page_count"])  # type: ignore[call-overload]  # int(str) overload
             self._cleanup_old_backups()
 
             logger.info(f"Backup created: {backup_path}")

@@ -29,7 +29,6 @@ if not hasattr(sys.modules.get("sqlite3", None), "_aura_wrapped"):
                     """Wrapper para simular SQLite3 >= 3.35.0 para ChromaDB."""
 
                     def __init__(self, original_sqlite3):
-                        """Initialize the widget."""
                         self._original = original_sqlite3
                         self._aura_wrapped = True  # Marca para evitar re-wrap
                         for attr in dir(original_sqlite3):
@@ -42,7 +41,7 @@ if not hasattr(sys.modules.get("sqlite3", None), "_aura_wrapped"):
                         self.sqlite_version_info = (3, 35, 0)
 
                 wrapped_sqlite3 = SQLite3Wrapper(sqlite3)
-                sys.modules["sqlite3"] = wrapped_sqlite3  # type: ignore[assignment]
+                sys.modules["sqlite3"] = wrapped_sqlite3  # type: ignore[assignment]  # module replaced at runtime
 
                 # Sanity check: verify ChromaDB can still be imported after wrap
                 try:
@@ -55,11 +54,11 @@ if not hasattr(sys.modules.get("sqlite3", None), "_aura_wrapped"):
                         )
                 except Exception as e:
                     logger.warning(
-                        f"Workaround SQLite3 pode estar desatualizado com esta versão do ChromaDB: {e}"
+                        f"SQLite3 workaround may be outdated for this ChromaDB version: {e}"
                     )
             else:
                 logger.debug(
-                    f"SQLite3 {sqlite_version} >= 3.35.0 — workaround não necessário"
+                    f"SQLite3 {sqlite_version} >= 3.35.0 — workaround not needed"
                 )
     except Exception as e:
         logger.warning(f"Error applying SQLite3 workaround: {e}")

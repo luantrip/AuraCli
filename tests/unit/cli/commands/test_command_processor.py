@@ -23,7 +23,7 @@ class TestHandleHelp:
 
 
 class TestHandleTools:
-    @patch("aura_cli.cli.commands.agents.Console")
+    @patch("aura_cli.cli.commands.agents.get_console")
     @patch("aura_cli.cli.commands.agents.OPS_TOOLS", {})
     @patch("aura_cli.cli.commands.agents.get_tools_dict")
     def test_handle_tools_no_exception(self, mock_get_tools, mock_console_class):
@@ -39,7 +39,7 @@ class TestHandleTools:
 
 
 class TestHandleTodo:
-    @patch("aura_cli.cli.commands.project.Console")
+    @patch("aura_cli.cli.commands.project.get_console")
     @patch("aura_cli.core.todo.todo_tracker.TodoTracker")
     @patch("aura_cli.cli.ui.todo_display.create_todo_panel")
     def test_handle_todo_displays_list(
@@ -61,7 +61,7 @@ class TestHandleTodo:
         calls = [str(c) for c in mock_console.print.call_args_list]
         assert any(str(mock_panel) in c for c in calls)
 
-    @patch("aura_cli.cli.commands.project.Console")
+    @patch("aura_cli.cli.commands.project.get_console")
     @patch("aura_cli.core.todo.todo_tracker.TodoTracker")
     def test_handle_todo_handles_errors(self, mock_tracker_class, mock_console_class):
         """Test that handle_todo handles errors gracefully."""

@@ -264,7 +264,7 @@ class TestGitManager:
 
         assert is_safe is False
         assert warning is not None
-        assert "arquivo(s) com mudanças não commitadas" in warning
+        assert "file(s) with uncommitted changes" in warning
         assert "file1.py" in warning
 
     @patch("subprocess.run")
@@ -370,5 +370,5 @@ class TestGitManager:
 
         assert is_safe is False
         assert warning is not None
-        assert "15 arquivo(s)" in warning
+        assert "15 file(s)" in warning
         assert "... e mais 5 arquivo(s)" in warning

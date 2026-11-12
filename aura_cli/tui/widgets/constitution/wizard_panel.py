@@ -10,28 +10,28 @@ from textual.containers import Container, Horizontal, Vertical
 from textual.widgets import Button, Input, Label, Select, Static
 
 _STAGE_CHOICES = [
-    ("MVP/Prototipação (foco em velocidade)", "MVP/Prototipação"),
-    ("Produção Estável (foco em segurança e testes)", "Produção Estável"),
-    ("Refatoração de Legado (manter compatibilidade)", "Refatoração de Legado"),
-    ("Caos Total (reorganização completa)", "Caos Total"),
+    ("MVP/Prototyping (speed-focused)", "MVP/Prototyping"),
+    ("Stable Production (safety & testing focused)", "Stable Production"),
+    ("Legacy Refactoring (maintain compatibility)", "Legacy Refactoring"),
+    ("Full Overhaul (complete reorganisation)", "Full Overhaul"),
 ]
 
 _STAGE_BEHAVIORS: Dict[str, str] = {
-    "MVP/Prototipação": (
-        "Permissivo e focado em velocidade. Pode sugerir soluções rápidas e "
-        "experimentais. Testes são recomendados mas não obrigatórios."
+    "MVP/Prototyping": (
+        "Permissive and speed-focused. May suggest quick and experimental solutions. "
+        "Tests are recommended but not mandatory."
     ),
-    "Produção Estável": (
-        "Conservador e obcecado por testes. Toda mudança deve ter testes unitários. "
-        "Refatorações devem ser incrementais e seguras."
+    "Stable Production": (
+        "Conservative and test-obsessed. Every change must have unit tests. "
+        "Refactorings must be incremental and safe."
     ),
-    "Refatoração de Legado": (
+    "Legacy Refactoring": (
         "Cuidadoso e focado em compatibilidade. Manter interfaces existentes quando "
-        "possível. Refatorações graduais e testadas."
+        "possible. Gradual, tested refactorings."
     ),
     "Caos Total": (
-        "Reorganização completa necessária. Pode sugerir refatorações maiores e "
-        "mudanças arquiteturais. Documentação e testes são críticos."
+        "Complete reorganization needed. May suggest major refactorings and "
+        "architectural changes. Documentation and tests are critical."
     ),
 }
 
@@ -39,8 +39,8 @@ _QUESTIONS = [
     ("stack", "Stack principal (ex: Python + FastAPI, Node.js + React)"),
     ("database", "Banco de dados (ex: PostgreSQL, MongoDB, SQLite)"),
     ("api_style", "Estilo da API (ex: REST, GraphQL, gRPC)"),
-    ("patterns", "Padrões de projeto (ex: Repository, Clean Architecture)"),
-    ("rules", "Outras regras ou convenções importantes"),
+    ("patterns", "Design patterns (e.g. Repository, Clean Architecture)"),
+    ("rules", "Other important rules or conventions"),
 ]
 
 
@@ -64,15 +64,15 @@ class ConstitutionWizardPanel(Container):
         with Vertical(id="content"):
             yield Select(
                 options=_STAGE_CHOICES,
-                prompt="Selecione o estágio do projeto",
+                prompt="Select the project stage",
                 id="stage-select",
             )
             yield Label("", classes="question-label", id="question-label")
             yield Input(placeholder="Sua resposta...", id="answer-input")
             yield Static("", id="summary")
         with Horizontal(id="buttons"):
-            yield Button("Cancelar", variant="error", id="btn-cancel")
-            yield Button("Próximo →", variant="primary", id="btn-next")
+            yield Button("Cancel", variant="error", id="btn-cancel")
+            yield Button("Next →", variant="primary", id="btn-next")
 
     def on_mount(self) -> None:
         self._render_step()
@@ -93,7 +93,7 @@ class ConstitutionWizardPanel(Container):
             answer_input.display = False
             question_label.display = False
             summary.display = False
-            btn_next.label = "Próximo →"
+            btn_next.label = "Next →"
         elif 1 <= self._step <= len(_QUESTIONS):
             stage_select.display = False
             answer_input.display = True
@@ -104,7 +104,7 @@ class ConstitutionWizardPanel(Container):
             answer_input.value = self._answers.get(_QUESTIONS[self._step - 1][0], "")
             answer_input.focus()
             btn_next.label = (
-                "Próximo →" if self._step < len(_QUESTIONS) else "Revisar →"
+                "Next →" if self._step < len(_QUESTIONS) else "Review →"
             )
         else:
             stage_select.display = False
@@ -112,11 +112,11 @@ class ConstitutionWizardPanel(Container):
             question_label.display = False
             summary.display = True
             summary.update(self._build_summary())
-            btn_next.label = "✔ Confirmar"
+            btn_next.label = "✔ Confirm"
 
     def _build_summary(self) -> str:
-        lines = ["[bold cyan]Resumo da Constituição:[/bold cyan]\n"]
-        for key, label in [("stage", "Estágio")] + [(k, lb) for k, lb in _QUESTIONS]:
+        lines = ["[bold cyan]Constitution Summary:[/bold cyan]\n"]
+        for key, label in [("stage", "Stage")] + [(k, lb) for k, lb in _QUESTIONS]:
             val = self._answers.get(key, "—")
             lines.append(f"[bold]{label}:[/bold] {val}")
         return "\n".join(lines)
@@ -125,11 +125,11 @@ class ConstitutionWizardPanel(Container):
         stage = self._answers.get("stage", "")
         behavior = _STAGE_BEHAVIORS.get(stage, "")
         parts = [
-            f"**ESTÁGIO DO PROJETO**\n- {stage}\n",
+            f"**PROJECT STAGE**\n- {stage}\n",
             f"**COMPORTAMENTO ESPERADO DO AGENTE**\n- {behavior}\n",
         ]
         for key, label in _QUESTIONS:
-            val = self._answers.get(key, "Não definido")
+            val = self._answers.get(key, "Not defined")
             parts.append(f"**{label.upper()}**\n- {val}\n")
         return "\n".join(parts)
 
@@ -143,7 +143,7 @@ class ConstitutionWizardPanel(Container):
         if self._step == 0:
             stage_select = self.query_one("#stage-select", Select)
             if stage_select.value is Select.BLANK:
-                self.notify("Selecione um estágio para continuar.", severity="warning")
+                self.notify("Select a stage to continue.", severity="warning")
                 return
             self._answers["stage"] = str(stage_select.value)
         elif 1 <= self._step <= len(_QUESTIONS):

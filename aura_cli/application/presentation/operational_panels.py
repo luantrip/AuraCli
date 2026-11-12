@@ -17,20 +17,24 @@ class DelegatedTaskState:
     start_time: float = field(default_factory=time.time)
 
     def mark_running(self, tool_count: int = 0) -> None:
+        """Mark the given operation as currently running."""
         self.status = "running"
         self.tool_count = tool_count
 
     def mark_done(self, tool_count: int, duration: float) -> None:
+        """Mark the given operation as successfully completed."""
         self.status = "done"
         self.tool_count = tool_count
         self.duration = duration
 
     def mark_failed(self, error: str) -> None:
+        """Mark the given operation as failed."""
         self.status = "failed"
         self.error = error
 
     @property
     def terminal(self) -> bool:
+        """Return True if the operation is in a terminal state."""
         return self.status in {"done", "failed"}
 
 
@@ -45,6 +49,7 @@ class ToolExecutionState:
     start_time: float = field(default_factory=time.time)
 
     def mark_running(self) -> None:
+        """Mark the given operation as currently running."""
         self.status = "running"
 
     def mark_success(
@@ -69,6 +74,7 @@ class ToolExecutionState:
 
 
 def delegated_tasks_complete(tasks: Iterable[DelegatedTaskState]) -> bool:
+    """Return True when all delegated tasks have reached a terminal state."""
     items = list(tasks)
     return bool(items) and all(item.terminal for item in items)
 
@@ -76,6 +82,7 @@ def delegated_tasks_complete(tasks: Iterable[DelegatedTaskState]) -> bool:
 def summarize_tool_executions(
     executions: Iterable[ToolExecutionState],
 ) -> dict[str, float | int]:
+    """Build a summary string of recent tool executions."""
     items = list(executions)
     return {
         "success": sum(item.status == "success" for item in items),

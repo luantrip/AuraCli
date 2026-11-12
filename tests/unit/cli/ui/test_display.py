@@ -380,7 +380,7 @@ class TestDisplayChatMessage:
 
             mock_console.print.assert_called_once()
             call_args = mock_console.print.call_args[0][0]
-            assert "Você" in call_args or "user" in call_args.lower()
+            assert "You" in call_args or "user" in call_args.lower()
 
     def test_display_chat_message_assistant(self):
         """Test display_chat_message for assistant role."""

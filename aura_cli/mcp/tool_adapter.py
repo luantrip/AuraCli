@@ -14,6 +14,7 @@ class ToolAdapter:
         self.writable = writable or set()
 
     def list_tools(self) -> list[dict]:
+        """Return all tools exposed by this MCP adapter."""
         result = []
         for name, function in self.tools.items():
             result.append({"name": name, "description": inspect.getdoc(function) or name,
@@ -21,6 +22,7 @@ class ToolAdapter:
         return result
 
     def call(self, name: str, arguments: dict | None = None, allow_writes: bool = False) -> Any:
+        """Execute a named tool and return the result."""
         if name not in self.tools:
             raise KeyError(f"unknown tool: {name}")
         if name in self.writable and not allow_writes:

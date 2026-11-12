@@ -11,8 +11,8 @@ def test_tool_history_empty_state_is_honest_and_localized(monkeypatch) -> None:
     console.print(viewer.render(console))
     output = console.export_text(clear=False)
 
-    assert "Nenhuma execução de tool" in output
-    assert "superfícies canônicas" in output
+    assert "No tool executions" in output
+    assert "canonical" in output and "surfaces" in output
 
 
 def test_tool_history_uses_compact_columns_and_localized_status(monkeypatch) -> None:
@@ -25,6 +25,6 @@ def test_tool_history_uses_compact_columns_and_localized_status(monkeypatch) -> 
     output = console.export_text(clear=False)
 
     assert "arquiv" in output
-    assert "concluída" in output
-    assert "Usada 2" in output
+    assert "completed" in output
+    assert "Used 2" in output
     assert "Status" not in output

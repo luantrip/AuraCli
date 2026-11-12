@@ -1,4 +1,12 @@
-"""Sentinel Manager - interface for the Sentinel Nim change detector."""
+"""Sentinel Manager - interface for the Sentinel Nim change detector.
+
+Sentinel is a pull-based, content-hash change detector, not a continuous
+real-time watcher: each :meth:`SentinelManager.scan_changes` call runs the
+binary once, which snapshots the tree and diffs it against the previous state
+file. There is no background process, inotify/FSEvents subscription or polling
+loop; callers decide when to scan. Describe it as a "file change detector",
+never as a "real-time watcher".
+"""
 
 from dataclasses import dataclass
 import json
@@ -39,7 +47,6 @@ class SentinelManager:
     """Manager for the Sentinel binary."""
 
     def __init__(self, project_root: Path):
-        """Initialize the manager."""
         self.project_root = project_root.expanduser().resolve()
         self.executable_path = self._find_binary()
         self.last_error: Optional[str] = None
@@ -93,9 +100,9 @@ class SentinelManager:
                 max_output_bytes=2 * 1024 * 1024,
             )
             if result.timed_out:
-                raise TimeoutError("Sentinel excedeu o timeout de 30 segundos")
+                raise TimeoutError("Sentinel timed out after 30 seconds")
             if result.output_limited:
-                raise ValueError("Sentinel excedeu o limite de saída")
+                raise ValueError("Sentinel exceeded output limit")
             if result.returncode != 0:
                 stderr = result.stderr.decode("utf-8", errors="replace").strip()
                 raise RuntimeError(

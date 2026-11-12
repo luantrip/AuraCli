@@ -9,7 +9,6 @@ from typing import Annotated, Any, Dict, List, Optional
 import warnings as _warnings
 
 from rich.console import Console
-from rich.panel import Panel
 import typer
 
 from aura_cli.cli.first_run import is_first_run, run_setup_wizard
@@ -21,19 +20,19 @@ from aura_cli.cli.helpers import (
 )
 from aura_cli.cli.key_manager import check_api_keys, show_settings_menu
 from aura_cli.cli.runtime import EmbeddingServerLifecycle, RuntimeServices
-from aura_cli.cli.ui.components.shell_box import register_shell_presenter
+from aura_cli.cli.ui.components.input.shell_box import register_shell_presenter
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.cli.ui.display_facade import (
     display_error,
     display_warning,
+    get_console,
 )
 from aura_cli.cli.ui.manager import UIManager
-from aura_cli.cli.utils import clear_screen, set_environment_for_litellm
+from aura_cli.cli.utils import set_environment_for_litellm
 from aura_cli.cli.utils.worker_readiness import WorkerReadinessError
 from aura_cli.core.config import get_config_manager
 from aura_cli.core.events.event_bus import get_event_bus
 from aura_cli.core.llm.model_utils import (
-    DEFAULT_MODEL,
     format_model_display_name,
     resolve_model_option,
 )
@@ -172,7 +171,7 @@ def _wait_for_worker_with_deadline(
             "status": "timeout",
             "task_id": getattr(worker, "task_id", None),
             "error_code": "worker_wait_timeout",
-            "message": "A operação excedeu o prazo e recebeu solicitação de cancelamento.",
+            "message": "The operation exceeded the timeout and received a cancellation request.",
             "worker_still_running": bool(worker_thread.is_alive()),
         }
 
@@ -190,7 +189,7 @@ def _wait_for_worker_with_deadline(
 def _version_callback(value: bool) -> None:
     """Show version and exit."""
     if value:
-        console = Console()
+        console = get_console()
         console.print(f"[bold cyan]Aura CLI[/] version [bold green]{__version__}[/]")
         raise typer.Exit()
 
@@ -198,7 +197,7 @@ def _version_callback(value: bool) -> None:
 app = typer.Typer(
     pretty_exceptions_show_locals=False,
     pretty_exceptions_enable=False,
-    help=f"[{UIStyles.TITLE}]Aura CLI - Seu Assistente de Código AI[/]",
+    help=f"[{UIStyles.TITLE}]Aura CLI - Your AI Code Assistant[/]",
     add_completion=False,
     no_args_is_help=False,
 )
@@ -212,19 +211,25 @@ def _main_callback(
         typer.Option(
             "--version",
             "-v",
-            help="Exibir versão e sair.",
+            help="Display version and exit.",
             callback=_version_callback,
             is_eager=True,
         ),
     ] = False,
     mcp: bool = typer.Option(False, "--mcp", help="Inicia a Aura como servidor MCP."),
-    mcp_transport: str = typer.Option("stdio", "--mcp-transport", help="Transporte MCP: stdio ou http."),
-    mcp_port: int = typer.Option(8765, "--mcp-port", help="Porta HTTP do servidor MCP."),
-    allow_writes: bool = typer.Option(False, "--allow-writes", help="Permite tools mutantes via MCP."),
+    mcp_transport: str = typer.Option(
+        "stdio", "--mcp-transport", help="Transporte MCP: stdio ou http."
+    ),
+    mcp_port: int = typer.Option(
+        8765, "--mcp-port", help="Porta HTTP do servidor MCP."
+    ),
+    allow_writes: bool = typer.Option(
+        False, "--allow-writes", help="Permite tools mutantes via MCP."
+    ),
     resume: Optional[str] = typer.Option(
         None,
         "--resume",
-        help="Retoma uma sessão Aura ou importa uma sessão externa por arquivo.",
+        help="Resumes an Aura session or imports an external session from a file.",
     ),
 ) -> None:
     """Aura CLI — AI code assistant entry point."""
@@ -232,6 +237,7 @@ def _main_callback(
         return
     if mcp is True:
         from aura_cli.cli.commands.mcp import create_mcp_server
+
         server = create_mcp_server(allow_writes=allow_writes)
         if mcp_transport == "http":
             server.serve_http(port=mcp_port)
@@ -266,7 +272,7 @@ def chat(
         project_root = Path.cwd()
         runtime_services = RuntimeServices.initialize(project_root)
         event_bus = get_event_bus()
-        console = Console()
+        console = get_console()
         ui = UIManager(
             stats=get_stats(), status_queue=event_bus.get_queue(), console=console
         )
@@ -321,7 +327,7 @@ def _format_output(
         if console and isinstance(data, dict):
             if data.get("status") == "completed":
                 console.print(
-                    f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Tarefa concluída![/{UIStyles.SUCCESS}]"
+                    f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Task completed![/{UIStyles.SUCCESS}]"
                 )
                 if data.get("context_summary"):
                     console.print(
@@ -329,7 +335,7 @@ def _format_output(
                     )
             elif data.get("status") == "error":
                 console.print(
-                    f"[{UIStyles.ERROR}]{UIIcons.ERROR} Erro: {data.get('error', 'Erro desconhecido')}[/{UIStyles.ERROR}]"
+                    f"[{UIStyles.ERROR}]{UIIcons.ERROR} Erro: {data.get('error', 'Unknown error')}[/{UIStyles.ERROR}]"
                 )
             else:
                 console.print(
@@ -344,12 +350,12 @@ def agi(
         typer.Option(
             "--project-root",
             "-p",
-            help="Especifica o diretório raiz do projeto. Padrão: diretório atual.",
+            help="Specifies the project root directory. Default: current directory.",
         ),
     ] = None,
     task: Annotated[
         Optional[List[str]],
-        typer.Argument(help="Descrição da tarefa a ser executada pelo Agente AGI."),
+        typer.Argument(help="Description of the task to be executed by the AGI Agent."),
     ] = None,
     model: Annotated[
         Optional[str],
@@ -363,19 +369,19 @@ def agi(
         "text",
         "--output",
         "-o",
-        help="Formato de saída: 'text' (padrão), 'json', 'yaml'.",
+        help="Output format: 'text' (default), 'json', 'yaml'.",
     ),
     quiet: bool = typer.Option(
         False,
         "--quiet",
         "-q",
-        help="Suprime a saída detalhada, mostrando apenas o resultado final.",
+        help="Suppress detailed output, showing only the final result.",
     ),
 ) -> None:
     """Launch the AGI agent for complex multi-step tasks."""
 
     get_config_manager()
-    console = Console()
+    console = get_console()
 
     if project_root is None:
         project_root = Path.cwd()
@@ -405,20 +411,20 @@ def agi(
 
         try:
             if _should_emit_progress(output, quiet):
-                ui.display_info("Executando tarefa AGI…")
+                ui.display_info("Running AGI task…")
             if worker_thread and worker_thread.is_alive():
                 worker_thread.join(timeout=300.0)
             result = _wait_for_worker_terminal(worker, timeout=30.0)
-            _format_output(result, output, console)  # type: ignore[arg-type]
+            _format_output(result, output, console)  # type: ignore[arg-type]  # Dict[str,Any] → OutputData
             exit_code = _worker_exit_code(result)
             if exit_code:
                 raise typer.Exit(exit_code)
         except typer.Exit:
             raise
         except Exception as e:
-            logger.error(f"Erro na execução headless: {e}", exc_info=True)
+            logger.error(f"Error in headless execution: {e}", exc_info=True)
             error_result = {"status": "error", "error": str(e)}
-            _format_output(error_result, output, console)  # type: ignore[arg-type]
+            _format_output(error_result, output, console)  # type: ignore[arg-type]  # Dict[str,Any] → OutputData
             raise typer.Exit(1) from None
     else:
         start_interactive_session()
@@ -465,6 +471,11 @@ from aura_cli.core.embeddings.client import (
 
 configure_embedding_server_starter(_init_embedding_server)
 
+from aura_cli.cli.ui.forget_prompt import select_messages_to_forget
+from aura_cli.core.tangent.manager import configure_forget_selector
+
+configure_forget_selector(select_messages_to_forget)
+
 
 def start_interactive_session(resume_reference: Optional[str] = None) -> None:
     """Initialize and run interactive Aura CLI session."""
@@ -479,32 +490,25 @@ def start_interactive_session(resume_reference: Optional[str] = None) -> None:
             f"start_interactive_session called from non-main thread: {current_thread.name}"
         )
 
-    Console()
     ui = UIManager(stats=get_stats())
 
     # Embedding server is now lazy-started (only when first needed by SkillRetriever)
     # _init_embedding_server() — removed from eager startup for faster launch
 
-    # First-run setup wizard: guided onboarding if no config exists
-    if is_first_run():
-        run_setup_wizard()
+    # One onboarding entry point. The wizard runs on a first launch AND whenever no
+    # API key exists (skipped/incomplete setup), so there is no second, different
+    # "settings" screen standing in for it.
+    _ran_wizard: bool = False
+    if is_first_run() or not check_api_keys():
+        _ran_wizard = True
+        run_setup_wizard(key_required=not check_api_keys())
 
     if not check_api_keys():
-        clear_screen()
-        UIStyles._ensure_initialized()
-        border_style = UIStyles.BORDER_SUCCESS or "green"
-
-        ui.print(
-            Panel(
-                f"[{UIStyles.WARNING} bold]{UIIcons.AURA} Bem-vindo à Aura![/]\nPara começar, preciso de uma Chave de API.",
-                title=f"[{UIStyles.TITLE}]{UIIcons.INFO} Configuração Inicial[/]",
-                border_style=border_style,
-            )
+        ui.display_error(
+            "No API key configured. Run `aura` to redo setup "
+            "or `aura settings` to configure manually."
         )
-        show_settings_menu()
-        if not check_api_keys():
-            ui.display_error("Nenhuma chave de API configurada. Saindo.")
-            raise typer.Exit()
+        raise typer.Exit()
 
     set_environment_for_litellm()
     try:
@@ -526,13 +530,43 @@ def start_interactive_session(resume_reference: Optional[str] = None) -> None:
     get_event_bus()  # initialize event bus
     logger.debug("CoreEventBus initialized in main thread")
 
-    _init_core_services(project_root, resume_reference=resume_reference)
+    _init_core_services(
+        project_root, resume_reference=resume_reference, wizard_ran=_ran_wizard
+    )
 
     get_config_manager()  # ensure config is loaded
 
 
+def _resolve_initial_model(configured_model: Optional[str]) -> str:
+    """Resolve the model shown at startup.
+
+    Respects an explicit user choice; otherwise picks a provider-aware default
+    whose provider actually has a configured key (instead of blindly using
+    DEFAULT_MODEL, which may point to an unconfigured provider).
+    """
+    if configured_model:
+        return resolve_model_option(configured_model)
+    from aura_cli.cli.helpers import get_api_keys_dict
+    from aura_cli.core.llm.model_utils import resolve_default_model
+
+    return resolve_default_model(get_api_keys_dict())
+
+
+def _maybe_show_onboarding_hint(*, ui: Any, wizard_ran: bool) -> None:
+    """Show the one-time hint unless the wizard already provided all context.
+
+    P2-6: the setup wizard displays a 'Setup complete!' panel on success; a
+    second 'how to start' banner in the same session is redundant noise.
+    """
+    if not wizard_ran:
+        show_onboarding_hint_if_first_run(ui=ui)
+
+
 def _init_core_services(
-    project_root: Path, *, resume_reference: Optional[str] = None
+    project_root: Path,
+    *,
+    resume_reference: Optional[str] = None,
+    wizard_ran: bool = False,
 ) -> None:
     """Initialize all core services at startup."""
     runtime_services = RuntimeServices.initialize(project_root)
@@ -551,9 +585,9 @@ def _init_core_services(
         else:
             logger.warning("▲  ADK initialization failed - native agents active")
     except (ImportError, AttributeError) as e:
-        logger.warning(f"Não foi possível inicializar ADK: {e}")
+        logger.warning(f"Could not initialise ADK: {e}")
     except Exception as e:
-        logger.warning(f"Erro inesperado ao inicializar ADK: {e}", exc_info=True)
+        logger.warning(f"Unexpected error initialising ADK: {e}", exc_info=True)
 
     try:
         from aura_cli.core.nim_integrity import (
@@ -575,16 +609,12 @@ def _init_core_services(
     except Exception as _mb_err:
         logger.debug(f"MetricsBridge skipped: {_mb_err}")
 
-    # NOTE: AuraOrchestrator removed — services now handled by DI container
-    # (see aura_cli.core.di_bootstrap)
 
     configured_model = get_config_manager().get("default_model")
-    initial_model = (
-        resolve_model_option(configured_model) if configured_model else DEFAULT_MODEL
-    )
+    initial_model = _resolve_initial_model(configured_model)
     stats = get_stats()
     stats.set_model(initial_model)
-    console = Console()
+    console = get_console()
     ui = UIManager(
         stats=stats, status_queue=get_event_bus().get_queue(), console=console
     )
@@ -592,7 +622,7 @@ def _init_core_services(
     display_aura_splash_screen(ui=ui)
     model_short = format_model_display_name(initial_model)
     ui.display_info(f"{UIIcons.AURA} Aura iniciada com {model_short}")
-    show_onboarding_hint_if_first_run(ui=ui)
+    _maybe_show_onboarding_hint(ui=ui, wizard_ran=wizard_ran)
 
     conversation_history = initialize_conversation_history()
     conversation_history.append(build_runtime_system_note())
@@ -635,7 +665,7 @@ def _init_core_services(
                 if preview.requires_confirmation:
                     reasons = "; ".join(preview.divergence_reasons)
                     if not typer.confirm(
-                        f"A sessão externa diverge ({reasons}). Importar como histórico?",
+                        f"The external session diverges ({reasons}). Import as history?",
                         default=False,
                     ):
                         raise typer.Abort()
@@ -646,8 +676,8 @@ def _init_core_services(
                 manager, reference=imported.id, workspace=app_loop
             )
             ui.display_info(
-                f"Sessão externa importada: {imported.name} "
-                f"({outcome.message_count} mensagens; somente leitura histórica)"
+                f"External session imported: {imported.name} "
+                f"({outcome.message_count} messages; read-only history)"
             )
         else:
             outcome = load_session_into_workspace(
@@ -660,16 +690,16 @@ def _init_core_services(
                 f"{session.name} ({session.id})" for session in outcome.matches
             )
             raise typer.BadParameter(
-                f"Referência ambígua; escolha uma sessão: {matches}",
+                f"Ambiguous reference; choose a session: {matches}",
                 param_hint="--resume",
             )
         if outcome.status is LoadSessionStatus.NOT_FOUND:
             raise typer.BadParameter(
-                f"Sessão não encontrada: {resume_reference}",
+                f"Session not found: {resume_reference}",
                 param_hint="--resume",
             )
         ui.display_info(
-            f"Sessão retomada: {outcome.session.name if outcome.session else resume_reference} "
+            f"Session resumed: {outcome.session.name if outcome.session else resume_reference} "
             f"({outcome.message_count} mensagens)"
         )
     app_loop.run()
@@ -702,45 +732,45 @@ def _external_resume_source(reference: str) -> str | None:
 def ops(
     task: Annotated[
         List[str],
-        typer.Argument(help="Descrição da tarefa de operação a ser realizada."),
+        typer.Argument(help="Description of the operation task to be performed."),
     ],
     mode: Annotated[
         str,
         typer.Option(
             "--mode",
             "-m",
-            help="Modo de operação: 'general', 'git', 'docker'.",
+            help="Operation mode: 'general', 'git', 'docker'.",
         ),
     ] = "general",
     model: Annotated[
         Optional[str],
         typer.Option(
             "--model",
-            help="Modelo LLM a ser usado.",
+            help="LLM model to use.",
         ),
     ] = None,
     output: Optional[str] = typer.Option(
         "text",
         "--output",
         "-o",
-        help="Formato de saída: 'text' (padrão), 'json'.",
+        help="Output format: 'text' (default), 'json'.",
     ),
     timeout: float = typer.Option(
         300.0,
         "--timeout",
-        help="Prazo total de observação da operação, em segundos.",
+        help="Total observation timeout for the operation, in seconds.",
         min=0.1,
     ),
     quiet: bool = typer.Option(
         False,
         "--quiet",
         "-q",
-        help="Suprime a saída detalhada.",
+        help="Suppress detailed output.",
     ),
 ) -> None:
     """Execute autonomous DevOps tasks (git, docker, system)."""
     get_config_manager()
-    console = Console()
+    console = get_console()
     Path.cwd()
 
     if task:
@@ -768,29 +798,29 @@ def ops(
 
         try:
             if not quiet:
-                ui.display_info(f"Executando operação ({mode})...")
+                ui.display_info(f"Running operation ({mode})...")
             result = _wait_for_worker_with_deadline(
                 worker,
                 worker_thread,
                 timeout,
             )
-            _format_output(result, output, console)  # type: ignore[arg-type]
+            _format_output(result, output, console)  # type: ignore[arg-type]  # Dict[str,Any] → OutputData
             exit_code = _worker_exit_code(result)
             if exit_code:
                 raise typer.Exit(exit_code)
 
         except KeyboardInterrupt:
             _cancel_worker(worker, "cancelled by user")
-            display_warning("Operação cancelada pelo usuário.")
+            display_warning("Operation cancelled by user.")
             raise typer.Exit(6) from None
         except typer.Exit:
             raise
         except Exception as e:
-            logger.error(f"Erro na execução ops: {e}", exc_info=True)
+            logger.error(f"Ops execution error: {e}", exc_info=True)
             display_error(str(e))
             raise typer.Exit(1) from e
     else:
-        display_error("Por favor, forneça uma descrição da tarefa.")
+        display_error("Please provide a task description.")
 
 
 if __name__ == "__main__":

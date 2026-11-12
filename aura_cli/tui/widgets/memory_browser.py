@@ -43,7 +43,6 @@ class MemoryBrowser(Static):
         """Emitted when a memory entry is selected."""
 
         def __init__(self, entry_type: str, entry_data: Any):
-            """Initialize the widget."""
             super().__init__()
             self.entry_type = entry_type
             self.entry_data = entry_data
@@ -52,7 +51,6 @@ class MemoryBrowser(Static):
         """Emitted when memory is cleared."""
 
         def __init__(self, memory_type: str):
-            """Initialize the widget."""
             super().__init__()
             self.memory_type = memory_type
 
@@ -62,7 +60,6 @@ class MemoryBrowser(Static):
         session_state: Optional[SessionState] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.conversation_memory = conversation_memory or ConversationMemory()
         self.session_state = session_state or SessionState()
@@ -71,11 +68,11 @@ class MemoryBrowser(Static):
 
     def compose(self) -> ComposeResult:
         """Compose the widget layout."""
-        yield Static("◉ Navegador de memória", classes="memory-header")
+        yield Static("◉ Memory browser", classes="memory-header")
 
         with Horizontal(classes="search-bar"):
             yield Input(
-                placeholder="Pesquisar na memória...",
+                placeholder="Search memory...",
                 id="memory_search",
                 classes="search-input",
             )
@@ -92,24 +89,24 @@ class MemoryBrowser(Static):
                 )
                 yield VerticalScroll(id="message_detail", classes="message-detail")
 
-            with TabPane("⊞ Estado da sessão", id="state_tab"):
-                yield Tree("Estado da sessão", id="state_tree", classes="state-tree")
+            with TabPane("⊞ Session state", id="state_tab"):
+                yield Tree("Session state", id="state_tree", classes="state-tree")
 
-            with TabPane("▾ Persistência", id="persistent_tab"):
+            with TabPane("▾ Persistence", id="persistent_tab"):
                 yield DataTable(id="persistent_table", zebra_stripes=True)
                 yield Static(
-                    "Nenhum registro persistente disponível.",
+                    "No persistent records available.",
                     id="persistent-empty-state",
                     classes="empty-state",
                 )
 
-            with TabPane("▥ Estatísticas", id="stats_tab"):
+            with TabPane("▥ Statistics", id="stats_tab"):
                 yield Static(id="memory_stats")
 
         with Horizontal(classes="action-bar"):
-            yield Button("✖ Limpar conversa", id="clear_conv_btn", variant="error")
-            yield Button("✖ Limpar estado", id="clear_state_btn", variant="error")
-            yield Button("↑ Exportar", id="export_btn", variant="primary")
+            yield Button("✖ Clear conversation", id="clear_conv_btn", variant="error")
+            yield Button("✖ Clear state", id="clear_state_btn", variant="error")
+            yield Button("↑ Export", id="export_btn", variant="primary")
 
     def on_mount(self) -> None:
         """Initialize widget state after mounting."""
@@ -123,13 +120,13 @@ class MemoryBrowser(Static):
     def _setup_conversation_table(self) -> None:
         """Configure conversation history table columns."""
         table = self.query_one("#conversation_table", DataTable)
-        table.add_columns("ID", "Papel", "Prévia do conteúdo", "Horário")
+        table.add_columns("ID", "Role", "Content preview", "Time")
         table.cursor_type = "row"
 
     def _setup_persistent_table(self) -> None:
         """Configure persistent memory table columns."""
         table = self.query_one("#persistent_table", DataTable)
-        table.add_columns("Chave", "Tipo", "Prévia do valor", "Atualizado")
+        table.add_columns("Key", "Type", "Value preview", "Updated")
         table.cursor_type = "row"
 
     def _load_conversation_data(self) -> None:
@@ -191,7 +188,7 @@ class MemoryBrowser(Static):
         state_data = self.session_state.all()
 
         if not state_data:
-            tree.root.add_leaf("Nenhum estado de sessão")
+            tree.root.add_leaf("No session state")
             return
 
         self._add_dict_to_tree(tree.root, state_data)
@@ -259,7 +256,7 @@ class MemoryBrowser(Static):
             self._set_persistent_empty_state()
         except Exception as e:
             self._set_persistent_empty_state(
-                "Não foi possível carregar a memória persistente. Tente Atualizar."
+                "Could not load persistent memory. Try refreshing."
             )
             self.notify(f"Failed to load persistent data: {e}", severity="error")
 
@@ -272,20 +269,20 @@ class MemoryBrowser(Static):
         state_count = len(self.session_state.all())
 
         stats_text = f"""
-▥ Estatísticas da memória
+▥ Memory statistics
 
-Memória da conversa:
-  • Mensagens: {conv_count}
-  • Caracteres totais: {conv_chars:,}
-  • Resumo: {"Sim" if self.conversation_memory.summary else "Não"}
-  • Máximo de mensagens: {self.conversation_memory.max_messages}
+Conversation memory:
+  • Messages: {conv_count}
+  • Total characters: {conv_chars:,}
+  • Resumo: {"Yes" if self.conversation_memory.summary else "No"}
+  • Max messages: {self.conversation_memory.max_messages}
 
-Estado da sessão:
-  • Chaves: {state_count}
-  • Alterado: {"Sim" if self.session_state.is_dirty else "Não"}
+Session state:
+  • Keys: {state_count}
+  • Modified: {"Yes" if self.session_state.is_dirty else "No"}
 
-Armazenamento persistente:
-  • Banco de dados: ~/.aura/tui_data.db
+Persistent storage:
+  • Database: ~/.aura/tui_data.db
 """
         stats_widget.update(stats_text)
 
@@ -320,7 +317,7 @@ Armazenamento persistente:
                 self._clear_log()
                 self._write_log(f"Papel: {msg.role}", "log-label")
                 self._write_log(
-                    f"Horário: {datetime.fromtimestamp(msg.timestamp)}", "log-label"
+                    f"Time: {datetime.fromtimestamp(msg.timestamp)}", "log-label"
                 )
 
                 if msg.metadata:
@@ -329,7 +326,7 @@ Armazenamento persistente:
                     )
 
                 self._write_log("", "log-content")
-                self._write_log("Conteúdo:", "log-label")
+                self._write_log("Content:", "log-label")
                 self._write_log(msg.content, "log-content")
 
                 self.post_message(self.MemoryEntrySelected("conversation", msg))
@@ -346,7 +343,7 @@ Armazenamento persistente:
             task = self._persistent_store.get_task(task_id)
             if task:
                 self.notify(
-                    f"Tarefa: {task.get('name', 'N/D')}\nEstado: {task.get('status', 'N/D')}"
+                    f"Task: {task.get('name', 'N/D')}\nEstado: {task.get('status', 'N/D')}"
                 )
                 self.post_message(self.MemoryEntrySelected("task", task))
 
@@ -356,7 +353,7 @@ Armazenamento persistente:
             if value is not None:
                 safe_value = self._safe_setting_value(setting_key, value)
                 self.notify(
-                    f"Configuração: {setting_key}\nValor: {json.dumps(safe_value, indent=2)[:200]}"
+                    f"Setting: {setting_key}\nValue: {json.dumps(safe_value, indent=2)[:200]}"
                 )
                 self.post_message(
                     self.MemoryEntrySelected("setting", {setting_key: safe_value})
@@ -414,7 +411,7 @@ Armazenamento persistente:
                 )
 
         self._set_conversation_empty_state(
-            "Nenhuma mensagem corresponde à busca."
+            "No messages match the search."
             if table.row_count == 0
             else "Nenhuma mensagem nesta conversa."
         )
@@ -426,13 +423,13 @@ Armazenamento persistente:
         self._load_session_state()
         self._load_persistent_data()
         self._update_statistics()
-        self.notify("Navegador de memória atualizado")
+        self.notify("Memory browser updated")
 
     def _request_clear(self, memory_type: str) -> None:
         """Ask for confirmation before clearing a memory surface."""
-        label = "a conversa" if memory_type == "conversation" else "o estado da sessão"
+        label = "the conversation" if memory_type == "conversation" else "the session state"
         dialog = ConfirmDialog(
-            message=f"Tem certeza que deseja limpar {label}? Esta ação não pode ser desfeita.",
+            message=f"Are you sure you want to clear {label}? This action cannot be undone.",
             title="Confirmar limpeza",
             on_confirm=(
                 self._clear_conversation
@@ -450,7 +447,7 @@ Armazenamento persistente:
         self._load_conversation_data()
         self._update_statistics()
         self.post_message(self.MemoryCleared("conversation"))
-        self.notify("Memória de conversa limpa")
+        self.notify("Conversation memory cleared")
 
     def _clear_session_state(self) -> None:
         """Clear session state after confirmation."""
@@ -458,7 +455,7 @@ Armazenamento persistente:
         self._load_session_state()
         self._update_statistics()
         self.post_message(self.MemoryCleared("session"))
-        self.notify("Estado da sessão limpo")
+        self.notify("Session state cleared")
 
     def _export_memory(self) -> None:
         """Export memory data to a timestamped JSON file."""
@@ -478,7 +475,7 @@ Armazenamento persistente:
         )
         temporary_path.replace(export_path)
         self._last_export_path = export_path
-        self.notify(f"Memória exportada: {export_path.name}")
+        self.notify(f"Memory exported: {export_path.name}")
 
     def _safe_setting_value(self, key: str, value: Any) -> Any:
         """Mask credential-like fields before persistent data reaches the UI."""

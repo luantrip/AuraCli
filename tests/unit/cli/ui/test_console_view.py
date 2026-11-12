@@ -428,10 +428,10 @@ def test_interaction_details_localizes_existing_and_missing_states(monkeypatch):
     console_view.display_interaction_details("missing", output_console=output_console)
     output = output_console.export_text(clear=False)
 
-    assert "Interação ok-1" in output
+    assert "Interaction ok-1" in output
     assert "Estado:" in output
     assert "Resposta:" in output
-    assert "Interação não encontrada" in output
+    assert "Interaction not found" in output
     assert "Response:" not in output
 
 
@@ -447,5 +447,5 @@ def test_dashboard_accepts_compact_width_and_localized_header():
     output_console.print(compact_layout)
     output = output_console.export_text(clear=False)
 
-    assert "Dashboard do histórico" in output
-    assert "Selecione uma interação" in output
+    assert "History dashboard" in output
+    assert "Select an interaction" in output

@@ -102,7 +102,7 @@ aura --resume 01a1633f-9540-7a92-b64a-e619e592a625
 |---------|-------------|
 | `/agi [goal]` | Autonomous AGI project manager |
 | `/ops [mode] <task>` | DevOps agent (git / docker / general) |
-| `/arena [options] <task>` | Compete subagents and select the strongest result |
+| `/arena [options] <task>` | Compete subagents and select the strongest result (rubric by default; `--judge-llm` for LLM judging) |
 | `/skill <subcommand>` | Manage installed skills (`list`, `install`, `pack`, `search`) |
 | `/mcp <subcommand>` | Inspect or start the MCP server |
 | `/tui` | Launch graphical TUI |
@@ -162,7 +162,7 @@ The Nim Powerpack is optional and is not required by the base Python wheel. This
 |--------|----------|---------|
 | `imagination` | Filesystem scanner | Optional native accelerator; benchmark locally |
 | `nexus` | Static dependency analyzer | Optional native accelerator |
-| `sentinel` | Real-time file watcher | Optional native watcher |
+| `sentinel` | File change detector | Optional native change detector |
 | `notebook` | Shared memory library (FFI) | Optional native notebook backend |
 | `forge` | Code validator/sanitizer | Optional native validator |
 | `prism` | Semantic code chunker | Optional native chunker |

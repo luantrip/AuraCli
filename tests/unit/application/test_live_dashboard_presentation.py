@@ -32,7 +32,7 @@ class Dashboard:
 
 
 def test_classifies_phase_completion_and_tool() -> None:
-    decision = classify_dashboard_message("Concluído após read_file")
+    decision = classify_dashboard_message("Completed after read_file")
 
     assert decision.phase == "completed"
     assert decision.completed is True

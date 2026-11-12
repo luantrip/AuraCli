@@ -7,7 +7,6 @@ Handles commands:
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from rich.console import Console
 from rich.markdown import Markdown
 from rich.panel import Panel
 from rich.table import Table
@@ -36,7 +35,7 @@ def handle_tangent(
     if subcmd == "tail":
         if not tangent_manager.in_tangent:
             return conversation_messages, format_warning_message(
-                "Não está no modo tangent."
+                "Not in tangent mode."
             )
 
         restored_messages, status = tangent_manager.exit(
@@ -76,7 +75,7 @@ def handle_checkpoint(
             return (
                 True,
                 None,
-                format_error_message("Descrição do checkpoint obrigatória."),
+                format_error_message("Checkpoint description required."),
             )
         checkpoint_manager.create(args, conversation_state=conversation_state)
         return True, None, format_success_message(f"Checkpoint created: {args}")
@@ -94,20 +93,20 @@ def handle_checkpoint(
                 True,
                 None,
                 format_warning_message(
-                    "Nenhum checkpoint encontrado. Use /checkpoint create <desc> para criar."
+                    "No checkpoint found. Use /checkpoint create <desc> to creatr."
                 ),
             )
 
         table = Table(title="Checkpoints", show_header=True, header_style="bold cyan")
         table.add_column("ID", style="dim", width=10)
-        table.add_column("Descrição", style="white")
+        table.add_column("Description", style="white")
         table.add_column("Data", style="dim", width=20)
         for cp in checkpoints:
             table.add_row(
                 cp.id, cp.description, cp.timestamp.strftime("%Y-%m-%d %H:%M")
             )
-        Console().print(table)
-        return True, None, None  # type: ignore[return-value]
+        get_console().print(table)
+        return True, None, None  # type: ignore[return-value]  # Optional tuple narrowing
 
     elif subcmd == "restore":
         if not args:
@@ -125,7 +124,7 @@ def handle_checkpoint(
             hard = True
             checkpoint_id = parts[1].strip()
         if not checkpoint_id:
-            return True, None, format_error_message("ID do checkpoint obrigatório.")
+            return True, None, format_error_message("Checkpoint ID required.")
         success, state = checkpoint_manager.restore(checkpoint_id, hard=hard)
         if not success:
             return (
@@ -140,7 +139,7 @@ def handle_checkpoint(
             state,
             format_success_message(
                 f"Checkpoint '{checkpoint_id}' restaurado."
-                + (" (restauração hard)" if hard else "")
+                + (" (hard restore)" if hard else "")
             ),
         )
 
@@ -165,14 +164,14 @@ def handle_memory(args: str) -> None:
         svc = get_notebook_service()
 
         if subcmd == "search" and query:
-            results = svc.search_pages(query)  # type: ignore[attr-defined]
+            results = svc.search_pages(query)  # type: ignore[attr-defined]  # MemoryService method
             if not results:
                 console.print(
-                    f"[{UIStyles.MUTED}]Nenhuma memória encontrada para '{query}'.[/]"
+                    f"[{UIStyles.MUTED}]No memories found for '{query}'.[/]"
                 )
                 return
             table = Table(show_header=True, box=None, padding=(0, 2))
-            table.add_column("Página", style=UIStyles.ACCENT)
+            table.add_column("Page", style=UIStyles.ACCENT)
             table.add_column("Trecho", style=UIStyles.BODY)
             for r in results[:10]:
                 title = getattr(r, "title", str(r)[:40])
@@ -181,18 +180,18 @@ def handle_memory(args: str) -> None:
             console.print(
                 Panel(
                     table,
-                    title=f"[{UIStyles.TITLE}]{UIIcons.SEARCH} Memórias: {query}[/]",
+                    title=f"[{UIStyles.TITLE}]{UIIcons.SEARCH} Memories: {query}[/]",
                     border_style=UIStyles.BORDER_PRIMARY,
                 )
             )
         else:
             pages = svc.list_pages()
             if not pages:
-                console.print(f"[{UIStyles.MUTED}]Nenhuma memória persistida ainda.[/]")
+                console.print(f"[{UIStyles.MUTED}]No memories persisted yet.[/]")
                 return
             table = Table(show_header=True, box=None, padding=(0, 2))
             table.add_column("#", style=UIStyles.MUTED, width=4)
-            table.add_column("Título", style=UIStyles.ACCENT)
+            table.add_column("Title", style=UIStyles.ACCENT)
             table.add_column("Data", style=UIStyles.MUTED, width=20)
             for i, p in enumerate(pages[:20], 1):
                 title = getattr(p, "title", str(p))
@@ -203,7 +202,7 @@ def handle_memory(args: str) -> None:
             console.print(
                 Panel(
                     table,
-                    title=f"[{UIStyles.TITLE}]{UIIcons.STATS} Memórias Persistidas[/]",
+                    title=f"[{UIStyles.TITLE}]{UIIcons.STATS} Persisted Memories[/]",
                     border_style=UIStyles.BORDER_PRIMARY,
                 )
             )
@@ -222,25 +221,25 @@ def handle_constitution(args: str) -> None:
         from aura_cli.core.memory.notebook_service import get_notebook_service
 
         svc = get_notebook_service()
-        content = svc.read_constitution()  # type: ignore[attr-defined]
+        content = svc.read_constitution()  # type: ignore[attr-defined]  # MemoryService method
 
         if subcmd == "show":
             if not content:
                 console.print(
-                    f"[{UIStyles.MUTED}]Nenhuma constituição definida. Use /agi para criar uma.[/]"
+                    f"[{UIStyles.MUTED}]No constitution defined. Use /agi to create one.[/]"
                 )
                 return
             console.print(
                 Panel(
                     Markdown(content),
-                    title=f"[{UIStyles.TITLE}]{UIIcons.SPARKLES} Constituição do Projeto[/]",
+                    title=f"[{UIStyles.TITLE}]{UIIcons.SPARKLES} Project Constitution[/]",
                     border_style=UIStyles.BORDER_PRIMARY,
                     padding=(1, 2),
                 )
             )
         elif subcmd == "edit":
             console.print(
-                f"[{UIStyles.INFO}]Use /agi para regenerar a constituição interativamente.[/]"
+                f"[{UIStyles.INFO}]Use /agi to regenerate the constitution interactively.[/]"
             )
         else:
             console.print(f"[{UIStyles.MUTED}]Uso: /constitution [show|edit][/]")

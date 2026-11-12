@@ -523,7 +523,7 @@ class ImaginationScanner:
         options = options or ScanOptions()
 
         if not path.exists():
-            raise FileNotFoundError(f"Caminho não encontrado: {path}")
+            raise FileNotFoundError(f"Path not found: {path}")
         if not path.is_dir():
             raise NotADirectoryError(f"Not a directory: {path}")
         cache_key = self._cache_key(path, options)

@@ -31,7 +31,7 @@ def _sum_costs(items: Any, field: str) -> float:
     return total
 
 
-def analyse_economics(  # noqa: C901
+def analyse_economics(
     spec: dict[str, Any], price: float | None = None, volume: float = 1.0
 ) -> dict[str, Any]:
     """Calculate contribution, break-even, ramp profit and red flags."""

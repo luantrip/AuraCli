@@ -30,9 +30,9 @@ from aura_cli.application.agents.ops_planning import (
 from aura_cli.cli.ui.constants import UIIcons
 
 try:
-    from aura_cli.cli.ui.components.subagent_panel import SubAgentPanel
+    from aura_cli.cli.ui.components.agent.subagent_panel import SubAgentPanel
 except ImportError:
-    SubAgentPanel = None  # type: ignore[assignment,misc]
+    SubAgentPanel = None  # type: ignore[assignment,misc]  # optional dep
 from aura_cli.application.agents.queue_event_emitter import QueueAgiAdapter
 from aura_cli.application.agents.worker_lifecycle import (
     build_worker_error_payload,
@@ -93,8 +93,8 @@ try:
     _loading_console = _Console()
 except ImportError:
     LOADING_AVAILABLE = False
-    _loading_console = None  # type: ignore[assignment]
-    logger.debug("Loading states não disponível em OpsWorker")
+    _loading_console = None  # type: ignore[assignment]  # optional dep
+    logger.debug("Loading states not available in OpsWorker")
 
 
 class OpsWorker(BaseWorker):
@@ -196,9 +196,9 @@ class OpsWorker(BaseWorker):
                 allowed_task_types=allowed_tasks,
             )
         else:
-            self.planner = None  # type: ignore[assignment]
-            self.task_planner = None  # type: ignore[assignment]
-            self.problem_decomposer = None  # type: ignore[assignment]
+            self.planner = None  # type: ignore[assignment]  # assigned post-init
+            self.task_planner = None  # type: ignore[assignment]  # assigned post-init
+            self.problem_decomposer = None  # type: ignore[assignment]  # assigned post-init
 
         self.orchestrator = None
         self.communication_manager = None
@@ -307,7 +307,7 @@ class OpsWorker(BaseWorker):
             }
             self.agi_event_adapter.update_task(
                 "reconciliation_required",
-                "Workflow interrompido; reconciliação necessária antes de repetir",
+                "Workflow interrupted; reconciliation required before retrying",
                 details=details,
             )
             self.agi_event_adapter.error_task(error, details=details)
@@ -545,14 +545,14 @@ class OpsWorker(BaseWorker):
             try:
                 self.agi_event_adapter.emit_chat_message(
                     sender="system",
-                    content=f"› [Aura Ops] ❌ Erro crítico no worker: {error}",
+                    content=f"› [Aura Ops] ❌ Critical worker error: {error}",
                 )
             except Exception as emit_error:
                 logger.debug(f"Error queuing error message: {emit_error}")
         try:
             self.cleanup()
         except Exception as cleanup_error:
-            logger.warning(f"Erro no cleanup do OpsWorker: {cleanup_error}")
+            logger.warning(f"Error in OpsWorker cleanup: {cleanup_error}")
 
     def _resolve_api_key(self, provider: str) -> Optional[str]:
         """Resolve API key for the given provider, posting error to queue if missing."""
@@ -585,7 +585,7 @@ class OpsWorker(BaseWorker):
             task_plan.tasks = valid_tasks
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura Ops] {UIIcons.INFO} Using workflow for {len(valid_tasks)} valid tasksdas",
+                content=f"› [Aura Ops] {UIIcons.INFO} Using workflow for {len(valid_tasks)} valid tasks",
             )
             return task_plan, True
 
@@ -599,8 +599,6 @@ class OpsWorker(BaseWorker):
         """Execute workflow path. Returns True if workflow completed (caller should return)."""
         workflow = None
         try:
-            from aura_cli.cli.workers.tool_panel_helper import tool_panel_context
-
             workflow, panel = self._build_ops_workflow(task_plan)
             if panel:
                 from aura_cli.cli.ui.composition import publish_subagent_panel
@@ -614,19 +612,11 @@ class OpsWorker(BaseWorker):
                 assert self.workflow_executor is not None
                 self._setup_ops_panel_tracking(panel)
 
-            task_description = (
-                f"{self.mode}: {self.prompt[:70]}"
-                if len(self.prompt) > 70
-                else f"{self.mode}: {self.prompt}"
-            )
             try:
-                with tool_panel_context(
-                    task_id=None, task_description=task_description
-                ):
-                    assert self.workflow_executor is not None
-                    workflow_result = self.workflow_executor.execute_workflow(
-                        workflow, max_iterations=1000
-                    )
+                assert self.workflow_executor is not None
+                workflow_result = self.workflow_executor.execute_workflow(
+                    workflow, max_iterations=1000
+                )
             finally:
                 if panel:
                     assert self.workflow_executor is not None
@@ -640,7 +630,7 @@ class OpsWorker(BaseWorker):
             icon = UIIcons.SUCCESS if status == "completed" else UIIcons.WARNING
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura Ops] {icon} Workflow {'completed' if status == 'completed' else f'finalizado com status: {status}'}! ({workflow_result.get('iterations', 0)} iterações)",
+                content=f"› [Aura Ops] {icon} Workflow {'completed' if status == 'completed' else f'finished with status: {status}'}! ({workflow_result.get('iterations', 0)} iterations)",
             )
             if status != "completed":
                 error = RuntimeError(f"Workflow terminou com status: {status}")
@@ -689,13 +679,13 @@ class OpsWorker(BaseWorker):
                     sender="agent",
                     content=(
                         f"› [Aura Ops] {UIIcons.WARNING} Workflow interrompido com "
-                        "efeito possível; reconciliação necessária antes de repetir"
+                        "possible side effect; reconciliation required before retrying"
                     ),
                 )
                 return True
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura Ops] {UIIcons.WARNING} Erro no workflow, continuando com execução padrão",
+                content=f"› [Aura Ops] {UIIcons.WARNING} Workflow error, continuing with standard execution",
             )
             return False
 
@@ -821,16 +811,7 @@ class OpsWorker(BaseWorker):
                 context=dict(record.context),
             )
 
-        from aura_cli.cli.workers.tool_panel_helper import tool_panel_context
-
-        task_description = (
-            f"{self.mode}: {self.prompt[:70]}"
-            if len(self.prompt) > 70
-            else f"{self.mode}: {self.prompt}"
-        )
-
-        with tool_panel_context(task_id=None, task_description=task_description):
-            user_proxy.initiate_chat(aura_ops_agent, message=effective_prompt)
+        user_proxy.initiate_chat(aura_ops_agent, message=effective_prompt)
 
         internal_window.stop()
         self.dashboard_active = False
@@ -857,7 +838,7 @@ class OpsWorker(BaseWorker):
 
         self.agi_event_adapter.emit_chat_message(
             sender="agent",
-            content=f"› [Aura Ops] {UIIcons.SUCCESS} Análise DevOps concluída! ({summary['tool_count']} ferramentas, {summary['duration']:.1f}s)",
+            content=f"› [Aura Ops] {UIIcons.SUCCESS} DevOps analysis complete! ({summary['tool_count']} tools, {summary['duration']:.1f}s)",
         )
         self._save_worker_snapshot()
         from aura_cli.core.stats import get_stats
@@ -881,7 +862,7 @@ class OpsWorker(BaseWorker):
         if self.use_advanced_features:
             if loading:
                 loading.update(
-                    LoadingState.PREPARING, "Inicializando componentes avançados..."
+                    LoadingState.PREPARING, "Initializing advanced components..."
                 )
             self._initialize_advanced_components()
 
@@ -980,11 +961,11 @@ class OpsWorker(BaseWorker):
             task_plan = self._decompose_and_plan(self.prompt)
             task_plan, use_workflow = self._validate_task_plan(task_plan)
         if loading:
-            loading.update(LoadingState.ANALYZING, "Iniciando análise DevOps...")
+            loading.update(LoadingState.ANALYZING, "Starting DevOps analysis...")
         else:
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura Ops] {UIIcons.SUCCESS} Iniciando análise DevOps...",
+                content=f"› [Aura Ops] {UIIcons.SUCCESS} Starting DevOps analysis...",
             )
 
         if (
@@ -1031,7 +1012,7 @@ class OpsWorker(BaseWorker):
             if not self.headless:
                 self.agi_event_adapter.emit_chat_message(
                     sender="agent",
-                    content=f"› [Aura Ops] {UIIcons.SUCCESS} Operação salva no caderno: {Path(page_path).name}",
+                    content=f"› [Aura Ops] {UIIcons.SUCCESS} Operation saved to notebook: {Path(page_path).name}",
                 )
         except Exception as e:
             logger.warning(f"Error saving OPS snapshot: {e}")

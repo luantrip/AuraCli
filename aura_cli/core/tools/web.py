@@ -98,7 +98,7 @@ def web_search(query: str, num_results: int = 5) -> str:
         return f"Erro: {error}"
 
     if not _ddgs_available and google_search is None:
-        return "Erro: nenhum pacote de busca disponível. Instale com: pip install ddgs"
+        return "Error: no search package available. Install with: pip install ddgs"
 
     # Check cache for previously successful results
     cache_key = request.cache_key
@@ -130,7 +130,7 @@ def web_search(query: str, num_results: int = 5) -> str:
         formatted_result = format_web_search_results(search_results)
 
         success_msg = (
-            f"Pesquisa concluída. Encontrados {len(search_results)} resultados."
+            f"Search complete. Found {len(search_results)} results."
         )
         console.print(f"[green]… {success_msg}[/green]")
 

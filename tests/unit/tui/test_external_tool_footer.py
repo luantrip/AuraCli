@@ -33,7 +33,7 @@ async def test_footer_renders_external_tool_phase_and_clears_it() -> None:
         footer.set_external_tool_session(session)
         label = footer.query_one("#footer-external-tool")
 
-        assert "Paint · abrindo" in label.render().plain
+        assert "Paint · opening" in label.render().plain
         assert label.has_class("external-tool-launching")
 
         footer.set_external_tool_session(None)
@@ -50,13 +50,13 @@ async def test_aura_app_projects_external_tool_transitions_without_launching() -
         app._begin_external_session("Paint")
         await pilot.pause()
         label = app.query_one("#footer-external-tool")
-        assert "Paint · preparando" in label.render().plain
+        assert "Paint · preparing" in label.render().plain
 
         app._advance_external_session(ExternalToolPhase.LAUNCHING)
         app._advance_external_session(ExternalToolPhase.ATTACHED)
         await pilot.pause()
 
-        assert "Paint · aberta" in label.render().plain
+        assert "Paint · open" in label.render().plain
         assert label.has_class("external-tool-attached")
 
 

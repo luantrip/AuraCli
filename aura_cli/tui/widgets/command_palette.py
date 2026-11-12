@@ -84,7 +84,6 @@ class CommandRegistry:
     """
 
     def __init__(self):
-        """Initialize the instance."""
         self._commands: Dict[str, Command] = {}
         self._recent: List[str] = []
         self._max_recent = 10
@@ -233,7 +232,6 @@ class CommandPalette(Static):
         """Emitted when a command is selected."""
 
         def __init__(self, command: Command):
-            """Initialize the instance."""
             super().__init__()
             self.command = command
 
@@ -241,8 +239,8 @@ class CommandPalette(Static):
         """Posted to toggle the command palette's visibility."""
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "close", "Fechar", show=False),
-        Binding("enter", "execute", "Executar", show=False),
+        Binding("escape", "close", "Close", show=False),
+        Binding("enter", "execute", "Execute", show=False),
     ]
 
     is_visible = reactive(False)
@@ -262,10 +260,10 @@ class CommandPalette(Static):
         """Compose the palette UI."""
         with Vertical(classes="palette-input"):
             yield Input(
-                placeholder="> Digite para buscar comandos...", id="palette_search"
+                placeholder="› Type to search commands...", id="palette_search"
             )
         yield OptionList(id="palette_list", classes="palette-list")
-        yield Static("↑↓ Navegar  Enter Selecionar  Esc Fechar", classes="palette-hint")
+        yield Static("↑↓ Navigate  Enter Select  Esc Close", classes="palette-hint")
 
     def on_mount(self) -> None:
         """Set up the palette."""

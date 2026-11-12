@@ -299,7 +299,7 @@ class TestFindDirectory:
 
         result = find_directory("secret-dir", str(outside))
 
-        assert "segurança" in result.lower()
+        assert "security" in result.lower()
 
     def test_returns_message_when_not_found(self, tmp_path):
         from aura_cli.core.tools.file_system import (
@@ -379,7 +379,7 @@ class TestWriteFile:
             return_value=False,
         ):
             result = write_file(str(tmp_path / "f.txt"), "data")
-        assert "cancelad" in result.lower()
+        assert "cancel" in result.lower()
 
     def test_permission_error_returns_error(self, tmp_path):
         from aura_cli.core.tools.file_system import set_allowed_base_dir, write_file
@@ -430,7 +430,7 @@ class TestGetFileTypeLabel:
     def test_python_is_code(self):
         from aura_cli.core.tools.file_system import _get_file_type_label
 
-        assert "Código" in _get_file_type_label(".py")
+        assert "Code" in _get_file_type_label(".py")
 
     def test_json_is_config(self):
         from aura_cli.core.tools.file_system import _get_file_type_label

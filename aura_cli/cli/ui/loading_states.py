@@ -142,13 +142,13 @@ class AdvancedLoadingManager:
                 LoadingState.IDLE: "Aguardando",
                 LoadingState.PREPARING: "Preparando",
                 LoadingState.EXECUTING: "Executando",
-                LoadingState.PROCESSING: "Processando",
+                LoadingState.PROCESSING: "Processing",
                 LoadingState.ANALYZING: "Analisando",
                 LoadingState.THINKING: "Pensando",
                 LoadingState.STREAMING: "Recebendo resposta",
                 LoadingState.FINALIZING: "Finalizando",
-                LoadingState.COMPLETE: "Concluído",
-                LoadingState.ERROR: "Erro",
+                LoadingState.COMPLETE: "Completed",
+                LoadingState.ERROR: "Error",
             }
             state_name = state_labels.get(state, state.value)
             msg = f"{icon} {state_name}"
@@ -221,7 +221,7 @@ class LLMLoadingStates:
         """Start a streaming-response loading state."""
         manager = AdvancedLoadingManager(console)
         manager.start(LoadingCategory.LLM, "Recebendo resposta", "Streaming ativo")
-        manager.update(LoadingState.STREAMING, "Processando tokens")
+        manager.update(LoadingState.STREAMING, "Processing tokens")
         return manager
 
     @staticmethod
@@ -229,7 +229,7 @@ class LLMLoadingStates:
         """Start a model-fallback loading state."""
         manager = AdvancedLoadingManager(console)
         manager.start(
-            LoadingCategory.LLM, "Fallback de modelo", f"{from_model} -> {to_model}"
+            LoadingCategory.LLM, "Model fallback", f"{from_model} -> {to_model}"
         )
         return manager
 
@@ -250,7 +250,7 @@ class ToolLoadingStates:
         """Start a tool-validation loading state."""
         manager = AdvancedLoadingManager(console)
         manager.start(
-            LoadingCategory.TOOL, f"Validando {tool_name}", "Verificando parâmetros"
+            LoadingCategory.TOOL, f"Validating {tool_name}", "Checking parameters"
         )
         return manager
 
@@ -262,7 +262,7 @@ class FileLoadingStates:
     def read_file(console: Console, filepath: str):
         """Start a file-read loading state."""
         manager = AdvancedLoadingManager(console)
-        manager.start(LoadingCategory.FILE, "Lendo arquivo", filepath)
+        manager.start(LoadingCategory.FILE, "Reading file", filepath)
         return manager
 
     @staticmethod
@@ -276,7 +276,7 @@ class FileLoadingStates:
     def analyze_code(console: Console, filepath: str):
         """Start a code-analysis loading state."""
         manager = AdvancedLoadingManager(console)
-        manager.start(LoadingCategory.FILE, "Analisando código", filepath)
+        manager.start(LoadingCategory.FILE, "Analyzing code", filepath)
         manager.update(LoadingState.ANALYZING, "Analisando AST")
         return manager
 
@@ -297,7 +297,7 @@ class AgentLoadingStates:
         """Start an agent-planning loading state."""
         manager = AdvancedLoadingManager(console)
         manager.start(
-            LoadingCategory.AGENT, f"{agent_name} planejando", "Criando estratégia"
+            LoadingCategory.AGENT, f"{agent_name} planning", "Creating strategy"
         )
         return manager
 
@@ -336,7 +336,7 @@ class BackgroundLoadingStates:
         """Start a dependency-analysis loading state."""
         manager = AdvancedLoadingManager(console)
         manager.start(
-            LoadingCategory.BACKGROUND, "Analisando dependências", "Construindo grafo"
+            LoadingCategory.BACKGROUND, "Analyzing dependencies", "Building graph"
         )
         return manager
 

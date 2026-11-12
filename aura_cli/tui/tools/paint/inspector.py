@@ -405,7 +405,7 @@ class PropertiesTree(Tree[object]):
             },
             "a_parameterized_generic": Dict[str, int],
             "a_module": inspect,
-            "a_function": lambda x: x,  # type: ignore
+            "a_function": lambda x: x,  # type: ignore[misc]  # Callable type narrowing
             "a_generator": (x for x in "abc"),
             "an_iterator": iter("abc"),
             "a_range": range(10),
@@ -468,11 +468,11 @@ class PropertiesTree(Tree[object]):
         if isinstance(data, dict):
             iterator: Iterable[Tuple[str, object, Exception | None]] = map(
                 with_no_error, data.items()
-            )  # type: ignore
-        elif isinstance(data, Iterable) and not hasattr(data, "_fields"):  # type: ignore
-            iterator = map(with_no_error, enumerate(data))  # type: ignore
+            )  # type: ignore[arg-type]  # Textual internals
+        elif isinstance(data, Iterable) and not hasattr(data, "_fields"):  # type: ignore[misc]  # runtime isinstance
+            iterator = map(with_no_error, enumerate(data))  # type: ignore[arg-type]  # Iterable[Any] narrowing
         else:
-            iterator = safe_object_items(data)  # type: ignore
+            iterator = safe_object_items(data)  # type: ignore[arg-type]  # Iterable[Any] narrowing
 
         self._num_keys_accessed[node] = 0
         for key, value, exception in iterator:
@@ -532,7 +532,7 @@ class PropertiesTree(Tree[object]):
                 )
             )
         elif isinstance(data, (list, set, frozenset, tuple)):
-            length = len(data)  # type: ignore
+            length = len(data)  # type: ignore[arg-type]  # Sized protocol not guaranteed
             # node.set_label(Text(f"{name} ({length})"))
             # node.set_label(with_name(PropertiesTree.highlighter(repr(data))))
             # node.set_label(Text.assemble(
@@ -549,7 +549,7 @@ class PropertiesTree(Tree[object]):
                     Text.styled(name, "bold"),
                     Text.styled(f"({length})", "#808080"),
                     "=",
-                    PropertiesTree.highlighter(repr(data)),  # type: ignore
+                    PropertiesTree.highlighter(repr(data)),  # type: ignore[arg-type]  # Textual highlighter protocol
                 )
             )
             # Can I perhaps DRY with with_name() with with_name taking a length parameter? In other words:
@@ -576,7 +576,7 @@ class PropertiesTree(Tree[object]):
         ):
             # Pyright gives an error here due to the more specific "object | Dict[Unknown, Unknown]"
             # even though object is a superclass of dict and repr takes an object.
-            node.set_label(with_name(PropertiesTree.highlighter(repr(data))))  # type: ignore
+            node.set_label(with_name(PropertiesTree.highlighter(repr(data))))  # type: ignore[arg-type]  # Textual label protocol
         else:
             node.allow_expand = False
             node.set_label(with_name(PropertiesTree.highlighter(repr(data))))
@@ -1499,7 +1499,7 @@ class Inspector(Container):
 
         # Highlight the clipped region and the box-model metrics of the hovered widget.
         if "inspector_highlight" not in self.app.styles.layers:
-            self.app.styles.layers += ("inspector_highlight",)  # type: ignore
+            self.app.styles.layers += ("inspector_highlight",)  # type: ignore[attr-defined]  # Textual CSS layers attr
 
         if dom_node not in self._highlight_boxes:
             self._highlight_boxes[dom_node] = {}

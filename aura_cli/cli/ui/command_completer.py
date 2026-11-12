@@ -121,9 +121,9 @@ class CommandCompleter(Completer):
             else:
                 completion_text, start_pos = tool_name, -len(arg)
             meta = (
-                f"Ferramenta: {tool_name}"
+                f"Tool: {tool_name}"
                 if score >= 1.0
-                else f"~ Ferramenta: {tool_name}"
+                else f"~ Tool: {tool_name}"
             )
             yield Completion(
                 completion_text,
@@ -172,7 +172,7 @@ class CommandCompleter(Completer):
         examples = (
             [
                 "criar app",
-                "refatorar código",
+                "refactor code",
                 "implementar feature",
                 "otimizar performance",
             ]

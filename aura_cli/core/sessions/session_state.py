@@ -474,11 +474,11 @@ class SessionStateManager:
             if matches:
                 stage = matches[0].lower().strip()
                 if "mvp" in stage or "prototipação" in stage:
-                    return "mvp/prototipação"
+                    return "mvp/prototyping"
                 elif "produção" in stage:
-                    return "produção estável"
+                    return "stable production"
                 elif "legado" in stage:
-                    return "refatoração de legado"
+                    return "legacy refactoring"
                 elif "caos" in stage:
                     return "caos total"
                 return stage
@@ -509,7 +509,7 @@ def get_session_state() -> SessionStateManager:
         if container.has(Services.SESSION_STATE):
             return container.resolve(Services.SESSION_STATE)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_session_state, using fallback", exc_info=True)
 
     # Fallback to legacy singleton
     return SessionStateManager.get_instance()

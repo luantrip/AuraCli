@@ -40,7 +40,8 @@ def set_environment_for_litellm() -> None:
 
     # Source 1: secure config (keyring)
     try:
-        from aura_cli.core.secure_config import secure_config_manager
+        from aura_cli.core.config import get_config_manager as _gcm
+        _secure = _gcm()
 
         for provider, env_name in [
             ("google", "GOOGLE_API_KEY"),
@@ -50,7 +51,7 @@ def set_environment_for_litellm() -> None:
             ("openrouter", "OPENROUTER_API_KEY"),
             ("groq", "GROQ_API_KEY"),
         ]:
-            val = secure_config_manager.get_api_key(provider)
+            val = _secure.get_api_key(provider)
             if val:
                 keys_to_set[env_name] = val
     except Exception as _e:

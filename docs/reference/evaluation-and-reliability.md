@@ -23,7 +23,16 @@ does not require a specific model provider.
 ## CLI
 
 ```text
-/arena [--quick] [--agents N] [--seed N] <task>
+/arena [--quick] [--agents N] [--seed N] [--judge-llm] <task>
+```
+
+By default, matches are decided by a deterministic rubric heuristic (no LLM
+calls for judging). Pass `--judge-llm` to decide each match with an LLM
+evaluator instead; this is opt-in because it costs one LLM call per match
+(N-1 calls for N competitors). Interrupted runs resume from the persisted
+bracket state on the next `/arena` with the same task.
+
+```text
 /skill list|install|remove|status|pack|search ...
 /mcp status|manifest|start ...
 ```

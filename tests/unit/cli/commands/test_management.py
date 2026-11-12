@@ -13,7 +13,7 @@ class TestHandleSession:
         """Test session with no args shows help."""
         from aura_cli.cli.commands.management import handle_session
 
-        with patch("aura_cli.cli.commands.management.Console") as mock_console:
+        with patch("aura_cli.cli.commands.management.get_console") as mock_console:
             result = handle_session("")
 
             assert result is None
@@ -279,7 +279,7 @@ class TestHandleWorkflow:
         """Test workflow with no args shows help."""
         from aura_cli.cli.commands.management import handle_workflow
 
-        with patch("aura_cli.cli.commands.management.Console") as mock_console:
+        with patch("aura_cli.cli.commands.management.get_console") as mock_console:
             with patch("aura_cli.cli.commands.management.UIIcons") as mock_icons:
                 mock_icons.WORKFLOW = "🔄"
                 result = handle_workflow("")
@@ -346,7 +346,7 @@ class TestHandleCache:
         """Test cache with no args shows help."""
         from aura_cli.cli.commands.management import handle_cache
 
-        with patch("aura_cli.cli.commands.management.Console") as mock_console:
+        with patch("aura_cli.cli.commands.management.get_console") as mock_console:
             result = handle_cache("")
 
             assert result is None

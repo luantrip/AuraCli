@@ -1,19 +1,3 @@
-# =============================================================================
-# Holographic Theme for Aura CLI
-# =============================================================================
-#
-# A futuristic sci-fi aesthetic inspired by holographic displays,
-# cyberpunk interfaces, and advanced HUD systems from sci-fi films.
-#
-# Design Philosophy:
-# - Deep void backgrounds for "floating" UI elements
-# - Cyan/Magenta primary colors for classic hologram feel
-# - Neon accents for high visibility and visual hierarchy
-# - Subtle glow effects through strategic color usage
-# - Immersive sci-fi atmosphere
-#
-# =============================================================================
-
 [metadata]
 name = "holographic"
 version = "2.0.0"
@@ -21,36 +5,19 @@ author = "Aura CLI Team"
 description = "Futuristic holographic display with neon glow effects"
 
 [colors]
-# =============================================================================
-# Primary Holographic Colors - Cyan-Magenta Spectrum
-# =============================================================================
-primary = "#00ffff"         # Hologram Cyan - Main interactive elements
-secondary = "#ff00ff"       # Plasma Magenta - Accents and highlights
-accent = "#00ff88"          # Matrix Green - Success and active states
-
-# =============================================================================
-# Semantic/Functional Colors - Neon Variants
-# =============================================================================
-success = "#00ff88"         # Neon Green - Successful operations
-warning = "#ffaa00"         # Amber Alert - Warnings and cautions
-error = "#ff0044"           # Critical Red - Errors and dangers
-info = "#00ccff"            # Info Cyan - Informational content
-
-# =============================================================================
-# UI Surface Colors - Deep Void Spectrum
-# =============================================================================
-background = "#0a0a0f"      # Deep Void - Main background
-surface = "#0f1020"         # Panel Glass - Elevated surfaces
-muted = "#334455"           # Dim Hologram - Disabled/secondary text
-highlight = "#ffffff"       # Bright Focus - Highlighted elements
-
-# =============================================================================
-# Extended Holographic Palette
-# =============================================================================
-background_deep = "#050508" # Absolute void
-surface_bright = "#141428"  # Brighter surface for hover
-
-# Hologram Core Colors
+primary = "#00ffff"
+secondary = "#ff00ff"
+accent = "#00ff88"
+success = "#00ff88"
+warning = "#ffaa00"
+error = "#ff0044"
+info = "#00ccff"
+background = "#0a0a0f"
+surface = "#0f1020"
+muted = "#334455"
+highlight = "#ffffff"
+background_deep = "#050508"
+surface_bright = "#141428"
 hologram_cyan = "#00ffff"
 hologram_magenta = "#ff00ff"
 hologram_green = "#00ff88"
@@ -59,205 +26,137 @@ hologram_violet = "#aa88ff"
 hologram_pink = "#ff88cc"
 hologram_blue = "#0088ff"
 hologram_red = "#ff0044"
-
-# Glow Variants (with alpha channel concept)
 glow_cyan = "#00ffff"
 glow_magenta = "#ff00ff"
 glow_green = "#00ff88"
-
-# Scanline Effect Colors
 scanline_bright = "#00ffff"
 scanline_dim = "#003344"
 
 [styles]
-# =============================================================================
-# Typography - Futuristic HUD Feel
-# =============================================================================
-title = "bold #00ffff"               # Primary headings (Cyan glow)
-subtitle = "bold #ff00ff"            # Secondary headings (Magenta)
-body = "#c0e0ff"                     # Body text (Soft blue-white)
-label = "#557799"                    # Labels and metadata
-caption = "dim italic #8899aa"       # Captions and timestamps
-code = "#00ff88"                     # Inline code (Matrix green)
-
-# =============================================================================
-# Status Indicators - High Visibility HUD
-# =============================================================================
-status_idle = "#557799"              # Idle (Dim hologram)
-status_thinking = "#ff00ff"          # Processing (Magenta pulse)
-status_working = "#00ffff"           # Active work (Cyan)
-status_success = "#00ff88"           # Completed (Green)
-status_error = "#ff0044"             # Error (Red alert)
-status_warning = "#ffaa00"           # Warning (Amber)
-status_scanning = "#ff00ff"          # Scanning mode
-status_watching = "#00ff88"          # Watch mode
-
-# =============================================================================
-# Component Specific Styles
-# =============================================================================
-loading = "#00ffff"                  # Loading indicators
-spinner = "#ff00ff"                  # Spinner animation
-progress = "#00ff88"                 # Progress bars
-scanline = "dim #00ffff"             # Scanline effect
-
-# =============================================================================
-# Agent Personas - Holographic Variants
-# =============================================================================
-agent_agi = "bold #ff00ff"           # The Brain (Magenta - thought)
-agent_ops = "bold #00ffff"           # The Hand (Cyan - action)
-agent_chat = "bold #00ff88"          # The Voice (Green - communication)
-
-# =============================================================================
-# Imagination Engine Specific
-# =============================================================================
-imag_file = "#00ffff"                # File nodes
-imag_dir = "#ff00ff"                 # Directory nodes
-imag_code = "#00ff88"                # Code files
-imag_config = "#ffaa00"              # Config files
-imag_doc = "#aa88ff"                 # Documentation
-imag_data = "#ff88cc"                # Data files
-
-# =============================================================================
-# Interactive Elements
-# =============================================================================
-link = "#00ffff"                     # Clickable links
-link_hover = "#88ffff"               # Link hover (brighter)
-selected = "bold #00ffff"            # Selected item
-focused = "#00ffff"                  # Focused element
-disabled = "#334455"                 # Disabled state
-
-# =============================================================================
-# Message Bubbles - Holographic Style
-# =============================================================================
-user_message = "#00ffff"             # User message (Cyan)
-assistant_message = "#ff00ff"        # Assistant message (Magenta)
-system_message = "#557799"           # System message (Dim)
+title = "bold #00ffff"
+subtitle = "bold #ff00ff"
+body = "#c0e0ff"
+label = "#557799"
+caption = "dim italic #8899aa"
+code = "#00ff88"
+status_idle = "#557799"
+status_thinking = "#ff00ff"
+status_working = "#00ffff"
+status_success = "#00ff88"
+status_error = "#ff0044"
+status_warning = "#ffaa00"
+status_scanning = "#ff00ff"
+status_watching = "#00ff88"
+loading = "#00ffff"
+spinner = "#ff00ff"
+progress = "#00ff88"
+scanline = "dim #00ffff"
+agent_agi = "bold #ff00ff"
+agent_ops = "bold #00ffff"
+agent_chat = "bold #00ff88"
+imag_file = "#00ffff"
+imag_dir = "#ff00ff"
+imag_code = "#00ff88"
+imag_config = "#ffaa00"
+imag_doc = "#aa88ff"
+imag_data = "#ff88cc"
+link = "#00ffff"
+link_hover = "#88ffff"
+selected = "bold #00ffff"
+focused = "#00ffff"
+disabled = "#334455"
+user_message = "#00ffff"
+assistant_message = "#ff00ff"
+system_message = "#557799"
 
 [borders]
-# =============================================================================
-# Border Colors - Glowing Neon Edges
-# =============================================================================
-border_primary = "#00ffff"           # Primary borders (Cyan)
-border_secondary = "#ff00ff"         # Secondary borders (Magenta)
-border_success = "#00ff88"           # Success state (Green)
-border_warning = "#ffaa00"           # Warning state (Amber)
-border_error = "#ff0044"             # Error state (Red)
-border_muted = "#223344"             # Subtle borders
-border_accent = "#00ff88"            # Accent borders (Green)
-border_glow = "#00ffff"              # Glow effect borders
-border_focus = "#ff00ff"             # Focus ring (Magenta)
+border_primary = "#00ffff"
+border_secondary = "#ff00ff"
+border_success = "#00ff88"
+border_warning = "#ffaa00"
+border_error = "#ff0044"
+border_muted = "#223344"
+border_accent = "#00ff88"
+border_glow = "#00ffff"
+border_focus = "#ff00ff"
 
 [layout]
-# =============================================================================
-# Spacing - Comfortable Sci-Fi Spacing
-# =============================================================================
-panel_padding = [1, 2]               # Standard panel padding
-
-# Chat Layout
-chat_padding = [0, 1]                # Message internal padding
-chat_margin = [0, 0, 1, 0]           # Message external margin
-chat_width_ratio = 0.85              # Max width for messages
-
-# Component Specific Layout
-lcd_padding = [0, 0]                 # LCD displays (edge-to-edge)
-dialog_padding = [1, 2]              # Dialog boxes
-compact_padding = [0, 1]             # Compact elements
+panel_padding = [ 1, 2,]
+chat_padding = [ 0, 1,]
+chat_margin = [ 0, 0, 1, 0,]
+chat_width_ratio = 0.85
+lcd_padding = [ 0, 0,]
+dialog_padding = [ 1, 2,]
+compact_padding = [ 0, 1,]
 
 [appearance]
-# =============================================================================
-# Visual Characteristics
-# =============================================================================
-panel_border_type = "double"         # Double borders for holographic look
-syntax_theme = "monokai"             # High contrast syntax
-
-# Holographic-specific appearance
-glow_enabled = true                  # Enable glow effects
-scanline_effect = true               # Enable scanline animation
-pulse_effect = true                  # Enable pulse animations
-flicker_effect = false               # Subtle flicker (can be enabled)
+panel_border_type = "double"
+syntax_theme = "monokai"
+glow_enabled = true
+scanline_effect = true
+pulse_effect = true
+flicker_effect = false
+animate_spinners = true
+show_timestamps = true
 
 [animations]
-# =============================================================================
-# Animation Settings
-# =============================================================================
-scan_speed = 100                     # ms between scan frames
-pulse_speed = 1000                   # ms for pulse cycle
-glow_intensity = 0.5                 # Glow strength (0.0 to 1.0)
-scanline_opacity = 0.1               # Scanline visibility
+scan_speed = 100
+pulse_speed = 1000
+glow_intensity = 0.5
+scanline_opacity = 0.1
 
 [icons]
-# =============================================================================
-# Holographic Icon Set - Sci-Fi Geometric
-# =============================================================================
-# Using futuristic geometric symbols
-
-# Status Icons
-status_success = "◈"                 # Diamond with center
-status_error = "✖"                   # X mark
-status_warning = "▲"                 # Triangle
-status_info = "◉"                    # Circle with dot
-status_pending = "○"                 # Empty circle
-status_active = "◉"                  # Filled circle with center
-
-# File Icons - Geometric Shapes
-file_default = "○"                   # Circle
-file_folder = "▣"                    # Filled square
-file_code = "◈"                      # Diamond
-file_config = "◉"                    # Bullseye
-file_image = "◎"                     # Double circle
-file_binary = "◆"                    # Filled diamond
-file_other = "○"                     # Circle
-
-folder = "▣"                         # Closed folder
-folder_open = "▢"                    # Open folder
-
-# Action Icons
-action_add = "+"                     # Plus
-action_remove = "−"                  # Minus
-action_edit = "◇"                    # Diamond outline
-action_search = "○"                  # Circle (radar)
-action_refresh = "↻"                 # Circular arrow
-
-# Navigation - Holographic Arrows
-arrow_right = "▸"                    # Triangle right
-arrow_down = "▾"                     # Triangle down
-arrow_left = "◂"                     # Triangle left
-arrow_up = "▴"                       # Triangle up
-
-# Spinner Frames - Rotating Scanner
-spinner_frames = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
+status_success = "◈"
+status_error = "✖"
+status_warning = "▲"
+status_info = "◉"
+status_pending = "○"
+status_active = "◉"
+file_default = "○"
+file_folder = "▣"
+file_code = "◈"
+file_config = "◉"
+file_image = "◎"
+file_binary = "◆"
+file_other = "○"
+folder = "▣"
+folder_open = "▢"
+action_add = "+"
+action_remove = "−"
+action_edit = "◇"
+action_search = "○"
+action_refresh = "↻"
+arrow_right = "▸"
+arrow_down = "▾"
+arrow_left = "◂"
+arrow_up = "▴"
+spinner_frames = [ "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏",]
 
 [syntax]
-# =============================================================================
-# Syntax Highlighting - Neon Colors
-# =============================================================================
-keyword = "#ff00ff"                  # Keywords (Magenta)
-string = "#00ff88"                   # Strings (Green)
-number = "#ffaa00"                   # Numbers (Amber)
-comment = "#557799"                  # Comments (Dim)
-function = "#00ffff"                 # Functions (Cyan)
-variable = "#c0e0ff"                 # Variables (Soft white)
-type = "#aa88ff"                     # Types (Violet)
-operator = "#ff88cc"                 # Operators (Pink)
-constant = "#ffaa00"                 # Constants (Amber)
+keyword = "#ff00ff"
+string = "#00ff88"
+number = "#ffaa00"
+comment = "#557799"
+function = "#00ffff"
+variable = "#c0e0ff"
+type = "#aa88ff"
+operator = "#ff88cc"
+constant = "#ffaa00"
 
 [markdown]
-# =============================================================================
-# Markdown Styling - Holographic Theme
-# =============================================================================
-heading_1 = "bold #00ffff"           # H1 - Cyan, bold
-heading_2 = "bold #ff00ff"           # H2 - Magenta, bold
-heading_3 = "bold #00ffff"            # H3 - Cyan, bold
-heading_4 = "#ff00ff"                 # H4 - Magenta
-heading_5 = "dim #ff00ff"             # H5 - Magenta, dim
-heading_6 = "dim #ff00ff"             # H6 - Magenta, dim
-code = "bold #00ff88 on #0a0a0a"     # Inline code - Green on dark
-code_block = "bold #00ff88"          # Code blocks - Green
-link = "underline #00ffff"           # Links - Cyan, underlined
-strong = "bold #00ffff"              # Bold text - Cyan
-emphasis = "italic #ff00ff"         # Italic text - Magenta
-blockquote = "dim #00ffff"           # Blockquotes - Cyan, dim
-list_bullet = "#00ffff"               # Bullet points - Cyan
-list_number = "#00ffff"               # Numbered lists - Cyan
-table_header = "bold #00ffff"        # Table headers - Cyan
-table_border = "#557799"             # Table borders - Dim blue
+heading_1 = "bold #00ffff"
+heading_2 = "bold #ff00ff"
+heading_3 = "bold #00ffff"
+heading_4 = "#ff00ff"
+heading_5 = "dim #ff00ff"
+heading_6 = "dim #ff00ff"
+code = "bold #00ff88 on #0a0a0a"
+code_block = "bold #00ff88"
+link = "underline #00ffff"
+strong = "bold #00ffff"
+emphasis = "italic #ff00ff"
+blockquote = "dim #00ffff"
+list_bullet = "#00ffff"
+list_number = "#00ffff"
+table_header = "bold #00ffff"
+table_border = "#557799"

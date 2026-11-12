@@ -23,9 +23,12 @@ def parse_natural_git_command(command: str) -> Dict:
 
     commit_patterns = [
         r"(fazer|fazer um|criar|fazer o|fazer o commit|commitar|salvar)\s+(?:um\s+)?commit",
-        r"commitar\s+(?:as\s+)?(?:mudanças|alterações|código)",
+        r"commitar\s+(?:as\s+)?(?:mudanças|alterações|código|tudo)",
         r"salvar\s+(?:as\s+)?(?:mudanças|alterações)",
-        r"fazer\s+commit\s+(?:das|das|de)\s+(?:mudanças|alterações)",
+
+        r"commit\s+(?:the\s+)?(?:changes|code)",
+        r"save\s+(?:the\s+)?(?:changes)",
+        r"make\s+(?:a\s+)?commit\s+(?:of\s+)?(?:the\s+)?(?:changes)",
     ]
 
     for pattern in commit_patterns:
@@ -38,11 +41,15 @@ def parse_natural_git_command(command: str) -> Dict:
             }
 
     status_patterns = [
-        r"status\s+(?:do\s+)?(?:repositório|git|projeto)",
-        r"(ver|mostrar|listar|exibir)\s+(?:as\s+)?(?:mudanças|status|alterações)(?:\s+pendentes)?",
-        r"mudanças?\s+(?:pendentes|não commitadas)",
+        r"status\s+(?:of\s+)?(?:the\s+)?(?:repository|git|project)",
+        r"(view|show|list|display)\s+(?:the\s+)?(?:changes|status|pending)?",
+        r"pending\s+changes?",
         r"o\s+que\s+mudou\b",
-        r"o\s+que\s+mudou\s+(?:no\s+)?(?:repositório|projeto)",
+        r"(ver|mostrar|listar)\s+(?:as\s+)?(?:mudanças|status|alterações)",
+        r"mudanças?\s+pendentes",
+        r"status\s+(?:do\s+)?(?:repositório|git|projeto)",
+
+        r"what\s+changed\s+(?:in\s+the\s+)?(?:repository|project)",
     ]
 
     for pattern in status_patterns:
@@ -50,8 +57,11 @@ def parse_natural_git_command(command: str) -> Dict:
             return {"action": "status", "original": command}
 
     log_patterns = [
-        r"(histórico|commits?|log)\s+(?:de\s+)?(?:commits?|mudanças|projeto)",
+        r"(history|commits?|log)\s+(?:of\s+)?(?:commits?|changes|project)",
         r"(últimos|recentes)\s+commits?",
+        r"histórico\s+(?:de\s+)?commits?",
+        r"log\s+(?:de\s+)?commits?",
+
         r"ver\s+(?:o\s+)?(?:histórico|log|commits)",
         r"commits?\s+(?:anteriores|passados)",
     ]
@@ -120,7 +130,7 @@ def suggest_commit_message(changes: List[str] | None = None) -> str:
         Suggested commit message string (e.g. "feat: atualizar 3 arquivos").
     """
     if not changes:
-        return "feat: mudanças automáticas"
+        return "feat: automatic changes"
 
     has_new_files = any(
         c.strip().startswith("A")

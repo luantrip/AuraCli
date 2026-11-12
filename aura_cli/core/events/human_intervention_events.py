@@ -221,8 +221,8 @@ def create_confirmation_request(
         request_type=InterventionRequestType.CONFIRM,
         prompt=prompt,
         context=context or InterventionContext(),
-        options=["Sim", "Não"],
-        default="Sim" if default else "Não",
+        options=["Yes", "No"],
+        default="Yes" if default else "No",
         timeout=timeout,
     )
     return request.to_dict()
@@ -290,7 +290,7 @@ def create_selection_request(
         prompt=prompt,
         context=InterventionContext(),
         options=options,
-        default=default,  # type: ignore[arg-type]
+        default=default,  # type: ignore[arg-type]  # dataclass field default narrowing
         timeout=timeout,
     )
     return request.to_dict()

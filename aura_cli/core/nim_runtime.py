@@ -180,7 +180,7 @@ def platform_bin_dirs() -> List[Path]:
 
         directories.append(Path(get_platform_bin_dir()))
     except (ImportError, AttributeError, OSError, RuntimeError):
-        pass
+        pass  # Optional aura_cli_nim package not installed — bundled bin/ used instead
     directories.append(_PROJECT_ROOT / "bin" / tag)
     return _dedupe_paths(directories)
 
@@ -409,7 +409,7 @@ def resolve_nim_workspace_path(
     return resolved
 
 
-def run_nim_process(  # noqa: C901
+def run_nim_process(
     args: Iterable[str | os.PathLike[str]],
     *,
     cwd: Path,

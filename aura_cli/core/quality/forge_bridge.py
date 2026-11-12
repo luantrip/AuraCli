@@ -36,14 +36,13 @@ class ForgeManager:
     """Specialised wrapper for the Forge binary."""
 
     def __init__(self):
-        """Initialize the manager."""
         self.executable_path = self._find_binary()
         self.last_error: Optional[str] = None
 
         if not self.executable_path:
             self.last_error = "Forge binary not found."
             logger.warning(
-                "Forge binary not found. Sandbox de código desabilitado."
+                "Forge binary not found. Code sandbox disabled."
             )
 
     def _find_binary(self) -> Optional[Path]:
@@ -90,9 +89,9 @@ class ForgeManager:
                 input_text=input_json,
             )
             if result.timed_out:
-                raise TimeoutError("Forge excedeu o timeout de 30 segundos")
+                raise TimeoutError("Forge timed out after 30 seconds")
             if result.output_limited:
-                raise ValueError("Forge excedeu o limite de saída")
+                raise ValueError("Forge exceeded output limit")
             if result.returncode != 0:
                 stderr = result.stderr.decode("utf-8", errors="replace").strip()
                 raise RuntimeError(
@@ -156,9 +155,9 @@ class ForgeManager:
                     input_text=json.dumps(payload, ensure_ascii=False),
                 )
                 if result.timed_out:
-                    raise TimeoutError("Forge analyze excedeu o timeout de 30 segundos")
+                    raise TimeoutError("Forge analyze timed out after 30 seconds")
                 if result.output_limited:
-                    raise ValueError("Forge analyze excedeu o limite de saída")
+                    raise ValueError("Forge analyze exceeded output limit")
                 if result.returncode != 0:
                     stderr = result.stderr.decode("utf-8", errors="replace").strip()
                     raise RuntimeError(

@@ -97,7 +97,6 @@ class _LazyAgentProxy:
     """Proxy that loads the real agent class on first use to break circular imports."""
 
     def __init__(self, agent_name: str):
-        """Initialize the instance."""
         self._agent_name = agent_name
         self._agent_class = None
 

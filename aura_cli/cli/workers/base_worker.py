@@ -103,7 +103,7 @@ class BaseWorker(threading.Thread):
                 "status": "timeout",
                 "task_id": self.task_id,
                 "error_code": "worker_wait_timeout",
-                "message": "O worker não produziu resultado terminal dentro do prazo.",
+                "message": "The worker did not produce a terminal result within the deadline.",
                 "finished_at": self.finished_at,
             }
 
@@ -143,8 +143,8 @@ class BaseWorker(threading.Thread):
                             }
                         )
                 except queue.Full:
-                    pass  # Drop message if still full
-            self._last_status_update = current_time  # type: ignore[assignment]
+                    _base_worker_logger.debug("base_worker: queue full, dropping message")
+            self._last_status_update = current_time  # type: ignore[assignment]  # float narrowed from Optional
 
     def get_result(self, timeout: float = 5.0) -> Dict[str, Any]:
         """Return a terminal result or an explicit wait-timeout envelope."""
@@ -291,9 +291,9 @@ class BaseWorker(threading.Thread):
                 if timed_out
                 else "worker_cancelled",
                 "message": (
-                    "A operação excedeu o prazo e recebeu solicitação de cancelamento."
+                    "The operation exceeded the deadline and received a cancellation request."
                     if timed_out
-                    else "A operação foi cancelada pelo usuário."
+                    else "The operation was cancelled by the user."
                 ),
                 "cancel_reason": reason_text,
             }

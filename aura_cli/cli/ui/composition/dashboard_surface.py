@@ -6,51 +6,52 @@ import importlib
 from typing import Dict, Optional, Tuple
 
 from rich.console import Console, RenderableType
-from rich.panel import Panel
 from rich.table import Table
 
+from aura_cli.application.presentation.cli_visual import SurfaceChrome
+from aura_cli.cli.ui.composition.visual_surface import surface_panel
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 
 DashboardEntry = Tuple[str, str, str]
 
 DASHBOARD_REGISTRY: Dict[str, DashboardEntry] = {
     "tool_history": (
-        "Histórico de Ferramentas (opcional)",
+        "Tool History (optional)",
         "aura_cli.cli.ui.tools.tool_history",
         "ToolHistoryViewer",
     ),
     "memory": (
-        "Explorador de Memória (opcional)",
+        "Memory Explorer (optional)",
         "aura_cli.cli.ui.memory.memory_explorer",
         "MemoryExplorer",
     ),
     "graph": (
-        "Explorador de Grafo de Módulos (opcional)",
+        "Module Graph Explorer (optional)",
         "aura_cli.cli.ui.visualization.graph_renderer",
         "GraphRenderer",
     ),
     "infra": (
-        "Infraestrutura / Containers (opcional)",
+        "Infrastructure / Containers (optional)",
         "aura_cli.cli.ui.ops.infrastructure_dashboard",
         "InfrastructureDashboard",
     ),
     "extensions": (
-        "Extensões / Plugins (opcional)",
+        "Extensions / Plugins (optional)",
         "aura_cli.cli.ui.extensions.extension_manager",
         "ExtensionBrowser",
     ),
     "edit": (
-        "Histórico de Edições (opcional)",
+        "Edit History (optional)",
         "aura_cli.cli.ui.edit.edit_coordinator",
         "EditHistoryViewer",
     ),
     "refactor": (
-        "Análise de Duplicações (opcional)",
+        "Duplication Analysis (optional)",
         "aura_cli.cli.ui.refactoring.refactoring_studio",
         "DuplicationAnalyzer",
     ),
     "autocomplete": (
-        "Sugestões de Autocomplete (opcional)",
+        "Autocomplete Suggestions (optional)",
         "aura_cli.cli.ui.autocomplete.autocomplete_widget",
         "AutocompleteWidget",
     ),
@@ -64,15 +65,17 @@ def _render_dashboard_unavailable(
     title, module_path, _class_name = entry
     message = Table.grid(padding=(0, 1))
     message.add_row("Dashboard", key)
-    message.add_row("Estado", "indisponível")
-    message.add_row("Módulo", module_path)
-    message.add_row("Motivo", str(error) or "implementação opcional não instalada")
-    message.add_row("Próximo passo", "instale/ative a extensão e tente novamente")
+    message.add_row("Status", "unavailable")
+    message.add_row("Module", module_path)
+    message.add_row("Reason", str(error) or "optional implementation not installed")
+    message.add_row("Next step", "install/activate the extension and try again")
     console.print(
-        Panel(
+        surface_panel(
             message,
             title=f"[{UIStyles.WARNING}]{UIIcons.WARNING} {title}[/]",
+            chrome=SurfaceChrome.GROUP,
             border_style=UIStyles.BORDER_WARNING,
+            console_width=console.width,
         )
     )
 
@@ -80,15 +83,17 @@ def _render_dashboard_unavailable(
 def render_dashboard_help(console: Console) -> None:
     """Print dashboard subcommand index."""
     table = Table(show_header=False, box=None, padding=(0, 2))
-    table.add_column("Comando", style=f"{UIStyles.ACCENT} bold", width=20)
-    table.add_column("Descrição", style=UIStyles.BODY)
+    table.add_column("Command", style=f"{UIStyles.ACCENT} bold", width=20)
+    table.add_column("Description", style=UIStyles.BODY)
     for key, (desc, _, _) in DASHBOARD_REGISTRY.items():
         table.add_row(f"/dashboard {key}", desc)
     console.print(
-        Panel(
+        surface_panel(
             table,
             title=f"[{UIStyles.TITLE}]{UIIcons.STATS} Dashboards Opcionais[/]",
+            chrome=SurfaceChrome.GROUP,
             border_style=UIStyles.BORDER_PRIMARY,
+            console_width=console.width,
         )
     )
 

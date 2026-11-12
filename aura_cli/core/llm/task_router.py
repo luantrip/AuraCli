@@ -18,6 +18,7 @@ from aura_cli.core.llm.model_utils import (
     get_models_for_provider,
     normalize_model_name,
 )
+from aura_cli.core.llm.provider_spec import env_keys_for
 
 if TYPE_CHECKING:
     from aura_cli.core.llm.model_profiles import ModelProfileManager
@@ -49,7 +50,7 @@ class ModelProfile:
     strengths: List[TaskType]
     speed: str  # "fast", "medium", "slow"
     cost: str  # "free", "cheap", "expensive"
-    env_key: str  # Required env var
+    credential_provider: str  # ProviderSpec id whose credentials enable this model
 
 
 def _catalog_model(provider: str, index: int, fallback: str) -> str:
@@ -74,7 +75,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="fast",
         cost="free",
-        env_key="GROQ_API_KEY",
+        credential_provider="groq",
     ),
     ModelProfile(
         _catalog_model("groq", 1, "groq/openai/gpt-oss-120b"),
@@ -88,7 +89,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="fast",
         cost="free",
-        env_key="GROQ_API_KEY",
+        credential_provider="groq",
     ),
     ModelProfile(
         _catalog_model("cerebras", 0, "cerebras/gpt-oss-120b"),
@@ -105,7 +106,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="fast",
         cost="free",
-        env_key="CEREBRAS_API_KEY",
+        credential_provider="cerebras",
     ),
     ModelProfile(
         _catalog_model("cerebras", 1, "cerebras/gpt-oss-120b"),
@@ -119,7 +120,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="fast",
         cost="free",
-        env_key="CEREBRAS_API_KEY",
+        credential_provider="cerebras",
     ),
     ModelProfile(
         _catalog_model("gemini", 0, "gemini/gemini-2.5-flash"),
@@ -134,7 +135,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="fast",
         cost="free",
-        env_key="GEMINI_API_KEY",
+        credential_provider="google",
     ),
     ModelProfile(
         _catalog_model("gemini", 1, "gemini/gemini-2.5-pro"),
@@ -147,7 +148,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="medium",
         cost="free",
-        env_key="GEMINI_API_KEY",
+        credential_provider="google",
     ),
     ModelProfile(
         _catalog_model(
@@ -165,7 +166,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="fast",
         cost="free",
-        env_key="OPENROUTER_API_KEY",
+        credential_provider="openrouter",
     ),
     ModelProfile(
         _catalog_model(
@@ -177,7 +178,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         [TaskType.QUICK_QUESTION, TaskType.FILE_OPERATION, TaskType.DOCUMENTATION],
         speed="fast",
         cost="free",
-        env_key="OPENROUTER_API_KEY",
+        credential_provider="openrouter",
     ),
     ModelProfile(
         _catalog_model(
@@ -189,7 +190,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         [TaskType.CODE_EDIT, TaskType.DEBUG, TaskType.QUICK_QUESTION],
         speed="fast",
         cost="free",
-        env_key="OPENROUTER_API_KEY",
+        credential_provider="openrouter",
     ),
     ModelProfile(
         _catalog_model("gpt", 0, "gpt-4o"),
@@ -203,7 +204,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="medium",
         cost="expensive",
-        env_key="OPENAI_API_KEY",
+        credential_provider="openai",
     ),
     ModelProfile(
         _catalog_model("claude", 0, "claude-sonnet-4-6"),
@@ -217,7 +218,7 @@ MODEL_PROFILES: List[ModelProfile] = [
         ],
         speed="medium",
         cost="expensive",
-        env_key="ANTHROPIC_API_KEY",
+        credential_provider="anthropic",
     ),
 ]
 
@@ -298,7 +299,9 @@ class TaskRouter:
 
                 self._profile_manager = get_profile_manager()
             except Exception as _e:
-                logger.debug("ModelProfileManager unavailable, routing without profiles: %s", _e)
+                logger.debug(
+                    "ModelProfileManager unavailable, routing without profiles: %s", _e
+                )
         return self._profile_manager
 
     def _get_available_profiles(self) -> List[ModelProfile]:
@@ -308,7 +311,9 @@ class TaskRouter:
 
         available = []
         for profile in MODEL_PROFILES:
-            if os.environ.get(profile.env_key):
+            if any(
+                os.environ.get(key) for key in env_keys_for(profile.credential_provider)
+            ):
                 available.append(profile)
 
         self._available_profiles = available
@@ -441,6 +446,6 @@ def get_task_router() -> TaskRouter:
         if container.has(Services.TASK_ROUTER):
             return container.resolve(Services.TASK_ROUTER)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_task_router, using fallback", exc_info=True)
     # Simple fallback (no globals needed — container handles thread safety)
     return TaskRouter()

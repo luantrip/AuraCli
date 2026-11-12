@@ -55,7 +55,6 @@ class LoadingSpinner(Widget):
     def __init__(
         self, message: str = "", style: str = "default", interval: float = 0.1, **kwargs
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.message = message
         self._interval = interval
@@ -82,7 +81,7 @@ class LoadingSpinner(Widget):
         """Stop the spinner animation."""
         self.is_spinning = False
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Animate the spinner."""
         if not self.is_spinning:
             return
@@ -129,7 +128,6 @@ class ProgressIndicator(Widget):
         show_percentage: bool = True,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.label = label
         self._total = total
@@ -191,7 +189,6 @@ class PulseAnimation(Widget):
     text: reactive[str] = reactive("")
 
     def __init__(self, text: str = "...", interval: float = 0.5, **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self.text = text
         self._interval = interval
@@ -210,7 +207,7 @@ class PulseAnimation(Widget):
         """Stop pulsing."""
         self.is_pulsing = False
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Advance one animation frame."""
         if not self.is_pulsing:
             return

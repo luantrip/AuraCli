@@ -67,7 +67,7 @@ class AgentBackendFactory:
     def set_default_backend(cls, name: str):
         """Set the default backend."""
         if name not in cls._backends:
-            raise ValueError(f"Backend '{name}' não registrado")
+            raise ValueError(f"Backend '{name}' not registered")
         cls._default_backend = name
 
     @classmethod

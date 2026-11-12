@@ -286,8 +286,8 @@ class TestRunShellCommand:
         result = run_shell_command("ls")
 
         assert (
-            "cancelado" in result.lower()
-            or "cancelada" in result.lower()
+            "cancelled" in result.lower()
+            or "cancelled" in result.lower()
             or "canceled" in result.lower()
         )
 
@@ -319,7 +319,7 @@ class TestRunShellCommand:
         result = run_shell_command("rm -rf /")
 
         assert (
-            "bloqueado" in result.lower()
+            "blocked" in result.lower()
             or "blocked" in result.lower()
             or "perigosos" in result.lower()
         )

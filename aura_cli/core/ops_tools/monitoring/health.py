@@ -10,20 +10,17 @@ from typing import Optional
 
 import psutil
 import requests
-from rich.console import Console
-from rich.table import Table
 
 from aura_cli.core.logger import get_logger
 from aura_cli.core.ui import display_tool_call
 
 logger = get_logger(__name__)
-console = Console()
 
 
 def check_service_health(url: str, timeout: int = 5) -> str:
     """Check HTTP/HTTPS service health."""
     display_tool_call("check_service_health", {"url": url, "timeout": timeout})
-    logger.debug(f"Verificando saúde do serviço: {url}")
+    logger.debug(f"Checking service health: {url}")
 
     try:
         response = requests.get(url, timeout=timeout)
@@ -31,20 +28,15 @@ def check_service_health(url: str, timeout: int = 5) -> str:
 
         if 200 <= status_code < 300:
             health_status = "✅ Healthy"
-            color = "green"
         elif 300 <= status_code < 400:
             health_status = "!️ Redirect"
-            color = "yellow"
         elif 400 <= status_code < 500:
             health_status = "❌ Client Error"
-            color = "red"
         else:
             health_status = "❌ Server Error"
-            color = "red"
 
         result = f"{health_status} - Status: {status_code} - Response Time: {response.elapsed.total_seconds():.2f}s"
-        console.print(f"[{color}]{result}[/{color}]")
-        logger.info(f"Serviço {url}: {health_status}")
+        logger.info(f"Service {url}: {health_status}")
         return result
 
     except requests.exceptions.Timeout:
@@ -52,7 +44,7 @@ def check_service_health(url: str, timeout: int = 5) -> str:
         logger.warning(error_msg)
         return error_msg
     except requests.exceptions.ConnectionError:
-        error_msg = f"Erro de conexão com {url}"
+        error_msg = f"Connection error with {url}"
         logger.warning(error_msg)
         return error_msg
     except Exception as e:
@@ -79,13 +71,11 @@ def check_port(host: str, port: int, timeout: int = 3) -> str:
         sock.close()
 
         if result == 0:
-            status_msg = f"✅ Porta {port} está aberta em {host}"
-            console.print(f"[green]{status_msg}[/green]")
+            status_msg = f"✅ Port {port} is open on {host}"
             logger.info(status_msg)
             return status_msg
         else:
-            status_msg = f"❌ Porta {port} está fechada em {host}"
-            console.print(f"[red]{status_msg}[/red]")
+            status_msg = f"❌ Port {port} is closed on {host}"
             logger.warning(status_msg)
             return status_msg
 
@@ -105,24 +95,6 @@ def system_resources() -> str:
         memory = psutil.virtual_memory()
         disk = psutil.disk_usage("/")
 
-        table = Table(title="System Resources", show_header=True)
-        table.add_column("Recurso", style="cyan")
-        table.add_column("Uso", style="yellow")
-        table.add_column("Disponível", style="green")
-
-        table.add_row("CPU", f"{cpu_percent}%", f"{100 - cpu_percent}%")
-        table.add_row(
-            "RAM",
-            f"{memory.percent}% ({memory.used / (1024**3):.2f} GB)",
-            f"{memory.available / (1024**3):.2f} GB",
-        )
-        table.add_row(
-            "Disk",
-            f"{disk.percent}% ({disk.used / (1024**3):.2f} GB)",
-            f"{disk.free / (1024**3):.2f} GB",
-        )
-
-        console.print(table)
         logger.info(
             f"Recursos: CPU={cpu_percent}%, RAM={memory.percent}%, Disk={disk.percent}%"
         )
@@ -141,7 +113,7 @@ def process_info(name: Optional[str] = None) -> str:
         name: Process name to filter by (None = show all processes).
     """
     display_tool_call("process_info", {"name": name})
-    logger.debug(f"Obtendo informações de processos: name={name}")
+    logger.debug(f"Getting process information: name={name}")
 
     try:
         processes = []
@@ -158,23 +130,8 @@ def process_info(name: Optional[str] = None) -> str:
         if not processes:
             return f"Nenhum processo encontrado{' com nome ' + name if name else ''}."
 
-        table = Table(title="Process Info", show_header=True)
-        table.add_column("PID", style="cyan")
-        table.add_column("Nome", style="green")
-        table.add_column("CPU %", style="yellow")
-        table.add_column("RAM %", style="yellow")
-
-        for proc in processes[:20]:  # Limita a 20 processos
-            table.add_row(
-                str(proc["pid"]),
-                proc["name"],
-                f"{proc['cpu_percent']:.1f}",
-                f"{proc['memory_percent']:.1f}",
-            )
-
-        console.print(table)
         logger.info(f"Listados {len(processes)} processos")
-        return f"Informações de {len(processes)} processos exibidas"
+        return f"Information for {len(processes)} processes displayed"
 
     except Exception as e:
         error_msg = f"Error fetching process information: {e}"

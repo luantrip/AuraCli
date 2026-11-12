@@ -66,9 +66,9 @@ class OpsCodeAgent(CodeAgent):
                 timeout=2,
             )
             if result.returncode != 0:
-                return False, "Git não está instalado. Instale o Git primeiro."
+                return False, "Git is not installed. Install Git first."
         except (subprocess.TimeoutExpired, FileNotFoundError):
-            return False, "Git não está disponível. Instale o Git ou configure o PATH."
+            return False, "Git is not available. Install Git or configure PATH."
 
         try:
             result = subprocess.run(
@@ -81,7 +81,7 @@ class OpsCodeAgent(CodeAgent):
             if result.returncode != 0:
                 return (
                     False,
-                    "Não está em um repositório Git. Inicialize um repositório ou navegue até um.",
+                    "Not in a Git repository. Initialize a repository or navigate to one.",
                 )
         except (subprocess.TimeoutExpired, FileNotFoundError):
             return False, "Error verifying Git repository."
@@ -118,11 +118,11 @@ class OpsCodeAgent(CodeAgent):
 
         if self._git_enabled is None:
             self._git_enabled = self._ask_user_permission(
-                "Git", "verificar status do repositório"
+                "Git", "check repository status"
             )
 
         if not self._git_enabled:
-            return "Operação Git cancelada pelo usuário."
+            return "Git operation cancelled by user."
 
         from aura_cli.core.ops_tools.git import git_status
 
@@ -135,10 +135,10 @@ class OpsCodeAgent(CodeAgent):
             return error_msg
 
         if self._git_enabled is None:
-            self._git_enabled = self._ask_user_permission("Git", "mostrar diferenças")
+            self._git_enabled = self._ask_user_permission("Git", "show differences")
 
         if not self._git_enabled:
-            return "Operação Git cancelada pelo usuário."
+            return "Git operation cancelled by user."
 
         from aura_cli.core.ops_tools.git import git_diff
 
@@ -152,10 +152,10 @@ class OpsCodeAgent(CodeAgent):
             return error_msg
 
         if self._git_enabled is None:
-            self._git_enabled = self._ask_user_permission("Git", "mostrar histórico")
+            self._git_enabled = self._ask_user_permission("Git", "show history")
 
         if not self._git_enabled:
-            return "Operação Git cancelada pelo usuário."
+            return "Git operation cancelled by user."
 
         from aura_cli.core.ops_tools.git import git_log
 
@@ -165,7 +165,7 @@ class OpsCodeAgent(CodeAgent):
     def _handle_docker_ps(self, task: AgentTask) -> str:
         """Handle a docker ps request."""
         if not self._check_docker_available():
-            return "Docker não está disponível ou não está rodando. Inicie o Docker ou instale-o."
+            return "Docker is not available or not running. Start Docker or install it."
 
         if self._docker_enabled is None:
             self._docker_enabled = self._ask_user_permission(
@@ -173,7 +173,7 @@ class OpsCodeAgent(CodeAgent):
             )
 
         if not self._docker_enabled:
-            return "Operação Docker cancelada pelo usuário."
+            return "Docker operation cancelled by user."
 
         from aura_cli.core.ops_tools.docker import docker_ps
 
@@ -184,7 +184,7 @@ class OpsCodeAgent(CodeAgent):
     def _handle_docker_logs(self, task: AgentTask) -> str:
         """Show Docker logs."""
         if not self._check_docker_available():
-            return "Docker não está disponível ou não está rodando. Inicie o Docker ou instale-o."
+            return "Docker is not available or not running. Start Docker or install it."
 
         if self._docker_enabled is None:
             container = task.parameters.get("container", "container")
@@ -193,13 +193,13 @@ class OpsCodeAgent(CodeAgent):
             )
 
         if not self._docker_enabled:
-            return "Operação Docker cancelada pelo usuário."
+            return "Docker operation cancelled by user."
 
         from aura_cli.core.ops_tools.docker import docker_logs
 
         container = task.parameters.get("container")
         if not container:
-            return "Erro: Parâmetro 'container' é obrigatório para docker_logs"
+            return "Error: Parameter 'container' is required for docker_logs"
         tail = task.parameters.get("tail", 100)
         result = docker_logs(container=container, tail=tail)
         return result if isinstance(result, str) else "\n".join(result)
@@ -210,5 +210,5 @@ class OpsCodeAgent(CodeAgent):
 
         command = task.parameters.get("command")
         if not command:
-            return "Erro: Parâmetro 'command' é obrigatório para run_shell_command"
+            return "Error: Parameter 'command' is required for run_shell_command"
         return run_shell_command(command)

@@ -175,10 +175,19 @@ class TestValidateApiKey:
         validate_api_key("nvidia", "nvapi-x")
         mock_v.assert_called_once()
 
+    @patch("aura_cli.core.llm.api_validator.validate_cerebras_api_key")
+    def test_routes_cerebras(self, mock_v):
+        mock_v.return_value = ValidationResult(
+            ValidationStatus.SUCCESS, "cerebras", "ok"
+        )
+        result = validate_api_key("cerebras", "csk-x")
+        mock_v.assert_called_once_with("csk-x")
+        assert result.status == ValidationStatus.SUCCESS
+
     def test_unknown_provider(self):
         result = validate_api_key("unknown_xyz", "key123")
         assert result.status == ValidationStatus.UNKNOWN_ERROR
-        assert "não suportado" in result.message
+        assert "unsupported" in result.message.lower()
 
     def test_case_insensitive_provider(self):
         with patch("aura_cli.core.llm.api_validator.validate_openai_api_key") as mock_v:

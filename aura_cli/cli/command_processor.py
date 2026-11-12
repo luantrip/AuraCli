@@ -91,7 +91,7 @@ def _handle_tangent_cmd(
     if not app_loop:
         return (
             True,
-            "Erro: AppLoop não disponível para tangent.",
+            "Error: AppLoop not available for tangent.",
             agi_thread,
             ops_thread,
             final_model,
@@ -109,7 +109,7 @@ def _handle_checkpoint_cmd(
     if not app_loop:
         return (
             True,
-            "Erro: AppLoop não disponível para checkpoint.",
+            "Error: AppLoop not available for checkpoint.",
             agi_thread,
             ops_thread,
             final_model,
@@ -169,7 +169,7 @@ def process_slash_command(
 
     return (
         True,
-        f"[{UIStyles.WARNING}]{UIIcons.WARNING} Comando desconhecido: {cmd}. Digite /help para ver os comandos disponíveis.[/{UIStyles.WARNING}]",
+        f"[{UIStyles.WARNING}]{UIIcons.WARNING} Unknown command: {cmd}. Type /help to see available commands.[/{UIStyles.WARNING}]",
         agi_thread,
         ops_thread,
         final_model,
@@ -274,7 +274,7 @@ def _dispatch_stateful_cmd(
         return _ok
 
     if cmd in ("/exit", "/quit"):
-        return False, "Sessão encerrada.", agi_thread, ops_thread, final_model
+        return False, "Session ended.", agi_thread, ops_thread, final_model
 
     if cmd in ("/tui", "/interface"):
         return True, "Abrindo interface Nebula...", agi_thread, ops_thread, final_model
@@ -345,7 +345,7 @@ def _dispatch_feature_cmd(
 
     if cmd == "/model":
         new_model = handle_model(args or final_model)
-        msg = f"Modelo: {new_model}" if new_model != final_model else None
+        msg = f"Model: {new_model}" if new_model != final_model else None
         return True, msg, agi_thread, ops_thread, new_model
 
     if cmd == "/dev":

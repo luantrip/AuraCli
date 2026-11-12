@@ -64,7 +64,6 @@ class ToolRegistryPanel(Static):
         """Emitted when a tool starts executing."""
 
         def __init__(self, tool_name: str):
-            """Initialize the widget."""
             super().__init__()
             self.tool_name = tool_name
 
@@ -72,12 +71,10 @@ class ToolRegistryPanel(Static):
         """Emitted when a tool finishes executing."""
 
         def __init__(self, execution: ToolExecution):
-            """Initialize the widget."""
             super().__init__()
             self.execution = execution
 
     def __init__(self, **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self.tools: Dict[str, ToolInfo] = {}
         self.executions: List[ToolExecution] = []
@@ -91,61 +88,61 @@ class ToolRegistryPanel(Static):
         default_tools = [
             ToolInfo(
                 name="file_read",
-                description="Ler conteúdo de arquivo",
+                description="Read file content",
                 category="filesystem",
                 parameters={"path": "string"},
             ),
             ToolInfo(
                 name="file_write",
-                description="Escrever conteúdo em arquivo",
+                description="Write content to file",
                 category="filesystem",
                 parameters={"path": "string", "content": "string"},
             ),
             ToolInfo(
                 name="shell_execute",
-                description="Executar comando shell",
+                description="Execute shell command",
                 category="system",
                 parameters={"command": "string", "timeout": "int"},
             ),
             ToolInfo(
                 name="code_analyze",
-                description="Analisar código em busca de problemas",
+                description="Analyse code for issues",
                 category="analysis",
                 parameters={"path": "string", "language": "string"},
             ),
             ToolInfo(
                 name="git_status",
-                description="Obter status do repositório Git",
+                description="Get Git repository status",
                 category="git",
                 parameters={"path": "string"},
             ),
             ToolInfo(
                 name="git_diff",
-                description="Mostrar diferenças do Git",
+                description="Show Git diff",
                 category="git",
                 parameters={"path": "string", "staged": "bool"},
             ),
             ToolInfo(
                 name="find_in_files",
-                description="Pesquisar código no repositório",
+                description="Search code in repository",
                 category="search",
                 parameters={"query": "string", "path": "string"},
             ),
             ToolInfo(
                 name="refactor_rename",
-                description="Renomear símbolo na base de código",
+                description="Rename symbol in codebase",
                 category="refactoring",
                 parameters={"old_name": "string", "new_name": "string"},
             ),
             ToolInfo(
                 name="test_run",
-                description="Executar testes de arquivo ou diretório",
+                description="Run tests for file or directory",
                 category="testing",
                 parameters={"path": "string", "verbose": "bool"},
             ),
             ToolInfo(
                 name="dependency_graph",
-                description="Gerar grafo de dependências",
+                description="Generate dependency graph",
                 category="analysis",
                 parameters={"path": "string", "format": "string"},
             ),
@@ -158,9 +155,9 @@ class ToolRegistryPanel(Static):
         """Compose the widget layout."""
         with Horizontal():
             with Vertical(classes="tool-list-pane"):
-                yield Static("⚒ Ferramentas disponíveis", classes="pane-header")
+                yield Static("⚒ Available tools", classes="pane-header")
                 yield Input(
-                    placeholder="Pesquisar ferramentas...",
+                    placeholder="Search tools...",
                     id="tool_search",
                     classes="tool-search",
                 )
@@ -168,21 +165,21 @@ class ToolRegistryPanel(Static):
                     id="tool_table", zebra_stripes=True, classes="tool-table"
                 )
                 with Horizontal(classes="tool-actions"):
-                    yield Button("▶ Executar", id="run_btn", variant="primary")
+                    yield Button("▶ Run", id="run_btn", variant="primary")
                     yield Button(
-                        "⏹ Parar", id="stop_btn", variant="error", disabled=True
+                        "⏹ Stop", id="stop_btn", variant="error", disabled=True
                     )
 
             with Vertical(classes="tool-output-pane"):
-                yield Static("↑ Saída da execução", classes="pane-header")
+                yield Static("↑ Execution output", classes="pane-header")
                 yield ProgressBar(
                     id="exec_progress", classes="progress-container", show_eta=False
                 )
                 yield VerticalScroll(id="output_log", classes="output-log")
                 with Horizontal(classes="tool-actions"):
-                    yield Button("✖ Limpar", id="clear_btn")
-                    yield Button("⊞ Copiar", id="copy_btn")
-                    yield Button("▥ Histórico", id="history_btn")
+                    yield Button("✖ Clear", id="clear_btn")
+                    yield Button("⊞ Copy", id="copy_btn")
+                    yield Button("▥ History", id="history_btn")
 
     def on_mount(self) -> None:
         """Initialize widget state after mounting."""
@@ -195,7 +192,7 @@ class ToolRegistryPanel(Static):
     def _setup_tool_table(self) -> None:
         """Configure tool table columns."""
         table = self.query_one("#tool_table", DataTable)
-        table.add_columns("Estado", "Ferramenta", "Categoria", "Execuções")
+        table.add_columns("Status", "Tool", "Category", "Runs")
         table.cursor_type = "row"
 
     def _load_tools(self, filter_query: str = "") -> None:
@@ -227,12 +224,12 @@ class ToolRegistryPanel(Static):
     def _category_label(category: str) -> str:
         """Return the user-facing Portuguese label for a tool category."""
         labels = {
-            "filesystem": "sistema de arquivos",
+            "filesystem": "file system",
             "system": "sistema",
-            "analysis": "análise",
+            "analysis": "analysis",
             "git": "Git",
             "search": "pesquisa",
-            "refactoring": "refatoração",
+            "refactoring": "refactoring",
             "testing": "testes",
         }
         return labels.get(category, category)
@@ -277,25 +274,25 @@ class ToolRegistryPanel(Static):
 
         self._clear_log()
 
-        self._write_log(f"Ferramenta: {tool.name}", "log-label")
-        self._write_log(f"Descrição: {tool.description}", "log-label")
+        self._write_log(f"Tool: {tool.name}", "log-label")
+        self._write_log(f"Description: {tool.description}", "log-label")
         self._write_log(
             f"Categoria: {self._category_label(tool.category)}", "log-label"
         )
-        self._write_log(f"Execuções: {tool.run_count}", "log-label")
+        self._write_log(f"Runs: {tool.run_count}", "log-label")
 
         if tool.parameters:
             self._write_log("", "log-content")
-            self._write_log("Parâmetros:", "log-label")
+            self._write_log("Parameters:", "log-label")
             for param, ptype in tool.parameters.items():
                 self._write_log(f"  • {param}: {ptype}", "log-info")
 
         if tool.last_run:
             self._write_log("", "log-content")
-            self._write_log(f"Última execução: {tool.last_run}", "log-label")
+            self._write_log(f"Last run: {tool.last_run}", "log-label")
 
             if tool.last_result:
-                self._write_log("Último resultado:", "log-label")
+                self._write_log("Last result:", "log-label")
                 self._write_log(str(tool.last_result)[:500], "log-content")
 
     def on_input_changed(self, event: Input.Changed) -> None:
@@ -343,7 +340,7 @@ class ToolRegistryPanel(Static):
         self._clear_log()
         self._write_log(f"▶ Executando: {tool.name}", "log-start")
         self._write_log(
-            f"Iniciado às: {datetime.now().strftime('%H:%M:%S')}", "log-info"
+            f"Started at: {datetime.now().strftime('%H:%M:%S')}", "log-info"
         )
         self._write_log("", "log-content")
 
@@ -364,7 +361,7 @@ class ToolRegistryPanel(Static):
         try:
             if self._executor is None:
                 raise RuntimeError(
-                    "Executor de tools não configurado; execução não realizada."
+                    "Tool executor not configured; execution not performed."
                 )
 
             start_time = datetime.now()
@@ -394,9 +391,9 @@ class ToolRegistryPanel(Static):
 
             progress.update(progress=1.0)
             self._write_log("", "log-content")
-            self._write_log("✔ Execução concluída", "log-success")
+            self._write_log("✔ Execution complete", "log-success")
             self._write_log(f"Resultado: {str(result)[:500]}", "log-content")
-            self._write_log(f"Duração: {duration_ms}ms", "log-info")
+            self._write_log(f"Duration: {duration_ms}ms", "log-info")
 
         except Exception as error:
             tool.status = ToolStatus.FAILED
@@ -407,7 +404,7 @@ class ToolRegistryPanel(Static):
                 self.executions.append(execution)
 
             self._write_log("", "log-content")
-            self._write_log(f"✖ Execução não realizada: {error}", "log-error")
+            self._write_log(f"✖ Execution failed: {error}", "log-error")
 
         finally:
             self.is_executing = False
@@ -441,22 +438,22 @@ class ToolRegistryPanel(Static):
             self.executions.append(self._current_execution)
 
         self._write_log("", "log-content")
-        self._write_log("⊘ Execução cancelada", "log-warning")
-        self.notify("Execução cancelada", severity="warning")
+        self._write_log("⊘ Execution cancelled", "log-warning")
+        self.notify("Execution cancelled", severity="warning")
 
     def _copy_output(self) -> None:
         """Copy tool output to clipboard."""
-        self.notify("Saída copiada para a área de transferência")
+        self.notify("Output copied to clipboard")
 
     def _show_history(self) -> None:
         """Show tool execution history."""
         self._clear_log()
 
-        self._write_log("▥ Histórico de execuções", "log-start")
+        self._write_log("▥ History", "log-start")
         self._write_log("", "log-content")
 
         if not self.executions:
-            self._write_log("Nenhuma execução ainda", "log-info")
+            self._write_log("No executions yet", "log-info")
             return
 
         for exec_record in reversed(self.executions[-20:]):
@@ -466,8 +463,8 @@ class ToolRegistryPanel(Static):
             )
 
             self._write_log(f"{status_icon} {exec_record.tool_name}", "log-label")
-            self._write_log(f"   Início: {exec_record.started_at[:19]}", "log-info")
-            self._write_log(f"   Duração: {duration}", "log-info")
+            self._write_log(f"   Start: {exec_record.started_at[:19]}", "log-info")
+            self._write_log(f"   Duration: {duration}", "log-info")
             if exec_record.error:
                 self._write_log(f"   Erro: {exec_record.error}", "log-error")
             self._write_log("", "log-content")

@@ -14,7 +14,7 @@ try:
 
     _PIL_AVAILABLE = True
 except ImportError:
-    Image = None  # type: ignore[assignment]
+    Image = None  # type: ignore[assignment]  # optional dep
     _PIL_AVAILABLE = False
 
 if TYPE_CHECKING:

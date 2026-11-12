@@ -28,7 +28,7 @@ class ExternalToolLauncher(Vertical):
         description_lines: List[str],
         features: List[str],
         install_command: Optional[str] = None,
-        launch_button_label: str = "Abrir",
+        launch_button_label: str = "Open",
         launch_button_id: str = "launch_btn",
         **kwargs,
     ) -> None:
@@ -41,7 +41,7 @@ class ExternalToolLauncher(Vertical):
         self._launch_id = launch_button_id
 
     def compose(self) -> ComposeResult:
-        status = "✓ Disponível" if self._available else "○ Indisponível"
+        status = "✓ Available" if self._available else "○ Unavailable"
         status_class = "status-available" if self._available else "status-unavailable"
         yield Static(f"Estado: {status}", classes=status_class)
 
@@ -56,14 +56,14 @@ class ExternalToolLauncher(Vertical):
             with Horizontal(classes="action-hint"):
                 yield Static("Pressione ", classes="action-hint")
                 yield Static("Enter", classes="action-key")
-                yield Static(" ou clique no botão para abrir", classes="action-hint")
-            yield Static("Pressione Esc para voltar", classes="description-text")
+                yield Static(" or click the button to open", classes="action-hint")
+            yield Static("Press Esc to go back", classes="description-text")
             yield Button(self._launch_label, id=self._launch_id, variant="primary")
         else:
             yield Static("Para instalar:", classes="install-hint")
             if self._install_command:
                 yield Static(self._install_command, classes="install-command")
-            yield Static("Pressione Esc para voltar", classes="description-text")
+            yield Static("Press Esc to go back", classes="description-text")
 
     @on(Button.Pressed)
     def _on_launch_btn(self, event: Button.Pressed) -> None:

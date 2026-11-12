@@ -24,7 +24,7 @@ def _en(pt: str, en: str = "") -> str:
 
 SLASH_COMMANDS: List[SlashCommand] = [
     SlashCommand("/help", "Mostrar ajuda", "Show help", tui_handler=True),
-    SlashCommand("/clear", "Limpar histórico do chat", "Clear chat", tui_handler=True),
+    SlashCommand("/clear", "Clear chat history", "Clear chat", tui_handler=True),
     SlashCommand("/cls", "Limpar chat (alias)", "Clear chat (alias)", tui_handler=True),
     SlashCommand(
         "/keyboard",
@@ -34,20 +34,20 @@ SLASH_COMMANDS: List[SlashCommand] = [
         tui_handler=True,
     ),
     SlashCommand(
-        "/back", "Voltar à CLI legada", "Return to legacy CLI", tui_handler=True
+        "/back", "Return to legacy CLI", "Return to legacy CLI", tui_handler=True
     ),
     SlashCommand("/exit", "Sair do Aura CLI", "Exit application", tui_handler=True),
     SlashCommand("/quit", "Sair (alias)", "Quit (alias)", tui_handler=True),
     SlashCommand(
         "/settings",
-        "Abrir configurações (TUI nativo)",
+        "Open settings (native TUI)",
         "Open settings",
         tui_handler=True,
         tui_only=True,
     ),
     SlashCommand(
         "/sessions",
-        "Histórico de sessões salvas",
+        "Saved session history",
         "Browse saved sessions",
         aliases=("/session-history",),
         tui_handler=True,
@@ -55,13 +55,13 @@ SLASH_COMMANDS: List[SlashCommand] = [
     ),
     SlashCommand(
         "/history",
-        "No TUI: histórico de comandos do input",
+        "In TUI: input command history",
         "Command input history",
         tui_handler=True,
     ),
     SlashCommand(
         "/constitution",
-        "Criar constituição do projeto",
+        "Create project constitution",
         "Constitution wizard",
         aliases=("/constituicao",),
         tui_handler=True,
@@ -98,7 +98,7 @@ SLASH_COMMANDS: List[SlashCommand] = [
     ),
     SlashCommand(
         "/welcome",
-        "Boas-vindas e comandos rápidos",
+        "Welcome screen and quick commands",
         "Show welcome message",
         tui_handler=True,
     ),
@@ -126,7 +126,7 @@ SLASH_COMMANDS: List[SlashCommand] = [
     SlashCommand(
         "/dev", "Status de LLM local", "Local LLM status", subcommands=("status",)
     ),
-    SlashCommand("/extensions", "Listar extensões", "List extensions"),
+    SlashCommand("/extensions", "List extensions", "List extensions"),
     SlashCommand("/interface", "Modo TUI", "TUI mode"),
     SlashCommand("/tui", "Modo TUI (alias)", "TUI mode (alias)"),
     SlashCommand("/cost", "Custo estimado", "Estimated cost"),
@@ -136,7 +136,7 @@ SLASH_COMMANDS: List[SlashCommand] = [
         "Dashboards",
         subcommands=("tool_history", "memory", "graph", "infra", "extensions", "help"),
     ),
-    SlashCommand("/memory", "Memória", "Memory"),
+    SlashCommand("/memory", "Memory", "Memory"),
     SlashCommand(
         "/workflow",
         "Workflows",
@@ -145,7 +145,7 @@ SLASH_COMMANDS: List[SlashCommand] = [
     ),
     SlashCommand(
         "/auto-run",
-        "Alternar execução sem confirmação",
+        "Toggle execution without confirmation",
         "Toggle auto-run",
         aliases=("/autorun",),
     ),
@@ -157,13 +157,13 @@ SLASH_COMMANDS: List[SlashCommand] = [
     ),
     SlashCommand(
         "/config",
-        "Configuração do sistema",
+        "System configuration",
         "System config",
         subcommands=("show", "set", "reset"),
     ),
     SlashCommand(
         "/checkpoint",
-        "Pontos de restauração da conversa",
+        "Conversation restore points",
         "Conversation checkpoints",
         subcommands=("init", "create", "list", "restore", "hard"),
         tui_handler=True,
@@ -177,14 +177,14 @@ SLASH_COMMANDS: List[SlashCommand] = [
     ),
     SlashCommand(
         "/session",
-        "Gerencia sessões (save, load, list, delete, info)",
+        "Manage sessions (save, load, list, delete, info)",
         "Session management",
         subcommands=("save", "load", "list", "delete", "info"),
         cli_only=True,
     ),
     SlashCommand(
         "/resume",
-        "Retomar uma sessão por ID, prefixo ou nome",
+        "Resume a session by ID, prefix or name",
         "Resume a session by ID, prefix, or name",
         cli_only=True,
     ),

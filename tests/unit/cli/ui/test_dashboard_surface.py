@@ -38,5 +38,5 @@ def test_unavailable_optional_dashboard_explains_recovery(monkeypatch):
 
     assert dashboard_surface.render_dashboard_subcommand(console, "memory") is None
     output = console.export_text(clear=False)
-    assert "indisponível" in output
-    assert "instale/ative a extensão" in output
+    assert "unavailable" in output
+    assert "install/activate the extension" in output

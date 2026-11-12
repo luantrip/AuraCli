@@ -74,20 +74,20 @@ def listar_paginas_caderno() -> str:
 
         if not pages:
             return (
-                "📓 Nenhuma página encontrada no caderno da sessão atual.\n\n"
-                f"Sessão: {notebook_service.session_id}\n"
-                "Páginas são criadas automaticamente quando o contexto excede 30 mensagens."
+                "📓 No pages found in the current session notebook.\n\n"
+                f"Session: {notebook_service.session_id}\n"
+                "Pages are created automatically when context exceeds 30 messages."
             )
 
-        result = f"📓 Caderno da Sessão: {notebook_service.session_id}\n"
-        result += f"Diretório: {notebook_service.session_path}\n"
-        result += f"Total de páginas: {len(pages)}\n"
+        result = f"📓 Session Notebook: {notebook_service.session_id}\n"
+        result += f"Directory: {notebook_service.session_path}\n"
+        result += f"Total pages: {len(pages)}\n"
 
         if session_info.get("total_size_bytes"):
             size_kb = session_info["total_size_bytes"] / 1024
             result += f"Tamanho total: {size_kb:.1f} KB\n"
 
-        result += "\n**Páginas disponíveis:**\n"
+        result += "\n**Available pages:**\n"
 
         for page in sorted(pages):
             full_path = notebook_service.session_path / page
@@ -104,8 +104,8 @@ def listar_paginas_caderno() -> str:
 
             result += "\n"
 
-        result += "\n💡 Use `ler_pagina_caderno(caminho)` para ver o conteúdo."
-        result += "\n💡 Use `ver_indice_caderno()` para ver resumos das páginas."
+        result += "\n💡 Use `ler_pagina_caderno(path)` to view the content."
+        result += "\n💡 Use `notebook_index()` to see page summaries."
 
         logger.info(f"Listed {len(pages)} notebook pages")
         return result
@@ -136,21 +136,21 @@ def ver_indice_caderno() -> str:
     try:
         index = notebook_service.read_index()
 
-        if not index or index.strip() == "# Índice do Caderno":
+        if not index or index.strip() == "# Notebook Index":
             return (
-                "# Índice do Caderno\n\n"
-                "📓 Nenhuma página registrada ainda.\n\n"
-                f"Sessão: {notebook_service.session_id}\n"
-                "Páginas serão criadas automaticamente quando o contexto "
-                "exceder 30 mensagens."
+                "# Notebook Index\n\n"
+                "📓 No pages registered yet.\n\n"
+                f"Session: {notebook_service.session_id}\n"
+                "Pages will be created automatically when context "
+                "exceeds 30 messages."
             )
 
-        header = f"# 📓 Caderno - Sessão {notebook_service.session_id}\n\n"
-        header += f"Diretório: `{notebook_service.session_path}`\n\n"
+        header = f"# 📓 Notebook - Session {notebook_service.session_id}\n\n"
+        header += f"Directory: `{notebook_service.session_path}`\n\n"
         header += "---\n\n"
 
-        if index.startswith("# Índice do Caderno"):
-            index = index.replace("# Índice do Caderno", "", 1).strip()
+        if index.startswith("# Notebook Index"):
+            index = index.replace("# Notebook Index", "", 1).strip()
 
         logger.info("Notebook index viewed")
         return header + index
@@ -181,10 +181,10 @@ def info_sessao_caderno() -> str:
     try:
         info = notebook_service.get_session_info()
 
-        result = "📊 **Informações da Sessão do Caderno**\n\n"
-        result += f"- **Sessão:** {notebook_service.session_id}\n"
-        result += f"- **Diretório:** `{notebook_service.session_path}`\n"
-        result += f"- **Páginas:** {info.get('page_count', 0)}\n"
+        result = "📊 **Notebook Session Information**\n\n"
+        result += f"- **Session:** {notebook_service.session_id}\n"
+        result += f"- **Directory:** `{notebook_service.session_path}`\n"
+        result += f"- **Pages:** {info.get('page_count', 0)}\n"
 
         size_bytes = info.get("total_size_bytes", 0)
         if size_bytes < 1024:
@@ -199,7 +199,7 @@ def info_sessao_caderno() -> str:
         else:
             result += "- **Backend:** Python (fallback)\n"
 
-        result += f"- **Contador de páginas:** {notebook_service.page_counter}\n"
+        result += f"- **Page counter:** {notebook_service.page_counter}\n"
 
         logger.info("Notebook session info retrieved")
         return result
@@ -237,7 +237,7 @@ def save_constitution(content: str, project_root: str = ".") -> str:
         memory = get_memory_service(Path(project_root))
         if memory.save_constitution(content):
             logger.info("Constitution saved successfully via tool.")
-            return "Constituição salva com sucesso."
+            return "Constitution saved successfully."
         else:
             logger.error("Failed to save constitution via tool.")
             return "Error: Failed to save the constitution."

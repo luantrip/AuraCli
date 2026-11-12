@@ -10,6 +10,7 @@ from typing import Any, Optional, Sequence
 
 
 class HookEvent(Enum):
+    """Event type that triggers a subprocess hook."""
     AGENT_SPAWN = "agentSpawn"
     USER_PROMPT = "userPromptSubmit"
     PRE_TOOL = "preToolUse"
@@ -19,6 +20,7 @@ class HookEvent(Enum):
 
 @dataclass(frozen=True)
 class HookResult:
+    """Result returned by a subprocess hook execution."""
     exit_code: int
     stdout: str = ""
     stderr: str = ""
@@ -35,6 +37,7 @@ class HookResult:
 
 @dataclass(frozen=True)
 class CommandHook:
+    """Hook binding a command pattern to a subprocess action."""
     event: HookEvent
     command: Sequence[str]
     matcher: Optional[str] = None

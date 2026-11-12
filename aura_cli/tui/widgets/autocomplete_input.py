@@ -174,7 +174,6 @@ class HistoryCompletionProvider(CompletionProvider):
     """Provides history-based completions."""
 
     def __init__(self, max_history: int = 100):
-        """Initialize the instance."""
         self.history: List[str] = []
         self.max_history = max_history
 
@@ -230,7 +229,6 @@ class AutocompleteInput(Static):
         """Emitted when command is submitted."""
 
         def __init__(self, command: str):
-            """Initialize the instance."""
             super().__init__()
             self.command = command
 
@@ -238,7 +236,6 @@ class AutocompleteInput(Static):
         """Emitted when completion is selected."""
 
         def __init__(self, completion: CompletionItem):
-            """Initialize the instance."""
             super().__init__()
             self.completion = completion
 
@@ -248,7 +245,6 @@ class AutocompleteInput(Static):
         providers: Optional[List[CompletionProvider]] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.placeholder = placeholder
         self.providers = providers or [
@@ -400,7 +396,7 @@ class AutocompleteInput(Static):
         """Set input value."""
         self.query_one("#autocomplete_input", Input).value = val
 
-    def focus(self) -> None:  # type: ignore[override]
+    def focus(self) -> None:  # type: ignore[override]  # Textual Widget.focus signature override
         """Focus the input."""
         self.query_one("#autocomplete_input", Input).focus()
 

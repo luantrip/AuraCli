@@ -1,12 +1,10 @@
-# Byte-compiled / optimized / DLL files
+# ── Python ──────────────────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyo
 
-# C extensions
-*.so
-
-# Distribution / packaging
+# ── Distribution / packaging ─────────────────────────────────────────────────
 .Python
 build/
 develop-eggs/
@@ -26,15 +24,15 @@ share/python-wheels/
 *.egg
 MANIFEST
 
-# PyInstaller
+# ── PyInstaller ───────────────────────────────────────────────────────────────
 *.manifest
 *.spec
 
-# Installer logs
+# ── Installer logs ────────────────────────────────────────────────────────────
 pip-log.txt
 pip-delete-this-directory.txt
 
-# Virtual Environments
+# ── Virtual environments ──────────────────────────────────────────────────────
 .env
 .venv
 env/
@@ -43,44 +41,66 @@ ENV/
 env.bak/
 venv.bak/
 
-# IDE / Editor specific files
+# ── Secrets & credentials ─────────────────────────────────────────────────────
+*.key
+*.pem
+*.p12
+*.pfx
+credentials.json
+service_account*.json
+
+# ── IDE / Editor ──────────────────────────────────────────────────────────────
 .idea/
 .vscode/
 *.sublime-project
 *.sublime-workspace
 
-# OS generated files
+# ── OS generated ──────────────────────────────────────────────────────────────
 .DS_Store
+.DS_Store?
+._*
 Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Test and coverage files
+# ── Tests / coverage ──────────────────────────────────────────────────────────
 .pytest_cache/
 .tox/
 .coverage
 .coverage.*
 htmlcov/
+coverage.xml
 .hypothesis/
 
-# Jupyter Notebook
-.ipynb_checkpoints
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
 
-# Databases
+# ── Databases ─────────────────────────────────────────────────────────────────
 *.sqlite3
 *.db
 
-# Ruff cache
+# ── Tool caches ───────────────────────────────────────────────────────────────
 .ruff_cache/
-
-# Mypy cache
 .mypy_cache/
 
-# Aura runtime artifacts
+# ── Aura runtime artifacts (user data, sessions, vectors) ────────────────────
 .aura/
 .aura_vectors/
 .local/
 
-# Accidental CLI output artifacts
+# ── Accidental CLI output artifacts ───────────────────────────────────────────
 .gz
 --help/
 --version/
 coverage.json
+
+# ── Graft local graph cache (regenerable via `graft build`) ───────────────────
+/graft/
+
+# ── Kiro editor settings ─────────────────────────────────────────────────────
+.kiro/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+*.log.*

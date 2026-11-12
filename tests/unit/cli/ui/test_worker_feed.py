@@ -1,6 +1,6 @@
 from rich.console import Console
 
-from aura_cli.cli.ui.components.worker_feed import (
+from aura_cli.cli.ui.components.agent.worker_feed import (
     WorkerActivityFeed,
     parse_status_messages,
 )
@@ -15,7 +15,7 @@ def test_worker_feed_renders_cancelled_state_without_error_label() -> None:
     console.print(feed.render(console_width=72))
     output = console.export_text(clear=False)
 
-    assert "cancelada" in output
+    assert "cancelled" in output
     assert "erro" not in output
     assert "TESTER" in output
     assert "🧪" not in output

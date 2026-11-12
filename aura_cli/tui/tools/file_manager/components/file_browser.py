@@ -247,21 +247,21 @@ class FileBrowser(Widget):
     """
 
     BINDINGS: ClassVar[list] = [
-        Binding("enter", "open_selected", "Abrir"),
+        Binding("enter", "open_selected", "Open"),
         Binding("backspace", "go_up", "Subir"),
-        Binding("n", "new_file", "Novo Arquivo"),
-        Binding("N", "new_folder", "Nova Pasta"),
-        Binding("r", "rename", "Renomear"),
+        Binding("n", "new_file", "New File"),
+        Binding("N", "new_folder", "New Folder"),
+        Binding("r", "rename", "Rename"),
         Binding("delete", "delete", "Excluir"),
-        Binding("c", "copy", "Copiar"),
+        Binding("c", "copy", "Copy"),
         Binding("x", "cut", "Recortar"),
-        Binding("v", "paste", "Colar"),
-        Binding("space", "toggle_select", "Selecionar"),
-        Binding("h", "toggle_hidden", "Mostrar Ocultos"),
+        Binding("v", "paste", "Paste"),
+        Binding("space", "toggle_select", "Select"),
+        Binding("h", "toggle_hidden", "Show Hidden"),
         Binding("f5", "refresh", "Atualizar"),
         Binding(".", "show_context_menu", "Menu de Contexto"),
-        Binding("e", "open_in_editor", "Abrir no Editor"),
-        Binding("p", "open_in_paint", "Abrir no Paint"),
+        Binding("e", "open_in_editor", "Open in Editor"),
+        Binding("p", "open_in_paint", "Open in Paint"),
     ]
 
     class FileSelected(Message):
@@ -279,7 +279,7 @@ class FileBrowser(Widget):
             self.dir_path = dir_path
 
     class OpenInEditor(Message):
-        """Postado quando um arquivo deve ser aberto no editor externo."""
+        """Posted when a file should be opened in the external editor."""
 
         def __init__(self, file_path: Path) -> None:
             super().__init__()
@@ -395,7 +395,7 @@ class FileBrowser(Widget):
             self._add_directory_contents(tree.root, self.current_path)
             tree.root.expand()
         except PermissionError:
-            self.notify(f"Permissão negada: {self.current_path}", severity="error")
+            self.notify(f"Permission denied: {self.current_path}", severity="error")
         except Exception as e:
             self.notify(f"Error: {e}", severity="error")
 
@@ -429,7 +429,7 @@ class FileBrowser(Widget):
                     parent_node.add_leaf(label_text, data=item)
 
         except PermissionError:
-            parent_node.add_leaf("◆ Permissão negada", data=None)
+            parent_node.add_leaf("◆ Permission denied", data=None)
         except Exception as e:
             parent_node.add_leaf(f"✖ Error: {e}", data=None)
 
@@ -565,9 +565,9 @@ class FileBrowser(Widget):
             result = await self.app.push_screen(
                 SharedConfirmDialog(
                     title="Excluir",
-                    message=f"Tem certeza que deseja excluir '{path.name}'?\nEsta ação não pode ser desfeita.",
+                    message=f"Are you sure you want to delete '{path.name}'?\nThis action cannot be undone.",
                     confirm_label="Excluir",
-                    cancel_label="Cancelar",
+                    cancel_label="Cancel",
                     dangerous=True,
                 ),
                 wait_for_dismiss=True,
@@ -576,10 +576,10 @@ class FileBrowser(Widget):
             if result:
                 try:
                     delete_path(path)
-                    self.notify(f"Excluído: {path.name}")
+                    self.notify(f"Deleted: {path.name}")
                     self._build_tree()
                 except PermissionError:
-                    self.notify("Permissão negada", severity="error")
+                    self.notify("Permission denied", severity="error")
                 except Exception as e:
                     self.notify(f"Error: {e}", severity="error")
 
@@ -602,7 +602,7 @@ class FileBrowser(Widget):
     def action_paste(self) -> None:
         """Paste from clipboard."""
         if not self._clipboard:
-            self.notify("Área de transferência vazia", severity="warning")
+            self.notify("Clipboard is empty", severity="warning")
             return
 
         dest_dir = self._get_selected_path()
@@ -615,7 +615,7 @@ class FileBrowser(Widget):
     def _do_paste(self, dest_dir: Path) -> None:
         """Perform paste operation."""
         if not self._clipboard or not self._clipboard.exists():
-            self.notify("Origem não existe mais", severity="error")
+            self.notify("Source no longer exists", severity="error")
             return
 
         src = self._clipboard
@@ -639,7 +639,7 @@ class FileBrowser(Widget):
         """Toggle showing hidden files."""
         self.show_hidden = not self.show_hidden
         self.notify(
-            f"Arquivos ocultos: {'visíveis' if self.show_hidden else 'ocultos'}"
+            f"Hidden files: {'visible' if self.show_hidden else 'hidden'}"
         )
 
     def action_refresh(self) -> None:
@@ -669,7 +669,7 @@ class FileBrowser(Widget):
                 self.post_message(OpenInPaint(path))
             else:
                 self.notify(
-                    f"Tipo de arquivo não suportado pelo Paint: {path.suffix}",
+                    f"File type not supported by Paint: {path.suffix}",
                     severity="warning",
                 )
 
@@ -708,7 +708,7 @@ class FileBrowser(Widget):
                 self.post_message(self.FileSelected(event.path))
             self._build_tree()
         except PermissionError:
-            self.notify("Permissão negada", severity="error")
+            self.notify("Permission denied", severity="error")
         except Exception as e:
             self.notify(f"Error: {e}", severity="error")
 
@@ -717,7 +717,7 @@ class FileBrowser(Widget):
         """Handle file/folder rename."""
         try:
             if event.new_path.exists():
-                self.notify(f"Já existe: {event.new_path.name}", severity="error")
+                self.notify(f"Already exists: {event.new_path.name}", severity="error")
                 return
             rename_path(event.old_path, event.new_path)
             self.notify(f"Renomeado para: {event.new_path.name}")
@@ -751,10 +751,10 @@ class FileBrowser(Widget):
     def _do_delete_confirmed(self, path: Path) -> None:
         try:
             delete_path(path)
-            self.notify(f"Excluído: {path.name}")
+            self.notify(f"Deleted: {path.name}")
             self._build_tree()
         except PermissionError:
-            self.notify("Permissão negada", severity="error")
+            self.notify("Permission denied", severity="error")
         except Exception as e:
             self.notify(f"Error: {e}", severity="error")
 
@@ -762,9 +762,9 @@ class FileBrowser(Widget):
         result = await self.app.push_screen(
             SharedConfirmDialog(
                 title="Excluir",
-                message=f"Tem certeza que deseja excluir '{path.name}'?\nEsta ação não pode ser desfeita.",
+                message=f"Are you sure you want to delete '{path.name}'?\nThis action cannot be undone.",
                 confirm_label="Excluir",
-                cancel_label="Cancelar",
+                cancel_label="Cancel",
                 dangerous=True,
             ),
             wait_for_dismiss=True,
@@ -829,15 +829,15 @@ class FileBrowser(Widget):
                 subprocess.run(["clip"], input=text.encode(), check=True)
             else:
                 self.notify(
-                    "Área de transferência não suportada neste sistema.",
+                    "Clipboard not supported on this system.",
                     severity="error",
                 )
                 return False
-            self.notify("Conteúdo copiado para a área de transferência.")
+            self.notify("Content copied to clipboard.")
             return True
         except Exception as error:
             self.notify(
-                f"Não foi possível copiar para a área de transferência: {error}",
+                f"Could not copy to clipboard: {error}",
                 severity="error",
             )
             return False

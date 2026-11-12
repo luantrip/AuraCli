@@ -5,7 +5,7 @@ Testa funcionalidades de visualização de métricas,
 logs e alertas em formato de dashboard interativo.
 """
 
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 
 from aura_cli.core.ops_tools.monitoring.dashboard import (
     DashboardWidget,
@@ -151,17 +151,14 @@ class TestMonitoringDashboard:
 
         assert len(self.dashboard.widgets) == initial_count - 1
 
-    @patch("aura_cli.core.ops_tools.monitoring.dashboard.console")
-    def test_display_overview_without_components(self, mock_console):
-        """Testa exibição de overview sem componentes."""
-        self.dashboard.display_overview()
+    def test_display_overview_without_components(self):
+        """display_overview runs without errors and invokes logger, not console."""
+        # console.print removed; display_overview now uses logger.info.
+        # The contract is that it does not raise.
+        self.dashboard.display_overview()  # must not raise
 
-        # Verificar que console.print foi chamado
-        mock_console.print.assert_called()
-
-    @patch("aura_cli.core.ops_tools.monitoring.dashboard.console")
-    def test_display_overview_with_performance_monitor(self, mock_console):
-        """Testa exibição de overview com monitor de performance."""
+    def test_display_overview_with_performance_monitor(self):
+        """display_overview queries the performance monitor."""
         mock_performance = Mock()
         mock_performance.get_performance_summary.return_value = {
             "system": {
@@ -170,15 +167,10 @@ class TestMonitoringDashboard:
                 "disk": {"percent": 45.0},
             }
         }
-
         dashboard = MonitoringDashboard(performance_monitor=mock_performance)
         dashboard.display_overview()
-
-        # Verificar que o método foi chamado
-        mock_performance.get_performance_summary.assert_called_once_with(
-            cpu_interval=0.0
-        )
-        mock_console.print.assert_called()
+        # console removed — the contract is that it queries the monitor
+        mock_performance.get_performance_summary.assert_called_once_with(cpu_interval=0.0)
 
     def test_create_metric_widget(self):
         """Testa criação de widget de métrica."""

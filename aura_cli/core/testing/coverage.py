@@ -47,7 +47,7 @@ class CoverageAnalyzer:
         if self._check_coverage():
             return self._analyze_with_coverage(source_path, test_path)
         else:
-            logger.warning("coverage.py não instalado, retornando relatório vazio")
+            logger.warning("coverage.py not installed, returning empty report")
             return CoverageReport()
 
     def _check_coverage(self) -> bool:

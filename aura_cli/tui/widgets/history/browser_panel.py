@@ -47,19 +47,19 @@ class HistoryBrowserPanel(Container):
 
     def compose(self) -> ComposeResult:
         with Container(id="search-container"):
-            yield Input(placeholder="⚲ Buscar no histórico...", id="search-input")
+            yield Input(placeholder="⚲ Search history...", id="search-input")
         yield Static("", id="filter-status")
         with Container(id="content-container"):
             yield DataTable(id="session-table")
             yield VerticalScroll(id="detail-panel")
         with Container(id="empty-history-state", classes="empty-state"):
-            yield Label("Nenhuma sessão neste workspace.", id="empty-history-title")
+            yield Label("No sessions in this workspace.", id="empty-history-title")
             yield Static(
-                "Comece uma conversa ou ajuste o workspace para carregar sessões.",
+                "Start a conversation or adjust the workspace to load sessions.",
                 id="empty-history-message",
             )
             with Horizontal(classes="empty-state-actions"):
-                yield Button("Iniciar conversa", id="history-start")
+                yield Button("Start conversation", id="history-start")
                 yield Button("Escolher workspace", id="history-workspace")
                 yield Button("Atualizar", id="history-refresh")
 
@@ -81,11 +81,11 @@ class HistoryBrowserPanel(Container):
         self.sessions = load_sessions(
             self.sessions_dir, include_external=self.include_external
         )
-        logger.info(f"Carregadas {len(self.sessions)} sessões")
+        logger.info(f"Loaded {len(self.sessions)} sessions")
 
     def _setup_table(self) -> None:
         table = self.query_one(DataTable)
-        table.add_columns("Tempo", "Msgs", "CWD", "Última Mensagem")
+        table.add_columns("Time", "Msgs", "CWD", "Last Message")
         table.cursor_type = "row"
 
     def _refresh_table(self) -> None:
@@ -133,19 +133,19 @@ class HistoryBrowserPanel(Container):
         title = self.query_one("#empty-history-title", Label)
         message = self.query_one("#empty-history-message", Static)
         if has_sessions:
-            title.update("Nenhuma sessão corresponde ao filtro.")
+            title.update("No sessions match the filter.")
             message.update(
-                "Limpe a busca ou desative o filtro CWD para ver o histórico."
+                "Clear the search or disable the CWD filter to see history."
             )
         else:
-            title.update("Nenhuma sessão neste workspace.")
+            title.update("No sessions in this workspace.")
             message.update(
-                "Comece uma conversa ou ajuste o workspace para carregar sessões."
+                "Start a conversation or adjust the workspace to load sessions."
             )
 
     def _update_filter_status(self) -> None:
         status = self.query_one("#filter-status", Static)
-        parts = [f"▥ {len(self.filtered)}/{len(self.sessions)} sessões"]
+        parts = [f"▥ {len(self.filtered)}/{len(self.sessions)} sessions"]
         parts.append(
             "▷ Filtro CWD: ON" if self.cwd_filter_active else "▷ Filtro CWD: OFF"
         )
@@ -221,7 +221,7 @@ class HistoryBrowserPanel(Container):
         detail.mount(Label("✎ Primeira mensagem:", classes="detail-label"))
         detail.mount(Static(entry.first_message or "N/A", classes="detail-content"))
         detail.mount(Static("", classes="detail-separator"))
-        detail.mount(Label("✎ Última mensagem:", classes="detail-label"))
+        detail.mount(Label("✎ Last message:", classes="detail-label"))
         detail.mount(Static(entry.last_message or "N/A", classes="detail-content"))
 
     def toggle_cwd_filter(self) -> None:

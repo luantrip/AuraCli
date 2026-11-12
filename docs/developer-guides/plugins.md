@@ -231,6 +231,38 @@ def my_hook_function(event_data):
 
 ---
 
+## Extension Architecture: three layers, one system
+
+Aura's extension code lives in three packages. They are **not** competing plugin
+systems — they are layers of one system, and each has a distinct role:
+
+| Layer | Package | Role | Public? |
+|-------|---------|------|---------|
+| Contracts | `aura_cli.application.extensions` | Abstract contracts and domain types: `AuraPlugin`, `PluginContext`, `PluginMetadata`, `ExtensionRegistry`, `ExtensionHookManager`, lifecycle events. No I/O, no imports of CLI/TUI. | Base classes you subclass |
+| Core runtime | `aura_cli.core.extensions` | Concrete adapters that wire the contracts to real services: `ExtensionLoader` (importlib discovery), `get_plugin_manager()`, guarded tool registration, runtime hook pipeline. Re-exports the contracts. | **Primary entry point** |
+| TUI specialization | `aura_cli.tui.plugin_manager` | Textual-specific plugins: `AuraTUIPluginBase(AuraPlugin)` and `AuraTUIPluginWidget` add widget mounting on top of the shared contracts. Loaded by the TUI lifecycle. | Only for TUI widget plugins |
+
+Dependency direction (never reversed): `tui.plugin_manager` → `application.extensions`
+(contracts) ← `core.extensions` (runtime). Core and TUI depend on the Application
+contracts; the contracts depend on neither.
+
+### Which one do I use?
+
+- **Writing a plugin?** Target the **Core runtime** surface. Your entry point
+  receives a `PluginContext` (see "Plugin Entry Point" above); it is loaded via
+  `get_plugin_manager()`, which the CLI exposes through `/extensions`.
+- **Writing a TUI widget plugin?** Subclass `AuraTUIPluginBase` from
+  `aura_cli.tui.plugin_manager`; it reuses the same `AuraPlugin` contract and adds
+  Textual mounting.
+- **Extending the framework itself (not a drop-in plugin)?** The Application
+  contracts are the stable types to build on; the concrete loaders in Core are
+  implementation detail and may change.
+
+> The `PluginContext` runtime API is experimental and may change between releases.
+> Pin your Aura CLI version when depending on it.
+
+---
+
 ## Hooks System
 
 ### Available Hooks

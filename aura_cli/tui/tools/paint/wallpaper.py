@@ -180,9 +180,11 @@ def _set_wallpaper_linux(desktop_env: str, file_loc: str, first_run: bool) -> bo
         uri = Path(file_loc).as_uri()
         SCHEMA = "org.gnome.desktop.background"
         try:
-            from gi.repository import Gio  # type: ignore
+            from gi.repository import (
+                Gio,  # type: ignore[import-untyped]  # gi (PyGObject) has no stubs
+            )
 
-            gsettings = Gio.Settings.new(SCHEMA)  # type: ignore
+            gsettings = Gio.Settings.new(SCHEMA)  # type: ignore[attr-defined]  # gi dynamic attrs
             gsettings.set_string("picture-uri", uri)
             gsettings.set_string("picture-uri-dark", uri)
         except Exception:
@@ -264,7 +266,7 @@ def set_wallpaper(file_loc: str, first_run: bool = True):
     if desktop_env == "windows":
         import ctypes
 
-        ctypes.windll.user32.SystemParametersInfoW(20, 0, file_loc, 0)  # type: ignore
+        ctypes.windll.user32.SystemParametersInfoW(20, 0, file_loc, 0)  # type: ignore[attr-defined]  # windll is Windows-only
         return True
     if desktop_env == "mac":
         _set_wallpaper_mac(file_loc)

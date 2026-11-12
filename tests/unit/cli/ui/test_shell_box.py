@@ -1,6 +1,6 @@
 from rich.console import Console
 
-from aura_cli.cli.ui.components.shell_box import BoxState, ShellCommandBox
+from aura_cli.cli.ui.components.input.shell_box import BoxState, ShellCommandBox
 
 
 def _render_text(box: ShellCommandBox, width: int = 60) -> str:
@@ -9,7 +9,7 @@ def _render_text(box: ShellCommandBox, width: int = 60) -> str:
     return console.export_text(clear=False)
 
 
-def test_shell_box_renders_pending_and_execution_states_in_portuguese() -> None:
+def test_shell_box_renders_pending_and_execution_states() -> None:
     box = ShellCommandBox("printf ok")
     pending = _render_text(box)
     assert "Comando shell" in pending
@@ -28,6 +28,6 @@ def test_shell_box_renders_cancelled_footer_without_error() -> None:
     box.cancel()
 
     output = _render_text(box, width=60)
-    assert "Execução cancelada" in output
+    assert "execution cancelled" in output.lower()
     assert "Falhou" not in output
     assert "expandir" in output

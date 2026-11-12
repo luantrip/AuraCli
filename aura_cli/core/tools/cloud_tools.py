@@ -74,6 +74,7 @@ def _provider_manager(provider: str):
 # Public tool functions
 # ---------------------------------------------------------------------------
 
+
 def cloud_providers_status() -> str:
     """Return which cloud provider SDKs are configured and available.
 
@@ -112,18 +113,25 @@ def cloud_list_resources(
     try:
         mgr = _provider_manager(provider)
         if not mgr.is_available():
-            return json.dumps(
-                {"error": f"Provider '{provider}' is not configured or SDK is missing."}
-            )
+            return json.dumps({"error": mgr.availability_error()})
         if region and hasattr(mgr, "_region"):
             mgr._region = region
         resources = mgr.list_resources(resource_type, **filters)
-        return json.dumps({"provider": provider, "resource_type": resource_type, "resources": resources}, indent=2)
+        return json.dumps(
+            {
+                "provider": provider,
+                "resource_type": resource_type,
+                "resources": resources,
+            },
+            indent=2,
+        )
     except ValueError as exc:
         return json.dumps({"error": str(exc)})
     except Exception as exc:
         logger.error("cloud_list_resources error: %s", exc)
-        return json.dumps({"error": f"Unexpected error listing {resource_type} on {provider}: {exc}"})
+        return json.dumps(
+            {"error": f"Unexpected error listing {resource_type} on {provider}: {exc}"}
+        )
 
 
 def cloud_get_status(provider: str, resource_id: str) -> str:
@@ -141,7 +149,10 @@ def cloud_get_status(provider: str, resource_id: str) -> str:
         if not mgr.is_available():
             return json.dumps({"error": f"Provider '{provider}' is not configured."})
         status = mgr.get_resource_status(resource_id)
-        return json.dumps({"provider": provider, "resource_id": resource_id, "status": status}, indent=2)
+        return json.dumps(
+            {"provider": provider, "resource_id": resource_id, "status": status},
+            indent=2,
+        )
     except ValueError as exc:
         return json.dumps({"error": str(exc)})
     except Exception as exc:
@@ -226,7 +237,12 @@ def cloud_s3_upload(local_path: str, bucket: str, key: Optional[str] = None) -> 
         s3 = session.client("s3")
         s3.upload_file(str(src), bucket, dest_key)
         return json.dumps(
-            {"uploaded": True, "bucket": bucket, "key": dest_key, "size": src.stat().st_size},
+            {
+                "uploaded": True,
+                "bucket": bucket,
+                "key": dest_key,
+                "size": src.stat().st_size,
+            },
             indent=2,
         )
     except Exception as exc:

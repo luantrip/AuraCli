@@ -6,11 +6,11 @@ Handles commands:
 
 from typing import Optional
 
-from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
+from aura_cli.cli.ui.display_facade import display_info, get_console
 from aura_cli.core.stats import get_stats
 
 
@@ -29,14 +29,12 @@ def handle_cost(args: str = "") -> Optional[str]:
     Returns:
         None (outputs directly to console).
     """
-    console = Console()
     stats = get_stats()
     summary = stats.get_cost_summary()
 
     if summary["total_tokens"] == 0:
-        console.print(
-            f"\n[{UIStyles.MUTED}]{UIIcons.INFO} No tokens used this session yet.[/]\n"
-        )
+        # Simple status message → route through the display funnel.
+        display_info("No tokens used this session yet.")
         return None
 
     # Main summary table
@@ -72,6 +70,8 @@ def handle_cost(args: str = "") -> Optional[str]:
         border_style=UIStyles.BORDER_PRIMARY,
     )
 
+    # Composed renderable → use the shared funnel console (not a fresh console).
+    console = get_console()
     console.print()
     console.print(panel)
     console.print()

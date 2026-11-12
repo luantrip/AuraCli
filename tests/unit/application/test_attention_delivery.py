@@ -26,7 +26,7 @@ def test_child_awaiting_user_escalates_outside_current_focus_once() -> None:
     )
     assert delivery is not None
     assert AttentionChannel.IN_APP in delivery.channels
-    assert delivery.terminal_title == "Aura · ação necessária"
+    assert delivery.terminal_title == "Aura · action required"
     _, duplicate = decide_attention_delivery(
         state,
         request(PresentationIntent.DECISION),

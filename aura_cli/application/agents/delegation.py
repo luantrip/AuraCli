@@ -58,7 +58,7 @@ def build_delegate_handoff(
     lines = [
         "[CHAT DELEGATION HANDOFF]",
         f"Agent target: {agent_label}",
-        f"Primary request: {request or 'Explorar o diretório atual e reportar contexto relevante.'}",
+        f"Primary request: {request or 'Explore the current directory and report relevant context.'}",
         f"Project root: {project_root}",
         f"Current chat model: {final_model}",
         f"Constitution active: {'yes' if bool(constitution) else 'no'}",
@@ -182,20 +182,20 @@ def format_delegation_launch_outcome(
     label = "Aura AGI" if outcome.agent_type == "agi" else "Aura Ops"
     if outcome.status is DelegationLaunchStatus.BUSY:
         message = (
-            f"A {label} já está em execução. Para uma nova tarefa, "
-            "o usuário pode reiniciar a sessão ou aguardar a conclusão da tarefa atual."
+            f"The {label} is already running. For a new task, "
+            "the user can restart the session or wait for the current task to complete."
         )
         return DelegationReceipt(message, outcome)
     if outcome.status is DelegationLaunchStatus.MISSING_CREDENTIALS:
         message = (
-            "Nenhuma API key configurada. Peça ao usuário para configurar com "
-            f"/settings antes de delegar à {'AGI' if outcome.agent_type == 'agi' else 'Ops'}."
+            "No API key configured. Ask the user to configure with "
+            f"/settings before delegating to {'AGI' if outcome.agent_type == 'agi' else 'Ops'}."
         )
         return DelegationReceipt(message, outcome)
     if outcome.status is DelegationLaunchStatus.FAILED:
         message = (
-            f"Não foi possível iniciar a {label}: {outcome.error}. "
-            f"Sugira ao usuário usar o comando /{outcome.agent_type} manualmente."
+            f"Could not start {label}: {outcome.error}. "
+            f"Suggest the user run /{outcome.agent_type} manually."
         )
         return DelegationReceipt(message, outcome)
     excerpt = outcome.request[:200]
@@ -207,7 +207,7 @@ def format_delegation_launch_outcome(
         f"{label}{mode} foi acionada em background com {noun}: «{excerpt}». "
         f"task_id={outcome.task_id or 'unknown'}, "
         f"thread={outcome.thread_name or 'unknown'}. "
-        "Acompanhe as atualizações no painel de status acima."
+        "Follow updates in the status panel above."
     )
     return DelegationReceipt(message, outcome)
 

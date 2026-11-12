@@ -116,15 +116,15 @@ class LLMQueryMixin:
     )
 
     _PURE_QUESTION_PATTERNS: ClassVar[tuple] = (
-        "o que é ",
         "what is ",
-        "o que são ",
+        "what is ",
+        "what are ",
         "what are ",
         "como funciona ",
         "how does ",
         "explique ",
         "explain ",
-        "qual a diferença",
+        "what is the difference",
         "what's the difference",
         "me fale sobre",
         "tell me about",
@@ -138,13 +138,33 @@ class LLMQueryMixin:
             chars_per_token=FALLBACK_CHARS_PER_TOKEN,
         )
 
+    def _context_hard_limit(self) -> int:
+        """Hard token ceiling for history, derived from the active model's window.
+
+        Previously this read ``context_max_tokens``, which ``config_manager.get``
+        resolves to ``None`` (the key is not a ``Settings`` field), so the cap was a
+        fixed 32k for every model — compaction stopped a 1M-window Gemini as if it
+        were a 32k model. Now the ceiling scales with the model's real window via
+        ``context_hard_limit_for_model``, while an explicit positive
+        ``context_max_tokens`` in settings still wins as a deliberate override.
+        """
+        from aura_cli.application.workspace import context_hard_limit_for_model
+
+        model = config_manager.get("default_model") or self.final_model
+        raw_override = config_manager.get("context_max_tokens")
+        try:
+            override = int(raw_override) if raw_override is not None else None
+        except (TypeError, ValueError):
+            override = None
+        return context_hard_limit_for_model(model, configured_override=override)
+
     def _maybe_compact_context(self, upcoming_user_message: str | None = None) -> None:
         """Proactively compact context before LLM calls to avoid token overflow."""
         try:
             estimated_tokens = self._estimate_context_tokens(upcoming_user_message)
             self.stats.context_tokens = estimated_tokens
             message_count = len(self.conversation_history)
-            context_hard = int(config_manager.get("context_max_tokens") or 32_000)
+            context_hard = self._context_hard_limit()
             context_soft = max(int(context_hard * 0.8), 1)
             session_soft = int(config_manager.get("token_budget_warning") or 100_000)
             session_hard = int(config_manager.get("token_budget_hard") or 250_000)
@@ -159,8 +179,8 @@ class LLMQueryMixin:
             ).decide(context_tokens=estimated_tokens, session_tokens=session_tokens)
             if decision is BudgetDecision.STOP:
                 raise RuntimeError(
-                    f"Limite rígido atingido: contexto={estimated_tokens:,}, "
-                    f"sessão={session_tokens:,} tokens"
+                    f"Hard limit reached: context={estimated_tokens:,}, "
+                    f"session={session_tokens:,} tokens"
                 )
             threshold_messages = 100
             if (
@@ -212,7 +232,7 @@ class LLMQueryMixin:
                 reducer=reduce_prompt,
             )
         except Exception as exc:
-            self.logger.debug(f"ContextPreprocessor indisponível: {exc}")
+            self.logger.debug(f"ContextPreprocessor unavailable: {exc}")
             prepared = prepare_prompt(
                 command,
                 constitution=self.constitution or "",
@@ -221,11 +241,11 @@ class LLMQueryMixin:
 
         if prepared.used_constitution:
             self.ui.display_info(
-                f"{UIIcons.INFO} Prompt sanitizado com a Constituição do Projeto."
+                f"{UIIcons.INFO} Prompt sanitized with the Project Constitution."
             )
         if prepared.used_pending_context:
             num_files = self.stats._pending_context_files
-            self.ui.display_info(f"Injetando contexto de {num_files} arquivo(s)...")
+            self.ui.display_info(f"Injecting context from {num_files} file(s)...")
         return prepared.original, prepared.rendered, prepared.used_pending_context
 
     def _filter_tool_schemas(self, tool_schemas: list, llm_command: str) -> list:
@@ -279,7 +299,7 @@ class LLMQueryMixin:
             ("reattach_delegated_task_context", self.reattach_delegated_task_context),
         ]
         for name, method in _delegation_tools:
-            method.__func__.__name__ = name  # type: ignore[attr-defined]
+            method.__func__.__name__ = name  # type: ignore[attr-defined]  # setting __name__ on bound method
             tools_dict[name] = method
         return tools_dict
 
@@ -508,7 +528,7 @@ class LLMQueryMixin:
                 model=current_model or "",
             )
         else:
-            self.ui.display_error("Não foi possível obter resposta do modelo.")
+            self.ui.display_error("Could not get a response from the model.")
 
         self.stats.set_status("idle")
         self.presenter.display_status_footer(

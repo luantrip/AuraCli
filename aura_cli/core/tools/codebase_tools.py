@@ -38,7 +38,7 @@ def inspect_code_structure(file_path: str, max_chunk_size: int = 2000) -> str:
     try:
         prism = PrismManager()
         if not prism.available:
-            return "Prism não disponível. Compile os módulos Nim e verifique 'nim_binary_path' em /settings."
+            return "Prism not available. Compile Nim modules and verify 'nim_binary_path' in /settings."
 
         chunks = prism.chunk_file(file_path, max_chunk_size)
 
@@ -67,7 +67,7 @@ def inspect_code_structure(file_path: str, max_chunk_size: int = 2000) -> str:
 
         console.print(
             f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-            f"Estrutura analisada: {len(structure_info)} definições[/{UIStyles.SUCCESS}]"
+            f"Structure analyzed: {len(structure_info)} definitions[/{UIStyles.SUCCESS}]"
         )
 
         return "\n".join(output)
@@ -85,7 +85,7 @@ def analyze_dependencies(file_path: str) -> str:
     try:
         graph_service = GraphService()
         if not graph_service.available:
-            return "Nexus (Dependency Graph) não disponível. Compile os módulos Nim e verifique 'nim_binary_path' em /settings."
+            return "Nexus (Dependency Graph) not available. Compile Nim modules and verify 'nim_binary_path' in /settings."
 
         graph = graph_service.build_graph()
         if not graph:
@@ -94,7 +94,7 @@ def analyze_dependencies(file_path: str) -> str:
         dependencies = graph.get_dependencies(file_path)
         dependents = graph.get_dependents(file_path)
 
-        output = [f"Análise de Dependências para '{file_path}':\n"]
+        output = [f"Dependency Analysis for '{file_path}':\n"]
 
         output.append(f"📥 Importa ({len(dependencies)}):")
         for dep in dependencies:
@@ -112,7 +112,7 @@ def analyze_dependencies(file_path: str) -> str:
 
         console.print(
             f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-            f"Dependências analisadas[/{UIStyles.SUCCESS}]"
+            f"Dependencies analyzed[/{UIStyles.SUCCESS}]"
         )
 
         return "\n".join(output)
@@ -207,7 +207,7 @@ def codebase_search(
                 continue
 
     if not results:
-        return f"Nenhum resultado encontrado para '{query}'"
+        return f"No results found for '{query}'"
 
     output = [f"Encontrados {len(results)} resultados para '{query}':\n"]
 
@@ -219,7 +219,7 @@ def codebase_search(
 
     console.print(
         f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-        f"Busca concluída: {len(results)} resultados[/{UIStyles.SUCCESS}]"
+        f"Search complete: {len(results)} results[/{UIStyles.SUCCESS}]"
     )
 
     return "\n".join(output)
@@ -327,7 +327,7 @@ def view_subdirectory(path: str, max_depth: int = 2, show_files: bool = True) ->
     display_tool_call("view_subdirectory", {"path": path, "max_depth": max_depth})
 
     if not os.path.isdir(path):
-        error_msg = f"Diretório '{path}' not found"
+        error_msg = f"Directory '{path}' not found"
         console.print(f"[{UIStyles.ERROR}]{error_msg}[/{UIStyles.ERROR}]")
         return error_msg
 
@@ -414,7 +414,7 @@ def glob_search(
             matches.append(match)
 
     if not matches:
-        return f"Nenhum arquivo encontrado para padrão '{pattern}'"
+        return f"No files found for pattern '{pattern}'"
 
     output = [f"Encontrados {len(matches)} arquivos:\n"]
     for match in sorted(matches):
@@ -518,7 +518,7 @@ def advanced_grep_search(
                 continue
 
     if not results:
-        return f"Nenhum resultado encontrado para padrão '{pattern}'"
+        return f"No results found for pattern '{pattern}'"
 
     output = [f"Encontrados {len(results)} resultados:\n"]
 

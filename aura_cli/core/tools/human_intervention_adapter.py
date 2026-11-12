@@ -247,7 +247,7 @@ class HumanInterventionAdapter:
         with self._requests_lock:
             self.pending_requests[request_id] = response_event
 
-        logger.info(f"Enviando requisição de intervenção: {request_id}")
+        logger.info(f"Sending intervention request: {request_id}")
         if self.lifecycle_emitter is not None:
             context = request_dict.get("context") or {}
             metadata = context.get("metadata") or {}
@@ -273,7 +273,7 @@ class HumanInterventionAdapter:
             if timeout:
                 elapsed = time.time() - start_time
                 if elapsed >= timeout:
-                    logger.warning(f"Timeout na requisição {request_id}")
+                    logger.warning(f"Timeout on request {request_id}")
                     with self._requests_lock:
                         self.pending_requests.pop(request_id, None)
                         self.responses.pop(request_id, None)
@@ -307,7 +307,7 @@ class HumanInterventionAdapter:
     def receive_response(self, response_dict: Dict[str, Any]):
         """Receive and process an intervention response."""
         if not isinstance(response_dict, dict):
-            logger.warning("Resposta de intervenção não é um dicionário; ignorada")
+            logger.warning("Intervention response is not a dict; ignored")
             return
 
         request_id = response_dict.get("request_id")
@@ -317,13 +317,13 @@ class HumanInterventionAdapter:
             logger.warning("Resposta sem request_id recebida")
             return
         if task_id is not None and str(task_id) != self.task_id:
-            logger.warning("Resposta descartada por task_id incompatível: %s", task_id)
+            logger.warning("Response discarded due to incompatible task_id: %s", task_id)
             return
 
         with self._requests_lock:
             response_event = self.pending_requests.get(request_id)
             if response_event is None:
-                logger.warning("Resposta órfã ou tardia descartada: %s", request_id)
+                logger.warning("Orphan or late response discarded: %s", request_id)
                 return
             self.responses[request_id] = response_dict
             response_event.set()
@@ -343,7 +343,7 @@ class HumanInterventionAdapter:
                 response_event.set()
             self.pending_requests.clear()
         logger.info(
-            f"Todas as requisições pendentes canceladas para task {self.task_id}"
+            f"All pending requests cancelled for task {self.task_id}"
         )
 
 
@@ -413,15 +413,15 @@ class InterventionHelper:
 
         if risk_level == RiskLevel.CRITICAL:
             prompt = (
-                f"▲ OPERAÇÃO CRÍTICA: {tool_name}\n"
-                "Deseja realmente executar esta operação de alto risco?"
+                f"▲ CRITICAL OPERATION: {tool_name}\n"
+                "Do you really want to execute this high-risk operation?"
             )
             timeout = 120
         elif risk_level == RiskLevel.HIGH:
-            prompt = f"🔶 Operação de alto impacto: {tool_name}\nConfirma a execução?"
+            prompt = f"🔶 High-impact operation: {tool_name}\nConfirm execution?"
             timeout = 60
         else:
-            prompt = f"Confirma execução de {tool_name}?"
+            prompt = f"Confirm execution of {tool_name}?"
             timeout = 60
 
         return risk_level, context, prompt, timeout
@@ -435,7 +435,7 @@ class InterventionHelper:
             tool_name=tool_name,
             tool_args=args,
             risk_level=risk_level,
-            description="Esta operação pode ter impacto significativo no sistema.",
+            description="This operation may have significant impact on the system.",
         )
 
 

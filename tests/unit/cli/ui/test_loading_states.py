@@ -11,7 +11,7 @@ def test_loading_state_messages_are_localized_and_semantic() -> None:
     assert "Executando" in manager._create_state_message(
         LoadingState.EXECUTING, None, 0
     )
-    assert "Processando" in manager._create_state_message(
+    assert "Processing" in manager._create_state_message(
         LoadingState.PROCESSING, None, 0
     )
     assert manager._get_state_icon(LoadingState.COMPLETE)

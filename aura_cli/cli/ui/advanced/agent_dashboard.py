@@ -12,10 +12,11 @@ from enum import Enum
 from typing import Any, List, Optional, Tuple
 
 from rich.console import Console, Group, RenderableType
-from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
+from aura_cli.application.presentation.cli_visual import SurfaceChrome
+from aura_cli.cli.ui.composition.visual_surface import surface_panel
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 
 
@@ -34,11 +35,11 @@ class AgentStatus(Enum):
 _AGENT_STATUS_LABELS = {
     AgentStatus.IDLE: "ocioso",
     AgentStatus.THINKING: "pensando",
-    AgentStatus.EXECUTING: "executando",
+    AgentStatus.EXECUTING: "running",
     AgentStatus.COMMUNICATING: "comunicando",
     AgentStatus.WAITING: "aguardando",
     AgentStatus.ERROR: "erro",
-    AgentStatus.COMPLETED: "concluído",
+    AgentStatus.COMPLETED: "completed",
 }
 
 
@@ -66,7 +67,7 @@ class AgentOrchestrationView:
         self.orchestrator = orchestrator
 
     def get_agent_states(self) -> List[AgentState]:
-        """Get estados reais de todos os agentes do orchestrator"""
+        """Return the current state of all agents from the orchestrator."""
         if not self.orchestrator or not hasattr(self.orchestrator, "agents"):
             return []
 
@@ -132,18 +133,17 @@ class AgentOrchestrationView:
             style=UIStyles.BODY,
         )
         body.append(
-            "Use o chat principal e a trilha operacional como superfície canônica.\n",
+            "Use the main chat and operational trail as the canonical surface.\n",
             style=UIStyles.MUTED,
         )
         body.append(
-            "Este dashboard é um explorador opcional de estado.", style=UIStyles.MUTED
+            "This dashboard is an optional state explorer.", style=UIStyles.MUTED
         )
-        return Panel(
+        return surface_panel(
             body,
-            title=f"{UIIcons.AGENT} Orquestração de agentes (opcional)",
-            title_align="left",
+            title=f"{UIIcons.AGENT} Agent orchestration (optional)",
+            chrome=SurfaceChrome.GROUP,
             border_style=UIStyles.BORDER_PRIMARY,
-            padding=(1, 2),
         )
 
     def render(self, console: Console) -> RenderableType:
@@ -153,18 +153,18 @@ class AgentOrchestrationView:
             return self._render_empty_state()
 
         table = Table(
-            title=f"{UIIcons.AGENT} Orquestração de agentes (opcional)",
+            title=f"{UIIcons.AGENT} Agent orchestration (optional)",
             title_style=UIStyles.TITLE,
             show_header=True,
             header_style=UIStyles.SUBTITLE,
             border_style=UIStyles.BORDER_PRIMARY,
             expand=False,
         )
-        table.add_column("Agente", style=UIStyles.LABEL, width=20)
+        table.add_column("Agent", style=UIStyles.LABEL, width=20)
         table.add_column("Status", style=UIStyles.INFO, width=12)
-        table.add_column("Tarefa atual", style=UIStyles.BODY, width=30)
+        table.add_column("Current task", style=UIStyles.BODY, width=30)
         table.add_column("Msgs", justify="center", width=8)
-        table.add_column("Memória", justify="center", width=8)
+        table.add_column("Memory", justify="center", width=8)
         table.add_column("Tarefas", justify="center", width=8)
         table.add_column("Tempo", justify="right", width=10)
 

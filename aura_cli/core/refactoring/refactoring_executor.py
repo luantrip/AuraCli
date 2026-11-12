@@ -30,7 +30,6 @@ class RefactoringSession:
     """Manages refactoring session with checkpoints and rollback."""
 
     def __init__(self, plan: "RefactoringPlan", scope: str = "."):
-        """Initialize the instance."""
         self.plan = plan
         self.scope = Path(scope).resolve()
         self.applied_changes: List[Dict] = []
@@ -116,7 +115,7 @@ class RefactoringSession:
                     f"Error creating Git checkpoint: {e}. "
                     f"Comando falhou: '{' '.join(e.cmd) if hasattr(e, 'cmd') else 'N/A'}'. "
                     "Usando backup de arquivos como alternativa. "
-                    "Verifique se o repositório Git está configurado corretamente."
+                    "Verify that the Git repository is correctly configured."
                 )
                 logger.warning(error_msg)
                 self._has_git = False
@@ -153,7 +152,7 @@ class RefactoringSession:
     def rollback_to_checkpoint(self, checkpoint_id: Optional[str] = None) -> bool:
         """Roll back all changes to a saved checkpoint."""
         if not self.checkpoints:
-            logger.error("Nenhum checkpoint disponível para rollback")
+            logger.error("No checkpoint available for rollback")
             return False
 
         checkpoint: dict[str, Any] | None
@@ -219,15 +218,15 @@ class RefactoringSession:
         except FileNotFoundError as e:
             error_msg = (
                 f"Rollback error: Checkpoint file not found: {e}. "
-                "Não é possível restaurar o estado anterior. "
+                "Cannot restore previous state. "
                 f"Verifique se os arquivos de backup existem em {self.checkpoint_dir}."
             )
             logger.error(error_msg, exc_info=True)
             return False
         except PermissionError as e:
             error_msg = (
-                f"Erro no rollback: Sem permissão para restaurar arquivos: {e}. "
-                "Verifique permissões de escrita nos arquivos que precisam ser restaurados."
+                f"Rollback error: No permission to restore files: {e}. "
+                "Check write permissions on files that need to be restored."
             )
             logger.error(error_msg, exc_info=True)
             return False
@@ -301,7 +300,7 @@ def _apply_batch_step(
                 step["file"], step.get("before"), step.get("after"), scope
             )
             if not validation.passed:
-                err = f"Validação falhou: {len(validation.errors)} erros"
+                err = f"Validation failed: {len(validation.errors)} errors"
                 session.failed_changes.append(
                     {
                         "step": step,
@@ -310,14 +309,14 @@ def _apply_batch_step(
                         "step_in_batch": step_idx,
                     }
                 )
-                logger.warning(f"Validação falhou para {step['file']}")
+                logger.warning(f"Validation failed for {step['file']}")
                 return True, err
     except FileNotFoundError as e:
         err = f"File not found during refactoring: {e}. Check that file {step.get('file', 'unknown')} exists and is accessible."
         session.failed_changes.append(
             {"step": step, "error": err, "batch": batch_idx, "step_in_batch": step_idx}
         )
-        logger.error(f"Exceção ao aplicar mudança: {e}", exc_info=True)
+        logger.error(f"Exception applying change: {e}", exc_info=True)
         return True, str(e)
     return False, None
 
@@ -344,8 +343,8 @@ def _validate_batch_files(
                     "batch": batch_idx,
                 }
             )
-            logger.warning(f"Validação falhou para {file_path}")
-            return True, f"Validação falhou para {file_path}"
+            logger.warning(f"Validation failed for {file_path}")
+            return True, f"Validation failed for {file_path}"
         if not validate_tests_pass(file_path, scope):
             session.failed_changes.append(
                 {"file": file_path, "tests_failed": True, "batch": batch_idx}
@@ -380,19 +379,19 @@ def apply_refactoring_plan(
         dependency_graph = None
 
     logger.info(
-        f"Iniciando refatoração: {len(plan.steps)} steps, estratégia: {plan.strategy}"
+        f"Starting refactoring: {len(plan.steps)} steps, strategy: {plan.strategy}"
     )
 
     batches = plan.get_batches(batch_size)
     total_batches = len(batches)
 
     logger.info(
-        f"Processando {total_batches} batches de até {batch_size} mudanças cada"
+        f"Processing {total_batches} batches of up to {batch_size} changes each"
     )
 
     for batch_idx, batch in enumerate(batches):
         logger.info(
-            f"Processando batch {batch_idx + 1}/{total_batches} ({len(batch)} mudanças)"
+            f"Processing batch {batch_idx + 1}/{total_batches} ({len(batch)} changes)"
         )
 
         # Impact Analysis for current batch
@@ -434,7 +433,7 @@ def apply_refactoring_plan(
 
         if batch_failed and auto_rollback:
             logger.warning(
-                f"Batch {batch_idx + 1} falhou: {batch_error}, revertendo..."
+                f"Batch {batch_idx + 1} failed: {batch_error}, reverting..."
             )
             if checkpoint:
                 success = session.rollback_to_checkpoint(checkpoint)
@@ -443,7 +442,7 @@ def apply_refactoring_plan(
                         f"Rollback bem-sucedido para checkpoint antes do batch {batch_idx + 1}"
                     )
                 else:
-                    logger.error("Rollback falhou!")
+                    logger.error("Rollback failed!")
 
             break
 
@@ -469,7 +468,7 @@ def apply_refactoring_plan(
     }
 
     logger.info(
-        f"Refatoração concluída: {total_applied}/{len(plan.steps)} aplicadas ({success_rate:.1f}%)"
+        f"Refactoring complete: {total_applied}/{len(plan.steps)} applied ({success_rate:.1f}%)"
     )
 
     return result
@@ -511,8 +510,8 @@ def apply_change(step: Dict, scope: str = ".") -> Dict:
         }
     except PermissionError as e:
         error_msg = (
-            f"Erro de permissão ao aplicar mudança no arquivo {step.get('file', 'unknown')}: {e}. "
-            "Verifique permissões de escrita no arquivo."
+            f"Permission error applying change to file {step.get('file', 'unknown')}: {e}. "
+            "Check write permissions on the file."
         )
         logger.error(error_msg, exc_info=True)
         return {
@@ -522,7 +521,7 @@ def apply_change(step: Dict, scope: str = ".") -> Dict:
         }
     except Exception as e:
         error_msg = (
-            f"Erro inesperado ao aplicar mudança no arquivo {step.get('file', 'unknown')}: {e}. "
+            f"Unexpected error applying change to file {step.get('file', 'unknown')}: {e}. "
             f"Tipo de erro: {type(e).__name__}. "
             "Verifique os logs para mais detalhes."
         )

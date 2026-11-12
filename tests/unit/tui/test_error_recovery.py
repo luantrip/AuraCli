@@ -24,7 +24,7 @@ def test_reset_app_returns_runtime_to_ready_and_restores_focus() -> None:
     app._action_cancel.assert_called_once_with()
     app._restore_composer_focus.assert_called_once_with()
     app.notify.assert_called_once_with(
-        "Aplicação reiniciada. Parte do estado pode ter sido perdida.",
-        title="Reinicialização concluída",
+        "Application restarted. Some state may have been lost.",
+        title="Restart complete",
         severity="warning",
     )

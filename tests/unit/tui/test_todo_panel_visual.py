@@ -24,7 +24,7 @@ def test_todo_panel_uses_compact_semantic_markers_in_ascii_mode() -> None:
 
         output = _render_text(panel)
 
-        assert "Tarefas · 3" in output
+        assert "Tasks · 3" in output
         assert "[ok] Concluída" in output
         assert "> Em execução" in output
         assert "[ ] Pendente" in output

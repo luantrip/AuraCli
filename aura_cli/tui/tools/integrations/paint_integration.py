@@ -116,9 +116,9 @@ class AnsiArtPreview(Widget):
         from textual.widgets import Static
 
         title = (
-            f"Visualização: {self.file_path.name}"
+            f"Preview: {self.file_path.name}"
             if self.file_path
-            else "Visualização de Arte ANSI"
+            else "ANSI Art Preview"
         )
 
         with Vertical():

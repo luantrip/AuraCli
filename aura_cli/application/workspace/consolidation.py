@@ -73,7 +73,7 @@ def build_consolidation_section(
 
     parts = [
         "\n\n---\n\n## Regras Aprendidas e Consolidadas\n\n",
-        f"*Consolidação manual: {timestamp:%Y-%m-%d %H:%M:%S}*\n\n",
+        f"*Manual consolidation: {timestamp:%Y-%m-%d %H:%M:%S}*\n\n",
     ]
     for category, contents in grouped.items():
         parts.append(f"### {category}\n\n")

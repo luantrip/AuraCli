@@ -102,20 +102,20 @@ def recommend_refactoring_strategy(
 ) -> tuple[str, str]:
     """Recommend an execution strategy and human-readable rationale."""
     if occurrences == 0:
-        return "none", "Nenhuma ocorrência encontrada"
+        return "none", "No occurrences found"
     if occurrences < 10 and files_affected < 5:
         return (
             "all_at_once",
-            f"Poucas mudanças ({occurrences} ocorrências, {files_affected} arquivos)",
+            f"Few changes ({occurrences} occurrences, {files_affected} files)",
         )
     if risk_level in {"high", "critical"}:
         return (
             "by_dependency",
-            f"Alto risco ({risk_level}), ordenar por dependências é mais seguro",
+            f"High risk ({risk_level}), sorting by dependencies is safer",
         )
     if occurrences > 100:
         return (
             "incremental",
-            f"Muitas mudanças ({occurrences} ocorrências), execução incremental recomendada",
+            f"Many changes ({occurrences} occurrences), incremental execution recommended",
         )
-    return "incremental", "Estratégia padrão segura para mudanças médias"
+    return "incremental", "Safe default strategy for medium changes"

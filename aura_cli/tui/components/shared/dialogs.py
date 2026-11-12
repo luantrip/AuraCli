@@ -33,20 +33,18 @@ class BaseDialog(ModalScreen):
         """Message sent when dialog is closed."""
 
         def __init__(self, result: Any = None, cancelled: bool = False) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.result = result
             self.cancelled = cancelled
 
     def __init__(self, title: str = "Dialog", **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self.title = title
 
     def compose(self) -> ComposeResult:
         """Compose the widget layout."""
         with Container():
-            yield Static(self.title, classes="dialog-title")  # type: ignore[arg-type]
+            yield Static(self.title, classes="dialog-title")  # type: ignore[arg-type]  # str | Text accepted
             yield from self.compose_content()
             with Horizontal(classes="dialog-buttons"):
                 yield from self.compose_buttons()
@@ -95,7 +93,6 @@ class ConfirmDialog(BaseDialog):
         dangerous: bool = False,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(title=title, **kwargs)
         self.message = message
         self.confirm_label = confirm_label
@@ -109,7 +106,7 @@ class ConfirmDialog(BaseDialog):
     def compose_buttons(self) -> ComposeResult:
         """Compose the dialog action buttons."""
         variant = "error" if self.dangerous else "primary"
-        yield Button(self.confirm_label, variant=variant, id="confirm")  # type: ignore[arg-type]
+        yield Button(self.confirm_label, variant=variant, id="confirm")  # type: ignore[arg-type]  # ButtonVariant literal
         yield Button(self.cancel_label, variant="default", id="cancel")
 
     @on(Button.Pressed, "#confirm")
@@ -144,7 +141,6 @@ class InputDialog(BaseDialog):
         validator: Optional[Callable[[str], bool]] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(title=title, **kwargs)
         self.message = message
         self.placeholder = placeholder
@@ -215,7 +211,6 @@ class SelectDialog(BaseDialog):
         default: Optional[str] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(title=title, **kwargs)
         self.message = message
         self.options = options or []
@@ -270,7 +265,6 @@ class ProgressDialog(BaseDialog):
         cancellable: bool = False,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(title=title, **kwargs)
         self.message = message
         self.total = total

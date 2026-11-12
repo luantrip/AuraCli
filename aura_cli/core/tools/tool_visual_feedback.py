@@ -377,7 +377,7 @@ def with_feedback(tool_name: str):
             with feedback.track_execution(tool_name, kwargs):
                 return func(*args, **kwargs)
 
-        return wrapper  # type: ignore[return-value]
+        return wrapper  # type: ignore[return-value]  # Callable → decorated type
 
     return decorator
 

@@ -16,11 +16,11 @@ def test_policy_manager_evaluate_access_returns_typed_decision() -> None:
 
     assert decision == ToolAccessDecision(
         allowed=False,
-        reason="Acesso negado à ferramenta 'write_file'",
+        reason="Access denied to tool 'write_file'",
     )
     assert decision.as_legacy_tuple() == (
         False,
-        "Acesso negado à ferramenta 'write_file'",
+        "Access denied to tool 'write_file'",
     )
 
 

@@ -27,11 +27,11 @@ class DiffConfirmationScreen(BaseAuraResultModalScreen[Tuple[str, Optional[str]]
     """Modal for reviewing unified diff before apply."""
 
     BINDINGS: ClassVar[list] = [
-        Binding("a", "accept", "Aceitar", show=True),
-        Binding("r", "reject", "Rejeitar", show=True),
-        Binding("e", "edit", "Editar", show=True),
-        Binding("shift+a", "accept_all", "Aceitar Todos", show=True),
-        Binding("escape", "reject", "Cancelar"),
+        Binding("a", "accept", "Accept", show=True),
+        Binding("r", "reject", "Reject", show=True),
+        Binding("e", "edit", "Edit", show=True),
+        Binding("shift+a", "accept_all", "Accept All", show=True),
+        Binding("escape", "reject", "Cancel"),
     ]
     MODAL_ROOT_ID = "diff-dialog-root"
 
@@ -60,22 +60,22 @@ class DiffConfirmationScreen(BaseAuraResultModalScreen[Tuple[str, Optional[str]]
 
     @on(Button.Pressed, "#accept")
     def handle_accept(self, event: Button.Pressed) -> None:
-        logger.info(f"Alterações aceitas para {self.file_path}")
+        logger.info(f"Changes accepted for {self.file_path}")
         self.dismiss(("accept", self.new_content))
 
     @on(Button.Pressed, "#reject")
     def handle_reject(self, event: Button.Pressed) -> None:
-        logger.info(f"Alterações rejeitadas para {self.file_path}")
+        logger.info(f"Changes rejected for {self.file_path}")
         self.dismiss(("reject", None))
 
     @on(Button.Pressed, "#edit")
     def handle_edit(self, event: Button.Pressed) -> None:
-        logger.info(f"Edição solicitada para {self.file_path}")
+        logger.info(f"Edit requested for {self.file_path}")
         self.dismiss(("edit", self.new_content))
 
     @on(Button.Pressed, "#accept_all")
     def handle_accept_all(self, event: Button.Pressed) -> None:
-        logger.info("Aceitar todas as alterações ativado")
+        logger.info("Accept all changes enabled")
         self.dismiss(("accept_all", self.new_content))
 
     def action_accept(self) -> None:

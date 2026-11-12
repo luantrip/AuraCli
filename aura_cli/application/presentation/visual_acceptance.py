@@ -75,7 +75,7 @@ def run_visual_scenario(
     frames: list[VisualAcceptanceFrame] = []
     for index, raw in enumerate(events):
         if not isinstance(raw, Mapping):
-            logger.warning("Evento visual ignorado: payload não é mapeável")
+            logger.warning("Visual event ignored: payload is not mappable")
             continue
         try:
             event = AgiEvent.from_dict(dict(raw))
@@ -96,7 +96,7 @@ def run_visual_scenario(
                     AttentionEntry(
                         request.key,
                         request.task_id,
-                        request.title or "Ação necessária",
+                        request.title or "Action required",
                         request.content,
                         True,
                     ),

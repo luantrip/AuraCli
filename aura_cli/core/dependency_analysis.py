@@ -27,7 +27,6 @@ class DependencyAnalyzer:
     """
 
     def __init__(self, scope: str = "."):
-        """Initialize the instance."""
         self.scope = Path(scope).resolve()
         self.import_graph: Any = nx.DiGraph() if HAS_NETWORKX and nx else None
         self.file_dependencies: Dict[str, Set[str]] = defaultdict(set)
@@ -40,7 +39,7 @@ class DependencyAnalyzer:
         """Analyze code."""
         if self._analyzed:
             return self
-        logger.info(f"Analisando dependências em {self.scope}")
+        logger.info(f"Analyzing dependencies in {self.scope}")
 
         all_python_paths = []
         for root, dirs, files in os.walk(self.scope, topdown=True):
@@ -232,7 +231,7 @@ class DependencyAnalyzer:
                 "isolated_modules": [],
                 "topological_order": [],
                 "has_networkx": False,
-                "warning": "networkx não instalado",
+                "warning": "networkx not installed",
             }
 
     def get_impact_analysis(self, file_path: str, change_type: str = "modify") -> Dict:

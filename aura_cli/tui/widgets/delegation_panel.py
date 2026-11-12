@@ -57,10 +57,10 @@ class DelegationPanel(TimerWidget):
         app_loop = self._get_app_loop()
         if not app_loop:
             return DelegationSnapshot(
-                summary="AppLoop indisponível na TUI.",
+                summary="AppLoop unavailable in TUI.",
                 latest_agi="n/a",
                 latest_ops="n/a",
-                details="A TUI não recebeu um AppLoop ativo.",
+                details="The TUI did not receive an active AppLoop.",
                 artifacts="n/a",
             )
 
@@ -91,7 +91,7 @@ class DelegationPanel(TimerWidget):
         if not app_loop:
             return "agi"
         agi_latest = app_loop.get_latest_delegated_task("agi")
-        return "agi" if agi_latest != "Nenhuma tarefa delegada encontrada." else "ops"
+        return "agi" if agi_latest and not str(agi_latest).startswith("No delegated") else "ops"
 
     def _show_latest(self, agent_type: str) -> None:
         """Show latest delegated task details for a given agent type."""

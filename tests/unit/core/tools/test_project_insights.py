@@ -98,7 +98,7 @@ class TestGenerateQualityRecommendations:
     def test_no_issues(self):
         recs = _generate_quality_recommendations({})
         assert len(recs) == 1
-        assert "boa qualidade" in recs[0]
+        assert "good overall quality" in recs[0]
 
 
 class TestGenerateSecurityRecommendations:
@@ -110,12 +110,12 @@ class TestGenerateSecurityRecommendations:
     def test_with_vulnerabilities(self):
         result = {"vulnerable_dependencies": [{"x": 1}]}
         recs = _generate_security_recommendations(result)
-        assert any("vulneráveis" in r.lower() or "atualizar" in r.lower() for r in recs)
+        assert any("vulnerable" in r.lower() or "update" in r.lower() for r in recs)
 
     def test_no_issues(self):
         recs = _generate_security_recommendations({})
         assert len(recs) == 2
-        assert any("nenhum" in r.lower() for r in recs)
+        assert any("no obvious" in r.lower() for r in recs)
 
 
 class TestCheckReadmeCompleteness:
@@ -153,7 +153,7 @@ class TestGenerateDocumentationRecommendations:
         recs = _generate_documentation_recommendations(
             {"readme_status": {"root_readme": True, "completeness_score": 30}}
         )
-        assert any("completude" in r.lower() for r in recs)
+        assert any("completeness" in r.lower() or "readme" in r.lower() for r in recs)
 
     def test_low_code_docs(self):
         recs = _generate_documentation_recommendations(
@@ -171,7 +171,7 @@ class TestGenerateDocumentationRecommendations:
                 "code_documentation": {"coverage_percentage": 80},
             }
         )
-        assert any("adequada" in r.lower() for r in recs)
+        assert any("adequate" in r.lower() for r in recs)
 
 
 class TestExtractFrontTechnologies:

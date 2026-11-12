@@ -13,8 +13,8 @@ import os
 
 from rich.console import Console
 
-from aura_cli.cli.ui.components.file_op_summary import FileOperationSummary
-from aura_cli.cli.ui.components.message_bubble import (
+from aura_cli.cli.ui.components.display.file_op_summary import FileOperationSummary
+from aura_cli.cli.ui.components.display.message_bubble import (
     MessageBubble,
     MessageMetadata,
     MessageType,
@@ -33,27 +33,26 @@ class AppPresenter:
     def __init__(
         self, console: Console, ui_manager: UIManager, stats_tracker: StatsTracker
     ):
-        """Initialize the instance."""
         self.console = console
         self.ui = ui_manager
         self.stats = stats_tracker
 
     def display_constitution(self, constitution_content: str):
         """Displays the project constitution."""
-        self.ui.display_info("◇ Constituição do Projeto carregada:")
+        self.ui.display_info("◇ Project Constitution loaded:")
         from aura_cli.cli.ui.constants import UIStyles
 
         self.ui.print(f"\n[{UIStyles.MUTED}]{'=' * 60}[/{UIStyles.MUTED}]")
-        self.ui.print(f"[{UIStyles.TITLE}]◇ CONSTITUIÇÃO DO PROJETO[/{UIStyles.TITLE}]")
+        self.ui.print(f"[{UIStyles.TITLE}]◇ PROJECT CONSTITUTION[/{UIStyles.TITLE}]")
         self.ui.print(f"[{UIStyles.MUTED}]{'=' * 60}[/{UIStyles.MUTED}]")
         self.ui.print(f"[{UIStyles.BODY}]{constitution_content}[/{UIStyles.BODY}]")
         self.ui.print(f"[{UIStyles.MUTED}]{'=' * 60}[/{UIStyles.MUTED}]\n")
 
     def display_constitution_missing(self):
         """Displays message when constitution is missing."""
-        self.ui.display_info("Nenhuma 'Constituição do Projeto' encontrada.")
+        self.ui.display_info("No 'Project Constitution' found.")
         self.ui.display_info(
-            "Iniciando o Agente Constituição para definir as regras do projeto..."
+            "Starting the Constitution Agent to define project rules..."
         )
 
     def display_llm_response(
@@ -83,7 +82,7 @@ class AppPresenter:
             return
 
         # CLI mode: render with Rich components
-        from aura_cli.cli.ui.components.turn_separator import TurnSeparator
+        from aura_cli.cli.ui.components.display.turn_separator import TurnSeparator
 
         # Separator between tools and response
         separator = TurnSeparator()

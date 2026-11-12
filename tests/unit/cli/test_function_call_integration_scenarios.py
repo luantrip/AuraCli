@@ -110,5 +110,5 @@ class TestFunctionCallIntegrationScenarios:
                 )
             )
 
-        assert "Resposta inválida do modelo" in result
+        assert "Invalid model response" in result
         assert response is malformed_response

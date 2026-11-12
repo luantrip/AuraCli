@@ -99,7 +99,7 @@ class LayoutMetrics:
 
 def layout_for_width(width: int | None, **overrides: object) -> LayoutMetrics:
     """Convenience factory used by renderers and tests."""
-    return LayoutMetrics.for_width(width, **overrides)  # type: ignore[arg-type]
+    return LayoutMetrics.for_width(width, **overrides)  # type: ignore[arg-type]  # kwargs overrides narrowing
 
 
 __all__ = ["LayoutMetrics", "layout_for_width"]

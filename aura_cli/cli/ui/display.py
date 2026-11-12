@@ -16,8 +16,8 @@ from rich.syntax import Syntax
 from rich.text import Text
 
 from aura_cli.application.presentation.safe_payloads import safe_tool_args_json
-from aura_cli.cli.ui.components.file_diff import FileDiff
-from aura_cli.cli.ui.components.syntax import AuraSyntax
+from aura_cli.cli.ui.components.display.file_diff import FileDiff
+from aura_cli.cli.ui.components.display.syntax import AuraSyntax
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.cli.ui.display_facade import get_console
 from aura_cli.cli.ui.responsive import get_responsive_layout
@@ -31,7 +31,6 @@ class ExpandablePreview:
     """Expandable preview with collapse/expand support."""
 
     def __init__(self, content: str, max_preview_length: int = 500):
-        """Initialize the instance."""
         self.content = content
         self.max_preview_length = max_preview_length
         self.is_expanded = False
@@ -40,7 +39,7 @@ class ExpandablePreview:
         """Alterna entre expandido e colapsado."""
         self.is_expanded = not self.is_expanded
 
-    def render(self, title: str = "Pré-visualização") -> Panel:
+    def render(self, title: str = "Preview") -> Panel:
         """Render the expandable preview."""
         if self.is_expanded or len(self.content) <= self.max_preview_length:
             display_content = self.content
@@ -215,7 +214,7 @@ def format_code_preview(
         border_primary_style = UIStyles.safe_style("BORDER_PRIMARY", "cyan")
         return Panel(
             syntax,
-            title=f"[{subtitle_style}]Preview de código ({language})[/{subtitle_style}]",
+            title=f"[{subtitle_style}]Code preview ({language})[/{subtitle_style}]",
             border_style=border_primary_style,
             padding=(1, 2),
         )
@@ -238,13 +237,13 @@ def format_code_preview(
 
     footer = Text()
     footer.append(
-        f"[{muted_style}][... +{omitted} linhas — código completo: {len(lines)} linhas][/{muted_style}]",
+        f"[{muted_style}][... +{omitted} lines — full code: {len(lines)} lines][/{muted_style}]",
         style=muted_style,
     )
 
     return Panel(
         Group(syntax, footer),
-        title=f"[{subtitle_style}]Preview de código ({language}) — {len(lines)} linhas[/{subtitle_style}]",
+        title=f"[{subtitle_style}]Code preview ({language}) — {len(lines)} lines[/{subtitle_style}]",
         border_style=border_primary_style,
         padding=(1, 2),
     )
@@ -284,7 +283,7 @@ def display_chat_message(
     """Display a formatted chat message."""
     if role == "user":
         success_style = UIStyles.safe_style("SUCCESS", "green")
-        prefix = f"› [{success_style} bold]Você:[/{success_style} bold]"
+        prefix = f"› [{success_style} bold]You:[/{success_style} bold]"
     else:
         title_style = UIStyles.safe_style("TITLE", "cyan")
         prefix = f"› [{title_style}]Aura:[/{title_style}]"

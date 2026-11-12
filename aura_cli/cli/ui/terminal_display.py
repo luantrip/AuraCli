@@ -25,7 +25,6 @@ class ExpandableOutput:
     """Expandable output with search and syntax highlighting."""
 
     def __init__(self, output: str, max_preview_lines: int = 30):
-        """Initialize the instance."""
         self.output = output
         self.max_preview_lines = max_preview_lines
         self.is_expanded = False
@@ -74,7 +73,7 @@ class ExpandableOutput:
 
         return result
 
-    def render(self, title: str = "Saída") -> Group:
+    def render(self, title: str = "Output") -> Group:
         """Render expandable output with minimal styling."""
         theme = get_theme_manager()
         muted = theme.get_color("muted")

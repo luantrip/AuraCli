@@ -157,7 +157,7 @@ class TestFunctionCallHandlerScenarios:
                 )
             )
 
-        assert "cancelada pelo usuário" in result
+        assert "cancelled by user" in result
         assert elapsed == 0.0
         available_tools["read_file"].assert_not_called()
 
@@ -217,7 +217,7 @@ class TestFunctionCallHandlerScenarios:
                 )
             )
 
-        assert result == "Execução interrompida pelo usuário."
+        assert result == "Execution interrupted by user."
         assert response is None
         assert set_workspace.call_count == 2
         assert set_workspace.call_args_list[-1].args == (None,)
@@ -241,7 +241,7 @@ class TestFunctionCallHandlerScenarios:
                 )
             )
 
-        assert "Resposta inválida do modelo" in result
+        assert "Invalid model response" in result
         assert response is invalid_response
 
     def test_process_function_calls_loop_returns_limit_exceeded(self):
@@ -278,5 +278,5 @@ class TestFunctionCallHandlerScenarios:
                 )
             )
 
-        assert result == "Execução interrompida: orçamento do turno esgotado."
+        assert result == "Execution interrupted: turn budget exhausted."
         assert response is llm_response

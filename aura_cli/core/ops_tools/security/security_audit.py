@@ -15,13 +15,10 @@ import subprocess
 from typing import Any, Dict, List, Optional
 import uuid
 
-from rich.console import Console
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class IssueSeverity(Enum):
@@ -73,7 +70,6 @@ class SecurityAuditor:
         import uuid
 
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         audit_id = str(uuid.uuid4())[:8]
 
@@ -107,15 +103,12 @@ class SecurityAuditor:
         self.audit_history.append(result)
 
         if passed:
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Auditoria concluída: Score {score:.1f}/100[/{UIStyles.SUCCESS}]"
-            )
+            logger.info("Audit complete: Score %.1f/100", score)
         else:
-            console.print(
-                f"[{UIStyles.WARNING}]{UIIcons.WARNING} "
-                f"Auditoria concluída: Score {score:.1f}/100 "
-                f"({len(issues)} problemas encontrados)[/{UIStyles.WARNING}]"
+            logger.warning(
+                "Audit complete: Score %.1f/100 (%d issues found)",
+                score,
+                len(issues),
             )
 
         self.stats.track_tool_usage("security_audit")
@@ -143,8 +136,8 @@ class SecurityAuditor:
                             id=str(uuid.uuid4())[:8],
                             severity=IssueSeverity.MEDIUM,
                             category="permissions",
-                            description=f"Arquivo {file_path} tem permissões de escrita para outros",
-                            recommendation="Remova permissões de escrita para outros: chmod o-w",
+                            description=f"File {file_path} has write permissions for others",
+                            recommendation="Remove write permissions for others: chmod o-w",
                             file_path=file_path,
                         )
                         issues.append(issue)
@@ -191,8 +184,8 @@ class SecurityAuditor:
                                     id=str(uuid.uuid4())[:8],
                                     severity=IssueSeverity.HIGH,
                                     category="secrets",
-                                    description=f"Possível {secret_type} exposto em {file_path}",
-                                    recommendation="Mova secrets para variáveis de ambiente ou secret manager",
+                                    description=f"Possible {secret_type} exposed in {file_path}",
+                                    recommendation="Move secrets to environment variables or secret manager",
                                     file_path=file_path,
                                 )
                                 issues.append(issue)
@@ -236,8 +229,8 @@ class SecurityAuditor:
                     severity=IssueSeverity.LOW,
                     category="dependencies",
                     description=(
-                        "pip-audit não está instalado. "
-                        "Não foi possível verificar CVEs nas dependências."
+                        "pip-audit is not installed. "
+                        "Could not check CVEs in dependencies."
                     ),
                     recommendation="Instale pip-audit: pip install pip-audit",
                 )
@@ -287,8 +280,8 @@ class SecurityAuditor:
                     id=uuid.uuid4().hex[:8],
                     severity=IssueSeverity.LOW,
                     category="dependencies",
-                    description="pip-audit excedeu o timeout de 120s — auditoria de dependências incompleta.",
-                    recommendation="Execute pip-audit manualmente para um relatório completo.",
+                    description="pip-audit exceeded the 120s timeout — dependency audit incomplete.",
+                    recommendation="Run pip-audit manually for a full report.",
                 )
             )
             return issues
@@ -310,7 +303,7 @@ class SecurityAuditor:
                 fix_hint = (
                     f"Atualize para {dep['name']}>={fix_versions[0]}"
                     if fix_versions
-                    else f"Verifique o advisory {vuln_id} para uma versão corrigida"
+                    else f"Check advisory {vuln_id} for a fixed version"
                 )
 
                 issues.append(
@@ -367,13 +360,13 @@ class SecurityAuditor:
                     severity=IssueSeverity.LOW,
                     category="dependencies",
                     description=(
-                        f"{len(unpinned)} pacote(s) sem versão pinada em requirements.txt: "
+                        f"{len(unpinned)} package(s) without pinned version in requirements.txt: "
                         + ", ".join(unpinned[:10])
                         + (" ..." if len(unpinned) > 10 else "")
                     ),
                     recommendation=(
-                        "Pinar versões (pkg==x.y.z) permite auditoria reprodutível de CVEs. "
-                        "Use pip freeze > requirements.txt para capturar versões exatas."
+                        "Pinning versions (pkg==x.y.z) enables reproducible CVE auditing. "
+                        "Use pip freeze > requirements.txt to capture exact versions."
                     ),
                 )
             )

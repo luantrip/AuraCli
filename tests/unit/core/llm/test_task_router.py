@@ -96,3 +96,13 @@ class TestRouting:
                 profile.model_id in catalog.get(provider, [])
                 or profile.model_id == DEFAULT_MODEL
             )
+
+
+def test_gemini_profiles_available_with_either_credential_name() -> None:
+    """P1-1 regression: the router only honoured GEMINI_API_KEY, so a user whose
+    key was stored as GOOGLE_API_KEY (the primary name everywhere else) got no
+    Gemini routing."""
+    for env in ({"GOOGLE_API_KEY": "k"}, {"GEMINI_API_KEY": "k"}):
+        with patch.dict(os.environ, env, clear=True):
+            providers = {p.provider for p in TaskRouter()._get_available_profiles()}
+            assert "gemini" in providers, env

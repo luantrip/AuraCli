@@ -25,7 +25,7 @@ class PaintScreen(BaseToolScreen):
 
     BINDINGS: ClassVar[list] = [
         *BaseToolScreen.BINDINGS,
-        Binding("enter", "launch", "Abrir AuraPaint"),
+        Binding("enter", "launch", "Open AuraPaint"),
     ]
 
     def compose_tool_body(self) -> ComposeResult:
@@ -34,24 +34,24 @@ class PaintScreen(BaseToolScreen):
             yield ExternalToolLauncher(
                 available=availability.paint,
                 description_lines=[
-                    "Editor de arte ANSI integrado à AuraCli.",
-                    "Mantém compatibilidade com formatos Textual Paint.",
+                    "ANSI art editor integrated with AuraCli.",
+                    "Maintains compatibility with Textual Paint formats.",
                 ],
                 features=[
-                    "Criação de arte ANSI",
+                    "ANSI art creation",
                     "Ferramentas de desenho e preenchimento",
                     "Paleta de cores",
                     "Suporte a camadas",
                 ],
                 install_command=None,
-                launch_button_label="Abrir AuraPaint",
+                launch_button_label="Open AuraPaint",
                 id="paint_launcher",
             )
 
     def action_launch(self) -> None:
         if get_tool_availability().paint:
             pop_screen_and_restore_focus(self.app)
-            self.app.action_launch_paint()  # type: ignore[attr-defined]
+            self.app.action_launch_paint()  # type: ignore[attr-defined]  # Textual App subclass action
 
     @on(ExternalToolLauncher.LaunchRequested)
     def _on_launch(self, _event: ExternalToolLauncher.LaunchRequested) -> None:

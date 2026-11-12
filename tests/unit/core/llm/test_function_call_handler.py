@@ -91,14 +91,14 @@ class TestExtractToolCallData:
         """Test extracting with missing function name raises ValueError."""
         tool_call = {"id": "call_1", "function": {"arguments": "{}"}}
 
-        with pytest.raises(ValueError, match="Não foi possível extrair"):
+        with pytest.raises(ValueError, match="Could not extract"):
             extract_tool_call_data(tool_call, 0)
 
     def test_extract_unsupported_format(self):
         """Test extracting from unsupported format raises ValueError."""
         tool_call = "invalid_format"
 
-        with pytest.raises(ValueError, match="Formato de tool call não suportado"):
+        with pytest.raises(ValueError, match="Unsupported tool call format"):
             extract_tool_call_data(tool_call, 0)
 
 
@@ -114,7 +114,7 @@ class TestBuildResponseFromToolResults:
 
         result = build_tool_result_response(history, "Read file")
 
-        assert "Read file" in result or "Concluí" in result
+        assert "Read file" in result or "Completed" in result
         assert len(result) > 0
 
     def test_build_response_multiple_tools(self):
@@ -129,7 +129,7 @@ class TestBuildResponseFromToolResults:
         result = build_tool_result_response(history, "Do multiple things")
 
         assert len(result) > 0
-        assert "Concluí" in result or "operacoes" in result.lower()
+        assert "Completed" in result or "operations" in result.lower()
 
     def test_build_response_no_tools(self):
         """Test building response with no tool results."""
@@ -137,7 +137,7 @@ class TestBuildResponseFromToolResults:
 
         result = build_tool_result_response(history, "Simple request")
 
-        assert "Concluí" in result or "Operação concluída" in result
+        assert "Completed" in result or "I completed" in result
 
     def test_build_response_with_user_request(self):
         """Test building response with user request."""
@@ -145,7 +145,7 @@ class TestBuildResponseFromToolResults:
 
         result = build_tool_result_response(history, "Read the file")
 
-        assert "Read the file" in result or "Concluí" in result
+        assert "Read the file" in result or "Completed" in result
 
 
 class TestExecuteToolCall:
@@ -214,7 +214,7 @@ class TestExecuteToolCall:
 
         from aura_cli.cli.function_call_handler import execute_tool_call
 
-        with pytest.raises(KeyError, match="não encontrada"):
+        with pytest.raises(KeyError, match="not found"):
             await execute_tool_call(
                 function_name="nonexistent_tool",
                 function_args={},
@@ -257,7 +257,7 @@ class TestExecuteToolCall:
 
         from aura_cli.cli.function_call_handler import execute_tool_call
 
-        with pytest.raises(Exception, match="Acesso negado pela política"):
+        with pytest.raises(Exception, match="Access denied by policy"):
             await execute_tool_call(
                 function_name="test_tool",
                 function_args={"arg1": "value1"},
@@ -314,7 +314,7 @@ class TestProcessFunctionCallsLoop:
         assert response_text == "fallback answer"
         tool_messages = [msg for msg in history if msg.get("role") == "tool"]
         assert len(tool_messages) == 1
-        assert "não encontrada" in tool_messages[0]["content"]
+        assert "not found" in tool_messages[0]["content"]
 
     @pytest.mark.asyncio
     async def test_tool_execution_failure_is_written_back_to_conversation(self):
@@ -361,4 +361,4 @@ class TestProcessFunctionCallsLoop:
         assert response_text == "fallback answer"
         tool_messages = [msg for msg in history if msg.get("role") == "tool"]
         assert len(tool_messages) == 1
-        assert "Erro inesperado ao executar broken_tool" in tool_messages[0]["content"]
+        assert "Unexpected error executing broken_tool" in tool_messages[0]["content"]

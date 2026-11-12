@@ -129,7 +129,6 @@ class PerformanceTracker:
     """
 
     def __init__(self, operation_name: str):
-        """Initialize the instance."""
         self.operation_name = operation_name
         self.start_time: Optional[float] = None
         self.end_time: Optional[float] = None
@@ -190,7 +189,6 @@ class MetricsCollector:
     """
 
     def __init__(self):
-        """Initialize the instance."""
         self._agent_metrics: Dict[str, AgentMetrics] = {}
         self._custom_metrics: Dict[str, List[MetricPoint]] = defaultdict(list)
         self._callbacks: List[Callable[[MetricPoint], None]] = []

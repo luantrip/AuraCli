@@ -392,7 +392,7 @@ class UserWorkflowManager:
 
             if not deps_ok:
                 step.status = "skipped"
-                step.error = "Dependência failed"
+                step.error = "Dependency failed"
                 results[step.id] = {
                     "success": False,
                     "skipped": True,

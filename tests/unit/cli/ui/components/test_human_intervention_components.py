@@ -58,7 +58,7 @@ class TestHumanConfirmationDialog:
     def test_render_returns_panel(self):
         from rich.panel import Panel
 
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -68,10 +68,10 @@ class TestHumanConfirmationDialog:
         assert panel is not None
         assert isinstance(panel, Panel)
         content = _panel_text(panel)
-        assert "Sim" in content or "Não" in content or "Cancelar" in content
+        assert "Yes" in content or "No" in content or "Cancel" in content
 
     def test_render_includes_tool_context(self):
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -84,7 +84,7 @@ class TestHumanConfirmationDialog:
         assert "run_shell_command" in content
 
     def test_render_risk_levels(self):
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -103,7 +103,7 @@ class TestHumanConfirmationDialog:
     @patch("rich.prompt.Prompt.ask")
     def test_prompt_user_approve_returns_approved_true(self, mock_ask):
         mock_ask.return_value = "y"
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -116,7 +116,7 @@ class TestHumanConfirmationDialog:
     @patch("rich.prompt.Prompt.ask")
     def test_prompt_user_deny_returns_approved_false(self, mock_ask):
         mock_ask.return_value = "n"
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -124,12 +124,12 @@ class TestHumanConfirmationDialog:
         request = _make_confirm_request()
         result = dialog.prompt_user(request)
         assert result["approved"] is False
-        assert result.get("value") == "Não"
+        assert result.get("value") == "No"
 
     @patch("rich.prompt.Prompt.ask")
     def test_prompt_user_cancel_returns_cancelled(self, mock_ask):
         mock_ask.return_value = "c"
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -143,7 +143,7 @@ class TestHumanConfirmationDialog:
     @patch("rich.prompt.Prompt.ask")
     def test_prompt_user_sim_pt_approved(self, mock_ask):
         mock_ask.return_value = "s"
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
 
@@ -159,7 +159,7 @@ class TestHumanDoubleConfirmationDialog:
     @patch("rich.prompt.Prompt.ask")
     def test_double_confirm_deny_first_returns_deny(self, mock_ask):
         mock_ask.return_value = "n"
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanDoubleConfirmationDialog,
         )
 
@@ -172,7 +172,7 @@ class TestHumanDoubleConfirmationDialog:
     @patch("rich.prompt.Prompt.ask")
     def test_double_confirm_approve_twice_returns_approved(self, mock_ask):
         mock_ask.side_effect = ["y", "y"]
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanDoubleConfirmationDialog,
         )
 

@@ -208,8 +208,8 @@ async def _handle_tool_calls(
                 turn_execution=turn_execution,
             )
         except KeyError as e:
-            logger.debug(f"Ferramenta não encontrada (ignorando): {e}")
-            from aura_cli.cli.ui.components.turn_separator import ToolCallInline
+            logger.debug(f"Tool not found (ignoring): {e}")
+            from aura_cli.cli.ui.components.display.turn_separator import ToolCallInline
 
             ui.print(
                 ToolCallInline().render(function_name, function_args, status="error")
@@ -219,13 +219,13 @@ async def _handle_tool_calls(
                 function_name,
                 function_args,
                 tool_call_id,
-                f"Erro: ferramenta '{function_name}' não encontrada.",
+                f"Error: tool '{function_name}' not found.",
             )
         except (ToolExecutionError, FileOperationError, LLMError) as e:
             logger.warning(
                 f"Error processing function call, continuing: {e}", exc_info=True
             )
-            from aura_cli.cli.ui.components.turn_separator import ToolCallInline
+            from aura_cli.cli.ui.components.display.turn_separator import ToolCallInline
 
             ui.print(
                 ToolCallInline().render(function_name, function_args, status="error")
@@ -239,14 +239,14 @@ async def _handle_tool_calls(
             )
         except Exception as e:
             logger.error(
-                f"Erro inesperado ao processar function call: {e}", exc_info=True
+                f"Unexpected error processing function call: {e}", exc_info=True
             )
             tool_execution._append_tool_interaction_to_history(
                 conversation_history,
                 function_name,
                 function_args,
                 tool_call_id,
-                f"Erro inesperado ao executar {function_name}: {e}",
+                f"Unexpected error executing {function_name}: {e}",
             )
     return function_call_count
 
@@ -271,23 +271,23 @@ def _handle_leaked_key() -> Tuple[str, None]:
     try:
         import keyring
 
-        from aura_cli.core.secure_config import secure_config_manager
+        from aura_cli.core.config import get_config_manager
 
         try:
             keyring.delete_password("aura_cli", "google_api_key")
         except Exception as ke:
             logger.warning(f"Failed to remove key from keyring: {ke}")
         try:
-            secure_config_manager.delete_api_key("google")
+            get_config_manager().set_api_key("google", None)
         except Exception as se:
             logger.warning(f"Failed to remove key from SecureConfig: {se}")
         for env_key in ["GOOGLE_API_KEY", "GEMINI_API_KEY"]:
             os.environ.pop(env_key, None)
-        logger.info("Chave vazada removida automaticamente")
+        logger.info("Leaked key removed automatically")
     except Exception as re_err:
         logger.warning(f"Failed to remove leaked key: {re_err}")
     return (
-        "▲ Chave de API inválida\n\nChave desativada por segurança.\n\n▪ Tente: /settings para nova chave",
+        "▲ Invalid API key\n\nKey disabled for security.\n\n▪ Try: /settings for a new key",
         None,
     )
 
@@ -349,20 +349,20 @@ def _handle_llm_call_error(e: Exception) -> Optional[Tuple[str, Any]]:
         return _handle_rate_limit_error(e)
     resolution = resolve_provider_error(e)
     if resolution.kind is ProviderErrorKind.CONNECTION:
-        logger.warning(f"Erro de conexão com LLM: {e}")
+        logger.warning(f"LLM connection error: {e}")
     elif resolution.kind is ProviderErrorKind.INVALID_REQUEST:
-        logger.error(f"Requisição inválida ao LLM: {e}", exc_info=True)
+        logger.error(f"Invalid LLM request: {e}", exc_info=True)
     elif resolution.kind in {
         ProviderErrorKind.AUTHENTICATION,
         ProviderErrorKind.LEAKED_CREDENTIAL,
     }:
-        logger.warning(f"Erro de chave de API: {e}")
+        logger.warning(f"API key error: {e}")
     elif resolution.kind is ProviderErrorKind.MODEL_NOT_FOUND:
         logger.warning(f"Model not found: {e}")
     elif resolution.kind is ProviderErrorKind.RATE_LIMIT:
         logger.debug(f"Rate limit (generic): {str(e)[:60]}")
     else:
-        logger.warning(f"Erro LLM: {e}")
+        logger.warning(f"LLM error: {e}")
 
     if resolution.suppression_key and _check_rate_limit_suppression(
         resolution.suppression_key
@@ -402,7 +402,7 @@ async def process_function_calls_loop(
     continuation = continuation or ContinuationController()
 
     # Activate workspace to group tool calls for this round
-    from aura_cli.cli.ui.components.agent_workspace import AgentWorkspacePanel
+    from aura_cli.cli.ui.components.agent.agent_workspace import AgentWorkspacePanel
 
     workspace = AgentWorkspacePanel(turn_execution=turn_execution)
     tool_execution.set_active_workspace(workspace)
@@ -443,12 +443,12 @@ async def process_function_calls_loop(
 
             if action is FunctionLoopAction.EMPTY_RESPONSE:
                 return (
-                    "▲ Resposta vazia do modelo\n\nO modelo não retornou resposta.\n\n▪ Tente: aguardar e tentar de novo, /model",
+                    "▲ Empty model response\n\nThe model returned no response.\n\n▪ Try: wait and retry, /model",
                     None,
                 )
             if action is FunctionLoopAction.INVALID_RESPONSE:
                 return (
-                    "▲ Resposta inválida do modelo\n\nResposta sem conteúdo válido.\n\n▪ Tente: /model",
+                    "▲ Invalid model response\n\nResponse has no valid content.\n\n▪ Try: /model",
                     response,
                 )
 
@@ -492,7 +492,7 @@ async def process_function_calls_loop(
                     if response and hasattr(response, "choices") and response.choices:
                         content = response.choices[0].message.content
                 except Exception as _e:
-                    logger.debug(f"Retry sem ferramentas falhou: {_e}")
+                    logger.debug(f"Retry without tools failed: {_e}")
 
             final_content = content if content else "Resposta vazia."
             final_content, retry_claim = _guard_completion_claims(

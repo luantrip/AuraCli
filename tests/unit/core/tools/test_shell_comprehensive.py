@@ -110,7 +110,7 @@ class TestShellExecutionStatus:
         enabled, reason = shell_execution_status()
 
         assert enabled is False
-        assert "desabilitada" in reason
+        assert "disabled" in reason
 
     @patch(
         "aura_cli.core.config.get_config_manager",
@@ -122,7 +122,7 @@ class TestShellExecutionStatus:
         enabled, reason = shell_execution_status()
 
         assert enabled is False
-        assert "configuração indisponível" in reason
+        assert "configuration unavailable" in reason
         assert "RuntimeError" in reason
 
 
@@ -219,7 +219,7 @@ class TestExecuteShellCommand:
         success, output = execute_shell_command("echo $(whoami)")
 
         assert success is False
-        assert "bloqueado" in output.lower() or "segurança" in output.lower()
+        assert "blocked" in output.lower() or "security" in output.lower()
 
     @patch("aura_cli.core.tools.shell._run_supervised")
     def test_execute_clear(self, mock_run):

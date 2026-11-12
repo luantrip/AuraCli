@@ -39,7 +39,7 @@ try:
     ACCESSIBILITY_AVAILABLE = True
 except ImportError:
     ACCESSIBILITY_AVAILABLE = False
-    AlternativeText = None  # type: ignore[misc,assignment]
+    AlternativeText = None  # type: ignore[misc,assignment]  # optional dep
 
 
 _icon_set = None
@@ -89,52 +89,34 @@ class UIIcons:
     CREATE = "✚"  # Heavy Plus
     DELETE = "✖"  # Heavy Multiply (Cleaner than trash)
     SAVE = "⊡"  # Square with dot
-    COPY = "❐"  # Two squares
     PASTE = "▥"  # Square with horizontal fill
-    UNDO = "↶"  # Arrow curve left
-    REDO = "↷"  # Arrow curve right
 
     AURA = "✦"  # Four pointed star (The Aura)
     AGENT = "◈"  # Diamond with dot
+    WORKFLOW = "⬡"  # Hexagon outline (workflow indicator)
     OPS = "⚡"  # High voltage
     AGI = "⬡"  # Hexagon
-    USER = "▹"  # Right-pointing triangle (small)
     SYSTEM = "⊞"  # Squared plus
-
-    MESSAGE = "◬"  # Triangle with dot
-    NOTIFICATION = "◉"  # Circle with dot
-    CHAT = "▷"  # Right-pointing triangle
 
     GIT = "ᛘ"  # Runic letter (Looks like branch)
     COMMIT = "◎"  # Bullseye
-    BRANCH = "ᛦ"  # Runic letter (Looks like branch split)
-    MERGE = "ᛨ"  # Runic letter (Looks like merge)
 
     BULLET = "▪"  # Small black square
     ARROW = "➔"  # Heavy wide headed right arrow
     ARROW_UP = "⇧"  # Upwards white arrow
     ARROW_DOWN = "⇩"  # Downwards white arrow
-    DASH = "━"  # Heavy horizontal
     SEPARATOR = "│"  # Light vertical
-    CORNER = "┕"  # Box drawings light up and right
-    TEE = "┝"  # Box drawings light vertical and right
 
     TODO = "☐"  # Ballot box
     DONE = "☑"  # Ballot box with check
-    IN_PROGRESS = "◪"  # Circle with upper left quadrant black
-    BLOCKED = "☒"  # Ballot box with X
 
     PRIORITY_HIGH = "▲"  # Black up pointing triangle
-    PRIORITY_MEDIUM = "◆"  # Black diamond
-    PRIORITY_LOW = "▼"  # Black down pointing triangle
 
     CLOCK = "◔"  # Circle with upper right quadrant
     TIMER = "◑"  # Circle with right half
-    CALENDAR = "▦"  # Square with vertical fill
 
     ROCKET = "△"  # Triangle
     SPARKLES = "✧"  # Small four-pointed star (hollow)
-    LIGHTNING = "⚡"  # Lightning bolt for speed
 
     ASCII_MODE = False
 
@@ -224,8 +206,8 @@ class UIIcons:
             "info": cls.INFO,
             "cancelled": cls.CANCEL,
             "pending": cls.TODO,
-            "in_progress": cls.IN_PROGRESS,
-            "blocked": cls.BLOCKED,
+            "in_progress": cls.WORKING,  # was IN_PROGRESS (removed)
+            "blocked": cls.CANCEL,       # was BLOCKED (removed)
         }
         return status_map.get(status.lower(), cls.BULLET)
 
@@ -303,6 +285,14 @@ class UIStyles:
         "border_error": "red",
         "border_muted": "dim white",
         "border_accent": "magenta",
+        "background": "default",
+        "surface": "default",
+        "foreground": "white",
+        "foreground_muted": "dim white",
+        "border": "dim white",
+        "chat_user": "blue",
+        "chat_assistant": "green",
+        "chat_system": "yellow",
     }
 
     @classmethod
@@ -379,6 +369,16 @@ class UIStyles:
     CHAT_SENDER_STYLE = "bold"
     CHAT_TIMESTAMP_STYLE = "dim italic"
     CHAT_TIMESTAMP_FORMAT = "%H:%M"
+
+    # Semantic surface/foreground/chat roles (neutral token vocabulary parity).
+    BACKGROUND = "default"
+    SURFACE = "default"
+    FOREGROUND = "white"
+    FOREGROUND_MUTED = "dim white"
+    BORDER = "dim white"
+    CHAT_USER = "blue"
+    CHAT_ASSISTANT = "green"
+    CHAT_SYSTEM = "yellow"
 
     @classmethod
     def get_style(cls, name: str, fallback: str = "white") -> str:

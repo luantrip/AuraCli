@@ -14,7 +14,7 @@ from aura_cli.tui.widgets.constitution.wizard_panel import ConstitutionWizardPan
 class ConstitutionScreen(BaseAuraResultModalScreen[Optional[str]]):
     """Multi-step constitution wizard; dismisses with markdown or None."""
 
-    TITLE = "◆  Criar Constituição do Projeto"
+    TITLE = "◆  Create Project Constitution"
     INITIAL_FOCUS_SELECTOR = "#stage-select"
     MODAL_ROOT_ID = "dialog"  # keep existing theme.tcss selectors
 

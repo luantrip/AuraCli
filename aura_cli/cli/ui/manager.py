@@ -4,7 +4,6 @@ This module provides a unified facade for the Aura CLI UI system, delegating
 responsibilities to specialized components:
 - InputManager: Handles user input and prompts
 - RenderCoordinator: Handles display and rendering
-- UIEventManager: Handles background event listening
 
 This maintains backward compatibility while improving internal architecture.
 """
@@ -13,8 +12,7 @@ from typing import Any, Optional
 
 from rich.console import Console
 
-from aura_cli.cli.ui.components.status_bar import StatusBar
-from aura_cli.cli.ui.events import UIEventManager
+from aura_cli.cli.ui.components.layout.status_bar import StatusBar
 from aura_cli.cli.ui.input import InputManager
 from aura_cli.cli.ui.rendering import RenderCoordinator
 from aura_cli.core.stats import StatsTracker, get_stats
@@ -37,10 +35,12 @@ class UIManager:
         # Initialize sub-components
         self._render_coordinator = RenderCoordinator(self.console, self.stats)
         self._input_manager = InputManager(self.console, self.stats, self.status_queue)
-        self._event_manager = UIEventManager(
-            self.status_queue, self._render_coordinator
-        )
         self.status_bar = StatusBar(self.stats)
+        from aura_cli.cli.ui.composition.worker_activity import (
+            WorkerActivityRenderer,
+        )
+
+        self.worker_activity = WorkerActivityRenderer(self._render_coordinator)
 
         # Expose sub-components for direct access if needed
         self.display = self._render_coordinator
@@ -53,11 +53,19 @@ class UIManager:
 
     # --- Delegation to RenderCoordinator ---
 
+    def present_surface(self, request: Any) -> None:
+        """Intent-based ingress for CLI output (PE-1).
+
+        Preferred entry point: callers build a ``SurfaceRequest`` and let the
+        display policy decide the surface, instead of calling display_* by name.
+        """
+        self._render_coordinator.present_surface(request)
+
     def show_thinking(self):
         """Show thinking status."""
         self._render_coordinator.status.set_thinking()
 
-    def show_working(self, message: str = "Processando"):
+    def show_working(self, message: str = "Processing"):
         """Show a working indicator."""
         self._render_coordinator.status.set_working(message)
 
@@ -159,7 +167,7 @@ class UIManager:
             Response dict with: approved (bool), value, cancelled, reason.
         """
         try:
-            from aura_cli.cli.ui.components.human_confirmation_dialog import (
+            from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
                 HumanConfirmationDialog,
                 HumanDoubleConfirmationDialog,
             )
@@ -196,7 +204,7 @@ class UIManager:
             from rich.prompt import Prompt
 
             answer = Prompt.ask(
-                f"[bold]{request.get('prompt', 'Confirmar?')}[/bold] [dim](s/n)[/dim]",
+                f"[bold]{request.get('prompt', 'Confirm?')}[/bold] [dim](s/n)[/dim]",
                 choices=["s", "n", "y"],
                 default="n",
             )
@@ -204,7 +212,7 @@ class UIManager:
             return {
                 "approved": approved,
                 "cancelled": False,
-                "value": "Sim" if approved else "Não",
+                "value": "Yes" if approved else "No",
             }
 
         except Exception as e:
@@ -233,13 +241,3 @@ class UIManager:
     def prompt(self, tangent_indicator: str = "") -> str:
         """Show the user input prompt."""
         return self._input_manager.prompt(tangent_indicator)
-
-    # --- Delegation to UIEventManager ---
-
-    def start_agi_event_listener(self):
-        """Inicia thread que escuta eventos AGI."""
-        self._event_manager.start_listener()
-
-    def stop_agi_event_listener(self):
-        """Stop the AGI event listener."""
-        self._event_manager.stop_listener()

@@ -8,6 +8,7 @@ This module provides an intelligent agent that can:
 - Integrate with other Aura CLI tools
 """
 
+import logging
 import math
 import random
 import re
@@ -127,7 +128,7 @@ class PaintAgent:
 
                 self.llm_agent = LLMPaintAgent(paint_app, llm_client)
             except ImportError as _e:
-                pass  # silenced
+                logging.getLogger(__name__).debug("LLMPaintAgent unavailable: %s", _e)
 
         # Command registry with patterns and handlers
         self.command_patterns: list[tuple[str, Any]] = [
@@ -806,7 +807,7 @@ class PaintAgent:
                 f"Filled area at ({fill_x}, {fill_y}) with {color or 'color'}"
             )
         else:
-            await self._send_response("Preenchimento não disponível")
+            await self._send_response("Fill not available")
 
     # ═══════════════════════════════════════════════════════════════════════════
     # Canvas Operations

@@ -197,7 +197,8 @@ class ChromaDBVectorStore(VectorStore):
                 if hasattr(self._client, "_persist"):
                     self._client._persist()
             except Exception:
-                pass
+                # _persist() is a ChromaDB internal — failure on teardown is non-fatal.
+                logger.debug("ChromaDB _persist() failed on close (non-fatal)", exc_info=True)
             self._client = None
             self._collection = None
 
@@ -879,7 +880,7 @@ def detect_best_backend() -> str:
         logger.info("Vector store backend (auto-detected): ChromaDB")
         return _available_backend
     except ImportError as _e:
-        pass  # silenced: {_e}
+        logger.debug("vector_store: chromadb not available: %s", _e)
 
     try:
         import faiss as _faiss
@@ -889,7 +890,7 @@ def detect_best_backend() -> str:
         logger.info("Vector store backend (auto-detected): FAISS")
         return _available_backend
     except ImportError as _e:
-        pass  # silenced: {_e}
+        logger.debug("vector_store: faiss not available: %s", _e)
 
     _available_backend = "simple"
     logger.warning(

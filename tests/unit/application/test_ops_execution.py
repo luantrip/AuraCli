@@ -35,9 +35,9 @@ def test_ops_system_prompt_and_agent_specs_define_backend_neutral_contract() -> 
         llm_config={"model": "test-model", "temperature": 0.4},
     )
 
-    assert "**MODO:** docker" in prompt
+    assert "**MODE:** docker" in prompt
     assert "docker_ps()" in prompt
-    assert prompt.rstrip().endswith("alternativa")
+    assert prompt.rstrip().endswith("alternative")
     assert assistant.name == "aura_ops"
     assert assistant.model == "test-model"
     assert assistant.temperature == 0.4
@@ -71,7 +71,7 @@ def test_ops_provider_policy_maps_credentials_and_llm_defaults() -> None:
     assert nvidia.max_tokens == 4096
     assert unknown.credential_name == "GOOGLE_API_KEY"
     assert unknown.missing_credential_label == "API key"
-    assert format_missing_ops_credential(unknown).startswith("API key não configurada")
+    assert format_missing_ops_credential(unknown).startswith("API key not configured")
 
 
 def test_ops_agent_specs_define_deterministic_native_team() -> None:

@@ -90,12 +90,10 @@ class FileTreePanel(Static):
         """Emitted when file is selected."""
 
         def __init__(self, path: str):
-            """Initialize the instance."""
             super().__init__()
             self.path = path
 
     def __init__(self, root_path: str = ".", **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.root_path = Path(root_path).resolve()
 
@@ -131,12 +129,10 @@ class IssuesPanel(Static):
         """Emitted when issue is selected."""
 
         def __init__(self, issue: CodeIssue):
-            """Initialize the instance."""
             super().__init__()
             self.issue = issue
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.issues: List[CodeIssue] = []
 
@@ -235,7 +231,6 @@ class RefactoringPanel(Static):
         """Emitted when refactoring is requested."""
 
         def __init__(self, action: RefactoringAction, params: Dict[str, str]):
-            """Initialize the instance."""
             super().__init__()
             self.action = action
             self.params = params
@@ -243,7 +238,6 @@ class RefactoringPanel(Static):
     selected_refactoring = reactive("")
 
     def __init__(self, refactorings: List[RefactoringAction] | None = None, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.all_refactorings = refactorings or []
         self.refactorings = {r.id: r for r in self.all_refactorings}
@@ -400,7 +394,6 @@ class IDEPanel(Static):
         refactorings: List[RefactoringAction] | None = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.root_path = root_path
         self.refactorings = refactorings or []

@@ -14,9 +14,9 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from prompt_toolkit import PromptSession
 from prompt_toolkit.history import FileHistory
-from rich.console import Console
 
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
+from aura_cli.cli.ui.display_facade import get_console
 from aura_cli.cli.ui.key_bindings import create_key_bindings
 from aura_cli.cli.ui.manager import UIManager
 from aura_cli.core.logger import get_logger
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     pass
 
 logger = get_logger(__name__)
-console = Console()
+console = get_console()
 
 
 def display_aura_splash_screen(ui: Optional[UIManager] = None) -> None:
@@ -43,7 +43,9 @@ def display_aura_splash_screen(ui: Optional[UIManager] = None) -> None:
     except ImportError:
         __version__ = "0.1.0"
 
-    ANIMATIONS_AVAILABLE = False  # animations.py removed (was an orphan with no callers)
+    ANIMATIONS_AVAILABLE = (
+        False  # animations.py removed (was an orphan with no callers)
+    )
     if not hasattr(UIStyles, "_styles_initialized") or not UIStyles._styles_initialized:
         UIStyles._init_styles()
 
@@ -72,9 +74,9 @@ def display_aura_splash_screen(ui: Optional[UIManager] = None) -> None:
                 console=console,
                 transient=True,
             ) as progress:
-                task1 = progress.add_task("[dim]Inicializando núcleo...", total=100)
+                task1 = progress.add_task("[dim]Initializing core...", total=100)
                 task2 = progress.add_task(
-                    "[dim]Carregando motores neurais...", total=100, visible=False
+                    "[dim]Loading neural engines...", total=100, visible=False
                 )
 
                 while not progress.finished:
@@ -86,7 +88,7 @@ def display_aura_splash_screen(ui: Optional[UIManager] = None) -> None:
             logger.debug(f"Ignorado: {_e}")
     welcome_content = Align.center(
         f"[bold white]Aura CLI[/] [dim]v{__version__}[/]\n"
-        f"[italic dim]Assistente de Código AI[/]\n\n"
+        f"[italic dim]AI Code Assistant[/]\n\n"
         f"[dim]▪ Digite [bold]/help[/] para comandos ou [bold]/agi[/] para delegar tarefas.[/]"
     )
     welcome_panel = Padding(welcome_content, (1, 2))
@@ -119,99 +121,99 @@ def initialize_conversation_history() -> List[Dict[str, str]]:
     return [
         {
             "role": "system",
-            "content": """Você é a Aura, uma engenheira de software sênior com acesso direto ao ambiente do usuário. Você age, não simula.
+            "content": """You are Aura, a senior software engineer with direct access to the user's environment. You act, you don't simulate.
 
-**IDENTIDADE**
-Você é uma parceira de desenvolvimento — direta, técnica e proativa. Quando o usuário pede algo, você faz. Não descreve o que vai fazer, não apresenta menus de opções, não simula resultados. Simplesmente age e reporta o que encontrou de forma natural.
+**IDENTITY**
+You are a development partner — direct, technical and proactive. When the user asks for something, you do it. You don't describe what you're going to do, don't present option menus, don't simulate results. You simply act and report what you found naturally.
 
-**REGRAS DE COMPORTAMENTO**
-- **Aja primeiro, explique depois** — use a ferramenta, depois comente o resultado em linguagem natural. Nunca descreva a ferramenta que vai usar antes de usá-la.
-- **NUNCA INVENTE DADOS** — se uma ferramenta retornou X, reporte X. Não extrapole, não complete com exemplos, não adicione itens que não estavam no resultado real. Se o resultado foi truncado, diga isso.
-- **Nunca simule** — se não executou uma ferramenta, não invente o resultado. Se não tem acesso a algo, diga claramente.
-- **Sem menus nem opções numeradas** — responda diretamente ao que foi pedido. Se precisar de mais informação, faça uma pergunta simples e direta.
-- **Tom de colega de trabalho** — conciso, técnico quando necessário, sem formalidades excessivas.
-- **Não mencione nomes de ferramentas na resposta** — o usuário não precisa saber que você chamou `list_directory`. Apenas diga o que encontrou.
+**BEHAVIOUR RULES**
+- **Act first, explain after** — use the tool, then comment on the result in natural language. Never describe the tool you're going to use before using it.
+- **NEVER INVENT DATA** — if a tool returned X, report X. Don't extrapolate, don't fill in with examples, don't add items that weren't in the real result. If the result was truncated, say so.
+- **Never simulate** — if you didn't run a tool, don't invent the result. If you don't have access to something, say so clearly.
+- **No menus or numbered options** — respond directly to what was asked. If you need more information, ask one simple, direct question.
+- **Colleague tone** — concise, technical when needed, no excessive formality.
+- **Don't mention tool names in the response** — the user doesn't need to know you called `list_directory`. Just say what you found.
 
-**ONBOARDING AUTOMÁTICO DE PROJETO**
-Quando o usuário apresentar um diretório ou pedir para conhecer/explorar o projeto, execute IMEDIATAMENTE e em sequência, sem pedir permissão:
-1. `scan_project(path=".")` — visão geral rápida (arquivos, linguagens, tamanho)
-2. `read_file("README.md")` — ou o arquivo de documentação principal encontrado
-3. `git_status()` — estado atual do repositório
-Depois responda com um resumo direto: o que é o projeto, stack, estado atual. Sem menus, sem perguntas.
+**AUTOMATIC PROJECT ONBOARDING**
+When the user presents a directory or asks to explore the project, execute IMMEDIATELY and in sequence, without asking permission:
+1. `scan_project(path=".")` — quick overview (files, languages, size)
+2. `read_file("README.md")` — or the main documentation file found
+3. `git_status()` — current repository state
+Then respond with a direct summary: what the project is, stack, current state. No menus, no questions.
 
-**EDIÇÃO DE CÓDIGO — FLUXO OBRIGATÓRIO**
-Para qualquer modificação em arquivo existente:
-1. `read_file(path)` — lê o arquivo completo primeiro
-2. Aplica a mudança no conteúdo lido, mantendo o estilo e convenções existentes
-3. `write_file(path, novo_conteúdo)` — escreve o arquivo completo modificado
-Nunca use `run_shell_command` para editar arquivos. Nunca escreva sem ler antes. Não adicione comentários como "Updated by Aura" ou marcações desnecessárias.
+**CODE EDITING — MANDATORY FLOW**
+For any modification to an existing file:
+1. `read_file(path)` — reads the full file first
+2. Apply the change to the read content, preserving existing style and conventions
+3. `write_file(path, new_content)` — writes the full modified file
+Never use `run_shell_command` to edit files. Never write without reading first. Don't add comments like "Updated by Aura" or unnecessary markers.
 
-**FERRAMENTAS DISPONÍVEIS (use silenciosamente)**
+**AVAILABLE TOOLS (use silently)**
 
-*Exploração:*
-- `list_directory`, `tree_view`, `view_subdirectory` — navega estrutura de diretórios
-- `read_file`, `write_file`, `edit_file` — lê/escreve/edita arquivos (edit_file para mudanças pontuais sem reescrever tudo)
-- `find_in_files`, `advanced_grep_search`, `glob_search`, `codebase_search` — busca em código
-- `view_repo_map` — mapa completo do repositório
+*Exploration:*
+- `list_directory`, `tree_view`, `view_subdirectory` — navigate directory structure
+- `read_file`, `write_file`, `edit_file` — read/write/edit files (edit_file for targeted changes without rewriting everything)
+- `find_in_files`, `advanced_grep_search`, `glob_search`, `codebase_search` — search in code
+- `view_repo_map` — full repository map
 
-*Análise de código:*
-- `scan_project` — visão geral rápida do projeto (use no onboarding)
-- `analyze_code` — análise estática detalhada de um arquivo
-- `analyze_project_structure` — detecta linguagens, frameworks, arquitetura
-- `analyze_project_quality` — complexidade, duplicação, métricas de qualidade
-- `analyze_project_security` — vulnerabilidades e problemas de segurança
-- `summarize_code` — resume o que um arquivo/módulo faz
-- `validate_syntax` — valida sintaxe antes de salvar
-- `classify_code` — classifica tipo e complexidade
-- `find_duplicate_code` — encontra código duplicado
-- `sanitize_code` — linta e formata via Forge (Nim)
+*Code analysis:*
+- `scan_project` — quick project overview (use during onboarding)
+- `analyze_code` — detailed static analysis of a file
+- `analyze_project_structure` — detects languages, frameworks, architecture
+- `analyze_project_quality` — complexity, duplication, quality metrics
+- `analyze_project_security` — vulnerabilities and security issues
+- `summarize_code` — summarises what a file/module does
+- `validate_syntax` — validates syntax before saving
+- `classify_code` — classifies type and complexity
+- `find_duplicate_code` — finds duplicated code
+- `sanitize_code` — lints and formats via Forge (Nim)
 
-*Dependências e impacto:*
-- `analyze_dependencies` — grafo de imports do projeto
-- `dep_find_dependencies` — dependências de um módulo específico
-- `dep_get_impact_analysis` — impacto de mudar um módulo (o que vai quebrar)
+*Dependencies and impact:*
+- `analyze_dependencies` — project import graph
+- `dep_find_dependencies` — dependencies of a specific module
+- `dep_get_impact_analysis` — impact of changing a module (what will break)
 
 *Git:*
 - `git_status`, `git_diff`, `git_diff_context`, `git_log`, `git_branch`, `git_commit`
-- `suggest_commit_message` — gera mensagem de commit baseada no diff
+- `suggest_commit_message` — generates commit message based on diff
 
-*Testes:*
-- `generate_tests_ml` — gera testes automaticamente para um arquivo
-- `run_tests_advanced` — roda testes com relatório detalhado
+*Tests:*
+- `generate_tests_ml` — automatically generates tests for a file
+- `run_tests_advanced` — runs tests with detailed report
 
-*Memória persistente:*
-- `notebook_write` — salva decisões, planos, resumos de análises
-- `notebook_read`, `notebook_search` — recupera memórias anteriores
+*Persistent memory:*
+- `notebook_write` — saves decisions, plans, analysis summaries
+- `notebook_read`, `notebook_search` — retrieves previous memories
 
 *DevOps:*
 - `docker_ps`, `docker_logs` — containers
-- `system_resources` — CPU/RAM/disco
-- `run_shell_command` — qualquer comando shell
+- `system_resources` — CPU/RAM/disk
+- `run_shell_command` — any shell command
 
-*Refatoração:*
-- `plan_refactoring` — planeja refatoração com análise de impacto
-- `check_file_changes` — detecta arquivos modificados (Sentinel)
+*Refactoring:*
+- `plan_refactoring` — plans refactoring with impact analysis
+- `check_file_changes` — detects modified files (Sentinel)
 
-*Web e delegação:*
-- `web_search` — busca na web
-- `delegate_to_agi` — tarefas complexas multi-etapa (passe objetivo autocontido)
-- `delegate_to_ops` — DevOps/Git/Docker em lote
+*Web and delegation:*
+- `web_search` — web search
+- `delegate_to_agi` — complex multi-step tasks (pass a self-contained objective)
+- `delegate_to_ops` — DevOps/Git/Docker in batch
 
-**REGRAS DE USO DE FERRAMENTAS**
-- **Commit**: NUNCA execute `git_commit` diretamente. Sempre: (1) `git_diff_context` para ver todas as mudanças, (2) `suggest_commit_message` para gerar a mensagem, (3) `git_commit` com a mensagem gerada.
-- **Formatar/lintar arquivo**: use `format_file(path)` — formata e linta um arquivo pelo caminho. Use para qualquer pedido de "formatar", "lintar", "organizar" ou "limpar" um arquivo.
-- **Impacto de mudança**: use `dep_get_impact_analysis`, não `analyze_dependencies`.
-- **Qualidade do código**: use `analyze_project_quality`.
-- **Busca em código**: prefira `advanced_grep_search` ou `codebase_search` para buscas complexas.
-- **Mudança pontual**: use `edit_file` em vez de read+write completo quando possível.
+**TOOL USAGE RULES**
+- **Commit**: NEVER run `git_commit` directly. Always: (1) `git_diff_context` to see all changes, (2) `suggest_commit_message` to generate the message, (3) `git_commit` with the generated message.
+- **Format/lint file**: use `format_file(path)` — formats and lints a file by path. Use for any request to "format", "lint", "organise" or "clean up" a file.
+- **Change impact**: use `dep_get_impact_analysis`, not `analyze_dependencies`.
+- **Code quality**: use `analyze_project_quality`.
+- **Code search**: prefer `advanced_grep_search` or `codebase_search` for complex searches.
+- **Targeted change**: use `edit_file` instead of full read+write when possible.
 
-**QUANDO DELEGAR**
-- `delegate_to_agi` — refatorações grandes, implementações complexas, análises sistemáticas. Passe um objetivo autocontido e completo (o AGI não tem acesso ao histórico da conversa).
-- `delegate_to_ops` — operações Git, Docker, deploy, infraestrutura.
+**WHEN TO DELEGATE**
+- `delegate_to_agi` — large refactorings, complex implementations, systematic analyses. Pass a self-contained and complete objective (the AGI has no access to conversation history).
+- `delegate_to_ops` — Git, Docker, deploy, infrastructure operations.
 
-**LIMITAÇÕES REAIS**
-- **Arquivo não encontrado** — se `read_file` retornar erro "not found", execute imediatamente `run_shell_command("find . -name '<arquivo>' 2>/dev/null")` para localizar. Só reporte ao usuário se o find também não encontrar nada.
-- **Tarefa ambígua** — se o pedido for vago (ex: "melhora o código"), pergunte qual arquivo ou módulo específico antes de agir.""",
+**REAL LIMITATIONS**
+- **File not found** — if `read_file` returns "not found", immediately run `run_shell_command("find . -name '<file>' 2>/dev/null")` to locate it. Only report to the user if find also finds nothing.
+- **Ambiguous task** — if the request is vague (e.g. "improve the code"), ask which specific file or module before acting.""",
         }
     ]
 
@@ -255,21 +257,21 @@ def build_runtime_system_note() -> Dict[str, str]:
         logger.debug("Web search health check failed: %s", _e)
         health["web_search"] = "missing"
     lines: List[str] = [
-        "📡 NOTA DE SISTEMA: Estado inicial das ferramentas nesta sessão:"
+        "📡 SYSTEM NOTE: Initial tool status for this session:"
     ]
 
     def fmt_status(label: str, key: str) -> None:
         """Format a status string for display."""
         status = health.get(key, "unknown")
         if status == "ok" or status == "importable":
-            lines.append(f"- {label}: disponível ({status})")
+            lines.append(f"- {label}: available ({status})")
         elif status == "missing":
-            lines.append(f"- {label}: binário ausente ({status})")
+            lines.append(f"- {label}: binary missing ({status})")
         elif isinstance(status, str) and status.startswith("error:"):
             reason = status.split("error:", 1)[-1].strip() or "erro ao verificar estado"
-            lines.append(f"- {label}: indisponível — {reason}")
+            lines.append(f"- {label}: unavailable — {reason}")
         elif status == "error":
-            lines.append(f"- {label}: indisponível (erro ao verificar estado)")
+            lines.append(f"- {label}: unavailable (error checking status)")
         else:
             lines.append(f"- {label}: {status}")
 
@@ -281,16 +283,16 @@ def build_runtime_system_note() -> Dict[str, str]:
     fmt_status("web_search", "web_search")
 
     lines.append(
-        "\nSe uma ferramenta reportar erro em tempo de execução, "
-        "explique o erro ao usuário e adapte a estratégia em vez de insistir."
+        "\nIf a tool reports a runtime error, "
+        "explain the error to the user and adapt the strategy instead of retrying."
     )
     lines.append(
-        "\n▪ **Dica rápida:** Para obter informações do projeto rapidamente, use:"
+        "\n▪ **Quick tip:** To get project information quickly, use:"
     )
-    lines.append('- `list_directory(".")` - Lista o diretório atual de forma formatada')
-    lines.append('- `tree_view(".")` - Visualiza estrutura de diretórios em árvore')
+    lines.append('- `list_directory(".")` - Lists the current directory in a formatted view')
+    lines.append('- `tree_view(".")` - Visualizes the directory structure as a tree')
     lines.append(
-        "- Ferramentas Nim (se disponíveis): `scan_project()`, `analyze_dependencies()`, etc."
+        "- Nim tools (if available): `scan_project()`, `analyze_dependencies()`, etc."
     )
 
     return {
@@ -323,7 +325,7 @@ def build_initial_project_profile(project_root: Path) -> Optional[Dict[str, str]
         logger.debug("Project structure analysis failed: %s", _e)
         structure_result = {"error": "analyze_project_structure_failed"}
     summary_lines: List[str] = []
-    summary_lines.append("🧭 Perfil inicial do projeto (scan automático):")
+    summary_lines.append("🧭 Initial project profile (automatic scan):")
     summary_lines.append(f"- Raiz do projeto: `{root_str}`")
 
     if isinstance(structure_result, dict) and "error" not in structure_result:
@@ -361,7 +363,7 @@ def build_initial_project_profile(project_root: Path) -> Optional[Dict[str, str]
         )
         write_result = nim_integration.notebook_write(
             content=profile_text,
-            summary="Perfil inicial do projeto (scan automático)",
+            summary="Initial project profile (automatic scan)",
         )
         page_path = write_result.get("page_path") if write_result.get("ok") else None
     except Exception as _e:
@@ -372,7 +374,7 @@ def build_initial_project_profile(project_root: Path) -> Optional[Dict[str, str]
         summary_lines.append(f"- Perfil completo salvo no Notebook: `{page_path}`")
     else:
         summary_lines.append(
-            "- Perfil não pôde ser salvo no Notebook (erro ao escrever)."
+            "- Profile could not be saved to Notebook (write error)."
         )
 
     return {
@@ -418,7 +420,7 @@ def show_onboarding_hint_if_first_run(ui: Optional[UIManager] = None) -> None:
     except OSError:
         return
     try:
-        message = "Digite uma pergunta ou /help para comandos e /keyboard para atalhos."
+        message = "Type a question or /help for commands and /keyboard for shortcuts."
         if ui is not None:
             ui.display_info(message)
         else:
@@ -436,11 +438,11 @@ def _handle_intervention_request(request_dict: Dict[str, Any]) -> None:
     Looks up the adapter by task_id and calls receive_response so the worker can unblock.
     """
     if not isinstance(request_dict, dict):
-        logger.warning("Intervention request não é um dicionário; ignorado")
+        logger.warning("Intervention request is not a dict; ignored")
         return
 
     try:
-        from aura_cli.cli.ui.components.human_confirmation_dialog import (
+        from aura_cli.cli.ui.components.input.human_confirmation_dialog import (
             HumanConfirmationDialog,
         )
         from aura_cli.core.events.human_intervention_events import (
@@ -510,6 +512,50 @@ def _handle_intervention_request(request_dict: Dict[str, Any]) -> None:
     adapter.receive_response(response_dict)
 
 
+def _emit_activity_heartbeat(ui: Optional[UIManager]) -> None:
+    """Print elapsed-time lines for long-running tools, if the UI tracks any.
+
+    Runs before the empty-queue early return: a tool that is silently running emits
+    no events, so the queue is exactly the case where the heartbeat matters.
+    """
+    renderer = getattr(ui, "worker_activity", None)
+    if renderer is None:
+        return
+    try:
+        renderer.heartbeat()
+    except Exception as error:  # a heartbeat must never break the refresh
+        logger.debug("Activity heartbeat skipped: %s", error)
+
+
+def _route_status_messages(
+    display_list: List[Any], ui: Optional[UIManager]
+) -> tuple[List[Any], List[Any]]:
+    """Split queued messages into Rich renderables and worker-feed text.
+
+    Structured lifecycle events (tool/task) are rendered in place as a one-line
+    activity trail via ``ui.worker_activity`` and therefore appear in neither list.
+    Chat renderables (non-string content) go to ``renderables``; everything else,
+    including legacy ``[Aura AGI]`` text, goes to the worker feed.
+    """
+    renderables: List[Any] = []
+    feed_messages: List[Any] = []
+    activity_renderer = getattr(ui, "worker_activity", None)
+
+    for msg in display_list:
+        if isinstance(msg, dict) and msg.get("type") == "chat_message":
+            content = msg.get("content")
+            if content is not None and not isinstance(content, str):
+                renderables.append(content)
+            else:
+                feed_messages.append(msg)
+            continue
+        if activity_renderer is not None and activity_renderer.render_event(msg):
+            continue
+        feed_messages.append(msg)
+
+    return renderables, feed_messages
+
+
 def handle_status_updates(
     status_queue: queue.Queue[str], ui: Optional[UIManager] = None
 ) -> None:
@@ -523,6 +569,7 @@ def handle_status_updates(
     Args:
         status_queue: Queue containing status messages from workers
     """
+    _emit_activity_heartbeat(ui)
     if status_queue.empty():
         return
 
@@ -541,22 +588,13 @@ def handle_status_updates(
         return
 
     target = ui if ui is not None else console
-    renderables: List[Any] = []
-    feed_messages: List[Any] = []
-
-    for msg in display_list:
-        if isinstance(msg, dict) and msg.get("type") == "chat_message":
-            content = msg.get("content")
-            if content is not None and not isinstance(content, str):
-                renderables.append(content)
-                continue
-        feed_messages.append(msg)
+    renderables, feed_messages = _route_status_messages(display_list, ui)
 
     for renderable in renderables:
         target.print(renderable)
 
     try:
-        from aura_cli.cli.ui.components.worker_feed import (
+        from aura_cli.cli.ui.components.agent.worker_feed import (
             parse_status_messages,
             render_worker_feeds,
         )
@@ -608,7 +646,7 @@ def parse_agi_command(command: str) -> Optional[str]:
     # Strip --validate flag (handled separately by parse_agi_flags)
     objective = objective.replace("--validate", "").strip()
     if not objective:
-        objective = "Explore o diretório atual, liste os arquivos principais, analise a estrutura do projeto e forneça um resumo do que encontrou."
+        objective = "Explore the current directory, list the main files, analyze the project structure and provide a summary of what you found."
     return objective
 
 
@@ -709,7 +747,7 @@ def handle_multiline_input(ui: Optional[UIManager] = None) -> Optional[str]:
     """
     try:
         message = (
-            "Modo multi-linha: digite três aspas (''') em uma nova linha para enviar."
+            "Multi-line mode: type three quotes (''') on a new line to send."
         )
         if ui is not None:
             ui.display_info(message)
@@ -719,7 +757,7 @@ def handle_multiline_input(ui: Optional[UIManager] = None) -> Optional[str]:
             display_info(message)
     except Exception:
         console.print(
-            f"[{UIStyles.WARNING}]{UIIcons.INFO} Modo de entrada multi-linha ativado. Digite três aspas (''') em uma nova linha para enviar.[/{UIStyles.WARNING}]"
+            f"[{UIStyles.WARNING}]{UIIcons.INFO} Multi-line input mode activated. Type three quotes (''') on a new line to send.[/{UIStyles.WARNING}]"
         )
     user_lines = []
 
@@ -748,11 +786,11 @@ def handle_multiline_input(ui: Optional[UIManager] = None) -> Optional[str]:
     if not user_input:
         try:
             if ui is not None:
-                ui.display_warning("Nenhuma entrada fornecida. Tente novamente.")
+                ui.display_warning("No input provided. Try again.")
             else:
                 from aura_cli.cli.ui.display_facade import display_warning
 
-                display_warning("Nenhuma entrada fornecida. Tente novamente.")
+                display_warning("No input provided. Try again.")
         except Exception:
             console.print(
                 f"[{UIStyles.WARNING}]{UIIcons.WARNING} Nenhuma entrada fornecida. Tente novamente.[/{UIStyles.WARNING}]"
@@ -767,7 +805,9 @@ def handle_multiline_input(ui: Optional[UIManager] = None) -> Optional[str]:
 
     if len(user_input) > CHAR_THRESHOLD or user_input.count("\n") > LINE_THRESHOLD:
         try:
-            from aura_cli.cli.ui.components.collapsed_text import CollapsedTextDisplay
+            from aura_cli.cli.ui.components.display.collapsed_text import (
+                CollapsedTextDisplay,
+            )
 
             collapsed_display = CollapsedTextDisplay()
             collapsed_view = collapsed_display.render_minimal(

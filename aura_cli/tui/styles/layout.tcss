@@ -27,7 +27,6 @@ Screen {
 
 .panel-title {
     height: 1;
-    content-align: center middle;
 }
 
 #main_grid .panel-container {
@@ -44,43 +43,38 @@ Screen {
     content-align: left middle;
 }
 
-#center_panel {
-    border-left: none;
-    border-right: none;
-}
-
 AuraFooter.runtime-ready #footer-status {
-    color: $foreground-muted;
+    color: $theme-status-idle;
     text-style: dim;
 }
 
 AuraFooter.runtime-loading #footer-status,
 AuraFooter.runtime-thinking #footer-status {
-    color: $primary;
+    color: $theme-status-thinking;
 }
 
 AuraFooter.runtime-executing #footer-status {
-    color: $warning;
+    color: $theme-status-working;
     text-style: bold;
 }
 
 AuraFooter.runtime-waiting_input #footer-status {
-    color: $warning;
+    color: $theme-status-warning;
     text-style: bold;
 }
 
 AuraFooter.runtime-error #footer-status {
-    color: $error;
+    color: $theme-status-error;
     text-style: bold;
 }
 
 AuraFooter.runtime-completed #footer-status {
-    color: $success;
+    color: $theme-status-success;
 }
 
 AuraFooter.runtime-cancelled #footer-status,
 AuraFooter.runtime-stopped #footer-status {
-    color: $foreground-muted;
+    color: $theme-status-idle;
 }
 
 .empty-state {
@@ -88,14 +82,14 @@ AuraFooter.runtime-stopped #footer-status {
     height: 1fr;
     padding: 2;
     align: center middle;
-    color: $foreground-muted;
+    color: $theme-foreground-muted;
 }
 
 .empty-state Label {
     width: 100%;
     content-align: center middle;
     text-style: bold;
-    color: $foreground;
+    color: $theme-foreground;
 }
 
 .empty-state-actions {

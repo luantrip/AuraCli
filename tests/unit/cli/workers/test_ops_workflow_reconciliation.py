@@ -46,7 +46,7 @@ def test_workflow_error_before_dispatch_keeps_chat_fallback(tmp_path):
     assert worker._execute_workflow_path(SimpleNamespace(), None) is False
     worker.agi_event_adapter.emit_chat_message.assert_called_once()
     assert (
-        "execução padrão"
+        "standard execution"
         in worker.agi_event_adapter.emit_chat_message.call_args.kwargs["content"]
     )
     worker._save_worker_snapshot.assert_not_called()

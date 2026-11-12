@@ -44,7 +44,7 @@ def get_status_intro(status: ToolStatus, is_instant: bool = False) -> str:
     status_map = {
         "generating": "vai",
         "generated": "quer",
-        "calling": "está",
+        "calling": "calling",
         "canceled": "tentou",
         "errored": "tentou",
     }
@@ -109,7 +109,7 @@ def get_group_action_verb(statuses: List[ToolStatus]) -> str:
         statuses: List of ToolStatus values for each tool in the group.
 
     Returns:
-        Action verb string: "Executando", "Gerando", "Pendente",
+        Action verb string: "Executando", "Gerando", "Pending",
         "Executado" or "Tentado".
     """
     if not statuses:
@@ -120,7 +120,7 @@ def get_group_action_verb(statuses: List[ToolStatus]) -> str:
     elif "generating" in statuses:
         return "Gerando"
     elif "generated" in statuses:
-        return "Pendente"
+        return "Pending"
     elif any(s == "done" for s in statuses):
         return "Executado"
     elif any(s in ("errored", "canceled") for s in statuses):
@@ -155,13 +155,13 @@ def format_tool_status_message(
     if custom_message:
         message = custom_message
     elif status == "done" or (is_instant and status == "calling"):
-        message = f"usou a ferramenta {tool_name}"
+        message = f"used tool {tool_name}"
     elif status in ("generating", "generated", "canceled", "errored"):
-        message = f"usar a ferramenta {tool_name}"
+        message = f"use tool {tool_name}"
     elif status == "calling":
-        message = f"usando a ferramenta {tool_name}"
+        message = f"using tool {tool_name}"
     else:
-        message = f"ferramenta {tool_name}"
+        message = f"tool {tool_name}"
 
     if intro:
         return f"{icon} Aura {intro} {message}"

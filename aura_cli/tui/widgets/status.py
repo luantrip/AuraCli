@@ -70,10 +70,10 @@ class AuraStatusSidebar(Vertical):
             # Compatible with new schema via ConfigCompat
             nim_path = config.get("nim_binary_path")
             if nim_path and "mock" not in str(nim_path).lower():
-                return "PRONTO"
-            return "NÃO CONFIGURADO"
+                return "READY"
+            return "NOT CONFIGURED"
         except Exception:
-            return "ERRO"
+            return "ERROR"
 
     def update_task_tree(self, task_states: dict) -> None:
         """Update the tree widget with current tasks and subtasks.
@@ -105,12 +105,12 @@ class AuraStatusSidebar(Vertical):
         root = tree_widget.root
 
         if not task_states:
-            root.label = "Sem Tarefas Ativas"
+            root.label = "No Active Tasks"
             root.data = None
             root.expand()
             return
 
-        root.label = "Tarefas Ativas"
+        root.label = "Active Tasks"
         root.data = None
         root.expand()
 

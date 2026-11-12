@@ -86,7 +86,7 @@ class ToolExecutionPipeline:
         await _resolve(self._before(request))
         if request.deadline is not None and time.monotonic() >= request.deadline:
             return ToolExecutionOutcome(
-                result="Prazo de execução expirado antes da tool iniciar.",
+                result="Execution deadline expired before tool started.",
                 elapsed=time.monotonic() - started,
                 status="timeout",
                 error="deadline_exceeded",
@@ -115,7 +115,7 @@ class ToolExecutionPipeline:
                 )
         except asyncio.TimeoutError:
             outcome = ToolExecutionOutcome(
-                result="Prazo de execução da tool expirado.",
+                result="Tool execution deadline expired.",
                 elapsed=time.monotonic() - started,
                 status="timeout",
                 error="deadline_exceeded",
@@ -139,11 +139,11 @@ def format_tool_result(result: Any) -> str:
     if not isinstance(result, dict):
         return str(result)
     if result.get("ok") is False and result.get("backend") == "nim":
-        error = result.get("error", "Ferramenta indisponível.")
+        error = result.get("error", "Tool unavailable.")
         return (
-            f"Ferramenta Nim indisponível neste ambiente: {error}."
-            " Use em vez disso: list_directory(path) para listar arquivos ou"
-            " tree_view(path) para ver a estrutura em árvore."
+            f"Nim tool unavailable in this environment: {error}."
+            " Use instead: list_directory(path) to list files or"
+            " tree_view(path) to view the tree structure."
         )
     return str(result)
 

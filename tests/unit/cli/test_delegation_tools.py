@@ -69,7 +69,7 @@ class TestDelegationWhenAlreadyRunning:
         )
         result = app_loop_with_mocks._do_delegate_to_agi("refatorar módulo X")
         assert isinstance(result, str)
-        assert "já está" in result or "já está em execução" in result.lower()
+        assert "already running" in result.lower()
 
     def test_ops_already_running_returns_message(self, app_loop_with_mocks):
         app_loop_with_mocks.ops_thread = MagicMock(
@@ -77,7 +77,7 @@ class TestDelegationWhenAlreadyRunning:
         )
         result = app_loop_with_mocks._do_delegate_to_ops("git status", mode="git")
         assert isinstance(result, str)
-        assert "já está" in result or "já está em execução" in result.lower()
+        assert "already running" in result.lower()
 
 
 class TestDelegationNoApiKey:
@@ -187,15 +187,15 @@ class TestDelegationSuccessPath:
         assert "agent_type=ops" in status
 
     def test_list_delegated_tasks_empty(self, app_loop_with_mocks):
-        assert "Nenhuma tarefa delegada" in app_loop_with_mocks.list_delegated_tasks()
+        assert "No delegated" in app_loop_with_mocks.list_delegated_tasks()
         assert (
-            "Nenhuma tarefa delegada" in app_loop_with_mocks.get_delegated_task_status()
+            "No delegated" in app_loop_with_mocks.get_delegated_task_status()
         )
         assert (
-            "Nenhuma tarefa delegada" in app_loop_with_mocks.summarize_delegated_task()
+            "No delegated" in app_loop_with_mocks.summarize_delegated_task()
         )
         assert (
-            "Nenhuma tarefa delegada"
+            "No delegated tasks"
             in app_loop_with_mocks.reattach_delegated_task_context()
         )
 
@@ -533,7 +533,7 @@ class TestDelegationSuccessPath:
         context = app_loop_with_mocks.reattach_delegated_task_context(
             "ops_task_context"
         )
-        assert "Contexto da tarefa delegada preparado" in context
+        assert "Delegated task context prepared" in context
         assert "[DELEGATED TASK CONTEXT]" in context
         assert "task_id: ops_task_context" in context
         assert "supporting_context:" in context

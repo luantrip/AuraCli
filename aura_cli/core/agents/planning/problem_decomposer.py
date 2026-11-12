@@ -101,7 +101,7 @@ class ProblemDecomposer:
     def _functional_decompose(self, problem: str) -> List[ProblemComponent]:
         """Functional responsibility decomposition."""
         components = []
-        functions = ["leitura", "escrita", "processamento", "validação", "apresentação"]
+        functions = ["reading", "writing", "processing", "validation", "presentation"]
 
         for i, func in enumerate(functions):
             component = ProblemComponent(
@@ -116,7 +116,7 @@ class ProblemDecomposer:
 
     def _sequential_decompose(self, problem: str) -> List[ProblemComponent]:
         """Sequential ordered decomposition."""
-        steps = ["Preparação", "Execução", "Validação", "Finalização"]
+        steps = ["Preparation", "Execution", "Validation", "Completion"]
 
         components = []
         for i, step in enumerate(steps):
@@ -136,9 +136,9 @@ class ProblemDecomposer:
         components = []
 
         parallel_parts = [
-            "Análise inicial",
-            "Preparação de recursos",
-            "Configuração de ambiente",
+            "Initial analysis",
+            "Resource preparation",
+            "Environment setup",
         ]
 
         for i, part in enumerate(parallel_parts):

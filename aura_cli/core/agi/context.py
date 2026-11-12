@@ -16,7 +16,7 @@ from typing import Any, Optional
 
 from aura_cli.application.artifacts import ArtifactLayout
 from aura_cli.core.agi.evidence_tree import EvidenceTree
-from aura_cli.core.state.project_state import ProjectState
+from aura_cli.core.sessions.project_state import ProjectState
 from aura_cli.core.tools.imagination_tools import ScanOptions
 from aura_cli.core.ui_bridge import UIIcons
 
@@ -36,7 +36,6 @@ class AgiContextManager:
         imagination_scanner: Any = None,
         consciousness_manager: Any = None,
     ):
-        """Initialize the instance."""
         self.project_root = project_root
         self.constitution = constitution
         self.agi_event_adapter = agi_event_adapter
@@ -196,23 +195,23 @@ class AgiContextManager:
             constitution_section = (
                 "\n\n"
                 "**═══════════════════════════════════════════════════════════**\n"
-                "**CONSTITUIÇÃO DO PROJETO (REGRAS IMUTÁVEIS)**\n"
+                "**PROJECT CONSTITUTION (IMMUTABLE RULES)**\n"
                 "**═══════════════════════════════════════════════════════════**\n"
             )
 
             if project_stage:
                 constitution_section += (
-                    f"**ESTÁGIO DO PROJETO: {project_stage.upper()}**\n"
+                    f"**PROJECT STAGE: {project_stage.upper()}**\n"
                     f"{stage_guidance}\n\n"
                 )
 
             constitution_section += (
-                "As seguintes regras e padrões do projeto são IMUTÁVEIS e devem ser "
-                "respeitadas em TODAS as suas ações e decisões:\n\n"
+                "The following project rules and patterns are IMMUTABLE and must be "
+                "respected in ALL your actions and decisions:\n\n"
                 f"{self.constitution}\n\n"
-                "**IMPORTANTE:** Se o usuário solicitar algo que contradiga estas regras, "
-                "você DEVE questionar e alertar antes de prosseguir. A Constituição tem "
-                "prioridade sobre qualquer solicitação do usuário.\n"
+                "**IMPORTANT:** If the user requests something that contradicts these rules, "
+                "you MUST question and warn before proceeding. The Constitution takes "
+                "priority over any user request.\n"
                 "**═══════════════════════════════════════════════════════════**\n"
             )
             enhanced_message = base_prompt + constitution_section
@@ -273,10 +272,10 @@ class AgiContextManager:
             return ""
 
         guidance = {
-            "greenfield": "Este é um projeto **novo**. Priorize estrutura correta, setup inicial robusto e documentação desde o início.",
-            "early_stage": "Projeto em **estágio inicial**. Foco em prototipagem rápida mas com arquitetura limpa.",
-            "growth": "Projeto em **crescimento**. Cuidado com dívida técnica, priorize escalabilidade e testes.",
-            "maintenance": "Projeto **maduro/manutenção**. Extrema cautela com refatorações grandes. Priorize estabilidade e testes de regressão.",
-            "legacy": "Projeto **legado**. Evite reescrever tudo. Faça mudanças cirúrgicas e bem testadas. Documente tudo.",
+            "greenfield": "This is a **new** project. Prioritize correct structure, robust initial setup and documentation.",
+            "early_stage": "Project in **early stage**. Focus on rapid prototyping but with a clean architecture.",
+            "growth": "**Growing** project. Watch for technical debt, prioritize scalability and tests.",
+            "maintenance": "**Mature/maintenance** project. Extreme caution with large refactorings. Prioritize stability.",
+            "legacy": "**Legacy** project. Avoid rewriting everything. Make surgical, well-tested changes.",
         }
         return guidance.get(stage, "")

@@ -218,7 +218,7 @@ class TextualUIManager:
             return
 
         if not isinstance(event_dict, dict):
-            logger.warning("Evento AGI descartado: payload não é um objeto")
+            logger.warning("AGI event discarded: payload is not an object")
             return
         event_type = event_dict.get("type")
         event_data = event_dict.get("data", {})
@@ -292,10 +292,10 @@ class TextualUIManager:
             metadata = {}
         options = [
             ("once", "Aprovar uma vez"),
-            ("session", "Aprovar nesta sessão"),
+            ("session", "Approve for this session"),
         ]
         if metadata.get("policy_key"):
-            options.append(("policy", "Aprovar e salvar política"))
+            options.append(("policy", "Approve and save policy"))
         options.append(("decline", "Recusar"))
 
         def deliver(scope: Optional[str]) -> None:
@@ -365,8 +365,8 @@ class TextualUIManager:
 
             self.app.push_screen(
                 SelectDialog(
-                    title="Ação necessária",
-                    message=str(request.get("prompt") or "Confirmar operação?"),
+                    title="Action required",
+                    message=str(request.get("prompt") or "Confirm operation?"),
                     options=options,
                     default="once",
                 ),
@@ -590,11 +590,11 @@ class TextualUIManager:
         """Present a blocked capability as a persistent security surface."""
         if decision.allowed:
             return
-        content = f"Operação bloqueada: `{tool_name}`\n{decision.reason}"
+        content = f"Operation blocked: `{tool_name}`\n{decision.reason}"
         self._present(
             PresentationIntent.ERROR,
             content,
-            title="Segurança",
+            title="Security",
             persistent=True,
             task_id=task_id or "global_chat",
         )

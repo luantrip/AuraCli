@@ -58,7 +58,7 @@ class AdvancedTestRunner:
         try:
             from aura_cli.core.ui import display_tool_call
         except ImportError:
-            display_tool_call = None  # type: ignore[assignment]
+            display_tool_call = None  # type: ignore[assignment]  # optional dep
 
         import time
 
@@ -109,7 +109,7 @@ class AdvancedTestRunner:
                 if _pytest_xdist is not None:
                     cmd.extend(["-n", "auto"])
             except ImportError:
-                logger.warning("pytest-xdist não instalado, executando sequencialmente")
+                logger.warning("pytest-xdist not installed, running sequentially")
 
         if verbose:
             cmd.append("-v")

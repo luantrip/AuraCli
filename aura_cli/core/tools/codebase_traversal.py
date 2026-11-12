@@ -25,14 +25,14 @@ try:
 
     IMAGINATION_AVAILABLE = True
 except Exception:
-    pass
+    pass  # imagination_tools optional — Nim binary may be absent; Python fallback used
 
 try:
     import pathspec
 
     _PATHSPEC_AVAILABLE = True
 except ImportError:
-    pathspec = None  # type: ignore[assignment]
+    pathspec = None  # type: ignore[assignment]  # optional dep
     _PATHSPEC_AVAILABLE = False
 
 

@@ -7,7 +7,14 @@ from .consolidation import (
     ConsolidationStatus,
     consolidate_notebook_rules,
 )
-from .context_usage import get_context_percentage, should_compact_context
+from .context_usage import (
+    DEFAULT_CONTEXT_WINDOW,
+    MIN_CONTEXT_HARD_LIMIT,
+    context_hard_limit_for_model,
+    context_window_for_model,
+    get_context_percentage,
+    should_compact_context,
+)
 from .conversation import ChatMessage, ConversationMemory
 from .memory_sync import (
     MemorySynchronizer,
@@ -18,6 +25,8 @@ from .state import WorkspaceState
 from .tangent import ConversationCheckpoint, TangentManager, TangentState
 
 __all__ = [
+    "DEFAULT_CONTEXT_WINDOW",
+    "MIN_CONTEXT_HARD_LIMIT",
     "ChatMessage",
     "ConsolidatedRule",
     "ConsolidationOutcome",
@@ -31,6 +40,8 @@ __all__ = [
     "WorkerCheckpointCoordinator",
     "WorkspaceState",
     "consolidate_notebook_rules",
+    "context_hard_limit_for_model",
+    "context_window_for_model",
     "get_context_percentage",
     "get_memory_synchronizer",
     "should_compact_context",

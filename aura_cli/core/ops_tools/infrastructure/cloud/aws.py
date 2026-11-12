@@ -4,14 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from rich.console import Console
-from rich.table import Table
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.ops_tools.infrastructure.cloud.base import CloudProviderManager
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class AWSManager(CloudProviderManager):
@@ -46,12 +42,29 @@ class AWSManager(CloudProviderManager):
         self._available: Optional[bool] = None
 
     def _get_boto3(self):
-        """Import boto3 (now essential)."""
+        """Import boto3, or return None if it is not installed."""
         if self._boto3 is None:
-            import boto3
-
+            try:
+                import boto3
+            except ImportError:
+                return None
             self._boto3 = boto3
         return self._boto3
+
+    def _sdk_installed(self) -> bool:
+        """Whether the boto3 SDK is importable (independent of credentials)."""
+        return self._get_boto3() is not None
+
+    def availability_error(self) -> str | None:
+        """Actionable reason the AWS provider is unavailable, or None if ready."""
+        if self.is_available():
+            return None
+        if not self._sdk_installed():
+            return "AWS SDK not installed. Install it with: pip install boto3"
+        return (
+            "AWS credentials not configured. Set AWS_ACCESS_KEY_ID / "
+            "AWS_SECRET_ACCESS_KEY, configure ~/.aws/credentials, or use an IAM role."
+        )
 
     def _get_session(self):
         """Get or create boto3 session."""
@@ -160,26 +173,6 @@ class AWSManager(CloudProviderManager):
                         }
                     )
 
-        if instances:
-            table = Table(title="☁️ AWS EC2 Instances")
-            table.add_column("ID", style="cyan")
-            table.add_column("Name", style="green")
-            table.add_column("Type")
-            table.add_column("State")
-            table.add_column("Public IP", style="yellow")
-
-            for inst in instances:
-                state_style = "green" if inst["state"] == "running" else "red"
-                table.add_row(
-                    inst["id"],
-                    inst["name"],
-                    inst["type"],
-                    f"[{state_style}]{inst['state']}[/{state_style}]",
-                    inst["public_ip"] or "-",
-                )
-
-            console.print(table)
-
         self.stats.track_tool_usage("aws_list_ec2")
         logger.info(f"Listed {len(instances)} EC2 instances")
         return instances
@@ -213,19 +206,6 @@ class AWSManager(CloudProviderManager):
             prefix = filters["prefix"]
             buckets = [b for b in buckets if b["name"].startswith(prefix)]
 
-        if buckets:
-            table = Table(title="☁️ AWS S3 Buckets")
-            table.add_column("Name", style="cyan")
-            table.add_column("Region", style="yellow")
-            table.add_column("Created")
-
-            for bucket in buckets:
-                table.add_row(
-                    bucket["name"], bucket["region"], bucket["creation_date"][:10]
-                )
-
-            console.print(table)
-
         self.stats.track_tool_usage("aws_list_s3")
         logger.info(f"Listed {len(buckets)} S3 buckets")
         return buckets
@@ -251,23 +231,6 @@ class AWSManager(CloudProviderManager):
                         "handler": func.get("Handler"),
                     }
                 )
-
-        if functions:
-            table = Table(title="☁️ AWS Lambda Functions")
-            table.add_column("Name", style="cyan")
-            table.add_column("Runtime", style="green")
-            table.add_column("Memory", style="yellow")
-            table.add_column("Timeout")
-
-            for func in functions:
-                table.add_row(
-                    func["name"],
-                    func["runtime"] or "-",
-                    f"{func['memory']} MB",
-                    f"{func['timeout']}s",
-                )
-
-            console.print(table)
 
         self.stats.track_tool_usage("aws_list_lambda")
         logger.info(f"Listed {len(functions)} Lambda functions")
@@ -295,26 +258,6 @@ class AWSManager(CloudProviderManager):
                         "storage_gb": db.get("AllocatedStorage"),
                     }
                 )
-
-        if instances:
-            table = Table(title="☁️ AWS RDS Instances")
-            table.add_column("ID", style="cyan")
-            table.add_column("Engine", style="green")
-            table.add_column("Class")
-            table.add_column("Status")
-            table.add_column("Storage")
-
-            for db in instances:
-                status_style = "green" if db["status"] == "available" else "yellow"
-                table.add_row(
-                    db["id"],
-                    f"{db['engine']} {db['engine_version']}",
-                    db["instance_class"],
-                    f"[{status_style}]{db['status']}[/{status_style}]",
-                    f"{db['storage_gb']} GB",
-                )
-
-            console.print(table)
 
         self.stats.track_tool_usage("aws_list_rds")
         logger.info(f"Listed {len(instances)} RDS instances")
@@ -357,24 +300,6 @@ class AWSManager(CloudProviderManager):
                             ],
                         }
                     )
-
-        if services:
-            table = Table(title="☁️ AWS ECS Services")
-            table.add_column("Service", style="cyan")
-            table.add_column("Cluster", style="green")
-            table.add_column("Status")
-            table.add_column("Running/Desired")
-
-            for svc in services:
-                status_style = "green" if svc["status"] == "ACTIVE" else "yellow"
-                table.add_row(
-                    svc["name"],
-                    svc["cluster"],
-                    f"[{status_style}]{svc['status']}[/{status_style}]",
-                    f"{svc['running_count']}/{svc['desired_count']}",
-                )
-
-            console.print(table)
 
         self.stats.track_tool_usage("aws_list_ecs")
         logger.info(f"Listed {len(services)} ECS services")
@@ -492,7 +417,6 @@ class AWSManager(CloudProviderManager):
         try:
             ec2.start_instances(InstanceIds=[instance_id])
             logger.info(f"Started EC2 instance: {instance_id}")
-            console.print(f"[green]✅ Started instance {instance_id}[/green]")
             return {"status": "starting", "instance_id": instance_id}
         except Exception as e:
             logger.error(f"Error starting instance: {e}")
@@ -508,7 +432,6 @@ class AWSManager(CloudProviderManager):
         try:
             ec2.stop_instances(InstanceIds=[instance_id])
             logger.info(f"Stopped EC2 instance: {instance_id}")
-            console.print(f"[yellow]⏹️ Stopped instance {instance_id}[/yellow]")
             return {"status": "stopping", "instance_id": instance_id}
         except Exception as e:
             logger.error(f"Error stopping instance: {e}")

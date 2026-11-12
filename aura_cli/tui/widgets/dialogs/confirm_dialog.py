@@ -31,11 +31,11 @@ class ConfirmDialog(BaseDialog):
     def __init__(
         self,
         message: str,
-        title: str = "Confirmar",
+        title: str = "Confirm",
         on_confirm: Optional[Callable[[], None]] = None,
         on_cancel: Optional[Callable[[], None]] = None,
         confirm_label: str = "Sim",
-        cancel_label: str = "Não",
+        cancel_label: str = "No",
         **kwargs,
     ):
         """

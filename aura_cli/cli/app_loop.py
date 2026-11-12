@@ -134,7 +134,7 @@ class AppLoop(CommandHandlerMixin, SessionLifecycleMixin, LLMQueryMixin):
             set_tangent_manager(self.tangent_manager)
             set_hook_manager(self.hook_manager)
         except ImportError:
-            self.logger.debug("Ferramentas de checkpoint não disponíveis")
+            self.logger.debug("Checkpoint tools not available")
         from aura_cli.core.paths import ArtifactLayout
 
         hooks_config = ArtifactLayout(self.project_root).project("hooks.json")
@@ -347,7 +347,7 @@ class AppLoop(CommandHandlerMixin, SessionLifecycleMixin, LLMQueryMixin):
 
             self.is_constitution_setup_active = True
 
-            constitution_worker_task = "Defina a constituição para este novo projeto através de uma conversa guiada. Use a ferramenta `save_constitution` quando o usuário confirmar o resumo final."
+            constitution_worker_task = "Define the constitution for this new project through a guided conversation."
 
             from aura_cli.cli.helpers import get_api_keys_dict
 
@@ -388,16 +388,16 @@ class AppLoop(CommandHandlerMixin, SessionLifecycleMixin, LLMQueryMixin):
             if constitution_content:
                 self.constitution = constitution_content
                 self._session_state.set_active_mode("agi")
-                self.ui.display_info("◇ Constituição do Projeto criada:")
+                self.ui.display_info("◇ Project Constitution created:")
                 self.ui.print(f"\n[dim]{'=' * 60}[/dim]")
-                self.ui.print("[bold cyan]◇ CONSTITUIÇÃO DO PROJETO[/bold cyan]")
+                self.ui.print("[bold cyan]◇ PROJECT CONSTITUTION[/bold cyan]")
                 self.ui.print(f"[dim]{'=' * 60}[/dim]")
                 self.ui.print(f"[white]{constitution_content}[/white]")
                 self.ui.print(f"[dim]{'=' * 60}[/dim]\n")
                 return True
             else:
                 self.ui.display_warning(
-                    "Constituição não foi criada. Tente novamente com /agi."
+                    "Constitution was not created. Try again with /agi."
                 )
                 return False
 

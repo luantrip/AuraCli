@@ -74,7 +74,7 @@ class InputDialog(BaseDialog):
         """Return the list of dialog action buttons."""
         return [
             ("OK", "ok", "primary"),
-            ("Cancelar", "cancel", "default"),
+            ("Cancel", "cancel", "default"),
         ]
 
     def on_mount(self) -> None:

@@ -69,7 +69,7 @@ def normalize_external_records(
 
     if skipped:
         warnings.append(
-            f"{skipped} eventos de tool/comando/aprovação foram ignorados; nenhum foi executado."
+            f"{skipped} tool/command/approval events were ignored; none were executed."
         )
     return ExternalSessionData(
         source_format=source_format,

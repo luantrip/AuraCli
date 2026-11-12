@@ -11,7 +11,7 @@ from aura_cli.cli.commands import agents
 
 def test_handle_tools_uses_open_catalog_surfaces() -> None:
     console = Console(record=True, width=100)
-    with patch.object(agents, "Console", return_value=console):
+    with patch("aura_cli.cli.commands.agents.get_console", return_value=console):
         agents.handle_tools()
 
     output = console.export_text()

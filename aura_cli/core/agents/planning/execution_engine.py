@@ -89,7 +89,7 @@ class ExecutionEngine:
                 failed += 1
                 if task.priority >= 8:
                     logger.error(
-                        f"Tarefa crítica {task.id} falhou, interrompendo execução"
+                        f"Critical task {task.id} failed, stopping execution"
                     )
                     break
 
@@ -206,7 +206,7 @@ class ExecutionEngine:
             else:
                 agents = list(self.orchestrator.agents.values())
                 if not agents:
-                    raise ValueError("Nenhum agente disponível")
+                    raise ValueError("No agent available")
                 agent = agents[0]
 
             result_value = agent._execute_task(task)

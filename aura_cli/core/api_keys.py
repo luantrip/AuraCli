@@ -10,6 +10,7 @@ from __future__ import annotations
 import os
 from typing import Dict
 
+from aura_cli.core.llm.provider_spec import PROVIDER_SPECS, all_env_keys
 from aura_cli.core.logger import get_logger
 
 logger = get_logger(__name__)
@@ -29,13 +30,12 @@ def get_api_keys_dict() -> Dict[str, str]:
     api_keys: Dict[str, str] = {}
 
     _PYDANTIC_PROVIDERS = [
-        ("google", "GOOGLE_API_KEY", "GEMINI_API_KEY"),
-        ("openai", "OPENAI_API_KEY", None),
-        ("anthropic", "ANTHROPIC_API_KEY", None),
-        ("openrouter", "OPENROUTER_API_KEY", None),
-        ("nvidia", "NVIDIA_API_KEY", None),
-        ("cerebras", "CEREBRAS_API_KEY", None),
-        ("groq", "GROQ_API_KEY", None),
+        (
+            spec.id,
+            spec.env_keys[0],
+            spec.env_keys[1] if len(spec.env_keys) > 1 else None,
+        )
+        for spec in PROVIDER_SPECS
     ]
     try:
         from aura_cli.core.config import ConfigCompat
@@ -63,16 +63,7 @@ def get_api_keys_dict() -> Dict[str, str]:
     except Exception as exc:
         logger.debug(f"Error fetching keys from SecureConfig: {exc}")
 
-    _ENV_KEYS = [
-        "GOOGLE_API_KEY",
-        "GEMINI_API_KEY",
-        "OPENAI_API_KEY",
-        "ANTHROPIC_API_KEY",
-        "OPENROUTER_API_KEY",
-        "NVIDIA_API_KEY",
-        "CEREBRAS_API_KEY",
-        "GROQ_API_KEY",
-    ]
+    _ENV_KEYS = all_env_keys()
     for key in _ENV_KEYS:
         if key not in api_keys:
             env_val = os.getenv(key)

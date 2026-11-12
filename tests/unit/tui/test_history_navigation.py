@@ -57,4 +57,4 @@ async def test_open_session_pops_restores_focus_and_notifies(tmp_path: Path) -> 
 
         restore.assert_called_once_with(app, session)
         pop_and_restore.assert_called_once_with(app)
-        notify.assert_called_once_with("Sessão restaurada: session-1", title="◇ Sessão")
+        notify.assert_called_once_with("Session restored: session-1", title="◇ Session")

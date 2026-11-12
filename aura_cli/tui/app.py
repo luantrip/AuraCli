@@ -130,7 +130,7 @@ class AuraTUI(App):
         "midnight": "theme.tcss",
         "solar-light": "theme.tcss",
         "dracula": "theme.tcss",
-        "macos-light": "macos_light.tcss",  # Dedicated macOS theme file
+        "macos-light": "theme.tcss",  # colors via $theme-* injection (ex-macos_light.tcss merged)
     }
 
     @classmethod
@@ -219,71 +219,71 @@ class AuraTUI(App):
         return variables
 
     BINDINGS: ClassVar[list] = [
-        Binding("ctrl+c", "quit", "Sair"),
-        Binding("ctrl+l", "clear_chat", "Limpar Chat"),
-        Binding("f", "toggle_focus_mode", "Modo Foco", show=True),
-        Binding("ctrl+s", "show_code_analysis", "Análise de Código", show=True),
-        Binding("ctrl+e", "toggle_analysis_event_panel", "Análise/Eventos", show=True),
+        Binding("ctrl+c", "quit", "Quit"),
+        Binding("ctrl+l", "clear_chat", "Clear Chat"),
+        Binding("f", "toggle_focus_mode", "Focus Mode", show=True),
+        Binding("ctrl+s", "show_code_analysis", "Code Analysis", show=True),
+        Binding("ctrl+e", "toggle_analysis_event_panel", "Analysis/Events", show=True),
         Binding("ctrl+b", "toggle_workspace_panel", "Workspace", show=True),
         Binding("ctrl+p", "toggle_command_palette", "Paleta de Comandos", show=True),
         Binding("ctrl+g", "push_paint_screen", "Paint", show=True),
         Binding("ctrl+f", "push_file_manager_screen", "Arquivos", show=True),
         Binding("ctrl+m", "push_monitor_screen", "Monitor", show=True),
         Binding("ctrl+shift+t", "show_token_usage", "Tokens", show=True),
-        Binding("ctrl+space", "leader_key", "Tecla Líder", show=False),
+        Binding("ctrl+space", "leader_key", "Leader Key", show=False),
     ]
 
     REFACTORINGS: ClassVar[list] = [
         RefactoringAction(
             "rename",
-            "Renomear símbolo",
-            "Renomear um símbolo em todo o codebase",
+            "Rename symbol",
+            "Rename a symbol across the entire codebase",
             "rename",
             parameters={"new_name": "string"},
         ),
         RefactoringAction(
             "extract_method",
-            "Extrair método",
-            "Extrair seleção em um novo método",
+            "Extract method",
+            "Extract selection into a new method",
             "extract",
             requires_selection=True,
         ),
         RefactoringAction(
             "extract_variable",
-            "Extrair variável",
-            "Extrair expressão em uma variável",
+            "Extract variable",
+            "Extract expression into a variable",
             "extract",
             requires_selection=True,
         ),
         RefactoringAction(
             "inline_variable",
-            "Inline variável",
-            "Substituir variável pelo valor",
+            "Inline variable",
+            "Replace variable with its value",
             "inline",
         ),
         RefactoringAction(
             "move_function",
-            "Mover função",
-            "Mover função para outro módulo",
+            "Move function",
+            "Move function to another module",
             "move",
             parameters={"target": "string"},
         ),
         RefactoringAction(
             "convert_to_async",
             "Converter para async",
-            "Converter função para async",
+            "Convert function to async",
             "convert",
         ),
         RefactoringAction(
             "add_type_hints",
             "Adicionar type hints",
-            "Adicionar type hints à função",
+            "Add type hints to function",
             "enhance",
         ),
         RefactoringAction(
             "optimize_imports",
             "Otimizar imports",
-            "Remover não usados e ordenar imports",
+            "Remove unused and sort imports",
             "optimize",
         ),
     ]
@@ -407,28 +407,34 @@ class AuraTUI(App):
             logger.warning(f"Comando desconhecido: {command}")
 
     def compose(self) -> ComposeResult:
-        """Compose TUI layout with 3-column grid and tabbed content."""
+        """Compose the conversation-first TUI.
+
+        The grid declares three columns, but the default is a single column: the
+        conversation. The left (workspace) and right (activity) panels are drawers
+        that stay hidden until opened, and ``decide_tui_layout`` keeps the
+        conversation primary. See ``_apply_layout_plan``.
+        """
         with Grid(id="main_grid"):
             with Container(id="left_panel", classes="panel-container"):
-                yield Static("Contexto", classes="panel-title")
+                yield Static("Context", classes="panel-title")
                 yield AuraStatusSidebar(id="status_sidebar")
                 yield DirectoryTree(".", id="directory_tree", classes="directory-tree")
 
             with Container(id="center_panel", classes="panel-container"):
-                yield Static("Conversa", classes="panel-title")
+                yield Static("Chat", classes="panel-title")
                 with Vertical(id="main_content"):
                     yield AuraTodoPanel(id="todo_panel")
                     yield AuraChatLog(id="chat_log")
                     yield AuraInputBar()
 
             with Container(id="right_panel", classes="panel-container"):
-                yield Static("Atividade", classes="panel-title")
+                yield Static("Activity", classes="panel-title")
                 with TabbedContent(id="right_tabs"):
-                    with TabPane("Eventos", id="events_tab"):
+                    with TabPane("Events", id="events_tab"):
                         yield EventStreamPanel(id="event_stream_panel")
-                    with TabPane("Análise", id="analysis_tab"):
+                    with TabPane("Analysis", id="analysis_tab"):
                         yield Container(id="analysis_panel_slot")
-                    with TabPane("Memória", id="memory_tab"):
+                    with TabPane("Memory", id="memory_tab"):
                         yield Container(id="memory_panel_slot")
                     with TabPane("Workflows", id="workflows_tab"):
                         yield WorkflowMonitor(id="workflow_monitor")
@@ -471,7 +477,7 @@ class AuraTUI(App):
                 content=(
                     "# Bem-vindo ao Aura CLI (Modo TUI)\n\n"
                     "Sistema pronto para comandos.\n\n"
-                    "Comece digitando uma pergunta, use `/help` para orientação "
+                    "Start by typing a question, use `/help` for guidance "
                     "ou `Ctrl+P` para abrir a paleta de comandos."
                 ),
                 sender="Aura",
@@ -508,12 +514,12 @@ class AuraTUI(App):
         elif route is PresentationInputRoute.AGI_WORKER:
             self._activate_agi_worker_automatically(user_input)
         elif route is PresentationInputRoute.DIRECT:
-            self._transition_runtime(RuntimeAction.LOADING, "Processando comando...")
+            self._transition_runtime(RuntimeAction.LOADING, "Processing command...")
             self._active_tui_worker = self.run_worker(
                 self._process_command_worker(user_input), exclusive=True
             )
         else:
-            self.post_message_to_chat("Sistema", "Erro: AppLoop não conectado.")
+            self.post_message_to_chat("System", "Error: AppLoop not connected.")
 
     def _handle_tui_command(self, command: str) -> bool:
         """Handle TUI-specific commands that should be processed locally.
@@ -533,12 +539,10 @@ class AuraTUI(App):
                 path.write_text(constitution, encoding="utf-8")
                 self.post_message_to_chat(
                     "Sistema",
-                    f"✔ Constituição criada e salva em `{path}`.",
+                    f"✔ Constitution created and saved at `{path}`.",
                 )
             else:
-                self.post_message_to_chat(
-                    "Sistema", "Criação da constituição cancelada."
-                )
+                self.post_message_to_chat("Sistema", "Constitution creation cancelled.")
 
         open_screen(self, ScreenId.CONSTITUTION, _on_result)
 
@@ -554,14 +558,14 @@ class AuraTUI(App):
             command: User command to process with AgiWorker
         """
         if not self.app_loop:
-            self.post_message_to_chat("Sistema", "Erro: AppLoop não conectado.")
+            self.post_message_to_chat("System", "Error: AppLoop not connected.")
             return
 
         # Check if AgiWorker is already running
         if self.app_loop.agi_thread and self.app_loop.agi_thread.is_alive():
             self.post_message_to_chat(
                 "Sistema",
-                "Aura AGI já está ativa. Aguarde a conclusão da tarefa atual ou use /agi explicitamente para nova tarefa.",
+                "Aura AGI is already active. Wait for the current task to finish or use /agi explicitly for a new task.",
             )
             return
 
@@ -570,12 +574,12 @@ class AuraTUI(App):
 
         self.post_message_to_chat(
             "Sistema",
-            "◈ Detectando tarefa complexa. Ativando Aura AGI automaticamente...",
+            "◈ Complex task detected. Activating Aura AGI automatically...",
         )
 
         agi_command = f"/agi {command}"
 
-        self._transition_runtime(RuntimeAction.THINKING, "Pensando...")
+        self._transition_runtime(RuntimeAction.THINKING, "Thinking...")
         self._active_tui_worker = self.run_worker(
             self._process_command_worker(agi_command), exclusive=True
         )
@@ -587,7 +591,7 @@ class AuraTUI(App):
             command: User command to process
         """
         if not self.app_loop:
-            self.post_message_to_chat("Sistema", "Erro: AppLoop não conectado.")
+            self.post_message_to_chat("System", "Error: AppLoop not connected.")
             return
 
         chat = self.query_one(AuraChatLog)
@@ -595,12 +599,12 @@ class AuraTUI(App):
 
         self.post_message_to_chat(
             "Sistema",
-            "⚲ Detectando análise de código. Iniciando investigação do codebase...",
+            "⚲ Detecting code analysis. Starting codebase investigation...",
         )
 
         objective = codebase_investigation_objective(command)
 
-        self._transition_runtime(RuntimeAction.LOADING, "Analisando codebase...")
+        self._transition_runtime(RuntimeAction.LOADING, "Analysing codebase...")
         self._active_tui_worker = self.run_worker(
             self._investigate_codebase_worker(objective), exclusive=True
         )
@@ -622,7 +626,7 @@ class AuraTUI(App):
                 project_root = self.app_loop.project_root or project_root
 
             self.post_message_to_chat(
-                "Sistema", f"▥ Iniciando análise do codebase em: {project_root}"
+                "Sistema", f"▥ Starting codebase analysis at: {project_root}"
             )
 
             results = investigate_codebase(
@@ -638,11 +642,11 @@ class AuraTUI(App):
             chat.hide_thinking()
 
             self._display_codebase_investigation_results(results)
-            self._transition_runtime(RuntimeAction.COMPLETED, "Análise concluída")
+            self._transition_runtime(RuntimeAction.COMPLETED, "Analysis complete")
         except KeyboardInterrupt:
-            self._transition_runtime(RuntimeAction.CANCELLED, "Análise cancelada")
+            self._transition_runtime(RuntimeAction.CANCELLED, "Analysis cancelled")
         except Exception as error:
-            self._transition_runtime(RuntimeAction.ERROR, f"Erro: {error}")
+            self._transition_runtime(RuntimeAction.ERROR, f"Error: {error}")
             logger.exception("Codebase investigation failed")
         finally:
             if self.runtime_state.loading_visible:
@@ -686,7 +690,7 @@ class AuraTUI(App):
         Consolidates learned rules from scratchpad into constitution.
         """
         if not self.app_loop:
-            self.post_message_to_chat("Sistema", "Erro: AppLoop não conectado.")
+            self.post_message_to_chat("System", "Error: AppLoop not connected.")
             return
 
         try:
@@ -707,17 +711,17 @@ class AuraTUI(App):
             if outcome.status is ConsolidationStatus.NO_CONSTITUTION:
                 self.post_message_to_chat(
                     "Sistema",
-                    "✖ Nenhuma Constituição encontrada. Use /agi para criar uma.",
+                    "✖ No Constitution found. Use /agi to create one.",
                 )
                 return
             if outcome.status is ConsolidationStatus.NO_PENDING_PAGES:
                 self.post_message_to_chat(
-                    "Sistema", "ℹ️ Nenhuma consolidação pendente no Rascunho."
+                    "System", "ℹ️ No pending consolidations in Scratchpad."
                 )
                 return
             if outcome.status is ConsolidationStatus.NO_RULES:
                 self.post_message_to_chat(
-                    "Sistema", "⚠️ Nenhuma regra encontrada nas consolidações."
+                    "System", "⚠️ No rules found in consolidations."
                 )
                 return
             if outcome.status is ConsolidationStatus.CONSOLIDATED:
@@ -735,7 +739,7 @@ class AuraTUI(App):
 
                 self.post_message_to_chat(
                     "Sistema",
-                    f"✔ Constituição atualizada com {outcome.rule_count} regra(s) consolidadas!",
+                    f"✔ Constitution updated with {outcome.rule_count} consolidated rule(s)!",
                 )
             else:
                 self.post_message_to_chat(
@@ -767,16 +771,16 @@ class AuraTUI(App):
                 command
             )
             if not should_continue:
-                self._transition_runtime(RuntimeAction.STOPPED, "Encerrando")
+                self._transition_runtime(RuntimeAction.STOPPED, "Stopping")
                 self.exit()
             elif self.runtime_state.loading_visible:
-                self._transition_runtime(RuntimeAction.COMPLETED, "Concluído")
+                self._transition_runtime(RuntimeAction.COMPLETED, "Completed")
         except KeyboardInterrupt:
             # User cancellation - don't log as error
-            self._transition_runtime(RuntimeAction.CANCELLED, "Operação cancelada")
+            self._transition_runtime(RuntimeAction.CANCELLED, "Operation cancelled")
             return
         except Exception as error:
-            self._transition_runtime(RuntimeAction.ERROR, f"Erro: {error}")
+            self._transition_runtime(RuntimeAction.ERROR, f"Error: {error}")
             error_handler = get_error_handler() or self.error_handler
             error_handler.handle_error(
                 error,
@@ -910,9 +914,7 @@ class AuraTUI(App):
                 title="Tarefa Selecionada",
             )
         else:
-            self.notify(
-                "Details not found for selected item.", severity="warning"
-            )
+            self.notify("Details not found for selected item.", severity="warning")
 
     def action_toggle_focus_mode(self):
         """Toggle focus mode for currently selected task."""
@@ -950,7 +952,7 @@ class AuraTUI(App):
         self._activate_activity_tab(ActivitySection.ANALYSIS, "analysis_tab")
         self.notify(
             "Use /init to index the project for real code analysis.",
-            title="Análise de Código",
+            title="Code Analysis",
             timeout=5,
         )
 
@@ -1061,7 +1063,7 @@ class AuraTUI(App):
         """Show memory/notebook browser panel."""
         self._ensure_activity_panel(ActivitySection.MEMORY)
         self._activate_activity_tab(ActivitySection.MEMORY, "memory_tab")
-        self.notify("Browser de memória ativado", title="Memória")
+        self.notify("Memory browser activated", title="Memory")
 
     def _activate_activity_tab(self, section: ActivitySection, tab_id: str) -> None:
         """Keep activity state, drawer layout, and visible tab synchronized."""
@@ -1120,15 +1122,15 @@ class AuraTUI(App):
         session = save_tui_session(self)
         if session:
             self.notify(
-                f"Sessão salva: {session.name} ({session.id})",
-                title="Sessão",
+                f"Session saved: {session.name} ({session.id})",
+                title="Session",
             )
 
     def action_new_session(self) -> None:
         from aura_cli.tui.services.tui_session_service import start_new_tui_session
 
         session = start_new_tui_session(self)
-        self.notify(f"Nova sessão: {session.name}", title="Sessão")
+        self.notify(f"New session: {session.name}", title="Session")
 
     def action_show_token_usage(self) -> None:
         from aura_cli.core.stats import get_stats
@@ -1188,12 +1190,12 @@ class AuraTUI(App):
                 suffix = "..." if len(selected_text) > 60 else ""
                 self.notify(
                     f"Copiado: '{preview}{suffix}'",
-                    title="Área de transferência",
+                    title="Clipboard",
                 )
             else:
                 self.notify(
                     "Failed to copy — system clipboard unavailable.",
-                    title="Área de transferência",
+                    title="Clipboard",
                     severity="error",
                 )
             return
@@ -1203,8 +1205,8 @@ class AuraTUI(App):
         content = clipboard.paste_smart()
         if content is None:
             self.notify(
-                "Clipboard vazio ou inacessível.",
-                title="Área de transferência",
+                "Clipboard is empty or inaccessible.",
+                title="Clipboard",
                 severity="warning",
             )
             return
@@ -1230,8 +1232,8 @@ class AuraTUI(App):
                 return
 
         self.notify(
-            "Nenhum campo de entrada ativo para colar o conteúdo.",
-            title="Área de transferência",
+            "No active input field to paste content into.",
+            title="Clipboard",
             severity="warning",
         )
 
@@ -1270,16 +1272,16 @@ class AuraTUI(App):
             and callable(cancel)
         ):
             cancel()
-            self._transition_runtime(RuntimeAction.CANCELLED, "Operação cancelada")
+            self._transition_runtime(RuntimeAction.CANCELLED, "Operation cancelled")
             self._restore_composer_focus()
-            self.notify("Operação cancelada.", title="Execução", severity="warning")
+            self.notify("Operation cancelled.", title="Execution", severity="warning")
 
     def action_toggle_theme_mode(self) -> None:
         from aura_cli.tui.styles.themes import get_theme_manager, toggle_theme
 
         get_theme_manager(self)
         theme = toggle_theme()
-        self.notify(f"Tema: {theme.name}", title="Aparência")
+        self.notify(f"Tema: {theme.name}", title="Appearance")
 
     def action_cycle_theme(self) -> None:
         from aura_cli.tui.styles.themes import THEMES, get_theme_manager
@@ -1295,7 +1297,7 @@ class AuraTUI(App):
             idx = -1
         next_name = names[(idx + 1) % len(names)]
         manager.set_theme(next_name)
-        self.notify(f"Tema: {next_name}", title="Aparência")
+        self.notify(f"Tema: {next_name}", title="Appearance")
 
     def action_push_tools_menu_screen(self) -> None:
         """Push optional tool launcher menu onto stack."""
@@ -1318,7 +1320,7 @@ class AuraTUI(App):
             self._interrupt_external_session()
         except FileNotFoundError as e:
             self._fail_external_session(str(e))
-            self.notify(f"AuraPaint não encontrado: {e}", severity="error")
+            self.notify(f"AuraPaint not found: {e}", severity="error")
         except Exception as e:
             self._fail_external_session(str(e))
             error_handler = get_error_handler() or self.error_handler
@@ -1393,7 +1395,7 @@ class AuraTUI(App):
             logger.warning(f"Unsafe command blocked in TUI: {command[:50]}...")
             self.notify(
                 f"Command blocked for security: {reason}",
-                title="Segurança",
+                title="Security",
                 severity="error",
             )
             return
@@ -1500,7 +1502,7 @@ class AuraTUI(App):
                     focus_returned=self._restore_composer_focus(),
                 )
             self.notify(
-                f"{self.external_tool_session.tool_name} interrompido pelo usuário.",
+                f"{self.external_tool_session.tool_name} interrupted by user.",
                 title="Ferramenta externa",
                 severity="warning",
             )

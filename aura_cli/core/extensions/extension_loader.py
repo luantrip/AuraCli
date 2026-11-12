@@ -86,21 +86,21 @@ class ExtensionLoader:
         path = Path(extension_path)
 
         if not path.exists():
-            logger.error(f"Extensão não encontrada: {extension_path}")
+            logger.error(f"Extension not found: {extension_path}")
             return None
 
         path_abs = path.resolve()
         is_trusted = self._is_trusted_path(path_abs)
         if not is_trusted and not self.allow_untrusted_extensions:
             logger.error(
-                f"Extensão bloqueada por origem não confiável: {path_abs}. "
-                "Use allow_untrusted_extensions=True somente para código "
+                f"Extension blocked by untrusted origin: {path_abs}. "
+                "Use allow_untrusted_extensions=True only for code "
                 "externo previamente auditado."
             )
             return None
         if not is_trusted:
             logger.warning(
-                f"Executando extensão externa explicitamente autorizada: {path_abs}"
+                f"Running explicitly authorized external extension: {path_abs}"
             )
 
         metadata = self._load_metadata(path)
@@ -140,7 +140,7 @@ class ExtensionLoader:
                 if hasattr(module, "initialize"):
                     module.initialize()
 
-                logger.info(f"Extensão '{metadata.name}' carregada")
+                logger.info(f"Extension '{metadata.name}' loaded")
             else:
                 logger.error(f"Error loading module: {extension_path}")
                 return None
@@ -198,7 +198,7 @@ class ExtensionLoader:
             extension = self.load_extension(str(py_file))
             if extension:
                 extensions.append(extension)
-        logger.info(f"{len(extensions)} extensões carregadas")
+        logger.info(f"{len(extensions)} extensions loaded")
         return extensions
 
     def get_extension(self, name: str) -> Optional[Extension]:

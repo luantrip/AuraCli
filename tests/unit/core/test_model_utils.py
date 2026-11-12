@@ -7,9 +7,13 @@ from aura_cli.core.llm.model_utils import (
     get_models_for_provider,
     get_provider_from_model,
     get_valid_models,
+    is_known_model,
     is_valid_model_format,
     normalize_model_name,
     normalize_provider_name,
+    provider_for_model,
+    provider_has_key,
+    resolve_default_model,
     resolve_model_option,
 )
 
@@ -216,3 +220,80 @@ class TestIsValidModelFormat:
 
     def test_empty_invalid(self):
         assert is_valid_model_format("") is False
+
+
+class TestOnlyConfiguredFilter:
+    """get_valid_models(only_configured=True) must filter by configured keys."""
+
+    def test_no_args_returns_full_catalog(self):
+        # Backward compatibility: existing callers pass no args.
+        assert len(get_valid_models()) > 0
+
+    def test_only_configured_filters_to_provider_with_key(self):
+        models = get_valid_models(
+            api_keys={"CEREBRAS_API_KEY": "x"}, only_configured=True
+        )
+        assert models  # at least the cerebras models
+        providers = {info["provider"] for info in models.values()}
+        assert providers == {"Cerebras"}
+
+    def test_only_configured_without_keys_is_empty(self):
+        assert get_valid_models(api_keys={}, only_configured=True) == {}
+
+    def test_multiple_providers(self):
+        models = get_valid_models(
+            api_keys={"CEREBRAS_API_KEY": "x", "GROQ_API_KEY": "y"},
+            only_configured=True,
+        )
+        providers = {info["provider"] for info in models.values()}
+        assert providers == {"Cerebras", "Groq"}
+
+
+class TestIsKnownModel:
+    def test_known_model(self):
+        assert is_known_model("cerebras/gpt-oss-120b") is True
+
+    def test_unknown_model(self):
+        assert is_known_model("fake/does-not-exist") is False
+
+    def test_empty_or_none(self):
+        assert is_known_model("") is False
+        assert is_known_model(None) is False
+
+
+class TestProviderForModel:
+    def test_cerebras(self):
+        assert provider_for_model("cerebras/gpt-oss-120b") == "cerebras"
+
+    def test_groq(self):
+        assert provider_for_model("groq/openai/gpt-oss-20b") == "groq"
+
+    def test_gemini(self):
+        assert provider_for_model("gemini/gemini-2.5-flash") == "gemini"
+
+    def test_nvidia(self):
+        assert provider_for_model("nvidia/nvidia/nemotron") == "nvidia"
+
+    def test_unknown(self):
+        assert provider_for_model("mystery-model") == ""
+
+
+class TestProviderHasKey:
+    def test_true_when_key_present(self):
+        assert provider_has_key("cerebras", {"CEREBRAS_API_KEY": "x"}) is True
+
+    def test_false_when_absent(self):
+        assert provider_has_key("cerebras", {}) is False
+        assert provider_has_key("cerebras", None) is False
+
+
+class TestResolveDefaultModel:
+    def test_prefers_default_when_provider_configured(self):
+        assert resolve_default_model({"CEREBRAS_API_KEY": "x"}) == "cerebras/gpt-oss-120b"
+
+    def test_falls_back_to_configured_provider(self):
+        # No cerebras key, but gemini is configured.
+        assert resolve_default_model({"GOOGLE_API_KEY": "x"}).startswith("gemini/")
+
+    def test_no_keys_returns_default(self):
+        assert resolve_default_model({}) == "cerebras/gpt-oss-120b"

@@ -20,7 +20,6 @@ class ToolExecutionError(AuraCLIError):
     def __init__(
         self, tool_name: str, message: str, original_error: Optional[Exception] = None
     ):
-        """Initialize the widget."""
         super().__init__(f"Tool '{tool_name}' failed: {message}")
         self.tool_name = tool_name
         self.original_error = original_error
@@ -32,7 +31,6 @@ class WorkerError(AuraCLIError):
     def __init__(
         self, worker_name: str, message: str, original_error: Optional[Exception] = None
     ):
-        """Initialize the instance."""
         super().__init__(f"Worker '{worker_name}' error: {message}")
         self.worker_name = worker_name
         self.original_error = original_error
@@ -47,7 +45,6 @@ class LLMError(AuraCLIError):
         model: Optional[str] = None,
         original_error: Optional[Exception] = None,
     ):
-        """Initialize the instance."""
         super().__init__(f"LLM error: {message}")
         self.model = model
         self.original_error = original_error
@@ -63,7 +60,6 @@ class RateLimitError(LLMError):
         retry_after: Optional[int] = None,
         original_error: Optional[Exception] = None,
     ):
-        """Initialize the instance."""
         super().__init__(message, model, original_error)
         self.retry_after = retry_after  # Seconds to wait before retry
 
@@ -78,7 +74,6 @@ class ThreadError(AuraCLIError):
     def __init__(
         self, thread_name: str, message: str, original_error: Optional[Exception] = None
     ):
-        """Initialize the instance."""
         super().__init__(f"Thread '{thread_name}' error: {message}")
         self.thread_name = thread_name
         self.original_error = original_error
@@ -98,7 +93,6 @@ class FileOperationError(AuraCLIError):
         message: str,
         original_error: Optional[Exception] = None,
     ):
-        """Initialize the instance."""
         super().__init__(f"File {operation} failed for '{file_path}': {message}")
         self.operation = operation
         self.file_path = file_path
@@ -111,7 +105,6 @@ class CommandError(AuraCLIError):
     def __init__(
         self, command: str, message: str, original_error: Optional[Exception] = None
     ):
-        """Initialize the widget."""
         super().__init__(f"Command '{command}' failed: {message}")
         self.command = command
         self.original_error = original_error

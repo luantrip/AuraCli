@@ -49,7 +49,7 @@ class CommandHandlerMixin:
         self.stats.skip_confirmations = not self.stats.skip_confirmations
         status = "ativado" if self.stats.skip_confirmations else "desativado"
         self.ui.display_info(
-            f"Execução sem confirmação {status}. Use Shift+Tab ou /auto-run para alternar."
+            f"Execution without confirmation {status}. Use Shift+Tab or /auto-run to toggle."
         )
         return True
 
@@ -88,11 +88,11 @@ class CommandHandlerMixin:
             self.ui.display_error(f"Failed to load TUI components: {e}")
             return True
         except (AttributeError, RuntimeError) as e:
-            self.ui.display_error(f"Erro na TUI: {e}")
+            self.ui.display_error(f"TUI error: {e}")
             self.logger.error(f"TUI launch error: {e}", exc_info=True)
             return True
         except Exception as e:
-            self.ui.display_error(f"Erro inesperado na TUI: {e}")
+            self.ui.display_error(f"Unexpected TUI error: {e}")
             self.logger.error(f"Unexpected TUI error: {e}", exc_info=True)
             return True
 
@@ -156,7 +156,7 @@ class CommandHandlerMixin:
                     pass
                 else:
                     self.ui.display_warning(
-                        "Agente de constituição não está ativo ou não respondeu. Tente /agi novamente para iniciar a configuração da constituição."
+                        "Constitution agent is not active or did not respond. Try /agi again to initialize it."
                     )
                 return True
             else:
@@ -224,7 +224,7 @@ class CommandHandlerMixin:
                     pass
                 else:
                     self.ui.display_warning(
-                        "Agente de constituição não está ativo ou não respondeu. Tente /agi novamente para iniciar a configuração da constituição."
+                        "Constitution agent is not active or did not respond. Try /agi again to initialize it."
                     )
                 return True
             else:

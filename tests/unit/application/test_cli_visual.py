@@ -25,8 +25,8 @@ def test_visual_acceptance_widths(width, density, preview, columns) -> None:
 
 
 def test_shared_vocabulary() -> None:
-    assert cli_label("operations") == "Operações"
-    assert cli_label("parallel_work") == "Trabalho paralelo"
+    assert cli_label("operations") == "Operations"
+    assert cli_label("parallel_work") == "Parallel work"
 
 
 def test_unknown_vocabulary_is_explicit() -> None:

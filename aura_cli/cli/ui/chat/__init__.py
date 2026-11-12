@@ -10,25 +10,18 @@ This module provides a complete, modern chat interface with:
 - Code blocks with syntax highlighting
 """
 
-from aura_cli.cli.ui.components.animated_spinner import (
-    AnimatedSpinner,
-    SpinnerConfig,
-    SpinnerFactory,
-    SpinnerStyle,
+from aura_cli.cli.ui.components.agent.streaming_renderer import (
+    StreamingConfig,
+    StreamingTextRenderer,
+    TypingIndicator,
+    create_streaming_renderer,
 )
-from aura_cli.cli.ui.components.code_block_enhanced import (
+from aura_cli.cli.ui.components.display.code_block_enhanced import (
     CodeBlockConfig,
     CodeBlockEnhanced,
     render_code,
 )
-from aura_cli.cli.ui.components.context_menu import (
-    ActionType,
-    ContextAction,
-    ContextMenu,
-    QuickReactions,
-    create_message_actions,
-)
-from aura_cli.cli.ui.components.message_bubble import (
+from aura_cli.cli.ui.components.display.message_bubble import (
     MessageBubble,
     MessageMetadata,
     MessageType,
@@ -36,11 +29,18 @@ from aura_cli.cli.ui.components.message_bubble import (
     StreamingBubble,
     ThinkingBubble,
 )
-from aura_cli.cli.ui.components.streaming_renderer import (
-    StreamingConfig,
-    StreamingTextRenderer,
-    TypingIndicator,
-    create_streaming_renderer,
+from aura_cli.cli.ui.components.input.context_menu import (
+    ActionType,
+    ContextAction,
+    ContextMenu,
+    QuickReactions,
+    create_message_actions,
+)
+from aura_cli.cli.ui.components.layout.animated_spinner import (
+    AnimatedSpinner,
+    SpinnerConfig,
+    SpinnerFactory,
+    SpinnerStyle,
 )
 from aura_cli.cli.ui.core.avatar_system import (
     Avatar,

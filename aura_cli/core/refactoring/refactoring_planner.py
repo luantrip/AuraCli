@@ -41,23 +41,23 @@ def plan_refactoring(
         file_pattern: Glob pattern to filter files (default: '*.py').
         max_results: Maximum number of matches to include in the plan.
     """
-    logger.info(f"Planejando refatoração: {pattern} -> {replacement}")
-    logger.info(f"Estratégia: {strategy}, Escopo: {scope}")
+    logger.info(f"Planning refactoring: {pattern} -> {replacement}")
+    logger.info(f"Strategy: {strategy}, Scope: {scope}")
 
-    logger.info("Buscando ocorrências...")
+    logger.info("Searching occurrences...")
     file_extensions = [".py"] if file_pattern == "*.py" else None
     occurrences_text = find_in_files(pattern, scope, file_extensions, max_results)
     occurrences_list = _parse_occurrences(occurrences_text, max_results)
 
-    logger.info(f"Encontradas {len(occurrences_list)} ocorrências")
+    logger.info(f"Found {len(occurrences_list)} occurrences")
 
     if not occurrences_list:
-        logger.warning("Nenhuma ocorrência encontrada")
+        logger.warning("No occurrences found")
         plan = RefactoringPlan()
-        plan.description = f"Nenhuma ocorrência de '{pattern}' encontrada"
+        plan.description = f"No occurrences of '{pattern}' found"
         return plan
 
-    logger.info("Analisando dependências...")
+    logger.info("Analyzing dependencies...")
     analyzer = DependencyAnalyzer(scope)
     analyzer.analyze()
 
@@ -76,10 +76,10 @@ def plan_refactoring(
     plan = RefactoringPlan()
     plan.strategy = strategy
     plan.affected_files = sorted(affected_files)
-    plan.description = f"Refatoração: '{pattern}' -> '{replacement}' ({len(occurrences_list)} ocorrências)"
+    plan.description = f"Refactoring: '{pattern}' -> '{replacement}' ({len(occurrences_list)} occurrences)"
 
     if strategy == "by_dependency":
-        logger.info("Ordenando por dependências...")
+        logger.info("Sorting by dependencies...")
         plan.steps = _order_by_dependencies(occurrences_list, impact_analysis, analyzer)
     elif strategy == "incremental":
         logger.info("Criando batches incrementais...")
@@ -121,7 +121,7 @@ def plan_file_refactoring(
     """Plan a refactoring for a specific file."""
     plan = RefactoringPlan()
     plan.strategy = strategy
-    plan.description = f"Refatoração de arquivo: {file_path}"
+    plan.description = f"File refactoring: {file_path}"
 
     impact = get_impact_analysis(file_path, "modify", scope)
     plan.affected_files = impact["affected_files"]
@@ -156,7 +156,7 @@ def analyze_impact_for_refactoring(
             "occurrences": 0,
             "files_affected": 0,
             "risk_level": "low",
-            "message": "Nenhuma ocorrência encontrada",
+            "message": "No occurrences found",
         }
 
     analyzer = DependencyAnalyzer(scope)

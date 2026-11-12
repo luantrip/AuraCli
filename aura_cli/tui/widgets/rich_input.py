@@ -132,7 +132,7 @@ class RichPromptInput(Static):
     BINDINGS: ClassVar[list] = [
         Binding("ctrl+e", "open_editor", "External Editor", show=False),
         Binding("ctrl+v", "smart_paste", "Smart Paste", show=False),
-        Binding("ctrl+u", "clear_input", "Limpar", show=False),
+        Binding("ctrl+u", "clear_input", "Clear", show=False),
         Binding("up", "history_prev", "Previous", show=False),
         Binding("down", "history_next", "Next", show=False),
     ]
@@ -145,7 +145,6 @@ class RichPromptInput(Static):
         """Emitted when prompt is submitted."""
 
         def __init__(self, content: str, parts: List[PromptPart]):
-            """Initialize the instance."""
             super().__init__()
             self.content = content
             self.parts = parts
@@ -155,7 +154,6 @@ class RichPromptInput(Static):
         """Emitted when a part is added."""
 
         def __init__(self, part: PromptPart):
-            """Initialize the instance."""
             super().__init__()
             self.part = part
 
@@ -434,7 +432,7 @@ class RichPromptInput(Static):
         """Get current parts."""
         return self.state.parts.copy()
 
-    def focus(self) -> None:  # type: ignore[override]
+    def focus(self) -> None:  # type: ignore[override]  # Textual Widget.focus signature override
         """Focus the input field."""
         self.query_one("#rich_input_field", Input).focus()
 

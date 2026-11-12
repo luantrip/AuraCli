@@ -43,7 +43,9 @@ from textual.reactive import var
 from textual.widget import Widget
 from textual.widgets import Button, Input, RadioButton, RadioSet, Static
 from textual.widgets._header import HeaderIcon
-from textual.worker import get_current_worker  # type: ignore
+from textual.worker import (
+    get_current_worker,  # type: ignore[attr-defined]  # textual internal, no public stub
+)
 
 from aura_cli.application.paint.action import Action
 from aura_cli.application.paint.ansi_art_document import (
@@ -1573,7 +1575,7 @@ Columns: {len(self.palette) // 2}
                     self.get_widget_by_id("status_text", Static).update(message)
                 return False
             # Avoid redundant encoding/decoding by keeping as bytes when possible
-            import pyperclip  # type: ignore
+            import pyperclip  # type: ignore[import-untyped]  # no stub for pyperclip
 
             # Try to copy as image format if content is image bytes
             if isinstance(content, bytes):
@@ -1609,7 +1611,7 @@ Columns: {len(self.palette) // 2}
     def action_paste(self) -> None:
         """Paste the clipboard (ANSI art allowed), either as a selection, or into a textbox."""
         try:
-            import pyperclip  # type: ignore
+            import pyperclip  # type: ignore[import-untyped]  # no stub for pyperclip
 
             # Try to get image from clipboard first (if available)
             try:
@@ -1747,7 +1749,7 @@ Columns: {len(self.palette) // 2}
                 "Foreground color: Use color picker\n"
                 "Background color: Use color picker\n"
                 "Character: Use character selector\n\n"
-                "Opções avançadas de formatação disponíveis via color picker e character selector."
+                "Advanced formatting options available via color picker and character selector."
             ),
             "ok",
         )
@@ -2316,7 +2318,7 @@ Columns: {len(self.palette) // 2}
         self.canvas = self.query_one("#canvas", Canvas)
         self.canvas.image = self.image
         self.editing_area = self.query_one("#editing_area", Container)
-        self.query_one(HeaderIcon).icon = header_icon_text  # type: ignore
+        self.query_one(HeaderIcon).icon = header_icon_text  # type: ignore[attr-defined]  # Textual widget attr
 
         # NEW: Initialize layer stack
         self.layer_stack = LayerStack(width=self.image.width, height=self.image.height)
@@ -2948,7 +2950,7 @@ Columns: {len(self.palette) // 2}
             import logging as _log
 
             _log.getLogger(__name__).debug(
-                f"Ferramenta não implementada no loop de desenho: {self.selected_tool}"
+                f"Tool not implemented in the drawing loop: {self.selected_tool}"
             )
 
     def on_canvas_tool_update(self, event: Canvas.ToolUpdate) -> None:
@@ -3446,7 +3448,7 @@ Columns: {len(self.palette) // 2}
     def on_key(self, event: events.Key) -> None:
         """Called when the user presses a key."""
 
-        if len(self.screen_stack) > 1:  # type: ignore
+        if len(self.screen_stack) > 1:  # type: ignore[attr-defined]  # Textual App internal attr
             # Avoid error if command palette is open, and you press an arrow key,
             # thereby creating a cursor and switching to the Text tool.
             # (NoMatches: No nodes match <DOMQuery query='ToolsBox'>)
@@ -3578,7 +3580,7 @@ Columns: {len(self.palette) // 2}
     def on_mouse_down(self, event: events.MouseDown) -> None:
         """Called when the mouse button gets pressed."""
 
-        if len(self.screen_stack) > 1:  # type: ignore
+        if len(self.screen_stack) > 1:  # type: ignore[attr-defined]  # Textual App internal attr
             # Avoid error if clicking to close the command palette
             return
 
@@ -3636,11 +3638,11 @@ Columns: {len(self.palette) // 2}
                         if hasattr(widget, "border_title")
                         else None,
                     )
-                )  # type: ignore
+                )  # type: ignore[return-value]  # Textual internal return type
                 widget.styles.background = Color.from_hsl(i / 10, 1, 0.3)
                 if not event.ctrl:
                     widget.styles.border = ("round", Color.from_hsl(i / 10, 1, 0.5))
-                    widget.border_title = widget.css_identifier_styled  # type: ignore
+                    widget.border_title = widget.css_identifier_styled  # type: ignore[attr-defined]  # Textual widget attr
 
 
 # `textual run --dev src.textual_paint.paint` will search for a

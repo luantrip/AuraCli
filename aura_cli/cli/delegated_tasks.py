@@ -94,7 +94,7 @@ class DelegatedTaskManager:
         """Record cancellation; request worker cancellation when supported."""
         task = self.resolve_task(task_id=task_id)
         if task is None:
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}'."
+            return f"No delegated task found for task_id='{task_id}'."
         worker = task.get("worker_ref")
         cancel = getattr(worker, "cancel", None)
         if callable(cancel):
@@ -106,7 +106,7 @@ class DelegatedTaskManager:
         """Record a verified observation timeout without claiming worker failure."""
         task = self.resolve_task(task_id=task_id)
         if task is None:
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}'."
+            return f"No delegated task found for task_id='{task_id}'."
         self._registry.mark_terminal(
             task,
             DelegatedTaskStatus.TIMED_OUT,
@@ -127,7 +127,7 @@ class DelegatedTaskManager:
     def list_tasks(self) -> str:
         """List known delegated AGI/Ops tasks for follow-up."""
         if not self._registry.tasks:
-            return "Nenhuma tarefa delegada foi registrada nesta sessão."
+            return "No delegated tasks registered in this session."
 
         lines = []
         for info in self._registry.sorted_tasks():
@@ -142,12 +142,12 @@ class DelegatedTaskManager:
     def get_latest_task(self, agent_type: str = "") -> str:
         """Return the latest delegated task, optionally filtered by agent type."""
         if not self._registry.tasks:
-            return "Nenhuma tarefa delegada foi registrada nesta sessão."
+            return "No delegated tasks registered in this session."
 
         candidates = self._registry.sorted_tasks(agent_type)
 
         if not candidates:
-            return f"Nenhuma tarefa delegada encontrada para agent_type='{agent_type}'."
+            return f"No delegated task found for agent_type='{agent_type}'."
 
         latest = candidates[0]
         return self.get_task_status(task_id=str(latest["task_id"]))
@@ -155,7 +155,7 @@ class DelegatedTaskManager:
     def summarize_tasks(self) -> str:
         """Return a compact summary of delegated-task counts and latest entries."""
         if not self._registry.tasks:
-            return "Nenhuma tarefa delegada foi registrada nesta sessão."
+            return "No delegated tasks registered in this session."
 
         counts = self._registry.counts()
         latest_any = self.get_latest_task()
@@ -173,8 +173,8 @@ class DelegatedTaskManager:
         task_info = self.resolve_task(task_id=task_id, agent_type=agent_type)
         if not task_info:
             if not self._registry.tasks:
-                return "Nenhuma tarefa delegada foi registrada nesta sessão."
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}' agent_type='{agent_type}'."
+                return "No delegated tasks registered in this session."
+            return f"No delegated task found for task_id='{task_id}' agent_type='{agent_type}'."
 
         self.reconcile_state(task_info)
 
@@ -197,8 +197,8 @@ class DelegatedTaskManager:
         task_info = self.resolve_task(task_id=task_id, agent_type=agent_type)
         if not task_info:
             if not self._registry.tasks:
-                return "Nenhuma tarefa delegada foi registrada nesta sessão."
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}' agent_type='{agent_type}'."
+                return "No delegated tasks registered in this session."
+            return f"No delegated task found for task_id='{task_id}' agent_type='{agent_type}'."
 
         status_line = self.get_task_status(task_id=str(task_info["task_id"]))
         return format_delegated_task_summary(task_info, status_line)
@@ -208,8 +208,8 @@ class DelegatedTaskManager:
         task_info = self.resolve_task(task_id=task_id, agent_type=agent_type)
         if not task_info:
             if not self._registry.tasks:
-                return "Nenhuma tarefa delegada foi registrada nesta sessão."
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}' agent_type='{agent_type}'."
+                return "No delegated tasks registered in this session."
+            return f"No delegated task found for task_id='{task_id}' agent_type='{agent_type}'."
 
         self.reconcile_state(task_info)
         final_result = task_info.get("final_result") or {}
@@ -233,8 +233,8 @@ class DelegatedTaskManager:
         task_info = self.resolve_task(task_id=task_id, agent_type=agent_type)
         if not task_info:
             if not self._registry.tasks:
-                return "Nenhuma tarefa delegada foi registrada nesta sessão."
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}' agent_type='{agent_type}'."
+                return "No delegated tasks registered in this session."
+            return f"No delegated task found for task_id='{task_id}' agent_type='{agent_type}'."
 
         self.reconcile_state(task_info)
         final_result = task_info.get("final_result") or {}
@@ -245,7 +245,7 @@ class DelegatedTaskManager:
             or final_error.get("snapshot_path")
         )
         if not snapshot_path:
-            return "A tarefa delegada não possui snapshot associado no notebook."
+            return "The delegated task has no associated snapshot in the notebook."
 
         try:
             content = self._read_snapshot(str(snapshot_path))
@@ -253,7 +253,7 @@ class DelegatedTaskManager:
             return f"Failed to read delegated task snapshot: {e}"
 
         if not content:
-            return f"Snapshot vazio ou indisponível: {snapshot_path}"
+            return f"Empty or unavailable snapshot: {snapshot_path}"
 
         truncated = content[:max_chars]
         if len(content) > max_chars:
@@ -273,8 +273,8 @@ class DelegatedTaskManager:
         task_info = self.resolve_task(task_id=task_id, agent_type=agent_type)
         if not task_info:
             if not self._registry.tasks:
-                return "Nenhuma tarefa delegada foi registrada nesta sessão."
-            return f"Nenhuma tarefa delegada encontrada para task_id='{task_id}' agent_type='{agent_type}'."
+                return "No delegated tasks registered in this session."
+            return f"No delegated task found for task_id='{task_id}' agent_type='{agent_type}'."
 
         context_block = build_delegated_task_context(task_info)
 
@@ -291,6 +291,6 @@ class DelegatedTaskManager:
                 stats._pending_context_files = 1
 
         return (
-            f"Contexto da tarefa delegada preparado para o próximo turno do chat.\n"
+            f"Delegated task context prepared for the next chat turn.\n"
             f"{context_block}"
         )

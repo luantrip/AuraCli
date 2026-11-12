@@ -102,7 +102,7 @@ class TestEditFile:
 
         result = edit_file(str(test_file), "World", "Python")
 
-        assert "sucesso" in result.lower() or "editado" in result.lower()
+        assert "edited successfully" in result.lower() or "content updated" in result.lower()
         assert "Hello Python" in test_file.read_text(encoding="utf-8")
 
     def test_edit_file_content_not_found(self, tmp_path, monkeypatch):

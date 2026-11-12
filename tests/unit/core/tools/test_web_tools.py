@@ -138,7 +138,7 @@ class TestWebSearch:
 
         assert "1." in result
         assert "Link:" in result
-        assert "Descrição:" in result
+        assert "Description:" in result
 
     @patch("aura_cli.core.tools.web._search_ddgs")
     @patch("aura_cli.core.tools.web._search_google")

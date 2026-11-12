@@ -73,7 +73,7 @@ def test_legacy_system_still_available():
         from aura_cli.core.agents.specialized_agents.code_agent import CodeAgent
         from aura_cli.core.agents.specialized_agents.refactor_agent import RefactorAgent
         from aura_cli.core.agents.specialized_agents.review_agent import ReviewAgent
-        from aura_cli.core.agents.specialized_agents.test_agent import TestAgent
+        from aura_cli.core.agents.specialized_agents.tester_agent import TestAgent
 
         # Todos devem estar disponíveis
         assert CodeAgent is not None

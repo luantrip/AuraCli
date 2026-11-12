@@ -129,7 +129,7 @@ class TestCompleteTask:
         t.mark_task_done.return_value = (True, "Task A")
         t.get_current_task.return_value = None
         result = self._run(t, task_id=0)
-        assert "concluídas" in result or "Task A" in result
+        assert "completed" in result.lower() or "Task A" in result
 
     def test_by_id_shows_next_task(self):
         t = _make_tracker(stats={"total": 3, "done": 1})
@@ -149,7 +149,7 @@ class TestCompleteTask:
         t = _make_tracker()
         t.mark_task_done.return_value = (False, "")
         result = self._run(t, task_id=99)
-        assert "possível" in result or "Erro" in result or "correto" in result
+        assert "could not" in result.lower() or "error" in result.lower() or "correct" in result.lower()
 
     def test_no_args_returns_error(self):
         t = _make_tracker()
@@ -176,7 +176,7 @@ class TestViewTasks:
     def test_no_tasks(self):
         t = _make_tracker()
         result = self._run(t)
-        assert "Nenhuma" in result
+        assert "No tasks" in result
 
     def test_with_tasks(self):
         task_a = _mock_task(0, "Do thing")
@@ -247,7 +247,7 @@ class TestGetNextTask:
     def test_all_done(self):
         t = _make_tracker(stats={"total": 2, "done": 2})
         result = self._run(t)
-        assert "concluídas" in result or "🎉" in result
+        assert "completed" in result.lower() or "🎉" in result
 
     def test_exception_returns_error(self):
         t = _make_tracker()
@@ -274,7 +274,7 @@ class TestStartAutonomousMode:
     def test_all_done(self):
         t = _make_tracker(stats={"total": 2, "done": 2})
         result = self._run(t)
-        assert "concluídas" in result or "🎉" in result
+        assert "completed" in result.lower() or "🎉" in result
 
     def test_has_pending(self):
         t = _make_tracker(
@@ -282,7 +282,7 @@ class TestStartAutonomousMode:
         )
         result = self._run(t)
         assert "First task" in result
-        assert "AUTÔNOMO" in result or "autônomo" in result.lower()
+        assert "AUTONOMOUS" in result or "autonomous" in result.lower()
 
     def test_exception_returns_error(self):
         t = _make_tracker()
@@ -304,7 +304,7 @@ class TestGetAutomationStatus:
     def test_no_tasks(self):
         t = _make_tracker()
         result = self._run(t)
-        assert "Nenhuma" in result
+        assert "No tasks" in result
 
     def test_progress_bar(self):
         done_tasks = [_mock_task(i, f"done {i}") for i in range(3)]
@@ -328,7 +328,7 @@ class TestGetAutomationStatus:
             done=done_tasks,
         )
         result = self._run(t)
-        assert "CONCLUÍDAS" in result or "concluídas" in result.lower()
+        assert "COMPLETED" in result or "completed" in result.lower()
 
     def test_many_done_tasks_truncated(self):
         done_tasks = [_mock_task(i, f"done {i}") for i in range(10)]

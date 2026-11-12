@@ -38,7 +38,7 @@ class FatalErrorDialog(BaseDialog):
             on_report: Callback to report bug
             on_exit: Callback to exit application
         """
-        super().__init__(title="Erro fatal", **kwargs)
+        super().__init__(title="Fatal error", **kwargs)
         self.error_info = error_info
         self._on_reset = on_reset
         self._on_report = on_report
@@ -74,7 +74,7 @@ class FatalErrorDialog(BaseDialog):
         # Help text
         content.append(
             Static(
-                "Você pode tentar resetar a aplicação, relatar este bug ou sair.",
+                "You can try resetting the application, reporting this bug or quitting.",
                 classes="error-help",
             )
         )
@@ -86,12 +86,12 @@ class FatalErrorDialog(BaseDialog):
         actions = []
 
         if self._on_reset:
-            actions.append(("Resetar aplicação", "reset", "warning"))
+            actions.append(("Reset application", "reset", "warning"))
 
         if self._on_report:
-            actions.append(("Relatar bug", "report", "primary"))
+            actions.append(("Report bug", "report", "primary"))
 
-        actions.append(("Sair", "exit", "error"))
+        actions.append(("Exit", "exit", "error"))
 
         return actions
 
@@ -122,7 +122,6 @@ class ErrorNotification(Static):
     """
 
     def __init__(self, **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self._message = ""
 

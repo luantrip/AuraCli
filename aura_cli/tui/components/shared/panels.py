@@ -35,7 +35,6 @@ class CollapsiblePanel(Widget):
         """Message when panel is toggled."""
 
         def __init__(self, collapsed: bool) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.collapsed = collapsed
 
@@ -50,14 +49,13 @@ class CollapsiblePanel(Widget):
         icon_collapsed: str = "▶",
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.title = title
         self.collapsed = collapsed
         self.collapsible = collapsible
         self._icon_expanded = icon_expanded
         self._icon_collapsed = icon_collapsed
-        self._content_widgets = []  # type: ignore[var-annotated]
+        self._content_widgets = []  # type: ignore[var-annotated]  # List[Widget] narrowed at use
 
     def compose(self) -> ComposeResult:
         """Compose the widget layout."""
@@ -103,7 +101,7 @@ class CollapsiblePanel(Widget):
         self.collapsed = not self.collapsed
         self.post_message(self.Toggled(self.collapsed))
 
-    def expand(self) -> None:  # type: ignore[override]
+    def expand(self) -> None:  # type: ignore[override]  # Textual widget override
         """Expand the panel."""
         self.collapsed = False
 
@@ -140,7 +138,6 @@ class SplitPanel(Widget):
         """Message when panel is resized."""
 
         def __init__(self, ratio: float) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.ratio = ratio
 
@@ -154,7 +151,6 @@ class SplitPanel(Widget):
         resizable: bool = True,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.direction = direction
         self.ratio = ratio

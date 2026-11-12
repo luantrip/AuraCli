@@ -143,7 +143,7 @@ class CommunicationChannel:
                     )
                 else:
                     logger.warning(
-                        f"Agent destinatário {receiver_id} não está registrado no canal"
+                        f"Recipient agent {receiver_id} is not registered in the channel"
                     )
             else:
                 sent_count = 0
@@ -167,7 +167,7 @@ class CommunicationChannel:
     ) -> Optional[AgentMessage]:
         """Receive a message by ID, or None if not found."""
         if agent_id not in self.message_queues:
-            logger.warning(f"Agent {agent_id} não está registrado no canal")
+            logger.warning(f"Agent {agent_id} is not registered in the channel")
             return None
 
         try:
@@ -205,8 +205,8 @@ class CommunicationChannel:
 
         if receiver_id is None:
             logger.warning(
-                f"Mensagem original {original_message_id} não encontrada; "
-                "enviando resposta sem destinatário específico"
+                f"Original message {original_message_id} not found; "
+                "sending response without specific recipient"
             )
 
         return self.send_message(

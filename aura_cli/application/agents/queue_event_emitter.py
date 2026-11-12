@@ -140,6 +140,7 @@ class QueueAgiAdapter:
         details: Optional[Dict[str, Any]] = None,
         **_kwargs,
     ) -> None:
+        """Emit a lifecycle event onto the status queue."""
         from aura_cli.application.agents.events import create_lifecycle_event
 
         self.status_queue.put(
@@ -188,6 +189,7 @@ class QueueAgiAdapter:
     def error_task(
         self, error: Any, *, details: Optional[Dict[str, Any]] = None
     ) -> None:
+        """Emit an error event for a failed task."""
         if self._terminal_event_emitted:
             return
         self._terminal_event_emitted = True
@@ -202,6 +204,7 @@ class QueueAgiAdapter:
         )
 
     def cancel_task(self, reason: str = "cancelled by user") -> None:
+        """Emit a cancellation event for a task."""
         if self._terminal_event_emitted:
             return
         self._terminal_event_emitted = True
@@ -215,6 +218,7 @@ class QueueAgiAdapter:
         )
 
     def interrupt_task(self, reason: str, *, resumable: bool = True) -> None:
+        """Emit an interruption event for a running task."""
         from aura_cli.application.agents.events import AgiEventType
 
         self.emit_lifecycle(
@@ -226,6 +230,7 @@ class QueueAgiAdapter:
         )
 
     def request_approval(self, request_id: str, message: str, *, action: str) -> None:
+        """Emit an approval-request event."""
         from aura_cli.application.agents.events import AgiEventType
 
         self.emit_lifecycle(
@@ -240,6 +245,7 @@ class QueueAgiAdapter:
     def resolve_approval(
         self, request_id: str, *, approved: bool, message: str = "Approval resolved"
     ) -> None:
+        """Emit an event resolving a pending approval."""
         from aura_cli.application.agents.events import AgiEventType
 
         self.emit_lifecycle(
@@ -251,6 +257,7 @@ class QueueAgiAdapter:
         )
 
     def checkpoint_created(self, name: str, artifact: str) -> None:
+        """Emit a checkpoint-created event onto the status queue."""
         from aura_cli.application.agents.events import AgiEventType
 
         self.status_queue.put(

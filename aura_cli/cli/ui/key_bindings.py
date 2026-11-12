@@ -42,7 +42,7 @@ def create_key_bindings() -> KeyBindings:
         # Use shared console — no new Console() per keypress
         console = get_console()
         console.print(
-            f"[{UIStyles.INFO}]{UIIcons.INFO} Execução sem confirmação {status}[/{UIStyles.INFO}]"
+            f"[{UIStyles.INFO}]{UIIcons.INFO} Execution without confirmation {status}[/{UIStyles.INFO}]"
         )
         # Clear buffer and exit prompt so main loop re-renders toolbar state
         event.app.current_buffer.text = ""
@@ -86,12 +86,12 @@ def show_keyboard_help() -> None:
     table.add_column("Description", width=35, style=UIStyles.MUTED)
 
     shortcuts = [
-        ("Ctrl+T", "Executar /tools", "Listar ferramentas disponíveis"),
-        ("Ctrl+L", "Executar /clear", "Limpar a tela sem pressionar Enter"),
-        ("Shift+Tab", "Alternar automático", "Ignorar confirmações de tools"),
-        ("ESC", "Cancelar entrada", "Limpar o buffer atual"),
-        ("Ctrl+C", "Sair", "Encerrar a AuraCli"),
-        ("/keyboard", "Mostrar ajuda", "Também: /keys, /shortcuts"),
+        ("Ctrl+T", "Run /tools", "List available tools"),
+        ("Ctrl+L", "Executar /clear", "Clear screen without pressing Enter"),
+        ("Shift+Tab", "Toggle auto", "Skip tool confirmations"),
+        ("ESC", "Cancel input", "Clear the current buffer"),
+        ("Ctrl+C", "Quit", "Encerrar a AuraCli"),
+        ("/keyboard", "Show help", "Also: /keys, /shortcuts"),
     ]
 
     for shortcut, action, description in shortcuts:

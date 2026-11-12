@@ -90,11 +90,11 @@ def analyze_project_structure(
 
     if not project_root.is_dir():
         return {
-            "error": f"Caminho não é um diretório: {project_path}",
+            "error": f"Path is not a directory: {project_path}",
             "project_root": str(project_root),
         }
 
-    logger.info(f"Iniciando análise estruturada do projeto: {project_root}")
+    logger.info(f"Starting structured project analysis: {project_root}")
 
     result: Dict[str, Any] = {
         "project_root": str(project_root),
@@ -152,7 +152,7 @@ def analyze_project_structure(
     result["recommendations"] = _generate_recommendations(result)
 
     logger.info(
-        f"Análise estruturada concluída: {len(result['fronts'])} frentes identificadas"
+        f"Structured analysis complete: {len(result['fronts'])} fronts identified"
     )
 
     return result
@@ -275,7 +275,7 @@ def _extract_purpose(key_files: Dict[str, Dict[str, str]]) -> str:
                     purposes.append(line)
                     break
 
-    return " | ".join(purposes[:3]) if purposes else "Não especificado"
+    return " | ".join(purposes[:3]) if purposes else "Not specified"
 
 
 def _generate_summary(result: Dict[str, Any]) -> str:
@@ -301,7 +301,7 @@ def _generate_summary(result: Dict[str, Any]) -> str:
             )
         if arch.get("patterns"):
             patterns = [p["pattern"] for p in arch["patterns"]]
-            summary_parts.append(f"🏛️  Padrões: {', '.join(set(patterns))}")
+            summary_parts.append(f"🏛️  Patterns: {', '.join(set(patterns))}")
 
     if result.get("dependencies"):
         deps = result["dependencies"]
@@ -310,17 +310,17 @@ def _generate_summary(result: Dict[str, Any]) -> str:
                 len(v.get("runtime", [])) + len(v.get("dev", []))
                 for v in deps["external"].values()
             )
-            summary_parts.append(f"📦 Dependências Externas: ~{total_deps} pacotes")
+            summary_parts.append(f"📦 External Dependencies: ~{total_deps} packages")
         if deps.get("cross_front"):
             summary_parts.append(
-                f"🔗 Dependências Cross-Front: {len(deps['cross_front'])} conexões"
+                f"🔗 Cross-Front Dependencies: {len(deps['cross_front'])} connections"
             )
 
     if result.get("tests"):
         tests = result["tests"]
         if tests.get("test_directories"):
             summary_parts.append(
-                f"🧪 Testes: {len(tests['test_directories'])} diretórios, {len(tests['test_files'])} arquivos"
+                f"🧪 Tests: {len(tests['test_directories'])} directories, {len(tests['test_files'])} files"
             )
         if tests.get("test_frameworks"):
             frameworks = [t["framework"] for t in tests["test_frameworks"]]
@@ -329,7 +329,7 @@ def _generate_summary(result: Dict[str, Any]) -> str:
             )
 
     if result["purpose"]:
-        summary_parts.append(f"🎯 Propósito: {result['purpose'][:150]}")
+        summary_parts.append(f"🎯 Purpose: {result['purpose'][:150]}")
 
     return "\n".join(summary_parts)
 
@@ -348,14 +348,14 @@ def _generate_recommendations(result: Dict[str, Any]) -> List[str]:
 
     if result["technologies"]:
         recommendations.append(
-            f"Analisar dependências e configurações das tecnologias: {', '.join(result['technologies'])}"
+            f"Analyze dependencies and configurations of the technologies: {', '.join(result['technologies'])}"
         )
 
     recommendations.append(
-        "Usar 'codebase_search' para buscar padrões específicos no código"
+        "Use 'codebase_search' to search for specific patterns in the code"
     )
     recommendations.append(
-        "Usar 'investigate_codebase' para análise profunda de cada frente"
+        "Use 'investigate_codebase' for deep analysis of each front"
     )
 
     return recommendations

@@ -24,7 +24,7 @@ class TestTaskBoard:
 
     def test_task_board_creation(self, mock_tracker):
         """Test TaskBoard can be created."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         board = TaskBoard(tracker=mock_tracker)
 
@@ -33,7 +33,7 @@ class TestTaskBoard:
 
     def test_task_board_default_tracker(self):
         """Test TaskBoard uses default tracker."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         with patch(
             "aura_cli.cli.ui.components.task_board.get_todo_tracker"
@@ -46,7 +46,7 @@ class TestTaskBoard:
 
     def test_categorize_tasks_empty(self, mock_tracker):
         """Test categorizing empty task list."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         board = TaskBoard(tracker=mock_tracker)
 
@@ -62,7 +62,7 @@ class TestTaskBoard:
 
     def test_categorize_tasks_with_tasks(self, mock_tracker):
         """Test categorizing tasks with items."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         # Create mock tasks
         done_task = MagicMock(is_done=True, is_pending=False, text="Done task")
@@ -78,7 +78,7 @@ class TestTaskBoard:
 
     def test_create_progress_bar(self, mock_tracker):
         """Test creating progress bar."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         mock_tracker.get_stats.return_value = {"total": 10, "done": 5, "pending": 5}
 
@@ -89,7 +89,7 @@ class TestTaskBoard:
 
     def test_create_progress_bar_empty(self, mock_tracker):
         """Test creating progress bar with no tasks."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         mock_tracker.get_stats.return_value = {"total": 0, "done": 0, "pending": 0}
 
@@ -102,7 +102,7 @@ class TestTaskBoard:
         """Test creating a column."""
         from rich.table import Table
 
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         task = MagicMock(is_done=False, is_pending=True, text="Test task")
 
@@ -115,7 +115,7 @@ class TestTaskBoard:
         """Test creating empty column."""
         from rich.table import Table
 
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         board = TaskBoard(tracker=mock_tracker)
         column = board._create_column("To Do", "📌", [], 0)
@@ -124,7 +124,7 @@ class TestTaskBoard:
 
     def test_create_column_long_task(self, mock_tracker):
         """Test creating column with long task text."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         long_text = "This is a very long task description that should be truncated"
         task = MagicMock(is_done=False, is_pending=True, text=long_text)
@@ -136,7 +136,7 @@ class TestTaskBoard:
 
     def test_create_next_task_hint_none(self, mock_tracker):
         """Test creating hint when no current task."""
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         mock_tracker.get_current_task.return_value = None
 
@@ -149,7 +149,7 @@ class TestTaskBoard:
         """Test creating hint with current task."""
         from rich.text import Text
 
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         current_task = MagicMock(text="Current task")
         mock_tracker.get_current_task.return_value = current_task
@@ -163,7 +163,7 @@ class TestTaskBoard:
         """Test rendering complete board."""
         from rich.console import Group
 
-        from aura_cli.cli.ui.components.task_board import TaskBoard
+        from aura_cli.cli.ui.components.agent.task_board import TaskBoard
 
         board = TaskBoard(tracker=mock_tracker)
         result = board.render()
@@ -176,7 +176,7 @@ class TestDisplayTaskBoard:
 
     def test_display_task_board(self):
         """Test display_task_board function."""
-        from aura_cli.cli.ui.components.task_board import display_task_board
+        from aura_cli.cli.ui.components.agent.task_board import display_task_board
 
         mock_tracker = MagicMock()
         mock_tracker.get_all_tasks.return_value = []

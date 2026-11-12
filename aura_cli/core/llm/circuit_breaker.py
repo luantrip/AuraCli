@@ -6,9 +6,12 @@ when it's experiencing issues, allowing it to recover.
 """
 
 from enum import Enum
+import logging
 import threading
 import time
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 class CircuitState(Enum):
@@ -172,7 +175,7 @@ def get_circuit_breaker(provider: str) -> CircuitBreaker:
             registry = container.resolve(Services.CIRCUIT_BREAKER_REGISTRY)
             return registry.get(provider)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_circuit_breaker, using fallback", exc_info=True)
     # Simple fallback (no globals needed — container handles thread safety)
     return CircuitBreaker()
 
@@ -188,4 +191,7 @@ def reset_circuit_breaker(provider: str):
             registry.get(provider).reset()
             return
     except Exception:
-        pass
+        logger.warning(
+            "DI container unavailable in reset_circuit_breaker — reset may not have taken effect",
+            exc_info=True,
+        )

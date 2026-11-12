@@ -29,7 +29,6 @@ class CodeIndex:
     """Index of an individual file"""
 
     def __init__(self, file_path: str):
-        """Initialize the instance."""
         self.file_path = file_path
         self.classes: List[Dict[str, Any]] = []
         self.functions: List[Dict[str, Any]] = []
@@ -63,7 +62,6 @@ class CodebaseIndexer:
     """Semantic indexer for the full codebase."""
 
     def __init__(self, scope: str = ".", cache_dir: Optional[str] = None):
-        """Initialize the instance."""
         self.scope = Path(scope).resolve()
         from aura_cli.core.paths import ArtifactLayout
 
@@ -142,7 +140,7 @@ class CodebaseIndexer:
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
         except Exception as e:
-            logger.warning(f"Não foi possível ler {file_path}: {e}")
+            logger.warning(f"Could not read {file_path}: {e}")
             return
 
         content_hash = hashlib.md5(content.encode(), usedforsecurity=False).hexdigest()
@@ -189,7 +187,7 @@ class CodebaseIndexer:
 
                 for item in node.body:
                     if isinstance(item, ast.FunctionDef):
-                        class_info["methods"].append(item.name)  # type: ignore[attr-defined]
+                        class_info["methods"].append(item.name)  # type: ignore[attr-defined]  # ast.AST has no stub for .name
 
                 if (
                     node.body
@@ -270,7 +268,7 @@ class CodebaseIndexer:
             elif isinstance(node, ast.Attribute):
                 return f"{self._ast_to_string(node.value)}.{node.attr}"
             elif isinstance(node, ast.Str):
-                return node.s  # type: ignore[return-value]
+                return node.s  # type: ignore[return-value]  # ast.Str.s deprecated in 3.12 but valid on 3.10
             else:
                 return ast.unparse(node) if hasattr(ast, "unparse") else str(node)
         except (AttributeError, TypeError, SyntaxError):
@@ -347,7 +345,7 @@ class CodebaseIndexer:
             with open(self._cache_file, "w", encoding="utf-8") as f:
                 json.dump(cache_data, f, ensure_ascii=False)
 
-            logger.info(f"Índice salvo no cache: {self._cache_file}")
+            logger.info(f"Index saved to cache: {self._cache_file}")
         except Exception as e:
             logger.warning(f"Error saving cache: {e}")
 
@@ -360,7 +358,7 @@ class CodebaseIndexer:
             with open(self._cache_file, encoding="utf-8") as f:
                 cache_data = json.load(f)
             if cache_data.get("format_version") != 1:
-                logger.warning("Versão desconhecida do cache de índice; reindexando")
+                logger.warning("Unknown index cache version; reindexing")
                 return False
 
             self.file_indices = {
@@ -569,8 +567,8 @@ class CodebaseIndexer:
                 if class_info["name"] == match:
                     context.update(
                         {
-                            "line": class_info.get("line"),  # type: ignore[dict-item]
-                            "docstring": class_info.get("docstring"),  # type: ignore[dict-item]
+                            "line": class_info.get("line"),  # type: ignore[dict-item]  # Optional[int] in typed Dict[str, str]
+                            "docstring": class_info.get("docstring"),  # type: ignore[dict-item]  # Optional[str] in typed Dict
                             "methods": class_info.get("methods", []),
                         }
                     )
@@ -580,8 +578,8 @@ class CodebaseIndexer:
                 if func_info["name"] == match:
                     context.update(
                         {
-                            "line": func_info.get("line"),  # type: ignore[dict-item]
-                            "docstring": func_info.get("docstring"),  # type: ignore[dict-item]
+                            "line": func_info.get("line"),  # type: ignore[dict-item]  # Optional[int] in typed Dict[str, str]
+                            "docstring": func_info.get("docstring"),  # type: ignore[dict-item]  # Optional[str] in typed Dict
                             "args": func_info.get("args", []),
                         }
                     )

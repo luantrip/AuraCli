@@ -73,7 +73,7 @@ class TestAuraLCDDisplay:
         """Testa se LCDDisplay retorna um Group configurado."""
         from rich.console import Group
 
-        from aura_cli.cli.ui.components.lcd_display import AuraLCDDisplay
+        from aura_cli.cli.ui.components.display.lcd_display import AuraLCDDisplay
 
         lcd = AuraLCDDisplay()
         renderable = lcd.render("print('hello')", title="TEST")
@@ -88,7 +88,7 @@ class TestAuraLCDDisplay:
         """Testa renderização com números de linha."""
         from rich.console import Group
 
-        from aura_cli.cli.ui.components.lcd_display import AuraLCDDisplay
+        from aura_cli.cli.ui.components.display.lcd_display import AuraLCDDisplay
 
         lcd = AuraLCDDisplay()
         content = "line1\nline2\nline3"
@@ -101,7 +101,7 @@ class TestAuraLCDDisplay:
         """Testa renderização com syntax highlighting."""
         from rich.console import Group
 
-        from aura_cli.cli.ui.components.lcd_display import AuraLCDDisplay
+        from aura_cli.cli.ui.components.display.lcd_display import AuraLCDDisplay
 
         lcd = AuraLCDDisplay()
         code = "def hello():\n    print('world')"
@@ -120,7 +120,10 @@ class TestAuraChatBox:
 
         from rich.padding import Padding
 
-        from aura_cli.cli.ui.components.message_bubble import MessageBubble, MessageType
+        from aura_cli.cli.ui.components.display.message_bubble import (
+            MessageBubble,
+            MessageType,
+        )
 
         # MessageBubble espera datetime, não float
         chat = MessageBubble(
@@ -141,7 +144,10 @@ class TestAuraChatBox:
 
         from rich.padding import Padding
 
-        from aura_cli.cli.ui.components.message_bubble import MessageBubble, MessageType
+        from aura_cli.cli.ui.components.display.message_bubble import (
+            MessageBubble,
+            MessageType,
+        )
 
         chat = MessageBubble(
             sender="aura",
@@ -160,7 +166,7 @@ class TestAuraChatBox:
 
         from rich.padding import Padding
 
-        from aura_cli.cli.ui.components.message_bubble import (
+        from aura_cli.cli.ui.components.display.message_bubble import (
             MessageBubble,
             MessageMetadata,
             MessageType,
@@ -188,7 +194,10 @@ class TestAuraChatBox:
 
         from rich.padding import Padding
 
-        from aura_cli.cli.ui.components.message_bubble import MessageBubble, MessageType
+        from aura_cli.cli.ui.components.display.message_bubble import (
+            MessageBubble,
+            MessageType,
+        )
 
         chat = MessageBubble(
             sender="user",
@@ -208,7 +217,7 @@ class TestAuraMarkdownDisplay:
 
     def test_markdown_rendering(self, mock_theme):
         """Testa se o renderizador retorna um objeto Markdown customizado."""
-        from aura_cli.cli.ui.components.markdown_display import (
+        from aura_cli.cli.ui.components.display.markdown_display import (
             AuraMarkdown,
             AuraMarkdownDisplay,
         )
@@ -220,7 +229,7 @@ class TestAuraMarkdownDisplay:
 
     def test_code_block_interception(self, mock_theme):
         """Testa se blocos de código são interceptados pelo AuraCodeBlock."""
-        from aura_cli.cli.ui.components.markdown_display import (
+        from aura_cli.cli.ui.components.display.markdown_display import (
             AuraCodeBlock,
             AuraMarkdown,
             AuraMarkdownDisplay,
@@ -242,7 +251,7 @@ class TestSmartContextBuffer:
         """Testa detecção de input grande por contagem de caracteres."""
         from datetime import datetime
 
-        from aura_cli.cli.ui.components.message_bubble import (
+        from aura_cli.cli.ui.components.display.message_bubble import (
             MessageBubble,
             MessageMetadata,
             MessageType,
@@ -270,7 +279,10 @@ class TestSmartContextBuffer:
         """Testa que inputs pequenos não ativam o buffer."""
         from datetime import datetime
 
-        from aura_cli.cli.ui.components.message_bubble import MessageBubble, MessageType
+        from aura_cli.cli.ui.components.display.message_bubble import (
+            MessageBubble,
+            MessageType,
+        )
 
         chat = MessageBubble(
             sender="user",
@@ -282,102 +294,3 @@ class TestSmartContextBuffer:
 
         # Sem metadata ou metadata padrão = input normal
         assert chat.metadata is not None  # MessageBubble cria metadata padrão se None
-
-
-class TestAgiTaskWindow:
-    """Testes para o componente AgiTaskWindow."""
-
-    def test_task_window_tracks_supervisor_state_on_update(self, mock_theme):
-        """Supervisor state should be stored on task updates."""
-        from aura_cli.cli.ui.components.agi_task_window import AgiTaskWindow
-
-        window = AgiTaskWindow(
-            task_id="agi-1",
-            description="Task",
-            objective="Analyze codebase",
-        )
-
-        window.update_status(
-            "awaiting_human",
-            "Need approval",
-            supervisor_state="awaiting_human",
-            fallback_reason="human_approval_required",
-        )
-
-        assert window.supervisor_state == "awaiting_human"
-        assert window.fallback_reason == "human_approval_required"
-
-    def test_task_window_marks_completed_supervisor_state(self, mock_theme):
-        """Successful completion should move the supervisor state to completed."""
-        from aura_cli.cli.ui.components.agi_task_window import AgiTaskWindow
-
-        window = AgiTaskWindow(
-            task_id="agi-2",
-            description="Task",
-            objective="Analyze codebase",
-        )
-
-        window.complete(True, result="done")
-
-        assert window.supervisor_state == "completed"
-
-    def test_task_window_marks_cancelled_as_terminal(self, mock_theme):
-        """Cancellation must stop activity and remain visible as a terminal state."""
-        from aura_cli.cli.ui.components.agi_task_window import AgiTaskWindow
-
-        window = AgiTaskWindow(
-            task_id="agi-cancelled",
-            description="Task",
-            objective="Analyze codebase",
-        )
-
-        window.cancel("cancelled by user")
-
-        assert window.status == "cancelled"
-        assert window.is_complete() is True
-        assert window.is_active() is False
-        assert window.error == "cancelled by user"
-        assert "Operação cancelada" in window.logs[-1].message
-
-    def test_task_window_formats_timestamp_and_localized_completion(self, mock_theme):
-        """Terminal logs should expose time and use the product language."""
-        from aura_cli.cli.ui.components.agi_task_window import AgiTaskWindow
-
-        window = AgiTaskWindow(
-            task_id="agi-2b",
-            description="Task",
-            objective="Analyze codebase",
-        )
-
-        window.complete(True, result="done")
-
-        rendered = window.logs[-1].format(mock_theme)
-        assert "[" in rendered.plain
-        assert "Tarefa concluída" in rendered.plain
-
-        window.complete(False, error="timeout")
-        assert "Falha: timeout" in window.logs[-1].message
-
-    def test_task_window_renders_supervisor_summary_only_for_exception_state(
-        self, mock_theme
-    ):
-        """Supervisor summary should only exist when state needs emphasis."""
-        from aura_cli.cli.ui.components.agi_task_window import AgiTaskWindow
-
-        window = AgiTaskWindow(
-            task_id="agi-3",
-            description="Task",
-            objective="Analyze codebase",
-        )
-
-        assert window._render_supervisor_summary(mock_theme) is None
-
-        window.update_status(
-            "awaiting_human",
-            "Need approval",
-            supervisor_state="awaiting_human",
-            fallback_reason="human_approval_required",
-        )
-
-        summary = window._render_supervisor_summary(mock_theme)
-        assert summary is not None

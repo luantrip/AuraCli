@@ -8,7 +8,7 @@ from itertools import islice
 import os
 from pathlib import Path
 import tempfile
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from rich.console import Console
 
@@ -20,15 +20,12 @@ from aura_cli.application.execution_feedback import (
 from aura_cli.application.workspace.path_policy import resolve_workspace_path
 from aura_cli.core.logger import get_logger
 
-# NOTE: PrismManager is lazy-imported inside read_code_element
-# so monkeypatch in tests can intercept it correctly.
+# PrismManager is lazy-imported inside read_code_element
+# so test monkeypatching can intercept the import correctly.
 from aura_cli.core.stats import get_stats
 from aura_cli.core.tools import human_intervention_adapter
 from aura_cli.core.ui import display_tool_call
 from aura_cli.core.ui_bridge import UIIcons, UIStyles
-
-if TYPE_CHECKING:
-    pass  # Future type imports can go here
 
 logger = get_logger(__name__)
 
@@ -120,7 +117,7 @@ def read_code_element(file_path: str, name: str, kind: Optional[str] = None) -> 
     try:
         safe_path = _sanitize_path(file_path)
     except ValueError as e:
-        error_msg = f"Erro de segurança: {e}"
+        error_msg = f"Security error: {e}"
         logger.warning(
             "Path validation failed for read_code_element %s: %s", file_path, e
         )
@@ -129,14 +126,14 @@ def read_code_element(file_path: str, name: str, kind: Optional[str] = None) -> 
     if not safe_path.exists():
         return f"File not found: {file_path}"
     if not safe_path.is_file():
-        return f"Error: '{file_path}' não é um arquivo."
+        return f"Error: '{file_path}' is not a file."
 
     try:
         from aura_cli.core.memory.prism_bridge import PrismManager
 
         prism = PrismManager()
         if not prism.available:
-            return "Prism não disponível. Use read_file com números de linha."
+            return "Prism not available. Use read_file with line numbers."
 
         chunks = prism.chunk_file(str(safe_path))
 
@@ -227,41 +224,29 @@ def read_file(path: str, offset: int = 0, limit: int = -1) -> str:
     except FileNotFoundError:
         error_msg = f"Error: File '{path}' not found."
         logger.warning(f"File not found: {path}")
-        error_style = UIStyles.safe_style("ERROR", "red")
-        Console().print(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
     except PermissionError:
-        error_msg = f"Erro: Sem permissão para ler o arquivo '{path}'."
-        logger.warning(f"Permissão negada ao ler: {path}")
-        error_style = UIStyles.safe_style("ERROR", "red")
-        Console().print(f"[{error_style}]{error_msg}[/{error_style}]")
+        error_msg = f"Error: No permission to read file '{path}'."
+        logger.warning(f"Permission denied reading: {path}")
         return error_msg
     except IsADirectoryError:
         error_msg = (
-            f"Error: '{path}' é um diretório, não um arquivo. "
-            "Use list_directory(path) para listar o conteúdo."
+            f"Error: '{path}' is a directory, not a file. "
+            "Use list_directory(path) to list the contents."
         )
         logger.warning(f"Attempt to read directory as file: {path}")
-        error_style = UIStyles.safe_style("ERROR", "red")
-        Console().print(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
     except UnicodeDecodeError as e:
-        error_msg = f"Error: File '{path}' não é um arquivo de texto válido (erro de encoding)."
+        error_msg = f"Error: File '{path}' is not a valid text file (encoding error)."
         logger.warning(f"Erro de encoding ao ler {path}: {e}")
-        error_style = UIStyles.safe_style("ERROR", "red")
-        Console().print(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
     except ValueError as e:
-        error_msg = f"Erro de segurança: {e}"
+        error_msg = f"Security error: {e}"
         logger.warning(f"Path validation failed for {path}: {e}")
-        error_style = UIStyles.safe_style("ERROR", "red")
-        Console().print(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
     except OSError as e:
         error_msg = f"Erro de sistema ao ler o arquivo '{path}': {e}"
         logger.error(f"System error reading file {path}: {e}", exc_info=True)
-        error_style = UIStyles.safe_style("ERROR", "red")
-        Console().print(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
 
 
@@ -289,8 +274,7 @@ def write_file(path: str, content: str, append: bool = False) -> str:
     display_tool_call(
         "write_file", {"path": path, "content": content[:100] + "...", "append": append}
     )
-    mode = "a" if append else "w"  # noqa: F841 — kept for action_desc below
-    action_desc = "adicionar conteúdo ao" if append else "sobrescrever o"
+    action_desc = "append content to" if append else "overwrite"
 
     console = Console()
     warning_style = UIStyles.safe_style("WARNING", "yellow")
@@ -384,36 +368,31 @@ def write_file(path: str, content: str, append: bool = False) -> str:
             )
             return success_msg
         except PermissionError:
-            error_msg = f"Erro: Sem permissão para escrever no arquivo '{path}'."
+            error_msg = f"Error: No permission to write to file '{path}'."
             return _write_error(loading, console, error_msg)
         except IsADirectoryError:
-            error_msg = f"Error: '{path}' é um diretório, não é possível escrever."
+            error_msg = f"Error: '{path}' is a directory, cannot write."
             return _write_error(loading, console, error_msg)
         except ValueError as e:
-            error_msg = f"Erro de segurança: {e}"
+            error_msg = f"Security error: {e}"
             return _write_error(loading, console, error_msg)
         except OSError as e:
             error_msg = f"Erro de sistema ao {'adicionar a' if append else 'escrever no'} o arquivo '{path}': {e}"
             return _write_error(loading, console, error_msg)
     else:
-        console = Console()
-        warning_style = UIStyles.safe_style("WARNING", "yellow")
-        console.print(
-            f"[{warning_style}]Operação de escrita cancelada pelo usuário.[/{warning_style}]"
-        )
-        return "Operação de escrita cancelada pelo usuário."
+        logger.info("Write operation cancelled by user: %s", path)
+        return "Write operation cancelled by user."
 
 
 def find_directory(directory_name: str, start_path: str | None = None) -> str:
     """Intelligently find a directory by searching recursively."""
-    Console()
     base_dir = get_allowed_base_dir()
     raw_start = str(base_dir) if start_path is None else start_path
 
     try:
         search_root = _sanitize_path(raw_start)
     except ValueError as error:
-        return f"Erro de segurança ao buscar diretório: {error}"
+        return f"Security error searching directory: {error}"
 
     common_paths = (
         search_root / directory_name,
@@ -453,7 +432,7 @@ _DOC_EXTS = {".pdf", ".doc", ".docx"}
 
 def _get_file_type_label(ext: str) -> str:
     if ext in _CODE_EXTS:
-        return "[blue]Código[/blue]"
+        return "[blue]Code[/blue]"
     if ext in _TEXT_EXTS:
         return "[green]Texto[/green]"
     if ext in _CONFIG_EXTS:
@@ -496,7 +475,7 @@ def _build_dir_entry_row(entry: Any) -> list:
             return [
                 f"[bold cyan]📁 {entry.name}/[/bold cyan]",
                 "",
-                "[dim]Diretório[/dim]",
+                "[dim]Directory[/dim]",
                 f"[dim]{mod_time.split()[0]}[/dim]",
             ]
         size_str = _format_size(stat.st_size)
@@ -519,11 +498,11 @@ def _dir_not_found_hint(path: str) -> str:
     if found_paths:
         suggestions = "\n".join(f"  • {p}" for p in found_paths[:3])
         extra = (
-            f"\n  ... e mais {len(found_paths) - 3} ocorrências"
+            f"\n  ... and {len(found_paths) - 3} more occurrences"
             if len(found_paths) > 3
             else ""
         )
-        return f"\n\n💡 Diretórios similares encontrados:\n{suggestions}{extra}\n\n💡 Dica: Liste o diretório atual primeiro com list_directory('.')"
+        return f"\n\n💡 Similar directories found:\n{suggestions}{extra}\n\n💡 Tip: List the directory at the path above."
     try:
         current_items = [
             d.name for d in os.scandir(get_allowed_base_dir()) if d.is_dir()
@@ -531,11 +510,11 @@ def _dir_not_found_hint(path: str) -> str:
         if current_items:
             suggestions = ", ".join(current_items[:5])
             extra = (
-                f" e mais {len(current_items) - 5}" if len(current_items) > 5 else ""
+                f" and {len(current_items) - 5} more" if len(current_items) > 5 else ""
             )
-            return f"\n\n💡 Diretórios disponíveis no diretório atual: {suggestions}{extra}"
+            return f"\n\n💡 Available directories in the current directory: {suggestions}{extra}"
     except Exception as _e:
-        logger.debug(f"Ignorado: {_e}")
+        logger.debug(f"Ignored: {_e}")
     return ""
 
 
@@ -553,14 +532,14 @@ def list_directory(path: str, show_hidden: bool = False) -> str:
         if not p.exists():
             return f"Error: '{path}' not found."
         if not p.is_dir():
-            return f"Error: '{path}' não é um diretório."
+            return f"Error: '{path}' is not a directory."
 
         entries = sorted(p.iterdir(), key=lambda e: (not e.is_dir(), e.name.lower()))
         if not show_hidden:
             entries = [e for e in entries if not e.name.startswith(".")]
 
         if not entries:
-            return f"Directory '{path}' está vazio."
+            return f"Directory '{path}' is empty."
 
         lines = [f"📁 {p}/"]
         for entry in entries:
@@ -572,8 +551,8 @@ def list_directory(path: str, show_hidden: bool = False) -> str:
             lines.append(f"  {prefix} {entry.name}{size}")
         return "\n".join(lines)
     except ValueError as e:
-        return f"Erro de segurança: {e}"
+        return f"Security error: {e}"
     except PermissionError:
-        return f"Erro: Sem permissão para acessar '{path}'."
+        return f"Error: No permission to access '{path}'."
     except OSError as e:
         return f"Error listing '{path}': {e}"

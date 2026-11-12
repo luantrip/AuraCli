@@ -16,7 +16,7 @@ def test_event_stream_formats_localized_activity_in_ascii_mode() -> None:
             "task-1",
             {"status": "executando", "message": "lendo arquivos"},
         )
-        assert "[ok] AGI concluída" in panel._format_event_content(
+        assert "[ok] AGI completed" in panel._format_event_content(
             "agi_task_complete", "task-1", {"success": True}
         )
         assert "[T] read_local" in panel._format_event_content(
@@ -76,8 +76,8 @@ def test_event_stream_formats_capability_phases_without_arguments() -> None:
 
     assert "Capability avaliada: read_file" in evaluation
     assert "secret.txt" not in evaluation
-    assert "Confirmação necessária: run_shell_command" in confirmation
-    assert "Segurança bloqueou delete_file: Acesso negado pela política." in blocked
+    assert "Confirmation required: run_shell_command" in confirmation
+    assert "Security blocked delete_file:" in blocked
     assert "linha privada" not in blocked
     assert "Capability reservada: write_file" in commit
 
@@ -109,7 +109,7 @@ def test_event_stream_redacts_sensitive_tool_preview() -> None:
 
     assert "run_shell_command" in content
     assert "super-secret-token" not in content
-    assert "[oculto]" in content
+    assert "[hidden]" in content
 
 
 def test_event_stream_preserves_failure_semantics() -> None:
@@ -118,6 +118,6 @@ def test_event_stream_preserves_failure_semantics() -> None:
     assert panel._get_event_class("agi_task_complete", {"success": False}) == (
         "event-task-failed"
     )
-    assert "falhou" in panel._format_event_content(
+    assert "failed" in panel._format_event_content(
         "agi_task_complete", "task-1", {"success": False}
     )

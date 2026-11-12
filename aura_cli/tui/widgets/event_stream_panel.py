@@ -39,18 +39,17 @@ class EventStreamPanel(VerticalScroll):
     MAX_LINES = 1000
     EVENT_FILTER_OPTIONS = (
         ("Todos os eventos", ""),
-        ("Tarefas AGI iniciadas", "agi_task_start"),
-        ("Atualizações AGI", "agi_task_update"),
-        ("Conclusões AGI", "agi_task_complete"),
-        ("Ferramentas em execução", "tool_executing"),
-        ("Resultados de ferramentas", "tool_result"),
-        ("Decisões de segurança", "capability_decision"),
+        ("AGI tasks started", "agi_task_start"),
+        ("AGI updates", "agi_task_update"),
+        ("AGI completions", "agi_task_complete"),
+        ("Tools executing", "tool_executing"),
+        ("Tool results", "tool_result"),
+        ("Security decisions", "capability_decision"),
         ("Mensagens do chat", "chat_message"),
     )
     _event_count = 0
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._events: List[_EventStatic] = []
         self._event_count = 0
@@ -67,7 +66,7 @@ class EventStreamPanel(VerticalScroll):
                 allow_blank=False,
             )
         yield Static(
-            "Nenhum evento ainda. Inicie uma tarefa para acompanhar a atividade.",
+            "No events yet. Start a task to track activity.",
             id="event-empty-state",
             classes="empty-state",
         )
@@ -263,12 +262,12 @@ class EventStreamPanel(VerticalScroll):
         elif event_type == "agi_task_complete":
             success = data.get("success", False)
             icon = tui_constants.SUCCESS if success else tui_constants.ERROR
-            state = "concluída" if success else "falhou"
+            state = "completed" if success else "failed"
             return f"{icon} AGI {state}"
         elif event_type == "tool_executing":
             tool = data.get("tool_name", "")
             has_args = bool(data.get("tool_args"))
-            suffix = " (parâmetros ocultos: [oculto])" if has_args else ""
+            suffix = " (hidden parameters: [hidden])" if has_args else ""
             return f"{tui_constants.TOOL} {tool}{suffix}"
         elif event_type == "tool_result":
             tool = data.get("tool_name", "")
@@ -288,9 +287,9 @@ class EventStreamPanel(VerticalScroll):
             reason = reason_lines[0][:72] if reason_lines else ""
             if not data.get("allowed", False) or phase == "blocked":
                 suffix = f": {reason}" if reason else ""
-                return f"{tui_constants.ERROR} Segurança bloqueou {tool}{suffix}"
+                return f"{tui_constants.ERROR} Security blocked {tool}{suffix}"
             if phase == "confirmation" or data.get("requires_confirmation", False):
-                return f"{tui_constants.WARNING} Confirmação necessária: {tool}"
+                return f"{tui_constants.WARNING} Confirmation required: {tool}"
             if phase == "commit":
                 return f"{tui_constants.SUCCESS} Capability reservada: {tool}"
             return f"{tui_constants.INFO} Capability avaliada: {tool}"

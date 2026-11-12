@@ -11,13 +11,10 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 import uuid
 
-from rich.console import Console
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class StageStatus(Enum):
@@ -111,7 +108,6 @@ class PipelineManager:
     ) -> Dict[str, Any]:
         """Execute a pipeline and return its result."""
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call("execute_pipeline", {"pipeline_id": pipeline_id})
 
@@ -164,15 +160,9 @@ class PipelineManager:
         self.stats.track_tool_usage("pipeline_manager")
 
         if all_success:
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Pipeline '{pipeline.name}' executed successfully[/{UIStyles.SUCCESS}]"
-            )
+            logger.info(f"Pipeline '{pipeline.name}' executed successfully")
         else:
-            console.print(
-                f"[{UIStyles.ERROR}]{UIIcons.ERROR} "
-                f"Pipeline '{pipeline.name}' falhou[/{UIStyles.ERROR}]"
-            )
+            logger.error(f"Pipeline '{pipeline.name}' failed")
 
         return {
             "pipeline_id": pipeline_id,
@@ -243,7 +233,7 @@ class PipelineManager:
                     if not result.success:
                         return {
                             "success": False,
-                            "error": f"Comando falhou com código {result.exit_code}",
+                            "error": f"Command failed with code {result.exit_code}",
                             "output": "\n".join(output_lines),
                             "error_output": "\n".join(error_lines),
                             "command": command,

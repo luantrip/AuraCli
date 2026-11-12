@@ -49,7 +49,7 @@ class TestCodebaseSearch:
     def test_no_results(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
             result = codebase_search("nonexistent_xyz", path=str(project))
-        assert "Nenhum resultado" in result
+        assert "No results" in result
 
     def test_filter_by_extension(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
@@ -68,7 +68,7 @@ class TestCodebaseSearch:
             result = codebase_search(
                 "DEF MAIN", path=str(project), filters={"case_sensitive": True}
             )
-        assert "Nenhum resultado" in result
+        assert "No results" in result
 
     def test_max_results(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
@@ -94,14 +94,14 @@ class TestCodebaseSearch:
         (hidden / "config").write_text("def secret()")
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
             result = codebase_search("secret", path=str(project))
-        assert "Nenhum resultado" in result
+        assert "No results" in result
 
     def test_skip_comments_filter(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
             result = codebase_search(
                 "TODO", path=str(project), filters={"search_in_comments": False}
             )
-        assert "Nenhum resultado" in result
+        assert "No results" in result
 
 
 class TestGlobSearch:
@@ -119,7 +119,7 @@ class TestGlobSearch:
     def test_no_matches(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
             result = glob_search("**/*.rs", path=str(project))
-        assert "Nenhum arquivo" in result
+        assert "No files" in result
 
     def test_exclude_pattern(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
@@ -136,7 +136,7 @@ class TestAdvancedGrepSearch:
     def test_no_results(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):
             result = advanced_grep_search("nonexistent_xyz", path=str(project))
-        assert "Nenhum resultado" in result
+        assert "No results" in result
 
     def test_invalid_regex(self, project):
         with patch("aura_cli.core.ui.display_tool_call", MagicMock(), create=True):

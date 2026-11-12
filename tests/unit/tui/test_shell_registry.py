@@ -14,7 +14,7 @@ def test_screen_registry_builds_history():
 
     screen = _build_screen(ScreenId.HISTORY)
     assert isinstance(screen, HistoryScreen)
-    assert screen.SCREEN_TITLE == "◇ Histórico de Sessões"
+    assert screen.SCREEN_TITLE == "◇ Session History"
 
 
 def test_screen_registry_builds_diff_confirm():
@@ -30,4 +30,4 @@ def test_screen_registry_builds_diff_confirm():
 
 
 def test_settings_screen_uses_modal_base_title():
-    assert SettingsScreen.TITLE == "⚙ Configurações"
+    assert SettingsScreen.TITLE == "⚙ Settings"

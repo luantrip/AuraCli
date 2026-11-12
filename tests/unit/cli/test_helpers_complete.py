@@ -56,7 +56,7 @@ class TestInitializeConversationHistory:
         assert len(history) > 0
         assert history[0]["role"] == "system"
         assert history[0]["role"] == "system"  # system message is present
-        assert "ferramentas" in history[0]["content"].lower()
+        assert "tools" in history[0]["content"].lower()
 
 
 class TestSetupPromptSession:

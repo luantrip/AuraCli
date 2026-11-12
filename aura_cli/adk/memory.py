@@ -313,7 +313,7 @@ class ConversationMemory(ApplicationConversationMemory):
     """
 
 
-MemoryStore = PersistentMemory
+MemoryStore = PersistentMemory  # Deprecated alias — use PersistentMemory directly.
 
 
 def get_default_memory_path() -> Path:

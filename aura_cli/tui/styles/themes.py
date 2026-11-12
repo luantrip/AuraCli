@@ -72,6 +72,46 @@ class ThemeColors:
     thought_fg: str = "#94a3b8"
     tree_line: str = "#475569"
 
+    # Semantic roles required by the neutral token vocabulary
+    # (application/presentation/semantic_tokens). Left empty so each theme can
+    # override; otherwise derived from existing colors in __post_init__ so the
+    # six built-in themes cover the full vocabulary without per-theme edits.
+    accent: str = ""
+    muted: str = ""
+    status_idle: str = ""
+    status_thinking: str = ""
+    status_working: str = ""
+    status_success: str = ""
+    status_error: str = ""
+    status_warning: str = ""
+    agent_agi: str = ""
+    agent_ops: str = ""
+    agent_chat: str = ""
+
+    def __post_init__(self) -> None:
+        """Derive semantic roles left unset from the base palette.
+
+        Keeps the full semantic vocabulary covered for every theme while letting
+        a theme override any role explicitly.
+        """
+        derived = {
+            "accent": self.secondary,
+            "muted": self.foreground_muted,
+            "border_active": self.primary,
+            "status_idle": self.foreground_muted,
+            "status_thinking": self.warning,
+            "status_working": self.primary,
+            "status_success": self.success,
+            "status_error": self.error,
+            "status_warning": self.warning,
+            "agent_agi": self.secondary,
+            "agent_ops": self.info,
+            "agent_chat": self.primary,
+        }
+        for role, fallback in derived.items():
+            if not getattr(self, role):
+                setattr(self, role, fallback)
+
 
 @dataclass
 class Theme:
@@ -336,7 +376,6 @@ class ThemeManager:
     """
 
     def __init__(self, app: Optional[App] = None):
-        """Initialize the instance."""
         self.app = app
         self._current_theme: Theme = NEBULA_DARK
         self._mode: ThemeMode = ThemeMode.AUTO
@@ -418,7 +457,7 @@ class ThemeManager:
             return
 
         try:
-            self.app.dark = theme.mode == ThemeMode.DARK  # type: ignore[attr-defined]
+            self.app.dark = theme.mode == ThemeMode.DARK  # type: ignore[attr-defined]  # Textual App.dark attr
             # Re-evaluate CSS so the injected $theme-* variables (see
             # AuraTUI.get_css_variables) pick up the new theme colors live.
             try:

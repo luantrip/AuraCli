@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class PluginHook(Enum):
+    """Lifecycle hook point in the plugin system."""
     ON_STARTUP = "on_startup"
     ON_SHUTDOWN = "on_shutdown"
     ON_SESSION_START = "on_session_start"
@@ -33,6 +34,7 @@ class PluginHook(Enum):
 
 @dataclass
 class PluginContext:
+    """Context provided to a plugin at hook invocation."""
     hook: PluginHook
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     data: dict[str, Any] = field(default_factory=dict)
@@ -50,6 +52,7 @@ class PluginContext:
 
 @dataclass
 class PluginMetadata:
+    """Static metadata describing a registered plugin."""
     name: str
     version: str
     description: str = ""
@@ -62,6 +65,7 @@ class PluginMetadata:
 
 @dataclass(frozen=True)
 class PluginToolDescriptor:
+    """Descriptor for a tool contributed by a plugin."""
     function: Callable[..., Any]
     effect: str
     risk: str

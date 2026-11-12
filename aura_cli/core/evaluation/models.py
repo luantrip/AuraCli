@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, fields
 from typing import Any, Mapping
 
 
@@ -23,6 +23,26 @@ class Score:
         if total <= 0:
             return 0.0
         return sum(values[name] * float(active.get(name, 0.0)) for name in values) / total
+
+    @classmethod
+    def from_mapping(cls, scores: Mapping[str, Any] | None) -> Score:
+        """Build a Score from an arbitrary mapping, safely.
+
+        Unknown keys are ignored and non-numeric values fall back to 0.0, so
+        untrusted payloads (e.g. an LLM judge's JSON) never raise ``TypeError``
+        or ``ValueError`` at construction time.
+        """
+        if not scores:
+            return cls()
+        known = {f.name for f in fields(cls)}
+        clean: dict[str, float] = {}
+        for name in known:
+            if name in scores:
+                try:
+                    clean[name] = float(scores[name])
+                except (TypeError, ValueError):
+                    clean[name] = 0.0
+        return cls(**clean)
 
     def to_dict(self) -> dict[str, float]:
         return asdict(self)

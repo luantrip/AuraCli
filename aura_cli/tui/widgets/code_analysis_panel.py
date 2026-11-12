@@ -49,7 +49,6 @@ class CodeAnalysisPanel(Vertical):
     issue_count: reactive[int] = reactive(0)
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.issues: List[CodeIssue] = []
         self.code_content: str = ""
@@ -58,7 +57,7 @@ class CodeAnalysisPanel(Vertical):
     def compose(self):
         """Compose code analysis panel structure."""
         yield Static(
-            "◆ Análise de código", classes="panel-header", id="analysis_header"
+            "◆ Code analysis", classes="panel-header", id="analysis_header"
         )
 
         with ScrollableContainer(id="code_viewer_container"):
@@ -79,7 +78,7 @@ class CodeAnalysisPanel(Vertical):
 
         with ScrollableContainer(id="analysis_summary_container"):
             yield Static(
-                "Nenhum resumo disponível ainda.",
+                "No summary available yet.",
                 id="analysis_summary",
                 classes="analysis-content",
             )
@@ -111,7 +110,7 @@ class CodeAnalysisPanel(Vertical):
 
         header = self.query_one("#analysis_header", Static)
         if file_path:
-            header.update(f"◆ Análise de código: {file_path}")
+            header.update(f"◆ Code analysis: {file_path}")
 
         # Build highlight_lines set from highlights parameter
         highlight_lines = None
@@ -162,9 +161,9 @@ class CodeAnalysisPanel(Vertical):
     def _severity_label(severity: str) -> str:
         """Return a Portuguese presentation label without changing the value."""
         return {
-            "error": "erro",
-            "warning": "aviso",
-            "info": "informação",
+            "error": "error",
+            "warning": "warning",
+            "info": "information",
             "hint": "dica",
         }.get(severity, severity)
 

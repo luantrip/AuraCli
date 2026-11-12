@@ -100,11 +100,11 @@ class TestDelegatedTaskManager:
 
     def test_empty_list(self):
         mgr = DelegatedTaskManager()
-        assert "Nenhuma" in mgr.list_tasks()
+        assert "No delegated" in mgr.list_tasks()
 
     def test_summarize_empty(self):
         mgr = DelegatedTaskManager()
-        assert "Nenhuma" in mgr.summarize_tasks()
+        assert "No delegated" in mgr.summarize_tasks()
 
     def test_persist_callback_called(self):
         cb = MagicMock()

@@ -78,7 +78,7 @@ def _display_tool_call(name: str, args: dict):
 
         display_tool_call(name, args)
     except ImportError as _e:
-        pass  # silenced: {_e}
+        logger.debug("display_tool_call unavailable: %s", _e)
 
 
 logger = _get_logger()
@@ -136,7 +136,7 @@ def deep_project_analysis(
 
     project_path = Path(path).resolve()
     if not project_path.exists():
-        return f"Erro: o caminho '{path}' não existe"
+        return f"Error: path '{path}' does not exist"
 
     report_parts = [
         "# 🔍 Deep Project Analysis",
@@ -267,7 +267,7 @@ def discover_patterns(
 
     project_path = Path(path).resolve()
     if not project_path.exists():
-        return f"Erro: o caminho '{path}' não existe"
+        return f"Error: path '{path}' does not exist"
 
     report_parts = [
         "# 🔎 Pattern Discovery Report",
@@ -372,7 +372,7 @@ def analyze_dependencies(path: str = ".") -> str:
 
     project_path = Path(path).resolve()
     if not project_path.exists():
-        return f"Erro: o caminho '{path}' não existe"
+        return f"Error: path '{path}' does not exist"
 
     report_parts = [
         "# 📦 Dependency Analysis",
@@ -390,8 +390,8 @@ def analyze_dependencies(path: str = ".") -> str:
             if "dependencies" in pyproject.read_text():
                 report_parts.append("*Dependencies found in pyproject.toml*")
                 report_parts.append("")
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to read pyproject.toml for dependency report: %s", exc)
     requirements = project_path / "requirements.txt"
     if requirements.exists():
         report_parts.append("## Python (requirements.txt)")
@@ -408,8 +408,8 @@ def analyze_dependencies(path: str = ".") -> str:
             if len(deps) > 20:
                 report_parts.append(f"- ... and {len(deps) - 20} more")
             report_parts.append("")
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to read requirements.txt for dependency report: %s", exc)
     package_json = project_path / "package.json"
     if package_json.exists():
         report_parts.append("## JavaScript (package.json)")
@@ -427,8 +427,8 @@ def analyze_dependencies(path: str = ".") -> str:
                 data.get("devDependencies", {}),
                 limit=10,
             )
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to parse package.json for dependency report: %s", exc)
 
     report_parts.append("---")
 
@@ -549,7 +549,7 @@ def _analyze_architecture(project_path: Path) -> Dict[str, List[str]]:
                 rel = m.relative_to(project_path)
                 findings["entry_points"].append(str(rel))
             except Exception as _e:
-                pass  # silenced: {_e}
+                logger.debug("deep_analysis: ignored path error: %s", _e)
     for init_file in project_path.rglob("__init__.py"):
         try:
             parent = init_file.parent

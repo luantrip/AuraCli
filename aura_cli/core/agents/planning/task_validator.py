@@ -85,7 +85,7 @@ class TaskValidator:
     def add_rule(self, rule: ValidationRule) -> None:
         """Register a validation rule."""
         self.rules.append(rule)
-        logger.debug(f"Regra de validação '{rule.name}' adicionada")
+        logger.debug(f"Validation rule '{rule.name}' added")
 
     def validate(
         self, task: AgentTask, context: Optional[Dict[str, Any]] = None
@@ -138,7 +138,7 @@ class TaskValidator:
         required_params = context.get("required_params", []) if context else []
         for param in required_params:
             if param not in task.parameters:
-                errors.append(f"Parâmetro obrigatório '{param}' ausente")
+                errors.append(f"Required parameter '{param}' missing")
 
         return errors
 
@@ -153,7 +153,7 @@ class TaskValidator:
 
         for dep_id in task.dependencies:
             if dep_id not in available_ids:
-                errors.append(f"Dependência '{dep_id}' não encontrada")
+                errors.append(f"Dependency '{dep_id}' not found")
 
         return errors
 

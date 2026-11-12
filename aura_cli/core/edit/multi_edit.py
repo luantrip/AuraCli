@@ -78,7 +78,7 @@ def multi_edit(
                 errors.append(f"Error validating {op.file_path}: {e}")
 
         if errors:
-            logger.error(f"Validação falhou: {len(errors)} erros")
+            logger.error(f"Validation failed: {len(errors)} errors")
             return MultiEditResult(success=False, errors=errors)
 
     if create_backups:
@@ -128,7 +128,7 @@ def multi_edit(
         error_style = UIStyles.safe_style("ERROR", "red")
         console.print(
             f"[{error_style}]{UIIcons.ERROR} "
-            f"Edição múltipla concluída com {len(errors)} erros[/{error_style}]"
+            f"Multi-edit complete with {len(errors)} errors[/{error_style}]"
         )
 
     return MultiEditResult(

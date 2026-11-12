@@ -50,7 +50,6 @@ class TangentManager:
         self,
         forget_selector: Callable[[List[Dict[str, Any]]], Optional[int]] | None = None,
     ):
-        """Initialize the instance."""
         self.checkpoint: Optional[ConversationCheckpoint] = None
         self.state = TangentState.NORMAL
         self._forget_selector = forget_selector

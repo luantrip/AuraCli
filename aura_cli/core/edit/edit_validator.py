@@ -56,10 +56,10 @@ class EditValidator:
         valid = result.valid
 
         if valid:
-            logger.debug(f"Operação {operation.id} validada com sucesso")
+            logger.debug(f"Operation {operation.id} validated successfully")
         else:
             logger.warning(
-                f"Operação {operation.id} falhou na validação: {len(errors)} erros"
+                f"Operation {operation.id} failed validation: {len(errors)} errors"
             )
 
         return ValidationResult(
@@ -82,7 +82,7 @@ class EditValidator:
         total = len(operations)
         valid = sum(1 for r in results.values() if r.valid)
 
-        logger.info(f"Plano validado: {valid}/{total} operações válidas")
+        logger.info(f"Plan validated: {valid}/{total} valid operations")
 
         return results
 

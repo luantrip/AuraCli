@@ -134,7 +134,7 @@ def _detect_linux_theme() -> Literal["dark", "light"]:
                 return "dark"
             return "light"
         except (subprocess.CalledProcessError, FileNotFoundError):
-            pass
+            pass  # macOS subprocess unavailable — fall through to dark default
 
     # Fallback to dark
     return "dark"
@@ -150,14 +150,14 @@ def _detect_windows_theme() -> Literal["dark", "light"]:
         import winreg
 
         # Open Registry key
-        key = winreg.OpenKey(  # type: ignore[attr-defined]
-            winreg.HKEY_CURRENT_USER,  # type: ignore[attr-defined]
+        key = winreg.OpenKey(  # type: ignore[attr-defined]  # winreg is Windows-only
+            winreg.HKEY_CURRENT_USER,  # type: ignore[attr-defined]  # winreg is Windows-only
             r"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
         )
 
         # Read AppsUseLightTheme value (0 = dark, 1 = light)
-        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")  # type: ignore[attr-defined]
-        winreg.CloseKey(key)  # type: ignore[attr-defined]
+        value, _ = winreg.QueryValueEx(key, "AppsUseLightTheme")  # type: ignore[attr-defined]  # winreg is Windows-only
+        winreg.CloseKey(key)  # type: ignore[attr-defined]  # winreg is Windows-only
 
         return "light" if value == 1 else "dark"
     except (ImportError, OSError, FileNotFoundError):

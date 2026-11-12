@@ -1,26 +1,17 @@
-"""Auxiliary semantic-memory stack for embeddings and semantic search.
+"""Compatibility shim — memory_advanced merged into core.memory.
 
-STATUS (2026-08): ACTIVE — two real runtime callers:
-  1. core/tools/dev_tools.py → SemanticSearch (tool semantic_search_advanced)
-  2. core/refactoring/semantic_similarity.py → EmbeddingGenerator
-
-NOT a replacement for memory/ (canonical):
-  - memory/  = conversation, SQLite persistence, snapshots, general VectorStore
-  - memory_advanced/ = code-specialised embeddings + semantic search
-    (fastembed/OpenAI/CodeBERT) over pre-built indexes.
-
-New memory behaviour should extend memory/, not this package.
+All symbols are re-exported from their new canonical location.
+Import directly from ``aura_cli.core.memory`` for new code.
 """
 
-from aura_cli.core.memory_advanced.embeddings import EmbeddingGenerator, EmbeddingModel
-from aura_cli.core.memory_advanced.semantic_search import (
+from aura_cli.core.memory.embeddings import EmbeddingGenerator, EmbeddingModel
+from aura_cli.core.memory.semantic_search import (
     SearchQuery,
     SearchResult,
     SemanticSearch,
 )
-from aura_cli.core.memory_advanced.vector_storage import (
+from aura_cli.core.memory.vector_storage import (
     VectorDocument,
-    VectorIndex,
     VectorStorage,
 )
 
@@ -31,6 +22,5 @@ __all__ = [
     "SearchResult",
     "SemanticSearch",
     "VectorDocument",
-    "VectorIndex",
     "VectorStorage",
 ]

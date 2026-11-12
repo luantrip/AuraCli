@@ -27,12 +27,12 @@ class BaseAuraModalScreen(ModalScreen[T], Generic[T]):
 
     TITLE: ClassVar[str] = ""
     SHOW_FOOTER_CLOSE: ClassVar[bool] = True
-    FOOTER_CLOSE_LABEL: ClassVar[str] = "Fechar"
+    FOOTER_CLOSE_LABEL: ClassVar[str] = "Close"
     MODAL_ROOT_ID: ClassVar[str] = "aura_modal_root"
     INITIAL_FOCUS_SELECTOR: ClassVar[str | None] = None
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "close_modal", "Fechar", show=True),
+        Binding("escape", "close_modal", "Close", show=True),
     ]
 
     def on_mount(self) -> None:
@@ -87,7 +87,7 @@ class BaseAuraModalScreen(ModalScreen[T], Generic[T]):
 
     def _default_dismiss_value(self) -> T:
         """Override when ``T`` is not ``None`` and ESC should return a sentinel."""
-        return None  # type: ignore[return-value]
+        return None  # type: ignore[return-value]  # Optional return narrowing
 
     @on(Button.Pressed, "#aura_modal_close")
     def _on_modal_close_pressed(self) -> None:

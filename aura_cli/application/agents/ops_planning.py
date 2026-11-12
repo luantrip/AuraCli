@@ -77,30 +77,30 @@ def build_ops_planning_prompt(
 ) -> str:
     """Build the constrained JSON planning prompt for an Ops execution mode."""
     payload_section = render_delegation_context(payload)
-    return f"""Você é um planejador de tarefas DevOps especializado. Analise o pedido do usuário e crie um plano estruturado de tarefas.
+    return f"""You are a specialized DevOps task planner. Analyze the user request and create a structured task plan.
 
-**MODO ATUAL:** {mode}
+**CURRENT MODE:** {mode}
 
 {payload_section}
 
 {workspace_diff}
 
-**FORMATO DE RESPOSTA (JSON):**
+**RESPONSE FORMAT (JSON):**
 {{
   "tasks": [
     {{
-      "id": "tarefa_1",
-      "description": "Descrição clara da tarefa",
+      "id": "task_1",
+      "description": "Clear task description",
       "type": "read_file|write_file|list_directory|git_status|git_diff|git_diff_context|git_log|docker_ps|docker_logs|cloudflare_tunnel_create|cloudflare_pages_deploy|run_shell_command|tree_view",
       "agent": "ops_code_agent",
       "priority": 5,
       "dependencies": [],
       "parameters": {{
-        "path": "caminho/do/arquivo",
-        "command": "comando se for git/docker",
-        "name": "nome do tunnel ou projeto",
-        "url": "url local para tunnel",
-        "directory": "diretório para deploy",
+        "path": "path/to/file",
+        "command": "command for git/docker",
+        "name": "tunnel or project name",
+        "url": "local url for tunnel",
+        "directory": "directory for deploy",
         "mode": "{mode}",
         ...
       }}
@@ -108,25 +108,25 @@ def build_ops_planning_prompt(
   ]
 }}
 
-**REGRAS:**
-1. Cada tarefa DEVE ter TODOS os parâmetros necessários
-2. Para read_file, write_file, list_directory, tree_view: SEMPRE inclua "path" (use "." se não especificado)
-3. IMPORTANTE: Só crie tarefas Git (git_status, git_diff, git_log) se o usuário explicitamente pedir ou se for necessário para a análise
-4. IMPORTANTE: Só crie tarefas Docker (docker_ps, docker_logs) se o usuário explicitamente pedir ou se for necessário para a análise
-5. Se o usuário não mencionar Git ou Docker, NÃO crie tarefas relacionadas a eles
-6. Para git_status: Não precisa de parâmetros adicionais
-7. Para git_diff: Opcionalmente inclua "file_path" ou "path"
-8. Para git_diff_context: Use para obter o estado completo, incluindo arquivos não rastreados.
-9. Para git_log: Opcionalmente inclua "limit" (padrão: 10)
-9. Para docker_ps: Opcionalmente inclua "all" (true/false)
-10. Para docker_logs: SEMPRE inclua "container" (nome do container)
-11. Para cloudflare_tunnel_create: Inclua "name" e "url"
-12. Para cloudflare_pages_deploy: Inclua "directory" (padrão ".") e opcionalmente "project_name"
-13. Para run_shell_command: SEMPRE inclua "command" (comando a executar)
-14. SEMPRE inclua "mode": "{mode}" nos parâmetros
-15. Comece sempre com list_directory(".") para entender o projeto
+**RULES:**
+1. Each task MUST have ALL required parameters
+2. For read_file, write_file, list_directory, tree_view: ALWAYS include "path" (use "." if not specified)
+3. IMPORTANT: Only create Git tasks (git_status, git_diff, git_log) if the user explicitly asks or it is needed for the analysis
+4. IMPORTANT: Only create Docker tasks (docker_ps, docker_logs) if the user explicitly asks or it is needed for the analysis
+5. If the user does not mention Git or Docker, do NOT create tasks related to them
+6. For git_status: No additional parameters needed
+7. For git_diff: Optionally include "file_path" or "path"
+8. For git_diff_context: Use to get the full state, including untracked files.
+9. For git_log: Optionally include "limit" (default: 10)
+9. For docker_ps: Optionally include "all" (true/false)
+10. For docker_logs: ALWAYS include "container" (container name)
+11. For cloudflare_tunnel_create: Include "name" and "url"
+12. For cloudflare_pages_deploy: Include "directory" (default ".") and optionally "project_name"
+13. For run_shell_command: ALWAYS include "command" (command to run)
+14. ALWAYS include "mode": "{mode}" in the parameters
+15. Always start with list_directory(".") to understand the project
 
-Retorne APENAS o JSON, sem markdown, sem explicações."""
+Return ONLY the JSON, no markdown, no explanations."""
 
 
 def select_ops_agent(task: Any, available_agents: Iterable[str]) -> str:

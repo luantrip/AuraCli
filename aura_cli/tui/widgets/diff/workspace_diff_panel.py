@@ -34,7 +34,7 @@ class WorkspaceDiffPanel(VerticalScroll):
     def _summary(self) -> str:
         status = "alterado" if self.snapshot.has_changes else "limpo"
         suffix = " · truncado" if self.snapshot.truncated else ""
-        return f"Aura Diff · {status} · {len(self.snapshot.changed_files)} arquivo(s){suffix}"
+        return f"Aura Diff · {status} · {len(self.snapshot.changed_files)} file(s){suffix}"
 
     @staticmethod
     def _line_class(line: str) -> str:

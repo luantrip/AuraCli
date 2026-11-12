@@ -4,7 +4,6 @@
 cli/ui/
 ├── manager.py              # UIManager facade
 ├── rendering.py            # RenderCoordinator (+ render_component)
-├── events.py               # UIEventManager (AGI/Ops events → windows)
 ├── display_facade.py       # display_* for workers
 ├── command_completer.py    # prompt_toolkit (uses cli/commands/slash_registry)
 └── composition/
@@ -19,7 +18,7 @@ components/ (renderables)
 ├── subagent_panel.py       # paralelo / workflow steps
 ├── tool_execution_panel.py # agrupa tool calls (tool_panel_helper)
 ├── worker_feed.py          # AGI/Ops activity feed
-├── agi_task_window.py      # janela por task_id (events.py)
+├── agi_task_window.py      # janela por task_id (sem consumidor em produção; ver dívida)
 └── tool_result.py / tool_header.py  # inline tool output
 ```
 
@@ -27,9 +26,12 @@ components/ (renderables)
 
 1. **Slash input** — `CommandCompleter` ← `slash_registry` (alinhado ao TUI).
 2. **Tool loop** — `tool_execution.py` → `ToolResult` / `ToolExecutionPanel` via `publish_tool_execution_panel`.
-3. **AGI/Ops worker** — eventos `AgiEvent` → `UIEventManager`:
-   - `render_task_composite_surface` (janela + painel de tools quando panel mode)
-   - `describe_operational_event` → `render_operational_feedback`
+3. **AGI/Ops worker** — a fila de status é drenada por `handle_status_updates`
+   (`cli/helpers.py`) a cada volta do laço principal, antes do prompt:
+   - mensagens `chat_message` com o marcador `[Aura AGI]` / `[Aura Ops]` →
+     `parse_status_messages` → `render_worker_feeds` (`WorkerActivityFeed`);
+   - eventos estruturados (`tool_executing`, `tool_result`, `task_complete`)
+     **não têm renderização no CLI hoje** — a TUI os consome via `tui/bridge.py`.
 4. **Workflow paralelo** — `SubAgentPanel` via `publish_subagent_panel(status_queue)`.
 5. **Workers background** — `publish_agent_status` → `parse_status_messages` → `render_worker_feeds` em `handle_status_updates`.
 

@@ -18,6 +18,7 @@ from aura_cli.application.presentation.tool_grammar import describe_tool_activit
 
 
 class WorkItemKind(str, Enum):
+    """Classifies the semantic role of a work item in the pipeline."""
     TURN = "turn"
     LLM = "llm"
     TOOL = "tool"
@@ -29,6 +30,7 @@ class WorkItemKind(str, Enum):
 
 
 class WorkItemState(str, Enum):
+    """Lifecycle state of a work item."""
     QUEUED = "queued"
     PREPARING = "preparing"
     RUNNING = "running"
@@ -44,6 +46,7 @@ class WorkItemState(str, Enum):
 
 
 class WorkItemAttention(str, Enum):
+    """Attention level required by a work item."""
     NONE = "none"
     PASSIVE = "passive"
     ACTION = "action"
@@ -51,6 +54,7 @@ class WorkItemAttention(str, Enum):
 
 
 class WorkItemCapability(str, Enum):
+    """Capability category associated with a work item."""
     INSPECT = "inspect"
     APPROVE = "approve"
     DECLINE = "decline"
@@ -208,6 +212,7 @@ class WorkItemEvidence:
 
 @dataclass(frozen=True)
 class WorkItemEnvelope:
+    """Envelope wrapping a work item with routing metadata."""
     CONTRACT_VERSION = 1
 
     identity: WorkItemIdentity

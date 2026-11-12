@@ -158,7 +158,7 @@ def encode_image_file(path: str | Path) -> tuple[str, str]:
             "view_image: resized %s from %dx%d to %dx%d",
             p.name, w, h, *img_resized.size,
         )
-        img = img_resized  # type: ignore[assignment]
+        img = img_resized  # type: ignore[assignment]  # ImageFile → Image narrowing
 
     b64, mime = _pil_to_base64(img, has_alpha=has_alpha)
 

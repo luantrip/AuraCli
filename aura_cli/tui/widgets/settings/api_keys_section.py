@@ -41,7 +41,7 @@ class ApiKeysSection(Static):
 
     def compose(self) -> ComposeResult:
         with Vertical(classes="settings-section"):
-            yield Static("Chaves de API", classes="section-title")
+            yield Static("API Keys", classes="section-title")
             yield Static("", id="api_keys_status")
             with Horizontal(classes="field-row"):
                 yield Select(
@@ -55,7 +55,7 @@ class ApiKeysSection(Static):
                 )
                 yield Button("Remover", id="api_remove_btn", variant="error")
                 yield Button(
-                    "Limpar todas",
+                    "Clear all",
                     id="api_clear_all_btn",
                     variant="warning",
                 )
@@ -85,13 +85,13 @@ class ApiKeysSection(Static):
         def _on_key(value: str | None) -> None:
             if value:
                 set_api_key_for_provider(provider, value)
-                self.notify(f"Chave salva: {label}", title="API Key")
+                self.notify(f"Key saved: {label}", title="API Key")
                 self._notify_changed(provider)
 
         push_input(
             self.app,
-            title=f"Chave API — {label}",
-            message="Cole a chave do provedor:",
+            title=f"API Key — {label}",
+            message="Paste the provider key:",
             password=True,
             on_result=_on_key,
         )
@@ -126,7 +126,7 @@ class ApiKeysSection(Static):
         push_confirm(
             self.app,
             title="Limpar todas as chaves",
-            message="Remover TODAS as chaves de API? Esta ação não pode ser desfeita.",
+            message="Remove ALL API keys? This action cannot be undone.",
             dangerous=True,
             confirm_label="Limpar tudo",
             on_result=_on_confirm,

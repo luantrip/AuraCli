@@ -119,7 +119,7 @@ def build_worker_readiness(
         return ReadinessReport(
             ready=False,
             code="provider",
-            message=f"Provider não suportado para {worker_name}: '{provider}'.",
+            message=f"Unsupported provider for {worker_name}: '{provider}'.",
             worker_type=worker_name,
             model=normalized_model,
             provider=provider,
@@ -131,7 +131,7 @@ def build_worker_readiness(
         return ReadinessReport(
             ready=False,
             code="workspace",
-            message=f"Workspace não existe ou não é diretório: {root}.",
+            message=f"Workspace does not exist or is not a directory: {root}.",
             worker_type=worker_name,
             model=normalized_model,
             provider=provider,
@@ -144,7 +144,7 @@ def build_worker_readiness(
             ready=False,
             code="configuration",
             message=(
-                f"{credential_name} não configurada para o provider '{provider}'. "
+                f"{credential_name} not configured for provider '{provider}'. "
                 "Configure com /settings ou pelo ambiente."
             ),
             worker_type=worker_name,
@@ -163,7 +163,7 @@ def build_worker_readiness(
                 ready=False,
                 code="dependency",
                 message=(
-                    f"Dependência de ferramentas indisponível para {worker_name}: "
+                    f"Tool dependency unavailable for {worker_name}: "
                     f"{error}"
                 ),
                 worker_type=worker_name,
@@ -185,7 +185,7 @@ def build_worker_readiness(
                 ready=False,
                 code="dependency",
                 message=(
-                    f"Dependências ausentes para {worker_name}: "
+                    f"Missing dependencies for {worker_name}: "
                     f"{', '.join(dependencies)}."
                 ),
                 worker_type=worker_name,
@@ -199,7 +199,7 @@ def build_worker_readiness(
     return ReadinessReport(
         ready=True,
         code="ready",
-        message=f"{worker_name} pronto para iniciar.",
+        message=f"{worker_name} ready to start.",
         worker_type=worker_name,
         model=normalized_model,
         provider=provider,
@@ -210,7 +210,7 @@ def build_worker_readiness(
 
 def ensure_worker_ready(**kwargs: object) -> ReadinessReport:
     """Raise `WorkerReadinessError` when the supplied launch is not ready."""
-    report = build_worker_readiness(**kwargs)  # type: ignore[arg-type]
+    report = build_worker_readiness(**kwargs)  # type: ignore[arg-type]  # kwargs narrowing
     if not report.ready:
         raise WorkerReadinessError(report)
     return report

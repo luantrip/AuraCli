@@ -4,14 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from rich.console import Console
-from rich.table import Table
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.ops_tools.infrastructure.cloud.base import CloudProviderManager
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class GCPManager(CloudProviderManager):
@@ -67,21 +63,36 @@ class GCPManager(CloudProviderManager):
             self._credentials = None
             return None
 
+    def _sdk_installed(self) -> bool:
+        """Whether the GCP SDK is importable (independent of credentials)."""
+        import importlib.util
+        return importlib.util.find_spec("google.cloud.compute_v1") is not None
+
+    def availability_error(self) -> str | None:
+        """Actionable reason the GCP provider is unavailable, or None if ready."""
+        if self.is_available():
+            return None
+        if not self._sdk_installed():
+            return (
+                "GCP SDK not installed. Install it with: "
+                "pip install google-cloud-compute google-cloud-storage"
+            )
+        return (
+            "GCP credentials not configured. Run 'gcloud auth application-default "
+            "login' or set GOOGLE_APPLICATION_CREDENTIALS to a service-account key."
+        )
+
     def is_available(self) -> bool:
         """Check if GCP SDK is available and credentials are configured."""
         if self._available is not None:
             return self._available
 
-        try:
-            from google.cloud import compute_v1 as _compute_v1
-
-            self._available = (
-                _compute_v1 is not None and self._get_credentials() is not None
-            )
-        except ImportError:
+        if not self._sdk_installed():
             logger.debug("google-cloud-compute not installed")
             self._available = False
+            return self._available
 
+        self._available = self._get_credentials() is not None
         return self._available
 
     def list_resources(self, resource_type: str, **filters) -> List[Dict[str, Any]]:
@@ -170,26 +181,6 @@ class GCPManager(CloudProviderManager):
                 except Exception as e:
                     logger.debug(f"Error listing instances in zone {zone_name}: {e}")
 
-            if instances:
-                table = Table(title="☁️ GCP Compute Instances")
-                table.add_column("Name", style="cyan")
-                table.add_column("Zone", style="green")
-                table.add_column("Type")
-                table.add_column("Status")
-                table.add_column("External IP", style="yellow")
-
-                for inst in instances:
-                    status_style = "green" if inst["status"] == "RUNNING" else "red"
-                    table.add_row(
-                        inst["name"],
-                        inst["zone"],
-                        inst["machine_type"],
-                        f"[{status_style}]{inst['status']}[/{status_style}]",
-                        inst["external_ip"] or "-",
-                    )
-
-                console.print(table)
-
             self.stats.track_tool_usage("gcp_list_compute")
             logger.info(f"Listed {len(instances)} Compute instances")
             return instances
@@ -220,21 +211,6 @@ class GCPManager(CloudProviderManager):
                         else None,
                     }
                 )
-
-            if buckets:
-                table = Table(title="☁️ GCP Storage Buckets")
-                table.add_column("Name", style="cyan")
-                table.add_column("Location", style="yellow")
-                table.add_column("Storage Class")
-
-                for bucket in buckets:
-                    table.add_row(
-                        bucket["name"],
-                        bucket["location"],
-                        bucket["storage_class"] or "-",
-                    )
-
-                console.print(table)
 
             self.stats.track_tool_usage("gcp_list_storage")
             logger.info(f"Listed {len(buckets)} Storage buckets")
@@ -272,26 +248,6 @@ class GCPManager(CloudProviderManager):
                         "timeout": func.timeout.seconds if func.timeout else None,
                     }
                 )
-
-            if functions:
-                table = Table(title="☁️ GCP Cloud Functions")
-                table.add_column("Name", style="cyan")
-                table.add_column("Runtime", style="green")
-                table.add_column("Status")
-                table.add_column("Memory")
-
-                for func in functions:
-                    status_style = "green" if func["status"] == "ACTIVE" else "yellow"
-                    table.add_row(
-                        func["name"],
-                        func["runtime"] or "-",
-                        f"[{status_style}]{func['status']}[/{status_style}]",
-                        f"{func['available_memory_mb']} MB"
-                        if func["available_memory_mb"]
-                        else "-",
-                    )
-
-                console.print(table)
 
             self.stats.track_tool_usage("gcp_list_functions")
             logger.info(f"Listed {len(functions)} Cloud Functions")

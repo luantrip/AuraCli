@@ -13,19 +13,17 @@ from aura_cli.cli.key_manager import check_api_keys, show_settings_menu
 class TestCheckApiKeys:
     """Test suite for check_api_keys."""
 
-    @patch("aura_cli.cli.key_manager.secure_config_manager")
-    @patch("aura_cli.core.config.ConfigCompat")
-    def test_check_api_keys_none_configured(self, mock_compat_cls, mock_secure_config):
+    @patch("aura_cli.cli.key_manager.get_config_manager")
+    def test_check_api_keys_none_configured(self, mock_gcm):
         """Test checking API keys when none are configured."""
-        mock_compat_cls.return_value.get_api_key.return_value = None
-        mock_secure_config.get_api_key.return_value = None
+        mock_gcm.return_value.get_api_key.return_value = None
 
         result = check_api_keys()
 
         assert result is False
 
-    @patch("aura_cli.cli.key_manager.secure_config_manager")
-    def test_check_api_keys_google_configured(self, mock_secure_config):
+    @patch("aura_cli.cli.key_manager.get_config_manager")
+    def test_check_api_keys_google_configured(self, mock_gcm):
         """Test checking API keys when Google is configured."""
 
         def side_effect(key):
@@ -33,14 +31,14 @@ class TestCheckApiKeys:
                 return "test_key"
             return None
 
-        mock_secure_config.get_api_key.side_effect = side_effect
+        mock_gcm.return_value.get_api_key.side_effect = side_effect
 
         result = check_api_keys()
 
         assert result is True
 
-    @patch("aura_cli.cli.key_manager.secure_config_manager")
-    def test_check_api_keys_openai_configured(self, mock_secure_config):
+    @patch("aura_cli.cli.key_manager.get_config_manager")
+    def test_check_api_keys_openai_configured(self, mock_gcm):
         """Test checking API keys when OpenAI is configured."""
 
         def side_effect(key):
@@ -48,14 +46,14 @@ class TestCheckApiKeys:
                 return "test_key"
             return None
 
-        mock_secure_config.get_api_key.side_effect = side_effect
+        mock_gcm.return_value.get_api_key.side_effect = side_effect
 
         result = check_api_keys()
 
         assert result is True
 
-    @patch("aura_cli.cli.key_manager.secure_config_manager")
-    def test_check_api_keys_anthropic_configured(self, mock_secure_config):
+    @patch("aura_cli.cli.key_manager.get_config_manager")
+    def test_check_api_keys_anthropic_configured(self, mock_gcm):
         """Test checking API keys when Anthropic is configured."""
 
         def side_effect(key):
@@ -63,7 +61,7 @@ class TestCheckApiKeys:
                 return "test_key"
             return None
 
-        mock_secure_config.get_api_key.side_effect = side_effect
+        mock_gcm.return_value.get_api_key.side_effect = side_effect
 
         result = check_api_keys()
 
@@ -193,3 +191,46 @@ def test_settings_dialog_wrapper_applies_graphite_style():
     kwargs = dialog.call_args.kwargs
     assert kwargs["style"] is not None
     assert "#15181d" in repr(kwargs["style"].style_rules)
+
+
+class TestSystemMenuStatusBarToggle:
+    """P1-7 — the footer's detail mode is switchable from /settings > Sistema."""
+
+    def _run_system_menu(self, config, choices):
+        from unittest.mock import Mock
+
+        from aura_cli.cli import key_manager
+
+        report = Mock(binaries=[], all_ok=True)
+        with (
+            patch("aura_cli.core.config.get_config_manager", return_value=config),
+            patch(
+                "aura_cli.core.nim_integrity.check_nim_integrity", return_value=report
+            ),
+            patch.object(key_manager, "radiolist_dialog") as dialog,
+        ):
+            dialog.return_value.run.side_effect = choices
+            key_manager._handle_system_menu()
+        return dialog
+
+    def test_toggle_flips_the_setting_on_and_off(self):
+        store: dict = {}
+        config = Mock()
+        config.get.side_effect = lambda key, default=None: store.get(key, default)
+        config.set.side_effect = lambda key, value: store.__setitem__(key, value)
+
+        self._run_system_menu(config, ["status_detail", "status_detail", "back"])
+
+        assert store["status_bar_verbose"] is False  # on, then back off
+
+    def test_menu_shows_the_current_state(self):
+        config = Mock()
+        config.get.side_effect = lambda key, default=None: (
+            True if key == "status_bar_verbose" else default
+        )
+
+        dialog = self._run_system_menu(config, ["back"])
+
+        labels = [label for _value, label in dialog.call_args.kwargs["values"]]
+        row = next(label for label in labels if "Barra" in label)
+        assert row.rstrip().endswith("✓")

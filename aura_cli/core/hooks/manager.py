@@ -9,6 +9,7 @@ from collections import defaultdict
 import contextlib
 from datetime import datetime
 import json
+import logging
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -23,6 +24,8 @@ from aura_cli.application.extensions.subprocess_hooks import (
     hook_matches,
 )
 
+logger = logging.getLogger(__name__)
+
 
 class HookManager:
     """Event-driven hook manager for extensibility.
@@ -34,7 +37,6 @@ class HookManager:
     """
 
     def __init__(self):
-        """Initialize the instance."""
         self.hooks: Dict[HookEvent, List[Hook]] = defaultdict(list)
         self.cache: Dict[str, tuple[HookResult, datetime]] = {}
 
@@ -198,7 +200,7 @@ def get_hook_manager() -> HookManager:
         if container.has(Services.HOOK_MANAGER):
             return container.resolve(Services.HOOK_MANAGER)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_hook_manager, using fallback", exc_info=True)
 
     # Fallback to legacy singleton
     global _hook_manager

@@ -31,7 +31,7 @@ class TestUIManager:
 
     def test_status_bar_with_notification(self):
         """Testa StatusBar com notificação."""
-        from aura_cli.cli.ui.components.status_bar import StatusBar
+        from aura_cli.cli.ui.components.layout.status_bar import StatusBar
         from aura_cli.core.stats import get_stats
 
         stats = get_stats()
@@ -44,7 +44,7 @@ class TestUIManager:
 
     def test_status_bar_without_notification(self):
         """Testa StatusBar sem notificação."""
-        from aura_cli.cli.ui.components.status_bar import StatusBar
+        from aura_cli.cli.ui.components.layout.status_bar import StatusBar
         from aura_cli.core.stats import get_stats
 
         stats = get_stats()
@@ -56,7 +56,7 @@ class TestUIManager:
 
     def test_status_bar_handles_missing_model(self):
         """Modelo ausente deve aparecer como auto, sem quebrar a renderização."""
-        from aura_cli.cli.ui.components.status_bar import StatusBar
+        from aura_cli.cli.ui.components.layout.status_bar import StatusBar
         from aura_cli.core.stats import get_stats
 
         stats = get_stats()

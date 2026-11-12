@@ -26,5 +26,5 @@ def test_build_tool_result_response_uses_recent_results() -> None:
 
     response = build_tool_result_response(history, "crie o arquivo")
 
-    assert "Concluí: crie o arquivo" in response
+    assert "Completed: crie o arquivo" in response
     assert "Arquivo modificado com sucesso" in response

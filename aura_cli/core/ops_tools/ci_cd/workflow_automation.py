@@ -41,7 +41,7 @@ class WorkflowAutomator:
         """Load the built-in default templates."""
         ci_template = WorkflowTemplate(
             name="ci_basic",
-            description="CI básico com testes",
+            description="Basic CI with tests",
             triggers=["push", "pull_request"],
             steps=[
                 {"name": "Checkout", "uses": "actions/checkout@v3"},
@@ -61,7 +61,7 @@ class WorkflowAutomator:
 
         deploy_template = WorkflowTemplate(
             name="deploy",
-            description="Deploy automático",
+            description="Automatic deploy",
             triggers=["push"],
             steps=[
                 {"name": "Checkout", "uses": "actions/checkout@v3"},

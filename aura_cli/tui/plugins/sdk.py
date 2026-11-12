@@ -89,7 +89,6 @@ class PluginWidget(Widget):
     is_active: reactive[bool] = reactive(True)
 
     def __init__(self, *args, plugin_id: str | None = None, **kwargs):
-        """Initialize the instance."""
         super().__init__(*args, **kwargs)
         self._plugin_id = plugin_id or (
             self.PLUGIN_INFO.name if self.PLUGIN_INFO else "unnamed"
@@ -115,7 +114,7 @@ class PluginWidget(Widget):
 
     def on_mount(self) -> None:
         """Called when widget is mounted."""
-        super().on_mount()  # type: ignore[misc]
+        super().on_mount()  # type: ignore[misc]  # Textual Widget.on_mount optional override
 
         if not self._initialized:
             self._initialize()
@@ -127,7 +126,7 @@ class PluginWidget(Widget):
         """Called when widget is unmounted."""
         self.on_plugin_unmount()
         self._cleanup()
-        super().on_unmount()  # type: ignore[misc]
+        super().on_unmount()  # type: ignore[misc]  # Textual Widget.on_unmount optional override
 
     def _initialize(self) -> None:
         """Initialize plugin systems."""
@@ -150,8 +149,8 @@ class PluginWidget(Widget):
         for attr_name in dir(self):
             attr = getattr(self, attr_name, None)
             if hasattr(attr, "_event_subscription"):
-                event_name = attr._event_subscription  # type: ignore
-                self._subscribe_to_event(event_name, attr)  # type: ignore[arg-type]
+                event_name = attr._event_subscription  # type: ignore[attr-defined]  # dynamic attr set by decorator
+                self._subscribe_to_event(event_name, attr)  # type: ignore[arg-type]  # Callable[..., Any] narrowing
 
     def _subscribe_to_event(self, event_name: str, handler: Callable) -> None:
         """Subscribe to an event."""
@@ -213,9 +212,9 @@ class PluginWidget(Widget):
         try:
             from aura_cli.tui.core.event_bus import show_toast
 
-            show_toast(message, severity=severity)  # type: ignore
+            show_toast(message, severity=severity)  # type: ignore[arg-type]  # Textual toast API varies by version
         except Exception:
-            self.app.notify(message, severity=severity)  # type: ignore[arg-type]
+            self.app.notify(message, severity=severity)  # type: ignore[arg-type]  # severity is SeverityLevel literal
 
     def get_store(self):
         """Get the sync store."""
@@ -261,7 +260,7 @@ def plugin_command(
 
     def decorator(func: Callable) -> Callable:
         """Decorator factory for plugin registration."""
-        func._plugin_command = {  # type: ignore[attr-defined]
+        func._plugin_command = {  # type: ignore[attr-defined]  # dynamic decorator attr
             "name": name,
             "description": description,
             "keybind": keybind,
@@ -289,7 +288,7 @@ def on_event(event_name: str):
 
     def decorator(func: Callable) -> Callable:
         """Decorator factory for plugin registration."""
-        func._event_subscription = event_name  # type: ignore[attr-defined]
+        func._event_subscription = event_name  # type: ignore[attr-defined]  # dynamic decorator attr
         return func
 
     return decorator
@@ -299,7 +298,6 @@ class PluginRegistry:
     """Registry for managing plugins."""
 
     def __init__(self):
-        """Initialize the instance."""
         self._plugins: Dict[str, Type[PluginWidget]] = {}
         self._instances: Dict[str, PluginWidget] = {}
 
@@ -422,7 +420,6 @@ class PluginContainer(Vertical):
     """
 
     def __init__(self, plugin: PluginWidget, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.plugin = plugin
         self._error: Optional[Exception] = None

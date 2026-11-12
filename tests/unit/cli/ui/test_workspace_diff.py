@@ -1,5 +1,5 @@
 from aura_cli.application.diffs import WorkspaceDiff
-from aura_cli.cli.ui.components.workspace_diff import WorkspaceDiffDisplay
+from aura_cli.cli.ui.components.layout.workspace_diff import WorkspaceDiffDisplay
 
 
 def test_workspace_diff_display_renders_snapshot_summary() -> None:

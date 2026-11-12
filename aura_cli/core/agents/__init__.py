@@ -157,7 +157,7 @@ def _ensure_adk_bridge() -> bool:
         except ImportError as e:
             logger.warning(f"Could not import ADK Bridge: {e}")
             ADKAgentAdapter = None
-            ADKBridgeFactory = _StubADKBridgeFactory  # type: ignore
+            ADKBridgeFactory = _StubADKBridgeFactory  # type: ignore[assignment]  # stub replaces Protocol
             ADKConfigAdapter = None
             ADKResponseAdapter = None
             _adk_bridge_loaded = True
@@ -165,7 +165,7 @@ def _ensure_adk_bridge() -> bool:
         except Exception as e:
             logger.error(f"Error loading ADK Bridge: {e}", exc_info=True)
             ADKAgentAdapter = None
-            ADKBridgeFactory = _StubADKBridgeFactory  # type: ignore
+            ADKBridgeFactory = _StubADKBridgeFactory  # type: ignore[assignment]  # stub replaces Protocol
             ADKConfigAdapter = None
             ADKResponseAdapter = None
             _adk_bridge_loaded = True
@@ -256,8 +256,8 @@ try:
     from .adk_integration import create_adk_wrapper
     from .adk_wrapper import ADKAgentWrapper
 except ImportError:
-    ADKAgentWrapper = None  # type: ignore[assignment,misc]
-    create_adk_wrapper = None  # type: ignore[assignment]
+    ADKAgentWrapper = None  # type: ignore[assignment,misc]  # optional dep
+    create_adk_wrapper = None  # type: ignore[assignment]  # optional dep
 
 __all__ = [
     "ADKAgentAdapter",

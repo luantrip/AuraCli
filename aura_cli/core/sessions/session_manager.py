@@ -53,7 +53,7 @@ def _atomic_write_json(path: Path, data: Any) -> None:
                 temporary_path.unlink(missing_ok=True)
             except OSError:
                 logger.debug(
-                    "Não foi possível remover exportação temporária", exc_info=True
+                    "Could not remove temporary export", exc_info=True
                 )
 
 
@@ -327,7 +327,7 @@ class SessionManager:
                     temporary_path.unlink(missing_ok=True)
                 except OSError:
                     logger.debug(
-                        "Não foi possível remover snapshot temporário", exc_info=True
+                        "Could not remove temporary snapshot", exc_info=True
                     )
 
     def load_session(self, session_id: str) -> Optional[Session]:

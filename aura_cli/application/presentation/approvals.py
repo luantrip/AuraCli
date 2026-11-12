@@ -9,12 +9,14 @@ from aura_cli.application.agents.events import AgiEvent
 
 
 class ApprovalScope(str, Enum):
+    """Scope at which an approval decision applies."""
     ONCE = "once"
     SESSION = "session"
     POLICY = "policy"
 
 
 class ApprovalStatus(str, Enum):
+    """Resolution status of an approval request."""
     PENDING = "pending"
     APPROVED = "approved"
     DECLINED = "declined"
@@ -24,6 +26,7 @@ class ApprovalStatus(str, Enum):
 
 @dataclass(frozen=True)
 class ApprovalRequest:
+    """Request for explicit user approval before an action."""
     request_id: str
     task_id: str
     action: str
@@ -35,11 +38,13 @@ class ApprovalRequest:
 
     @property
     def key(self) -> str:
+        """Return the unique string key identifying this approval request."""
         return f"task:{self.task_id}/approval:{self.request_id}"
 
 
 @dataclass(frozen=True)
 class ApprovalResolution:
+    """Recorded resolution of an approval request."""
     request_id: str
     status: ApprovalStatus
     scope: ApprovalScope = ApprovalScope.ONCE
@@ -57,6 +62,7 @@ class ApprovalCenter:
 def request_approval(
     center: ApprovalCenter, request: ApprovalRequest
 ) -> ApprovalCenter:
+    """Create and dispatch an approval request for a pending action."""
     pending = tuple(
         item for item in center.pending if item.request_id != request.request_id
     )
@@ -66,6 +72,7 @@ def request_approval(
 def resolve_approval(
     center: ApprovalCenter, resolution: ApprovalResolution
 ) -> ApprovalCenter:
+    """Resolve a pending approval request with the given decision."""
     request = next(
         (item for item in center.pending if item.request_id == resolution.request_id),
         None,
@@ -97,18 +104,20 @@ def resolve_approval(
 def is_preapproved(
     center: ApprovalCenter, *, action: str, policy_key: str | None = None
 ) -> bool:
+    """Return True if the given action is covered by a pre-approval policy."""
     return action in center.session_grants or bool(
         policy_key and policy_key in center.policy_grants
     )
 
 
 def approval_request_from_event(event: AgiEvent) -> ApprovalRequest:
+    """Build an ApprovalRequest from a raw event payload."""
     data = event.data or {}
     return ApprovalRequest(
         request_id=str(data.get("request_id") or event.task_id),
         task_id=event.task_id,
         action=str(data.get("action") or "decision"),
-        message=str(data.get("message") or "Ação necessária"),
+        message=str(data.get("message") or "Action required"),
         scope=ApprovalScope(str(data.get("scope") or "once")),
         parent_task_id=event.parent_task_id,
         session_id=str(data.get("session_id")) if data.get("session_id") else None,
@@ -117,6 +126,7 @@ def approval_request_from_event(event: AgiEvent) -> ApprovalRequest:
 
 
 def approval_resolution_from_event(event: AgiEvent) -> ApprovalResolution:
+    """Build an ApprovalResolution from a raw event payload."""
     data = event.data or {}
     status = str(data.get("status") or "declined")
     return ApprovalResolution(

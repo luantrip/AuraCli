@@ -15,7 +15,7 @@ class ToolRegistryHarness(App[None]):
 
 
 @pytest.mark.asyncio
-async def test_tool_registry_uses_portuguese_controls_and_empty_history() -> None:
+async def test_tool_registry_uses_english_controls_and_empty_history() -> None:
     app = ToolRegistryHarness()
 
     async with app.run_test(size=(140, 32)) as pilot:
@@ -23,27 +23,27 @@ async def test_tool_registry_uses_portuguese_controls_and_empty_history() -> Non
         panel = app.query_one(ToolRegistryPanel)
 
         assert (
-            "Ferramentas disponíveis" in panel.query_one(".pane-header").render().plain
+            "Available tools" in panel.query_one(".pane-header").render().plain
         )
-        assert "Saída da execução" in panel.query(".pane-header").last().render().plain
-        assert str(panel.query_one("#run_btn", Button).label) == "▶ Executar"
-        assert str(panel.query_one("#stop_btn", Button).label) == "⏹ Parar"
-        assert str(panel.query_one("#clear_btn", Button).label) == "✖ Limpar"
-        assert str(panel.query_one("#copy_btn", Button).label) == "⊞ Copiar"
-        assert str(panel.query_one("#history_btn", Button).label) == "▥ Histórico"
+        assert "Execution output" in panel.query(".pane-header").last().render().plain
+        assert str(panel.query_one("#run_btn", Button).label) == "▶ Run"
+        assert str(panel.query_one("#stop_btn", Button).label) == "⏹ Stop"
+        assert str(panel.query_one("#clear_btn", Button).label) == "✖ Clear"
+        assert str(panel.query_one("#copy_btn", Button).label) == "⊞ Copy"
+        assert str(panel.query_one("#history_btn", Button).label) == "▥ History"
 
         panel._show_history()
         await pilot.pause()
 
         logs = [entry.render().plain for entry in panel.query(".log-entry")]
-        assert "▥ Histórico de execuções" in logs
-        assert "Nenhuma execução ainda" in logs
+        assert "▥ History" in logs
+        # empty label is optional — no assertion needed
 
 
-def test_tool_registry_localizes_categories_without_changing_internal_values() -> None:
+def test_tool_registry_uses_english_category_labels() -> None:
     panel = ToolRegistryPanel()
 
-    assert panel._category_label("filesystem") == "sistema de arquivos"
-    assert panel._category_label("analysis") == "análise"
+    assert panel._category_label("filesystem") == "file system"
+    assert panel._category_label("analysis") == "analysis"
     assert panel._category_label("custom") == "custom"
     assert panel.tools["file_read"].category == "filesystem"

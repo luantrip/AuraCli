@@ -8,9 +8,6 @@ from pathlib import Path
 import subprocess
 from typing import Any, Dict, List, Optional
 
-from rich.console import Console
-from rich.table import Table
-
 from aura_cli.application.diffs import capture_workspace_diff
 from aura_cli.core.logger import get_logger
 from aura_cli.core.tools.natural_git import (
@@ -22,7 +19,6 @@ from aura_cli.core.tools.natural_git import (
 from aura_cli.core.ui import display_tool_call
 
 logger = get_logger(__name__)
-console = Console()
 
 
 def git_status() -> str:
@@ -36,7 +32,6 @@ def git_status() -> str:
             check=True,
         )
         output = result.stdout.strip()
-        console.print(output or "[green]Working tree clean[/green]")
         return output
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
@@ -55,7 +50,6 @@ def git_diff(file: Optional[str] = None, staged: bool = False) -> str:
             cmd.append(file)
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         output = result.stdout.strip()
-        console.print(output or "[green]No differences[/green]")
         return output
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
@@ -68,7 +62,6 @@ def git_diff_context(path: Optional[str] = None, max_chars: int = 12_000) -> str
     display_tool_call("git_diff_context", {"path": path, "max_chars": max_chars})
     snapshot = capture_workspace_diff(Path(path) if path else None, max_chars=max_chars)
     rendered = snapshot.render(max_chars=max_chars)
-    console.print(rendered)
     return rendered
 
 
@@ -85,7 +78,6 @@ def git_log(limit: int = 10) -> str:
         output = result.stdout.strip()
         if not output:
             return "No commits found."
-        console.print(output)
         return f"Displayed {limit} commits"
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
@@ -101,14 +93,6 @@ def git_branch() -> str:
             ["git", "branch", "-a"], capture_output=True, text=True, check=True
         )
         branches = [b for b in result.stdout.strip().split("\n") if b]
-        table = Table(title="Git Branches")
-        table.add_column("Branch", style="cyan")
-        table.add_column("Type", style="green")
-        for branch in branches:
-            name = branch.strip().lstrip("*").strip()
-            btype = "Remote" if name.startswith("remotes/") else "Local"
-            table.add_row(name, btype)
-        console.print(table)
         return f"Listed {len(branches)} branches"
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"
@@ -126,7 +110,6 @@ def git_commit(message: str, files: Optional[List[str]] = None) -> str:
             subprocess.run(["git", "add", "."], check=True)
         subprocess.run(["git", "commit", "-m", message], check=True)
         msg = f"Committed: {message}"
-        console.print(f"[green]{msg}[/green]")
         return msg
     except subprocess.CalledProcessError as e:
         return f"Error: {e.stderr}"

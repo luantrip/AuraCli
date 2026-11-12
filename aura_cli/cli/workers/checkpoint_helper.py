@@ -33,14 +33,14 @@ class WorkerCheckpointHelper(WorkerCheckpointCoordinator):
 
             checkpoint_manager = checkpoint_tools._checkpoint_manager
         except Exception as exc:
-            logger.debug("Ferramentas de checkpoint não disponíveis: %s", exc)
+            logger.debug("Checkpoint tools not available: %s", exc)
 
         try:
             if importlib.util.find_spec("aura_cli.core.hooks") is not None:
                 main_module = sys.modules.get("aura_cli.cli.main")
                 self._hook_manager = getattr(main_module, "hook_manager", None)
         except Exception as exc:
-            logger.debug("Hook manager não disponível: %s", exc)
+            logger.debug("Hook manager not available: %s", exc)
 
         self.configure(
             checkpoint_manager=checkpoint_manager,

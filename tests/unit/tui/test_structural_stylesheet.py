@@ -7,7 +7,7 @@ def test_every_theme_loads_shared_layout_last() -> None:
     for theme in ("nebula-dark", "macos-light"):
         paths = AuraTUI._get_css_paths(theme)
         assert len(paths) == 2
-        assert Path(paths[0]).name in {"theme.tcss", "macos_light.tcss"}
+        assert Path(paths[0]).name == "theme.tcss"
         assert Path(paths[-1]).name == "layout.tcss"
 
 

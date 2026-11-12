@@ -107,7 +107,7 @@ class CodeTokenizer:
             logger.info(f"Tokenizer loaded: {model_to_use}")
 
         except ImportError:
-            logger.warning("transformers não instalado, tokenização limitada")
+            logger.warning("transformers not installed, tokenization limited")
             self._model_loaded = False
         except Exception as e:
             logger.error(f"Error loading tokenizer: {e}", exc_info=True)
@@ -152,7 +152,7 @@ class CodeTokenizer:
                 },
             )
 
-            logger.debug(f"Código tokenizado: {len(tokens_clean)} tokens")
+            logger.debug(f"Code tokenized: {len(tokens_clean)} tokens")
             self.stats.track_tool_usage("code_tokenizer")
 
             return result
@@ -255,6 +255,6 @@ class CodeTokenizer:
         analysis["identifiers"] = identifiers
         analysis["operators"] = operators
 
-        logger.debug(f"Análise de tokens: {analysis}")
+        logger.debug(f"Token analysis: {analysis}")
 
         return analysis

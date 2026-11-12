@@ -8,6 +8,7 @@ from typing import List, Optional
 
 
 class MessageType(str, Enum):
+    """Semantic type of a conversation message."""
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
@@ -19,6 +20,7 @@ class MessageType(str, Enum):
 
 @dataclass
 class Reaction:
+    """User reaction attached to a conversation message."""
     emoji: str
     count: int = 1
     users: List[str] = field(default_factory=list)
@@ -26,6 +28,7 @@ class Reaction:
 
 @dataclass
 class MessageMetadata:
+    """Metadata envelope for a conversation message."""
     tokens: Optional[int] = None
     model: Optional[str] = None
     duration: Optional[float] = None

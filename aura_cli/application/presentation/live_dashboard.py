@@ -11,7 +11,7 @@ _PHASE_KEYWORDS = (
     ("starting", ("iniciando", "starting")),
     ("analyzing", ("analisando", "analyzing")),
     ("executing", ("executando", "executing")),
-    ("completed", ("concluído", "completed")),
+    ("completed", ("completed", "completed")),
     ("error", ("erro", "error")),
 )
 _TOOL_KEYWORDS = (
@@ -71,9 +71,11 @@ class DashboardState:
     last_update: float = field(default_factory=time.time)
 
     def set_progress(self, progress: float) -> None:
+        """Update the overall progress value of the live dashboard."""
         self.progress = min(1.0, max(0.0, progress))
 
     def add_task(self, task_id: str, description: str) -> None:
+        """Add a new task tracker to the live dashboard."""
         self.tasks.append(DashboardTask(task_id, description))
 
     def update_task(
@@ -86,6 +88,7 @@ class DashboardState:
         error: str | None = None,
         timestamp: float | None = None,
     ) -> None:
+        """Update the state of an existing task tracker."""
         task = next((item for item in self.tasks if item.id == task_id), None)
         if task is None:
             return
@@ -103,11 +106,13 @@ class DashboardState:
             task.error = error
 
     def add_tool(self, tool_name: str) -> None:
+        """Register a tool call in the live dashboard."""
         if tool_name not in self.tools_used:
             self.tools_used.append(tool_name)
         self.current_tool = tool_name
 
     def add_message(self, message: str, msg_type: str, timestamp: float) -> None:
+        """Append a message to the live dashboard feed."""
         self.messages.append({"text": message, "type": msg_type, "time": timestamp})
         self.messages = self.messages[-10:]
 

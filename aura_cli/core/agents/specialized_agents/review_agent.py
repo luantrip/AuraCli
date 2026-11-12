@@ -23,7 +23,7 @@ class ReviewAgent(AgentBase):
         super().__init__(
             agent_id=agent_id,
             name="Review Agent",
-            description="Agente especializado em revisão e análise de código",
+            description="Specialized agent for code review and analysis",
             model=model,
         )
 
@@ -42,29 +42,33 @@ class ReviewAgent(AgentBase):
 
     def _handle_analyze_code(self, task: AgentTask) -> str:
         """Handle an analyze_code request."""
-        from aura_cli.core.tools import analyze_code  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            analyze_code,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         file_path = task.parameters.get("file_path")
         if not file_path:
-            raise ValueError("Parâmetro 'file_path' é obrigatório")
+            raise ValueError("Parameter 'file_path' is required")
         return analyze_code(file_path)
 
     def _handle_validate_syntax(self, task: AgentTask) -> str:
         """Valida sintaxe."""
-        from aura_cli.core.tools import validate_syntax  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            validate_syntax,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         content = task.parameters.get("content")
         language = task.parameters.get("language")
 
         if not all([content, language]):
-            raise ValueError("Parâmetros 'content' e 'language' são obrigatórios")
+            raise ValueError("Parameters 'content' and 'language' are required")
 
         return validate_syntax(content, language)
 
     def _handle_review_file(self, task: AgentTask) -> str:
         """Review a complete file with NLP analysis."""
         from aura_cli.core.code_analysis.nlp_analyzer import NLPAnalyzer
-        from aura_cli.core.tools import (  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (  # type: ignore[attr-defined]  # exported via __getattr__
             analyze_code,
             read_file,
             validate_syntax,
@@ -72,7 +76,7 @@ class ReviewAgent(AgentBase):
 
         file_path = task.parameters.get("file_path")
         if not file_path:
-            raise ValueError("Parâmetro 'file_path' é obrigatório")
+            raise ValueError("Parameter 'file_path' is required")
 
         analysis = analyze_code(file_path)
 
@@ -87,7 +91,7 @@ class ReviewAgent(AgentBase):
         syntax_result = (
             validate_syntax(content, language)
             if language != "unknown"
-            else "Linguagem não suportada"
+            else "Language not supported"
         )
 
         nlp_analyzer = NLPAnalyzer()
@@ -95,15 +99,15 @@ class ReviewAgent(AgentBase):
         summary = nlp_analyzer.summarize_code(content)
 
         result_parts = [
-            f"Análise de Código:\n{analysis}",
-            "\nAnálise NLP:",
-            f"- Tipo de Função: {classification.function_type.value}",
+            f"Code Analysis:\n{analysis}",
+            "\nNLP Analysis:",
+            f"- Function Type: {classification.function_type.value}",
             f"- Complexidade: {classification.complexity.value}",
-            f"- Intenção: {classification.intent}",
+            f"- Intent: {classification.intent}",
             f"- Resumo: {summary.summary}",
             f"- Pontos-chave: {', '.join(summary.key_points[:3])}",
-            f"- Sugestões: {', '.join(summary.suggestions[:3])}",
-            f"\nValidação de Sintaxe:\n{syntax_result}",
+            f"- Suggestions: {', '.join(summary.suggestions[:3])}",
+            f"\nSyntax Validation:\n{syntax_result}",
         ]
 
         if self.has_consciousness():
@@ -126,21 +130,21 @@ class ReviewAgent(AgentBase):
         if self.consciousness_persona:
             persona_name = self.consciousness_persona.get("name", "")
             if "reviewer" in persona_name.lower():
-                insights.append("🎯 Foco da Revisão (baseado na persona):")
+                insights.append("🎯 Review Focus (based on persona):")
                 # Extract key focus areas from persona prompt
                 prompt = self.consciousness_persona.get("system_prompt", "")
                 if "Security" in prompt or "security" in prompt:
-                    insights.append("  - Verificação de vulnerabilidades de segurança")
+                    insights.append("  - Security vulnerability checks")
                 if "Performance" in prompt or "performance" in prompt:
-                    insights.append("  - Análise de problemas de performance")
+                    insights.append("  - Performance issue analysis")
                 if "Code Quality" in prompt or "quality" in prompt:
-                    insights.append("  - Qualidade e manutenibilidade do código")
+                    insights.append("  - Code quality and maintainability")
 
         if self.consciousness_skills:
             insights.append("\n📚 Recommendations (based on loaded knowledge):")
             for skill in self.consciousness_skills[:2]:  # Limit to 2 skills
                 skill_name = skill.get("name", "Unknown")
-                insights.append(f"  - Aplicar princípios de: {skill_name}")
+                insights.append(f"  - Apply principles of: {skill_name}")
 
         return "\n".join(insights) if insights else ""
 

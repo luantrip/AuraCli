@@ -1,8 +1,8 @@
 """Semantic infrastructure factories must not hide shared mutable state."""
 
-from aura_cli.core.memory_advanced.cognitive_refinement import get_cognitive_refinement
-from aura_cli.core.memory_advanced.embeddings import EmbeddingModel, get_embedding_model
-from aura_cli.core.memory_advanced.vector_storage import VectorStorage
+from aura_cli.core.memory.cognitive_refinement import get_cognitive_refinement
+from aura_cli.core.memory.embeddings import EmbeddingModel, get_embedding_model
+from aura_cli.core.memory.vector_storage import VectorStorage
 
 
 def test_refinement_factory_respects_explicit_storage() -> None:

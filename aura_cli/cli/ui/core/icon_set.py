@@ -181,7 +181,7 @@ class IconSet:
         if self._type == IconSetType.NERD:
             return ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
         elif self._type == IconSetType.UTF8:
-            return ["◐", "◓", "◑", "◒"]
+            return ["◐", "◓", "◑", "◒", "◐", "◕", "◑", "◔"]
         else:
             return ["|", "/", "-", "\\"]
 
@@ -242,7 +242,7 @@ def detect_icon_support() -> IconSetType:
     term = os.environ.get("TERM", "")
     term_program = os.environ.get("TERM_PROGRAM", "")
 
-    nerd_terms = ["iTerm", "kitty", "alacritty", "wezterm", "hyper"]
+    nerd_terms = ["iTerm", "kitty", "alacritty", "wezterm", "WezTerm", "hyper", "Hyper"]
     if any(nt.lower() in term_program.lower() for nt in nerd_terms):
         return IconSetType.NERD
 

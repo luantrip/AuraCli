@@ -25,5 +25,5 @@ def test_result_projection_is_backend_neutral() -> None:
         format_web_search_results(
             [{"title": "Aura", "url": "https://example.test", "description": "CLI"}]
         )
-        == "1. Aura\n   Link: https://example.test\n   Descrição: CLI\n"
+        == "1. Aura\n   Link: https://example.test\n   Description: CLI\n"
     )

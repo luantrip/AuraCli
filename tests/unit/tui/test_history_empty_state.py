@@ -35,7 +35,7 @@ async def test_empty_history_explains_next_actions(tmp_path: Path) -> None:
         assert table.display is False
         assert app.focused is panel.query_one("#history-start")
         assert str(panel.query_one("#empty-history-title").render()) == (
-            "Nenhuma sessão neste workspace."
+            "No sessions in this workspace."
         )
         assert panel.query_one("#history-start")
         assert panel.query_one("#history-workspace")
@@ -57,7 +57,7 @@ async def test_empty_history_explains_next_actions(tmp_path: Path) -> None:
         assert panel.query_one("#empty-history-state").display is True
         assert panel.query_one("#session-table").display is False
         assert str(panel.query_one("#empty-history-title").render()) == (
-            "Nenhuma sessão corresponde ao filtro."
+            "No sessions match the filter."
         )
         await pilot.pause()
 

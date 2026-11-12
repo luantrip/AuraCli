@@ -39,7 +39,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Analyse code structure and return metrics.',
                           'parameters': {'type': 'object',
                                          'properties': {'file_path': {'type': 'string',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'file_path'}},
                                          'required': ['file_path']}}}},
  {'name': 'analyze_code_nlp',
@@ -54,7 +54,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Analyse code using NLP and return insights.',
                           'parameters': {'type': 'object',
                                          'properties': {'file_path': {'type': 'string',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'file_path'}},
                                          'required': ['file_path']}}}},
  {'name': 'analyze_dependencies',
@@ -181,25 +181,25 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'files, fronts, tech stack.',
                           'parameters': {'type': 'object',
                                          'properties': {'project_path': {'type': 'string',
-                                                                         'description': 'Parâmetro '
+                                                                         'description': 'Parameter '
                                                                                         'project_path'},
                                                         'include_subprojects': {'type': 'boolean',
-                                                                                'description': 'Parâmetro '
+                                                                                'description': 'Parameter '
                                                                                                'include_subprojects'},
                                                         'read_key_files': {'type': 'boolean',
-                                                                           'description': 'Parâmetro '
+                                                                           'description': 'Parameter '
                                                                                           'read_key_files'},
                                                         'max_depth': {'type': 'integer',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'max_depth'},
                                                         'analyze_architecture': {'type': 'boolean',
-                                                                                 'description': 'Parâmetro '
+                                                                                 'description': 'Parameter '
                                                                                                 'analyze_architecture'},
                                                         'analyze_dependencies': {'type': 'boolean',
-                                                                                 'description': 'Parâmetro '
+                                                                                 'description': 'Parameter '
                                                                                                 'analyze_dependencies'},
                                                         'analyze_tests': {'type': 'boolean',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'analyze_tests'}},
                                          'required': []}}}},
  {'name': 'backup_file',
@@ -214,7 +214,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Create a backup copy of a file.',
                           'parameters': {'type': 'object',
                                          'properties': {'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'}},
+                                                                 'description': 'Parameter path'}},
                                          'required': ['path']}}}},
  {'name': 'browse_content',
   'category': 'web',
@@ -300,37 +300,6 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                                                                      'to '
                                                                                      'classify.'}},
                                          'required': ['file_path']}}}},
- {'name': 'code_agent_schemas_for_categories',
-  'category': 'development',
-  'description': 'Agent: schemas_for_categories',
-  'effect': 'mutating',
-  'cacheable': False,
-  'module': 'aura_cli.core.agents.specialized_agents._tool_schema',
-  'qualname': 'schemas_for_categories',
-  'schema': {'type': 'function',
-             'function': {'name': 'code_agent_schemas_for_categories',
-                          'description': 'Return OpenAI-style tool schemas for all tools in '
-                                         '*categories*.',
-                          'parameters': {'type': 'object',
-                                         'properties': {'categories': {'type': 'string',
-                                                                       'description': 'ToolCategory '
-                                                                                      'values to '
-                                                                                      'include.'},
-                                                        'extra_names': {'type': 'string',
-                                                                        'description': 'Additional '
-                                                                                       'tool names '
-                                                                                       'to add '
-                                                                                       'regardless '
-                                                                                       'of '
-                                                                                       'category.'},
-                                                        'exclude_names': {'type': 'string',
-                                                                          'description': 'Tool '
-                                                                                         'names to '
-                                                                                         'suppress '
-                                                                                         'from the '
-                                                                                         'final '
-                                                                                         'list.'}},
-                                         'required': ['categories']}}}},
  {'name': 'codebase_search',
   'category': 'development',
   'description': 'Codebase: codebase_search',
@@ -377,10 +346,10 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'similarities and patterns.',
                           'parameters': {'type': 'object',
                                          'properties': {'project_path': {'type': 'string',
-                                                                         'description': 'Parâmetro '
+                                                                         'description': 'Parameter '
                                                                                         'project_path'},
                                                         'fronts': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'fronts'}},
                                          'required': []}}}},
  {'name': 'create_checkpoint',
@@ -439,7 +408,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Analyse the full import graph.',
                           'parameters': {'type': 'object',
                                          'properties': {'scope': {'type': 'string',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'scope'}},
                                          'required': []}}}},
  {'name': 'dep_find_dependencies',
@@ -499,9 +468,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Check the health of a deployment.',
                           'parameters': {'type': 'object',
                                          'properties': {'url': {'type': 'string',
-                                                                'description': 'Parâmetro url'},
+                                                                'description': 'Parameter url'},
                                                         'timeout': {'type': 'integer',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'timeout'}},
                                          'required': ['url']}}}},
  {'name': 'deploy_deploy_application',
@@ -516,10 +485,10 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Deploy an application using the given config.',
                           'parameters': {'type': 'object',
                                          'properties': {'config': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'config'},
                                                         'deployment_script': {'type': 'string',
-                                                                              'description': 'Parâmetro '
+                                                                              'description': 'Parameter '
                                                                                              'deployment_script'}},
                                          'required': ['config']}}}},
  {'name': 'deploy_get_deployment_status',
@@ -534,7 +503,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Return the current deployment status.',
                           'parameters': {'type': 'object',
                                          'properties': {'deployment_id': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'deployment_id'}},
                                          'required': ['deployment_id']}}}},
  {'name': 'deploy_rollback_deployment',
@@ -552,6 +521,39 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                                                           'description': 'ID do '
                                                                                          'deployment'}},
                                          'required': ['deployment_id']}}}},
+ {'name': 'describe_url_visual',
+  'category': 'vision',
+  'description': 'Vision: describe_url_visual',
+  'effect': 'read_only',
+  'cacheable': False,
+  'module': 'aura_cli.core.tools.vision_tools',
+  'qualname': 'describe_url_visual',
+  'schema': {'type': 'function',
+             'function': {'name': 'describe_url_visual',
+                          'description': 'Fetch a URL via the text monitor and send a screenshot '
+                                         'of the content.',
+                          'parameters': {'type': 'object',
+                                         'properties': {'url': {'type': 'string',
+                                                                'description': 'URL or local '
+                                                                               '``file://`` path '
+                                                                               'to fetch.'},
+                                                        'prompt': {'type': 'string',
+                                                                   'description': 'Instruction for '
+                                                                                  'what to analyse '
+                                                                                  'visually.'},
+                                                        'model': {'type': 'string',
+                                                                  'description': 'Override the '
+                                                                                 'active model '
+                                                                                 '(optional).'},
+                                                        'include_text': {'type': 'string',
+                                                                         'description': 'If True, '
+                                                                                        'also '
+                                                                                        'include '
+                                                                                        'the text '
+                                                                                        'dump in '
+                                                                                        'the '
+                                                                                        'result.'}},
+                                         'required': ['url']}}}},
  {'name': 'diff_checkpoint',
   'category': 'development',
   'description': 'Checkpoint: diff_checkpoint',
@@ -820,7 +822,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                                                                      'pair from '
                                                                                      'the tangent'},
                                                         'conversation_history': {'type': 'string',
-                                                                                 'description': 'Parâmetro '
+                                                                                 'description': 'Parameter '
                                                                                                 'conversation_history'}},
                                          'required': []}}}},
  {'name': 'extract_commit_message',
@@ -836,7 +838,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'command.',
                           'parameters': {'type': 'object',
                                          'properties': {'command': {'type': 'string',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'command'}},
                                          'required': ['command']}}}},
  {'name': 'find_duplicate_code',
@@ -851,9 +853,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Find duplicate code using semantic similarity.',
                           'parameters': {'type': 'object',
                                          'properties': {'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'},
+                                                                 'description': 'Parameter path'},
                                                         'similarity_threshold': {'type': 'number',
-                                                                                 'description': 'Parâmetro '
+                                                                                 'description': 'Parameter '
                                                                                                 'similarity_threshold'}},
                                          'required': []}}}},
  {'name': 'find_in_files',
@@ -868,15 +870,15 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Search for a pattern across project files.',
                           'parameters': {'type': 'object',
                                          'properties': {'pattern': {'type': 'string',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'pattern'},
                                                         'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'},
+                                                                 'description': 'Parameter path'},
                                                         'file_extensions': {'type': 'string',
-                                                                            'description': 'Parâmetro '
+                                                                            'description': 'Parameter '
                                                                                            'file_extensions'},
                                                         'max_results': {'type': 'integer',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'max_results'}},
                                          'required': ['pattern']}}}},
  {'name': 'forget_messages',
@@ -891,9 +893,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Remove recent messages from the conversation history.',
                           'parameters': {'type': 'object',
                                          'properties': {'count': {'type': 'integer',
-                                                                  'description': 'Parâmetro count'},
+                                                                  'description': 'Parameter count'},
                                                         'conversation_history': {'type': 'string',
-                                                                                 'description': 'Parâmetro '
+                                                                                 'description': 'Parameter '
                                                                                                 'conversation_history'}},
                                          'required': ['count']}}}},
  {'name': 'format_file',
@@ -924,7 +926,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Generate test cases using ML-based analysis.',
                           'parameters': {'type': 'object',
                                          'properties': {'file_path': {'type': 'string',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'file_path'}},
                                          'required': ['file_path']}}}},
  {'name': 'get_context_usage',
@@ -950,13 +952,13 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Create a GitHub Actions workflow file.',
                           'parameters': {'type': 'object',
                                          'properties': {'workflow_name': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'workflow_name'},
                                                         'config': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'config'},
                                                         'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'}},
+                                                                 'description': 'Parameter path'}},
                                          'required': ['workflow_name', 'config']}}}},
  {'name': 'gh_get_workflow_status',
   'category': 'ci_cd',
@@ -970,7 +972,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Return the status of one or all workflows.',
                           'parameters': {'type': 'object',
                                          'properties': {'workflow_name': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'workflow_name'}},
                                          'required': []}}}},
  {'name': 'gh_list_workflows',
@@ -985,7 +987,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Return a list of existing workflows.',
                           'parameters': {'type': 'object',
                                          'properties': {'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'}},
+                                                                 'description': 'Parameter path'}},
                                          'required': []}}}},
  {'name': 'gh_run_workflow',
   'category': 'ci_cd',
@@ -999,12 +1001,12 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Trigger a workflow run via GitHub CLI.',
                           'parameters': {'type': 'object',
                                          'properties': {'workflow_name': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'workflow_name'},
                                                         'ref': {'type': 'string',
-                                                                'description': 'Parâmetro ref'},
+                                                                'description': 'Parameter ref'},
                                                         'inputs': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'inputs'}},
                                          'required': ['workflow_name']}}}},
  {'name': 'git_branch',
@@ -1030,10 +1032,10 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Create a git commit.',
                           'parameters': {'type': 'object',
                                          'properties': {'message': {'type': 'string',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'message'},
                                                         'files': {'type': 'string',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'files'}},
                                          'required': ['message']}}}},
  {'name': 'git_diff',
@@ -1048,9 +1050,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Show git diff.',
                           'parameters': {'type': 'object',
                                          'properties': {'file': {'type': 'string',
-                                                                 'description': 'Parâmetro file'},
+                                                                 'description': 'Parameter file'},
                                                         'staged': {'type': 'boolean',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'staged'}},
                                          'required': []}}}},
  {'name': 'git_log',
@@ -1065,7 +1067,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Show recent git commits.',
                           'parameters': {'type': 'object',
                                          'properties': {'limit': {'type': 'integer',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'limit'}},
                                          'required': []}}}},
  {'name': 'git_status',
@@ -1120,10 +1122,10 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'Prism.',
                           'parameters': {'type': 'object',
                                          'properties': {'file_path': {'type': 'string',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'file_path'},
                                                         'max_chunk_size': {'type': 'integer',
-                                                                           'description': 'Parâmetro '
+                                                                           'description': 'Parameter '
                                                                                           'max_chunk_size'}},
                                          'required': ['file_path']}}}},
  {'name': 'investigate_codebase',
@@ -1139,25 +1141,25 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'directory.',
                           'parameters': {'type': 'object',
                                          'properties': {'root_path': {'type': 'string',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'root_path'},
                                                         'objective': {'type': 'string',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'objective'},
                                                         'include_extensions': {'type': 'string',
-                                                                               'description': 'Parâmetro '
+                                                                               'description': 'Parameter '
                                                                                               'include_extensions'},
                                                         'max_files': {'type': 'integer',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'max_files'},
                                                         'verbose': {'type': 'boolean',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'verbose'},
                                                         'respect_gitignore': {'type': 'boolean',
-                                                                              'description': 'Parâmetro '
+                                                                              'description': 'Parameter '
                                                                                              'respect_gitignore'},
                                                         'use_imagination': {'type': 'boolean',
-                                                                            'description': 'Parâmetro '
+                                                                            'description': 'Parameter '
                                                                                            'use_imagination'}},
                                          'required': ['root_path']}}}},
  {'name': 'list_checkpoints',
@@ -1184,9 +1186,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'workspace.',
                           'parameters': {'type': 'object',
                                          'properties': {'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'},
+                                                                 'description': 'Parameter path'},
                                                         'show_hidden': {'type': 'string',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'show_hidden'}},
                                          'required': ['path']}}}},
  {'name': 'llm_compare_model_responses',
@@ -1201,13 +1203,13 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Compare responses from different models and rank them.',
                           'parameters': {'type': 'object',
                                          'properties': {'prompt': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'prompt'},
                                                         'models': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'models'},
                                                         'system_message': {'type': 'string',
-                                                                           'description': 'Parâmetro '
+                                                                           'description': 'Parameter '
                                                                                           'system_message'}},
                                          'required': ['prompt']}}}},
  {'name': 'llm_get_default_multi_model_candidates',
@@ -1234,7 +1236,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Normalise a model name to a canonical LiteLLM format.',
                           'parameters': {'type': 'object',
                                          'properties': {'model': {'type': 'string',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'model'}},
                                          'required': ['model']}}}},
  {'name': 'llm_query_multiple_models',
@@ -1250,13 +1252,13 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'responses.',
                           'parameters': {'type': 'object',
                                          'properties': {'prompt': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'prompt'},
                                                         'models': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'models'},
                                                         'system_message': {'type': 'string',
-                                                                           'description': 'Parâmetro '
+                                                                           'description': 'Parameter '
                                                                                           'system_message'}},
                                          'required': ['prompt']}}}},
  {'name': 'llm_smart_model_query',
@@ -1271,16 +1273,16 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Execute a smart query with automatic model selection.',
                           'parameters': {'type': 'object',
                                          'properties': {'prompt': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'prompt'},
                                                         'models': {'type': 'string',
-                                                                   'description': 'Parâmetro '
+                                                                   'description': 'Parameter '
                                                                                   'models'},
                                                         'system_message': {'type': 'string',
-                                                                           'description': 'Parâmetro '
+                                                                           'description': 'Parameter '
                                                                                           'system_message'},
                                                         'ensemble_strategy': {'type': 'string',
-                                                                              'description': 'Parâmetro '
+                                                                              'description': 'Parameter '
                                                                                              'ensemble_strategy'}},
                                          'required': ['prompt']}}}},
  {'name': 'notebook_list',
@@ -1329,7 +1331,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'for keywords.',
                           'parameters': {'type': 'object',
                                          'properties': {'query': {'type': 'string',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'query'}},
                                          'required': ['query']}}}},
  {'name': 'notebook_write',
@@ -1447,16 +1449,16 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'edit plan.',
                           'parameters': {'type': 'object',
                                          'properties': {'description': {'type': 'string',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'description'},
                                                         'operations': {'type': 'string',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'operations'},
                                                         'strategy': {'type': 'string',
-                                                                     'description': 'Parâmetro '
+                                                                     'description': 'Parameter '
                                                                                     'strategy'},
                                                         'id_factory': {'type': 'string',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'id_factory'}},
                                          'required': ['description', 'operations']}}}},
  {'name': 'plan_estimate_edit_risk',
@@ -1472,7 +1474,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'dependency depth.',
                           'parameters': {'type': 'object',
                                          'properties': {'operations': {'type': 'string',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'operations'}},
                                          'required': ['operations']}}}},
  {'name': 'plan_order_edit_operations',
@@ -1488,7 +1490,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                          'cyclic/unresolved items at the end.',
                           'parameters': {'type': 'object',
                                          'properties': {'operations': {'type': 'string',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'operations'}},
                                          'required': ['operations']}}}},
  {'name': 'plan_refactoring',
@@ -1610,7 +1612,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                                                                                    'across '
                                                                                                    'providers.'},
                                                         'event_callback': {'type': 'string',
-                                                                           'description': 'Parâmetro '
+                                                                           'description': 'Parameter '
                                                                                           'event_callback'}},
                                          'required': ['model', 'messages']}}}},
  {'name': 'read_file',
@@ -1641,37 +1643,6 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                                                                                  'to end of '
                                                                                  'file.'}},
                                          'required': ['path']}}}},
- {'name': 'refactor_agent_schemas_for_categories',
-  'category': 'development',
-  'description': 'Agent: schemas_for_categories',
-  'effect': 'mutating',
-  'cacheable': False,
-  'module': 'aura_cli.core.agents.specialized_agents._tool_schema',
-  'qualname': 'schemas_for_categories',
-  'schema': {'type': 'function',
-             'function': {'name': 'refactor_agent_schemas_for_categories',
-                          'description': 'Return OpenAI-style tool schemas for all tools in '
-                                         '*categories*.',
-                          'parameters': {'type': 'object',
-                                         'properties': {'categories': {'type': 'string',
-                                                                       'description': 'ToolCategory '
-                                                                                      'values to '
-                                                                                      'include.'},
-                                                        'extra_names': {'type': 'string',
-                                                                        'description': 'Additional '
-                                                                                       'tool names '
-                                                                                       'to add '
-                                                                                       'regardless '
-                                                                                       'of '
-                                                                                       'category.'},
-                                                        'exclude_names': {'type': 'string',
-                                                                          'description': 'Tool '
-                                                                                         'names to '
-                                                                                         'suppress '
-                                                                                         'from the '
-                                                                                         'final '
-                                                                                         'list.'}},
-                                         'required': ['categories']}}}},
  {'name': 'restore_backup',
   'category': 'development',
   'description': 'Dev: restore_backup',
@@ -1711,42 +1682,11 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Restore the workspace to a checkpoint.',
                           'parameters': {'type': 'object',
                                          'properties': {'checkpoint_id': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'checkpoint_id'},
                                                         'hard': {'type': 'boolean',
-                                                                 'description': 'Parâmetro hard'}},
+                                                                 'description': 'Parameter hard'}},
                                          'required': ['checkpoint_id']}}}},
- {'name': 'review_agent_schemas_for_categories',
-  'category': 'development',
-  'description': 'Agent: schemas_for_categories',
-  'effect': 'mutating',
-  'cacheable': False,
-  'module': 'aura_cli.core.agents.specialized_agents._tool_schema',
-  'qualname': 'schemas_for_categories',
-  'schema': {'type': 'function',
-             'function': {'name': 'review_agent_schemas_for_categories',
-                          'description': 'Return OpenAI-style tool schemas for all tools in '
-                                         '*categories*.',
-                          'parameters': {'type': 'object',
-                                         'properties': {'categories': {'type': 'string',
-                                                                       'description': 'ToolCategory '
-                                                                                      'values to '
-                                                                                      'include.'},
-                                                        'extra_names': {'type': 'string',
-                                                                        'description': 'Additional '
-                                                                                       'tool names '
-                                                                                       'to add '
-                                                                                       'regardless '
-                                                                                       'of '
-                                                                                       'category.'},
-                                                        'exclude_names': {'type': 'string',
-                                                                          'description': 'Tool '
-                                                                                         'names to '
-                                                                                         'suppress '
-                                                                                         'from the '
-                                                                                         'final '
-                                                                                         'list.'}},
-                                         'required': ['categories']}}}},
  {'name': 'run_shell_command',
   'category': 'shell',
   'description': 'Shell: run_shell_command',
@@ -1759,13 +1699,13 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Run a shell command with timeout and capture output.',
                           'parameters': {'type': 'object',
                                          'properties': {'command': {'type': 'string',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'command'},
                                                         'background': {'type': 'boolean',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'background'},
                                                         'owner_task': {'type': 'string',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'owner_task'}},
                                          'required': ['command']}}}},
  {'name': 'run_tests_advanced',
@@ -1864,12 +1804,12 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Advanced semantic search using HuggingFace embeddings.',
                           'parameters': {'type': 'object',
                                          'properties': {'query': {'type': 'string',
-                                                                  'description': 'Parâmetro query'},
+                                                                  'description': 'Parameter query'},
                                                         'index_id': {'type': 'string',
-                                                                     'description': 'Parâmetro '
+                                                                     'description': 'Parameter '
                                                                                     'index_id'},
                                                         'top_k': {'type': 'integer',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'top_k'}},
                                          'required': ['query']}}}},
  {'name': 'suggest_commit_message',
@@ -1919,37 +1859,31 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
              'function': {'name': 'system_resources',
                           'description': 'Display system resources (CPU, RAM, Disk).',
                           'parameters': {'type': 'object', 'properties': {}, 'required': []}}}},
- {'name': 'test_agent_schemas_for_categories',
-  'category': 'development',
-  'description': 'Agent: schemas_for_categories',
+ {'name': 'take_screenshot',
+  'category': 'vision',
+  'description': 'Vision: take_screenshot',
   'effect': 'mutating',
   'cacheable': False,
-  'module': 'aura_cli.core.agents.specialized_agents._tool_schema',
-  'qualname': 'schemas_for_categories',
+  'module': 'aura_cli.core.tools.vision_tools',
+  'qualname': 'take_screenshot',
   'schema': {'type': 'function',
-             'function': {'name': 'test_agent_schemas_for_categories',
-                          'description': 'Return OpenAI-style tool schemas for all tools in '
-                                         '*categories*.',
+             'function': {'name': 'take_screenshot',
+                          'description': 'Capture the current screen and send it to the active '
+                                         'LLM.',
                           'parameters': {'type': 'object',
-                                         'properties': {'categories': {'type': 'string',
-                                                                       'description': 'ToolCategory '
-                                                                                      'values to '
-                                                                                      'include.'},
-                                                        'extra_names': {'type': 'string',
-                                                                        'description': 'Additional '
-                                                                                       'tool names '
-                                                                                       'to add '
-                                                                                       'regardless '
-                                                                                       'of '
-                                                                                       'category.'},
-                                                        'exclude_names': {'type': 'string',
-                                                                          'description': 'Tool '
-                                                                                         'names to '
-                                                                                         'suppress '
-                                                                                         'from the '
-                                                                                         'final '
-                                                                                         'list.'}},
-                                         'required': ['categories']}}}},
+                                         'properties': {'prompt': {'type': 'string',
+                                                                   'description': 'Question or '
+                                                                                  'instruction '
+                                                                                  'about what to '
+                                                                                  'analyse in the '
+                                                                                  'screenshot.'},
+                                                        'model': {'type': 'string',
+                                                                  'description': 'Override the '
+                                                                                 'active model '
+                                                                                 '(optional, '
+                                                                                 'mainly for '
+                                                                                 'testing).'}},
+                                         'required': []}}}},
  {'name': 'todo_refresh_todo_tracker',
   'category': 'development',
   'description': 'Todo: refresh_todo_tracker',
@@ -1962,7 +1896,7 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Force a tracker refresh and return a new singleton.',
                           'parameters': {'type': 'object',
                                          'properties': {'scope': {'type': 'string',
-                                                                  'description': 'Parâmetro '
+                                                                  'description': 'Parameter '
                                                                                  'scope'}},
                                          'required': []}}}},
  {'name': 'tokenize_code',
@@ -1977,9 +1911,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Tokenise code using specialised HuggingFace models.',
                           'parameters': {'type': 'object',
                                          'properties': {'code': {'type': 'string',
-                                                                 'description': 'Parâmetro code'},
+                                                                 'description': 'Parameter code'},
                                                         'language': {'type': 'string',
-                                                                     'description': 'Parâmetro '
+                                                                     'description': 'Parameter '
                                                                                     'language'}},
                                          'required': ['code']}}}},
  {'name': 'tree_view',
@@ -1994,12 +1928,12 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Display a Linux-style directory tree.',
                           'parameters': {'type': 'object',
                                          'properties': {'path': {'type': 'string',
-                                                                 'description': 'Parâmetro path'},
+                                                                 'description': 'Parameter path'},
                                                         'max_depth': {'type': 'integer',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'max_depth'},
                                                         'show_hidden': {'type': 'boolean',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'show_hidden'}},
                                          'required': []}}}},
  {'name': 'validate_syntax',
@@ -2014,12 +1948,41 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Validate syntax for a code snippet or file.',
                           'parameters': {'type': 'object',
                                          'properties': {'content': {'type': 'string',
-                                                                    'description': 'Parâmetro '
+                                                                    'description': 'Parameter '
                                                                                    'content'},
                                                         'language': {'type': 'string',
-                                                                     'description': 'Parâmetro '
+                                                                     'description': 'Parameter '
                                                                                     'language'}},
                                          'required': ['content', 'language']}}}},
+ {'name': 'view_image',
+  'category': 'vision',
+  'description': 'Vision: view_image',
+  'effect': 'read_only',
+  'cacheable': False,
+  'module': 'aura_cli.core.tools.vision_tools',
+  'qualname': 'view_image',
+  'schema': {'type': 'function',
+             'function': {'name': 'view_image',
+                          'description': 'Send a local image file to the active LLM for visual '
+                                         'analysis.',
+                          'parameters': {'type': 'object',
+                                         'properties': {'path': {'type': 'string',
+                                                                 'description': 'Path to the image '
+                                                                                'file (PNG, JPEG, '
+                                                                                'WEBP, GIF, BMP '
+                                                                                'supported).'},
+                                                        'prompt': {'type': 'string',
+                                                                   'description': 'Question or '
+                                                                                  'instruction to '
+                                                                                  'accompany the '
+                                                                                  'image.'},
+                                                        'model': {'type': 'string',
+                                                                  'description': 'Override the '
+                                                                                 'active model '
+                                                                                 '(optional, '
+                                                                                 'mainly for '
+                                                                                 'testing).'}},
+                                         'required': ['path']}}}},
  {'name': 'view_repo_map',
   'category': 'development',
   'description': 'Codebase: view_repo_map',
@@ -2087,13 +2050,13 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Export a dependency graph to a file.',
                           'parameters': {'type': 'object',
                                          'properties': {'dependencies': {'type': 'string',
-                                                                         'description': 'Parâmetro '
+                                                                         'description': 'Parameter '
                                                                                         'dependencies'},
                                                         'output_path': {'type': 'string',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'output_path'},
                                                         'output_format': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'output_format'}},
                                          'required': ['dependencies', 'output_path']}}}},
  {'name': 'viz_export_impact_analysis',
@@ -2108,13 +2071,13 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Export an impact analysis report to a file.',
                           'parameters': {'type': 'object',
                                          'properties': {'impact_data': {'type': 'string',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'impact_data'},
                                                         'output_path': {'type': 'string',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'output_path'},
                                                         'output_format': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'output_format'}},
                                          'required': ['impact_data', 'output_path']}}}},
  {'name': 'viz_visualize_dependency_graph',
@@ -2129,16 +2092,16 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Visualise the dependency graph.',
                           'parameters': {'type': 'object',
                                          'properties': {'dependencies': {'type': 'string',
-                                                                         'description': 'Parâmetro '
+                                                                         'description': 'Parameter '
                                                                                         'dependencies'},
                                                         'root_nodes': {'type': 'string',
-                                                                       'description': 'Parâmetro '
+                                                                       'description': 'Parameter '
                                                                                       'root_nodes'},
                                                         'max_depth': {'type': 'integer',
-                                                                      'description': 'Parâmetro '
+                                                                      'description': 'Parameter '
                                                                                      'max_depth'},
                                                         'output_format': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'output_format'}},
                                          'required': ['dependencies']}}}},
  {'name': 'viz_visualize_impact_analysis',
@@ -2153,10 +2116,10 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Visualise the impact analysis.',
                           'parameters': {'type': 'object',
                                          'properties': {'impact_data': {'type': 'string',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'impact_data'},
                                                         'output_format': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'output_format'}},
                                          'required': ['impact_data']}}}},
  {'name': 'viz_visualize_refactoring_progress',
@@ -2171,18 +2134,18 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Visualise refactoring progress.',
                           'parameters': {'type': 'object',
                                          'properties': {'plan': {'type': 'string',
-                                                                 'description': 'Parâmetro plan'},
+                                                                 'description': 'Parameter plan'},
                                                         'completed_steps': {'type': 'integer',
-                                                                            'description': 'Parâmetro '
+                                                                            'description': 'Parameter '
                                                                                            'completed_steps'},
                                                         'total_steps': {'type': 'integer',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'total_steps'},
                                                         'current_batch': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'current_batch'},
                                                         'total_batches': {'type': 'string',
-                                                                          'description': 'Parâmetro '
+                                                                          'description': 'Parameter '
                                                                                          'total_batches'}},
                                          'required': ['plan', 'completed_steps', 'total_steps']}}}},
  {'name': 'web_search',
@@ -2197,9 +2160,9 @@ TOOL_MANIFEST: Final[list[dict[str, Any]]] = [{'name': 'advanced_grep_search',
                           'description': 'Performs a web search and returns the top results.',
                           'parameters': {'type': 'object',
                                          'properties': {'query': {'type': 'string',
-                                                                  'description': 'Parâmetro query'},
+                                                                  'description': 'Parameter query'},
                                                         'num_results': {'type': 'integer',
-                                                                        'description': 'Parâmetro '
+                                                                        'description': 'Parameter '
                                                                                        'num_results'}},
                                          'required': ['query']}}}},
  {'name': 'write_file',

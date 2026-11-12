@@ -9,9 +9,12 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+import logging
 from typing import Any, Dict, Optional
 
 from aura_cli.application.execution import TurnExecution
+
+logger = logging.getLogger(__name__)
 
 
 class _SafeStatusContext:
@@ -514,7 +517,7 @@ def get_stats() -> StatsTracker:
         if container.has(Services.STATS):
             return container.resolve(Services.STATS)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_stats, using fallback", exc_info=True)
     # Simple fallback (no globals needed — container handles thread safety)
     return StatsTracker()
 
@@ -529,7 +532,10 @@ def reset_stats() -> None:
             container.resolve(Services.STATS).reset()
             return
     except Exception:
-        pass
+        logger.warning(
+            "DI container unavailable in reset_stats — stats reset may not have taken effect",
+            exc_info=True,
+        )
 
 
 def get_stats_snapshot() -> Dict[str, Any]:

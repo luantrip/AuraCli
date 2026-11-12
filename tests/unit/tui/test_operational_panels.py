@@ -75,32 +75,32 @@ async def test_memory_browser_localizes_copy_and_surfaces_empty_states(
         panel = app.query_one("#memory", MemoryBrowser)
 
         assert (
-            "Navegador de memória" in panel.query_one(".memory-header").render().plain
+            "Memory browser" in panel.query_one(".memory-header").render().plain
         )
         assert panel.query_one("#memory_search", Input).placeholder == (
-            "Pesquisar na memória..."
+            "Search memory..."
         )
         assert str(panel.query_one("#clear_conv_btn", Button).label) == (
-            "✖ Limpar conversa"
+            "✖ Clear conversation"
         )
         assert str(panel.query_one("#clear_state_btn", Button).label) == (
-            "✖ Limpar estado"
+            "✖ Clear state"
         )
-        assert str(panel.query_one("#export_btn", Button).label) == "↑ Exportar"
+        assert str(panel.query_one("#export_btn", Button).label) == "↑ Export"
         assert panel.query_one("#conversation-empty-state", Static).display is True
         assert panel.query_one("#persistent-empty-state", Static).display is True
         assert panel.query_one("#state_tree", Tree).root.children[-1].label.plain == (
-            "Nenhum estado de sessão"
+            "No session state"
         )
         assert (
-            "Estatísticas da memória" in panel.query_one("#memory_stats").render().plain
+            "Memory statistics" in panel.query_one("#memory_stats").render().plain
         )
 
-        panel._perform_search("não-encontrado")
+        panel._perform_search("not-found")
         await pilot.pause()
         empty = panel.query_one("#conversation-empty-state", Static)
         assert empty.display is True
-        assert "corresponde à busca" in empty.render().plain
+        assert "match the search" in empty.render().plain
         assert panel.query_one("#conversation_table", DataTable).row_count == 0
 
 

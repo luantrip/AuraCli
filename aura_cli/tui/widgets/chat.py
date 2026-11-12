@@ -124,7 +124,7 @@ class AuraChatLog(VerticalScroll):
             self._message_history = self._message_history[-self.MAX_HISTORY :]
         return bubble
 
-    def write_user_message(self, content: str, sender: str = "Você") -> MessageBubble:
+    def write_user_message(self, content: str, sender: str = "You") -> MessageBubble:
         """Write a user message."""
         return self.write_bubble(
             sender=sender,
@@ -163,7 +163,7 @@ class AuraChatLog(VerticalScroll):
     def write_error_message(self, content: str) -> MessageBubble:
         """Write an error message."""
         return self.write_bubble(
-            sender="Erro",
+            sender="Error",
             content=content,
             message_type=MessageType.ERROR,
         )
@@ -171,7 +171,7 @@ class AuraChatLog(VerticalScroll):
     def write_success_message(self, content: str) -> MessageBubble:
         """Write a success message."""
         return self.write_bubble(
-            sender="Sucesso",
+            sender="Success",
             content=content,
             message_type=MessageType.SUCCESS,
         )
@@ -183,7 +183,7 @@ class AuraChatLog(VerticalScroll):
     ) -> MessageBubble:
         """Write a tool execution message."""
         return self.write_bubble(
-            sender="Ferramenta",
+            sender="Tool",
             content=content,
             message_type=MessageType.TOOL,
             metadata=MessageMetadata(tool_name=tool_name),
@@ -248,7 +248,7 @@ class AuraChatLog(VerticalScroll):
         if title:
             code_content = f"**{title}**\n\n{code_content}"
         self.write_bubble(
-            sender="Código",
+            sender="Code",
             content=code_content,
             message_type=MessageType.SYSTEM,
         )
@@ -259,7 +259,7 @@ class AuraChatLog(VerticalScroll):
         self.mount(Static(divider_text, classes="chat-divider"))
         self.scroll_end()
 
-    def add_reaction(self, message_id: str, emoji: str, user: str = "Você"):
+    def add_reaction(self, message_id: str, emoji: str, user: str = "You"):
         """Add a reaction to a message."""
         for bubble in self._message_history:
             if bubble.message_id == message_id:

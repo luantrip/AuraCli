@@ -45,7 +45,7 @@ def generate_ascii_art_sync(
             async def query(self, prompt: str):
                 """Query the LLM and return the response text."""
                 messages = [{"role": "user", "content": prompt}]
-                return await asyncio.to_thread(query_llm, None, messages)  # type: ignore[arg-type]
+                return await asyncio.to_thread(query_llm, None, messages)  # type: ignore[arg-type]  # to_thread Callable narrowing
 
         ext = get_paint_extension(SimpleLLMClient())
         try:

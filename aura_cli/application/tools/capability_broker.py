@@ -49,7 +49,7 @@ def decide_tool_capability(
         return CapabilityDecision(
             allowed=False,
             requires_confirmation=False,
-            reason=access_reason or "Acesso negado pela política.",
+            reason=access_reason or "Access denied by policy.",
             risk_level=risk_level,
         )
 
@@ -58,7 +58,7 @@ def decide_tool_capability(
         return CapabilityDecision(
             allowed=True,
             requires_confirmation=False,
-            reason="Ferramenta sem confirmação adicional.",
+            reason="Tool without additional confirmation.",
             risk_level=risk_level,
         )
 
@@ -69,28 +69,28 @@ def decide_tool_capability(
                     allowed=False,
                     requires_confirmation=False,
                     reason=(
-                        "Operação de alto risco rejeitada: adapter de intervenção "
-                        "ausente."
+                        "High-risk operation rejected: intervention "
+                        "adapter absent."
                     ),
                     risk_level=risk_level,
                 )
             return CapabilityDecision(
                 allowed=True,
                 requires_confirmation=True,
-                reason="Auto-confirmação não cobre operações de alto risco.",
+                reason="Auto-confirm does not cover high-risk operations.",
                 risk_level=risk_level,
             )
         return CapabilityDecision(
             allowed=True,
             requires_confirmation=False,
-            reason="Auto-confirmação autorizada pela policy task-local.",
+            reason="Auto-confirm authorized by task-local policy.",
             risk_level=risk_level,
         )
 
     return CapabilityDecision(
         allowed=True,
         requires_confirmation=True,
-        reason="Confirmação explícita necessária para esta operação.",
+        reason="Explicit confirmation required for this operation.",
         risk_level=risk_level,
     )
 

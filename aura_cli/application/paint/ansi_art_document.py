@@ -613,7 +613,7 @@ class AnsiArtDocument:
             char
             in "\x07\x00\x01\x02\x03\x04\x05\x06\x08\x0e\x0f\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1a\x1c\x1e\x1f"
         ):
-            pass  # ignore bell and other non-printable control characters
+            pass  # textual-paint: ignore bell and other non-printable control characters
         else:
             while len(document.ch) <= y:
                 document.ch.append([])
@@ -770,7 +770,7 @@ class AnsiArtDocument:
                     instruction, document, x, y, default_style
                 )
             elif isinstance(instruction, stransi.SetAttribute):
-                pass  # attributes not rendered
+                pass  # textual-paint: attributes not rendered
             elif isinstance(instruction, stransi.Unsupported):
                 raise ValueError("Unknown instruction " + repr(instruction.token))
             else:
@@ -811,7 +811,7 @@ class AnsiArtDocument:
         document = AnsiArtDocument(width, height)
         for y in range(height):
             for x in range(width):
-                r, g, b = rgb_image.getpixel((x, y))  # type: ignore
+                r, g, b = rgb_image.getpixel((x, y))  # type: ignore[misc]  # PIL getpixel returns int|tuple
                 document.st[y][x] += Style.from_color(
                     bgcolor=RichColor.from_rgb(r, g, b)
                 )
@@ -1237,7 +1237,7 @@ class AnsiArtDocument:
             try:
                 return AnsiArtDocument.from_image_format(content)
             except Exception:
-                pass  # Not an image; continue to text-based formats
+                pass  # textual-paint: not an image, continue to text-based formats
         if format_id == "ANSI":
             return AnsiArtDocument.from_ansi(
                 content.decode("utf-8"), default_bg, default_fg

@@ -17,7 +17,7 @@ def push_confirm(
     on_result: Callable[[Optional[bool]], None],
     dangerous: bool = False,
     confirm_label: str = "Sim",
-    cancel_label: str = "Não",
+    cancel_label: str = "No",
 ) -> None:
     app.push_screen(
         ConfirmDialog(

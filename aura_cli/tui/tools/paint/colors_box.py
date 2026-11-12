@@ -80,7 +80,7 @@ class ColorsBox(Container):
 
         for extra_button in buttons[len(palette) :]:
             extra_button.remove()
-            del self.color_by_button[extra_button]  # type: ignore
+            del self.color_by_button[extra_button]  # type: ignore[misc]  # Textual widget as dict key
 
         for _new_color in palette[len(buttons) :]:
             button = Button("", classes="color_button color_well")
@@ -92,7 +92,7 @@ class ColorsBox(Container):
             buttons, palette, strict=False
         ):  # Palette may be shorter
             button.styles.background = color
-            self.color_by_button[button] = color  # type: ignore
+            self.color_by_button[button] = color  # type: ignore[misc]  # Textual widget as dict key
 
     last_click_time = 0
     last_click_button: Button | None = None

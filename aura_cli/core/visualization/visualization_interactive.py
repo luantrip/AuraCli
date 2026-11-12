@@ -32,7 +32,7 @@ def create_dependency_graph_plotly(
 ) -> str:
     """Create an interactive dependency graph with Plotly."""
     if not HAS_PLOTLY:
-        raise ImportError("plotly é necessário. Instale com: pip install plotly")
+        raise ImportError("plotly is required. Install with: pip install plotly")
 
     nodes = set()
     edges = []
@@ -118,7 +118,7 @@ def create_dependency_graph_plotly(
 
     if output_path:
         fig.write_html(output_path)
-        logger.info(f"Gráfico salvo em: {output_path}")
+        logger.info(f"Chart saved at: {output_path}")
         return output_path
     else:
         return fig.to_html(include_plotlyjs="cdn")
@@ -129,7 +129,7 @@ def create_impact_analysis_chart(
 ) -> str:
     """Create an interactive impact analysis chart."""
     if not HAS_PLOTLY:
-        raise ImportError("plotly é necessário. Instale com: pip install plotly")
+        raise ImportError("plotly is required. Install with: pip install plotly")
 
     affected_files = impact_data.get("affected_files", [])
 
@@ -193,7 +193,7 @@ def create_impact_analysis_chart(
 
     if output_path:
         fig.write_html(output_path)
-        logger.info(f"Gráfico salvo em: {output_path}")
+        logger.info(f"Chart saved at: {output_path}")
         return output_path
     else:
         return fig.to_html(include_plotlyjs="cdn")
@@ -204,7 +204,7 @@ def create_progress_dashboard(
 ) -> str:
     """Create an interactive progress dashboard."""
     if not HAS_PLOTLY:
-        raise ImportError("plotly é necessário. Instale com: pip install plotly")
+        raise ImportError("plotly is required. Install with: pip install plotly")
 
     completed = progress_data.get("completed_steps", 0)
     total = progress_data.get("total_steps", 1)
@@ -251,7 +251,7 @@ def create_interactive_dashboard(
 ) -> str:
     """Create a full interactive analysis dashboard."""
     if not HAS_PLOTLY:
-        raise ImportError("plotly é necessário. Instale com: pip install plotly")
+        raise ImportError("plotly is required. Install with: pip install plotly")
 
     num_plots = 1
     if impact_data:
@@ -285,7 +285,7 @@ def create_dash_app(
 ) -> Any:
     """Create an interactive Dash application."""
     if not HAS_DASH:
-        raise ImportError("dash é necessário. Instale com: pip install dash")
+        raise ImportError("dash is required. Install with: pip install dash")
 
     app = dash.Dash(__name__)
 

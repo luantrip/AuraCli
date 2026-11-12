@@ -1,4 +1,4 @@
-from aura_cli.cli.ui.components.arena_panel import render_arena_panel
+from aura_cli.cli.ui.components.agent.arena_panel import render_arena_panel
 
 
 def test_arena_panel_renders_status():

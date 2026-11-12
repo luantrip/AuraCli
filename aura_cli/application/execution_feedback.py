@@ -54,13 +54,13 @@ class NullLoadingHandle:
     """Headless loading handle implementing the adapter's operational surface."""
 
     def update(self, state: LoadingState, details: Optional[str] = None) -> None:
-        pass
+        """Update the feedback message for the current operation."""
 
     def complete(self, result: Optional[str] = None) -> None:
-        pass
+        """Mark the current operation as successfully completed."""
 
     def error(self, error_msg: str) -> None:
-        pass
+        """Mark the current operation as failed with an error message."""
 
 
 class ShellExecutionState(Enum):
@@ -87,10 +87,12 @@ class ShellExecutionView:
     start_time: Optional[float] = None
 
     def start(self) -> None:
+        """Start tracking a new operation with the given label."""
         self.state = ShellExecutionState.EXECUTING
         self.start_time = time.time()
 
     def finish(self, exit_code: int) -> None:
+        """Finish tracking and flush the feedback record."""
         self.exit_code = exit_code
         self.execution_time = time.time() - self.start_time if self.start_time else 0
         self.state = (
@@ -100,6 +102,7 @@ class ShellExecutionView:
         )
 
     def cancel(self) -> None:
+        """Cancel the current operation and discard its feedback."""
         self.state = ShellExecutionState.CANCELLED
 
 

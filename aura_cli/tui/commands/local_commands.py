@@ -89,7 +89,7 @@ WELCOME_TEXT = """# ✦ Welcome to Aura CLI
 _Digite uma pergunta ou use um comando acima._"""
 
 HISTORY_TEXT = (
-    "No TUI, `/history` refere-se ao histórico de **comandos** do input (↑/↓). "
+    "In the TUI, `/history` refers to the **command** history of the input (↑/↓). "
     "Para conversas salvas em disco, use **`/sessions`** (~/.aura/sessions)."
 )
 
@@ -147,10 +147,10 @@ def handle_local_command(host: LocalCommandHost, command: str) -> bool:
     elif action is PresentationCommandAction.HISTORY:
         host.post_message_to_chat("Sistema", HISTORY_TEXT)
     elif action is PresentationCommandAction.BACK:
-        host.post_message_to_chat("Sistema", "Retornando à interface CLI legada...")
+        host.post_message_to_chat("System", "Returning to legacy CLI interface...")
         host.exit()
     elif action is PresentationCommandAction.EXIT:
-        host.post_message_to_chat("Sistema", "Até logo! Encerrando Aura CLI...")
+        host.post_message_to_chat("System", "Goodbye! Shutting down Aura CLI...")
         host.set_timer(0.5, host.exit)
     elif action is PresentationCommandAction.CONTEXT:
         host.action_toggle_workspace_panel()
@@ -167,12 +167,12 @@ def _reveal_todo(host: LocalCommandHost) -> None:
         panel.display = bool(panel.tasks)
         panel.scroll_visible()
         message = (
-            "✔ Tarefas visíveis no fluxo da conversa."
+            "✔ Tasks visible in the conversation flow."
             if panel.tasks
-            else "A lista está vazia. Use `/todo add <tarefa>` para adicionar."
+            else "The list is empty. Use `/todo add <task>` to add one."
         )
     except Exception:
-        message = "Lista de tarefas: use `/todo add <tarefa>` para adicionar itens."
+        message = "Task list: use `/todo add <task>` to add items."
     host.post_message_to_chat("Sistema", message)
 
 

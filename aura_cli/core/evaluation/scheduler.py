@@ -35,12 +35,14 @@ class RunRecord:
     result_path: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
+        """Serialise the evaluation run to a plain dictionary."""
         data = asdict(self)
         data["status"] = self.status.value
         return data
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> RunRecord:
+        """Deserialise an evaluation run from a plain dictionary."""
         copied = dict(data)
         copied["status"] = RunStatus(copied.get("status", RunStatus.PENDING))
         return cls(**copied)
@@ -56,6 +58,7 @@ class RunScheduler:
         self._load()
 
     def enqueue(self, task_id: str, payload: dict[str, Any] | None = None) -> RunRecord:
+        """Add an evaluation run to the pending queue."""
         with self._lock:
             record = RunRecord(uuid.uuid4().hex, task_id, payload or {})
             self._runs[record.run_id] = record
@@ -63,6 +66,7 @@ class RunScheduler:
             return record
 
     def claim_next(self) -> RunRecord | None:
+        """Claim the next pending run for execution."""
         with self._lock:
             pending = [run for run in self._runs.values() if run.status == RunStatus.PENDING]
             if not pending:
@@ -75,13 +79,16 @@ class RunScheduler:
             return record
 
     def complete(self, run_id: str, result_path: str | None = None) -> RunRecord:
+        """Mark a claimed run as successfully completed."""
         return self._transition(run_id, RunStatus.COMPLETED, result_path=result_path)
 
     def fail(self, run_id: str, error: str, *, retry: bool = False) -> RunRecord:
+        """Mark a claimed run as failed with an error."""
         status = RunStatus.PENDING if retry else RunStatus.FAILED
         return self._transition(run_id, status, error=error)
 
     def cancel(self, run_id: str) -> RunRecord:
+        """Cancel a pending evaluation run by ID."""
         return self._transition(run_id, RunStatus.CANCELLED)
 
     def resume(self) -> list[RunRecord]:
@@ -98,10 +105,12 @@ class RunScheduler:
             return recovered
 
     def get(self, run_id: str) -> RunRecord | None:
+        """Look up an evaluation run by its ID."""
         with self._lock:
             return self._runs.get(run_id)
 
     def list(self, status: RunStatus | None = None) -> list[RunRecord]:
+        """Return all runs in the scheduler, optionally filtered by status."""
         with self._lock:
             records = list(self._runs.values())
             return [record for record in records if status is None or record.status == status]

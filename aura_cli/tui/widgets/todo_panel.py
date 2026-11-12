@@ -131,7 +131,7 @@ class AuraTodoPanel(Widget):
         return Panel(
             content,
             border_style="dim",
-            title=f"[bold]Tarefas · {len(self.tasks)}[/bold]",
+            title=f"[bold]Tasks · {len(self.tasks)}[/bold]",
             title_align="left",
             padding=(0, 1),
         )

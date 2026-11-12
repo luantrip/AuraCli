@@ -9,14 +9,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from rich.console import Console
 import yaml
 
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 @dataclass
@@ -34,7 +32,6 @@ def create_workflow(
 ) -> str:
     """Create a GitHub Actions workflow file."""
     from aura_cli.core.ui import display_tool_call
-    from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
     display_tool_call("create_workflow", {"workflow_name": workflow_name, "path": path})
 
@@ -57,17 +54,11 @@ def create_workflow(
 
         logger.info(f"Workflow '{workflow_name}' created at {workflow_file}")
 
-        console.print(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-            f"Workflow '{workflow_name}' created[/{UIStyles.SUCCESS}]"
-        )
-
         return str(workflow_file)
 
     except Exception as e:
         error_msg = f"Error creating workflow: {e}"
         logger.error(error_msg, exc_info=True)
-        console.print(f"[{UIStyles.ERROR}]{error_msg}[/{UIStyles.ERROR}]")
         return error_msg
 
 
@@ -105,7 +96,6 @@ def run_workflow(
 ) -> str:
     """Trigger a workflow run via GitHub CLI."""
     from aura_cli.core.ui import display_tool_call
-    from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
     display_tool_call("run_workflow", {"workflow_name": workflow_name, "ref": ref})
 
@@ -114,7 +104,6 @@ def run_workflow(
     if not shutil.which("gh"):
         error_msg = "GitHub CLI (gh) not found. Install it to run workflows."
         logger.error(error_msg)
-        console.print(f"[{UIStyles.ERROR}]{error_msg}[/{UIStyles.ERROR}]")
         return error_msg
 
     cmd = ["gh", "workflow", "run", workflow_name, "--ref", ref]
@@ -131,9 +120,6 @@ def run_workflow(
         if result.returncode == 0:
             success_msg = f"Workflow '{workflow_name}' disparado com sucesso"
             logger.info(success_msg)
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} {success_msg}[/{UIStyles.SUCCESS}]"
-            )
 
             stats = get_stats()
             stats.track_tool_usage("run_workflow")
@@ -142,7 +128,6 @@ def run_workflow(
         else:
             error_msg = f"Error running workflow: {result.stderr}"
             logger.error(error_msg)
-            console.print(f"[{UIStyles.ERROR}]{error_msg}[/{UIStyles.ERROR}]")
             return error_msg
 
     except subprocess.TimeoutExpired:
@@ -161,7 +146,12 @@ def get_workflow_status(workflow_name: Optional[str] = None) -> List[Dict[str, A
 
     if not shutil.which("gh"):
         logger.warning("GitHub CLI not found")
-        return []
+        return [
+            {
+                "error": "GitHub CLI (gh) not installed. "
+                "Install it from https://cli.github.com and run 'gh auth login'."
+            }
+        ]
 
     import subprocess
 

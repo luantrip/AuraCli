@@ -22,6 +22,7 @@ from aura_cli.core.service_registry import get_tools_dict
 
 if TYPE_CHECKING:
     from aura_cli.cli.workers import AgiWorker, OpsWorker
+    from aura_cli.cli.workers.arena_worker import ArenaWorker
 
 
 def create_agi_worker_thread(
@@ -58,9 +59,11 @@ def create_agi_worker_thread(
 
             ensure_adk_agents_registered()
         except (ImportError, AttributeError) as _e:
-            pass  # silenced: {_e}
+            import logging as _lg
+            _lg.getLogger(__name__).debug("ADK agents registration skipped: %s", _e)
         except Exception as _e:
-            pass  # silenced: {_e}
+            import logging as _lg
+            _lg.getLogger(__name__).debug("ADK agents registration error: %s", _e)
 
     ensure_worker_ready(
         worker_type="agi",
@@ -161,3 +164,61 @@ def create_ops_worker_thread(
     )
 
     return ops_worker, registered_thread
+
+
+def create_arena_worker_thread(
+    task: str,
+    project_root: Path,
+    agents: int = 100,
+    seed: int = 0,
+    headless: bool = False,
+    use_llm_judge: bool = False,
+    model: str = "",
+    shutdown_timeout: float = 30.0,
+) -> Tuple["ArenaWorker", threading.Thread]:
+    """Create and register an ArenaWorker thread.
+
+    Mirrors the AGI/Ops factories: wires the worker to the shared event-bus
+    queue (so progress and the winner surface in the chat loop) and registers
+    the thread with the ThreadManager for lifecycle management.
+
+    Args:
+        task: Task description for the arena tournament
+        project_root: Project root path
+        agents: Number of competing subagents
+        seed: Deterministic seed for the bracket
+        headless: Whether to run in headless mode
+        use_llm_judge: If True, judge matches with an LLM (opt-in, costs N-1
+            LLM calls); otherwise use the deterministic rubric heuristic
+        model: LLM model for the judge (empty = session default)
+        shutdown_timeout: Timeout for thread shutdown
+
+    Returns:
+        Tuple of (ArenaWorker instance, registered Thread)
+    """
+    from aura_cli.cli.workers.arena_worker import ArenaWorker
+
+    status_queue = get_event_bus().get_queue()
+
+    arena_worker = ArenaWorker(
+        task,
+        project_root=project_root,
+        agents=agents,
+        seed=seed,
+        headless=headless,
+        use_llm_judge=use_llm_judge,
+        model=model,
+        status_queue=status_queue,
+    )
+
+    thread_manager = get_thread_manager()
+    thread_name = f"arena_worker_{uuid.uuid4().hex[:16]}"
+    registered_thread = thread_manager.register_thread(
+        name=thread_name,
+        target=arena_worker.run,
+        daemon=True,
+        shutdown_timeout=shutdown_timeout,
+        stop_callback=arena_worker.cleanup,
+    )
+
+    return arena_worker, registered_thread

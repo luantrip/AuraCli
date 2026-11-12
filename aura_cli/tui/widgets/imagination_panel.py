@@ -68,7 +68,6 @@ class HolographicHeader(Static):
     status = reactive(ScanStatus.IDLE)
 
     def __init__(self, title: str = "IMAGINATION ENGINE", **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.title = title
 
@@ -84,7 +83,7 @@ class HolographicHeader(Static):
         """Start animation on mount."""
         self.set_interval(0.1, self._animate)
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Animate the scan indicator."""
         if self.status == ScanStatus.SCANNING:
             self.scan_frame = (self.scan_frame + 1) % len(SCAN_FRAMES)
@@ -125,7 +124,6 @@ class CategoryBreakdown(Static):
     """Visual breakdown of file categories with holographic bars."""
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.data: Dict[str, int] = {}
 
@@ -143,7 +141,7 @@ class CategoryBreakdown(Static):
         content = self.query_one("#category-content", Static)
 
         if not self.data:
-            content.update("Sem dados disponíveis")
+            content.update("No data available")
             return
 
         total = sum(self.data.values())
@@ -177,7 +175,6 @@ class RecentActivity(Static):
     """Real-time activity stream with holographic styling."""
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.activities: List[FileInfo] = []
         self.max_items = 15
@@ -220,7 +217,6 @@ class ExtensionCloud(Static):
     """Visual cloud of file extensions."""
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.extensions: Dict[str, int] = {}
 
@@ -238,7 +234,7 @@ class ExtensionCloud(Static):
         content = self.query_one("#extension-content", Static)
 
         if not self.extensions:
-            content.update("Nenhuma extensão encontrada")
+            content.update("No extension found")
             return
 
         items = []
@@ -253,7 +249,6 @@ class ScanStats(Static):
     """Quick scan statistics with holographic display."""
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.stats: Optional[ScanResult] = None
 
@@ -304,7 +299,6 @@ class ImaginationPanel(Vertical):
         """Emitted when scan completes."""
 
         def __init__(self, result: ScanResult):
-            """Initialize the instance."""
             super().__init__()
             self.result = result
 
@@ -312,12 +306,10 @@ class ImaginationPanel(Vertical):
         """Emitted on scan error."""
 
         def __init__(self, error: str):
-            """Initialize the instance."""
             super().__init__()
             self.error = error
 
     def __init__(self, target_path: str = ".", **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.target_path = Path(target_path).resolve()
         self.scanner = get_imagination_scanner()

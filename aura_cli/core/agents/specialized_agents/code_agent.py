@@ -73,7 +73,9 @@ class CodeAgent(AgentBase):
 
     def _handle_read_file(self, task: AgentTask) -> str:
         """Read a file."""
-        from aura_cli.core.tools import read_file  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            read_file,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         path = task.parameters.get("path")
         if not path:
@@ -86,7 +88,9 @@ class CodeAgent(AgentBase):
 
     def _handle_write_file(self, task: AgentTask) -> str:
         """Write to a file."""
-        from aura_cli.core.tools import write_file  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            write_file,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         path = task.parameters.get("path")
         content = task.parameters.get("content")
@@ -99,14 +103,18 @@ class CodeAgent(AgentBase):
 
     def _handle_list_directory(self, task: AgentTask) -> str:
         """List directory."""
-        from aura_cli.core.tools import list_directory  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            list_directory,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         path = task.parameters.get("path", ".")
         return list_directory(path)
 
     def _handle_find_in_files(self, task: AgentTask) -> str:
         """Search in files."""
-        from aura_cli.core.tools import find_in_files  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            find_in_files,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         pattern = task.parameters.get("pattern")
         path = task.parameters.get("path", ".")
@@ -120,7 +128,9 @@ class CodeAgent(AgentBase):
 
     def _handle_analyze_code(self, task: AgentTask) -> str:
         """Analyze code."""
-        from aura_cli.core.tools import analyze_code  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            analyze_code,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         file_path = task.parameters.get("file_path")
         if not file_path:
@@ -130,7 +140,9 @@ class CodeAgent(AgentBase):
 
     def _handle_edit_file(self, task: AgentTask) -> str:
         """Edit file."""
-        from aura_cli.core.tools import edit_file  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            edit_file,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         path = task.parameters.get("path")
         old_content = task.parameters.get("old_content")
@@ -145,7 +157,9 @@ class CodeAgent(AgentBase):
 
     def _handle_validate_syntax(self, task: AgentTask) -> str:
         """Validate syntax."""
-        from aura_cli.core.tools import validate_syntax  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            validate_syntax,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         content = task.parameters.get("content")
         language = task.parameters.get("language")
@@ -157,7 +171,9 @@ class CodeAgent(AgentBase):
 
     def _handle_tree_view(self, task: AgentTask) -> str:
         """View directory tree."""
-        from aura_cli.core.tools import tree_view  # type: ignore[attr-defined]
+        from aura_cli.core.tools import (
+            tree_view,  # type: ignore[attr-defined]  # exported via __getattr__
+        )
 
         path = task.parameters.get("path", ".")
         max_depth = task.parameters.get("max_depth", 3)

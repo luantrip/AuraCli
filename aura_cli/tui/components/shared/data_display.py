@@ -50,7 +50,6 @@ class KeyValueTable(Widget):
         show_header: bool = True,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._data = data or {}
         self._key_header = key_header
@@ -59,7 +58,7 @@ class KeyValueTable(Widget):
 
     def compose(self) -> ComposeResult:
         """Compose the widget layout."""
-        table = DataTable(show_header=self._show_header, id="kv-table")  # type: ignore[var-annotated]
+        table = DataTable(show_header=self._show_header, id="kv-table")  # type: ignore[var-annotated]  # Textual widget
         yield table
 
     def on_mount(self) -> None:
@@ -115,7 +114,6 @@ class TreeView(Widget):
         """Message when a node is selected."""
 
         def __init__(self, node: TreeNode) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.node = node
 
@@ -123,7 +121,6 @@ class TreeView(Widget):
         """Message when a node is expanded."""
 
         def __init__(self, node: TreeNode) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.node = node
 
@@ -131,12 +128,10 @@ class TreeView(Widget):
         """Message when a node is collapsed."""
 
         def __init__(self, node: TreeNode) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.node = node
 
     def __init__(self, root: Optional[TreeNode] = None, label: str = "Tree", **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self._root = root
         self._label = label
@@ -144,7 +139,7 @@ class TreeView(Widget):
 
     def compose(self) -> ComposeResult:
         """Compose the widget layout."""
-        tree = Tree(self._label, id="tree")  # type: ignore[var-annotated]
+        tree = Tree(self._label, id="tree")  # type: ignore[var-annotated]  # Textual widget
         yield tree
 
     def on_mount(self) -> None:
@@ -159,7 +154,7 @@ class TreeView(Widget):
             tree.clear()
 
             self._node_map.clear()
-            self._add_node(tree.root, self._root)  # type: ignore[arg-type]
+            self._add_node(tree.root, self._root)  # type: ignore[arg-type]  # TreeNode[Any] narrowing
         except Exception as error:
             self.log.debug("Tree display is not mounted yet: %s", error)
 

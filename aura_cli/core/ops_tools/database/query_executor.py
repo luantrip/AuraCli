@@ -11,7 +11,6 @@ import os
 import re
 from typing import Any, Dict, Generator, List, Optional
 
-from rich.console import Console
 from rich.table import Table
 
 from aura_cli.core.logger import get_logger
@@ -19,7 +18,6 @@ from aura_cli.core.paths import aura_path
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 # SQL identifiers (table names) cannot be passed as bind parameters, so any value
 # interpolated into a statement must be validated against a strict allowlist to
@@ -297,7 +295,6 @@ class QueryExecutor:
                 duration = time.time() - start_time
 
                 logger.info(f"Query executed: {row_count} rows ({duration:.3f}s)")
-                console.print(f"[green]✅ Query executed: {row_count} rows[/green]")
 
                 self.stats.track_tool_usage("query_executor")
 

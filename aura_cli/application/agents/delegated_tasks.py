@@ -18,6 +18,7 @@ PersistDelegatedTask = Callable[..., None]
 
 
 class DelegatedTaskStatus(str, Enum):
+    """Lifecycle status of a delegated background task."""
     ACCEPTED = "accepted"
     RUNNING = "running"
     COMPLETED = "completed"
@@ -39,6 +40,7 @@ _STATUS_ALIASES = {
 
 
 def normalize_delegated_status(status: str) -> DelegatedTaskStatus:
+    """Normalize a raw status string to a DelegatedTaskStatus enum value."""
     normalized = str(status or "").casefold()
     try:
         return DelegatedTaskStatus(normalized)
@@ -47,6 +49,7 @@ def normalize_delegated_status(status: str) -> DelegatedTaskStatus:
 
 
 class DelegatedWorker(Protocol):
+    """Handle to a worker running a delegated task."""
     final_result: Mapping[str, Any] | None
     final_error: Mapping[str, Any] | None
     last_snapshot_path: str | None
@@ -55,6 +58,7 @@ class DelegatedWorker(Protocol):
 
 @dataclass(frozen=True)
 class DelegatedTaskCounts:
+    """Aggregate counts of delegated tasks by status."""
     total: int
     agi: int
     ops: int
@@ -116,6 +120,7 @@ class DelegatedTaskRegistry:
         mode: str | None = None,
         worker_ref: DelegatedWorker | Any | None = None,
     ) -> None:
+        """Register a new delegated task and return its assigned ID."""
         with self._lock:
             if task_id in self._tasks:
                 return
@@ -191,6 +196,7 @@ class DelegatedTaskRegistry:
     def resolve_task(
         self, task_id: str = "", agent_type: str = ""
     ) -> DelegatedTask | None:
+        """Mark a delegated task as resolved with the given outcome."""
         with self._lock:
             if task_id:
                 task = self._tasks.get(task_id)
@@ -199,6 +205,7 @@ class DelegatedTaskRegistry:
             return candidates[0] if candidates else None
 
     def sorted_tasks(self, agent_type: str = "") -> list[DelegatedTask]:
+        """Return tasks sorted by creation time, most recent first."""
         with self._lock:
             candidates = sorted(
                 self._tasks.values(),
@@ -215,6 +222,7 @@ class DelegatedTaskRegistry:
             return [self._snapshot_task(task) for task in candidates]
 
     def counts(self) -> DelegatedTaskCounts:
+        """Return aggregate counts of tasks by status."""
         with self._lock:
             types = [
                 str(task.get("agent_type", "")).casefold()
@@ -225,6 +233,7 @@ class DelegatedTaskRegistry:
             )
 
     def update_status(self, task: DelegatedTask, status: str) -> bool:
+        """Update the status of an existing delegated task."""
         normalized = normalize_delegated_status(status).value
         terminal_statuses = {
             DelegatedTaskStatus.COMPLETED.value,
@@ -257,6 +266,7 @@ class DelegatedTaskRegistry:
         *,
         reason: str | None = None,
     ) -> bool:
+        """Mark a task as having reached a terminal state."""
         if status not in {
             DelegatedTaskStatus.COMPLETED,
             DelegatedTaskStatus.FAILED,

@@ -17,10 +17,12 @@ class ChatMessage:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialise the conversation to a plain dictionary."""
         return asdict(self)
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> ChatMessage:
+        """Deserialise a conversation from a plain dictionary."""
         return cls(**data)
 
 
@@ -37,6 +39,7 @@ class ConversationMemory:
     def add_message(
         self, role: str, content: str, metadata: Optional[Dict] = None
     ) -> None:
+        """Append a message to the conversation history."""
         message = ChatMessage(role=role, content=content, metadata=metadata or {})
         self.messages.append(message)
         self._total_chars += len(content)
@@ -54,6 +57,7 @@ class ConversationMemory:
             self.summary = "Previous conversation summary:\n" + "\n".join(parts)
 
     def get_context(self, include_summary: bool = True) -> List[Dict[str, str]]:
+        """Return the conversation history as LLM context messages."""
         context = []
         if include_summary and self.summary:
             context.append({"role": "system", "content": self.summary})
@@ -63,14 +67,17 @@ class ConversationMemory:
         return context
 
     def get_last_n(self, n: int) -> List[ChatMessage]:
+        """Return the last n messages from the conversation history."""
         return self.messages[-n:] if n < len(self.messages) else self.messages
 
     def clear(self) -> None:
+        """Clear all messages from the conversation history."""
         self.messages = []
         self.summary = ""
         self._total_chars = 0
 
     def to_dict(self) -> Dict[str, Any]:
+        """Serialise the conversation to a plain dictionary."""
         return {
             "messages": [message.to_dict() for message in self.messages],
             "summary": self.summary,
@@ -80,6 +87,7 @@ class ConversationMemory:
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> ConversationMemory:
+        """Deserialise a conversation from a plain dictionary."""
         memory = cls(
             max_messages=data.get("max_messages", 50),
             max_tokens=data.get("max_tokens", 8000),

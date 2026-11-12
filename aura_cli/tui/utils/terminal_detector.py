@@ -144,7 +144,7 @@ class TerminalDetector:
         # Method 3: Check terminal-specific environment
         term_bg = os.environ.get("TERMINAL_BACKGROUND", "").lower()
         if term_bg in ("light", "dark"):
-            return term_bg  # type: ignore[return-value]
+            return term_bg  # type: ignore[return-value]  # Optional narrowed before return
 
         # Method 4: OSC 11 query (can hang, use carefully)
         if (

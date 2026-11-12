@@ -274,7 +274,7 @@ class WorkflowExecutor:
         self.active_workflows[workflow.workflow_id] = workflow
 
         logger.info(
-            f"Iniciando execução do workflow '{workflow.name}' "
+            f"Starting workflow execution '{workflow.name}' "
             f"({len(workflow.steps)} passos)"
         )
 
@@ -336,7 +336,7 @@ class WorkflowExecutor:
 
             logger.info(
                 f"Workflow '{workflow.name}' completed with status "
-                f"{workflow.status.value} após {iteration} iterações"
+                f"{workflow.status.value} after {iteration} iterations"
             )
 
             return results
@@ -424,13 +424,13 @@ class WorkflowExecutor:
             if step.attempts <= step.retry_count:
                 step.status = WorkflowStatus.PENDING
                 logger.warning(
-                    f"Passo {step.id} falhou (tentativa {step.attempts}/"
-                    f"{step.retry_count + 1}), será tentado novamente"
+                    f"Step {step.id} failed (attempt {step.attempts}/"
+                    f"{step.retry_count + 1}), will be retried"
                 )
             else:
                 step.status = WorkflowStatus.FAILED
                 logger.error(
-                    f"Passo {step.id} falhou definitivamente após "
+                    f"Step {step.id} definitively failed after "
                     f"{step.attempts} tentativas: {e}",
                     exc_info=True,
                 )

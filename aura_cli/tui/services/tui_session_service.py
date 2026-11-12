@@ -112,7 +112,7 @@ def save_tui_session(app: AuraTUI) -> Optional[Session]:
     try:
         export_session_jsonl(session, jsonl_path)
     except Exception as e:
-        logger.warning(f"Não foi possível exportar JSONL: {e}")
+        logger.warning(f"Could not export JSONL: {e}")
     app.store.set("session.id", session.id)
     app.store.set("session.manager_id", session.id)
     return session

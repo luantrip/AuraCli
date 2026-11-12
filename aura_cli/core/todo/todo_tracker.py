@@ -90,15 +90,15 @@ class TodoTracker:
             return False
         except PermissionError as e:
             logger.error(
-                f"Erro de permissão ao ler arquivo to-do.md: {self.todo_file}. "
-                f"Verifique se você tem permissão de leitura. Erro: {e}"
+                f"Permission error reading to-do.md: {self.todo_file}. "
+                f"Check that you have read permission. Error: {e}"
             )
             return False
         except Exception as e:
             logger.error(
                 f"Erro inesperado ao carregar tarefas do arquivo {self.todo_file}: {e}. "
                 f"Tipo de erro: {type(e).__name__}. "
-                "Verifique se o arquivo está acessível e tem formato válido."
+                "Check that the file is accessible and has a valid format."
             )
             return False
 
@@ -215,14 +215,14 @@ class TodoTracker:
         except FileNotFoundError:
             logger.error(
                 f"to-do.md file not found: {self.todo_file}. "
-                f"Não é possível marcar tarefa {task_id} como concluída."
+                f"Cannot mark task {task_id} as completed."
             )
             return False, None
         except PermissionError as e:
             logger.error(
-                f"Erro de permissão ao escrever no arquivo to-do.md: {self.todo_file}. "
-                f"Não é possível marcar tarefa {task_id} como concluída. "
-                f"Verifique permissões de escrita. Erro: {e}"
+                f"Permission error writing to-do.md: {self.todo_file}. "
+                f"Cannot mark task {task_id} as completed. "
+                f"Check write permissions. Error: {e}"
             )
             return False, None
         except IndexError as e:
@@ -233,9 +233,9 @@ class TodoTracker:
             return False, None
         except Exception as e:
             logger.error(
-                f"Erro inesperado ao marcar tarefa {task_id} como concluída no arquivo {self.todo_file}: {e}. "
+                f"Unexpected error marking task {task_id} as completed in {self.todo_file}: {e}. "
                 f"Tipo de erro: {type(e).__name__}. "
-                "Verifique se o arquivo está acessível e não está corrompido."
+                "Check that the file is accessible and not corrupted."
             )
             return False, None
 
@@ -266,23 +266,23 @@ class TodoTracker:
 
         except PermissionError as e:
             logger.error(
-                f"Erro de permissão ao escrever no arquivo to-do.md: {self.todo_file}. "
-                f"Não é possível adicionar tarefa '{text}'. "
-                f"Verifique permissões de escrita. Erro: {e}"
+                f"Permission error writing to-do.md: {self.todo_file}. "
+                f"Cannot add task '{text}'. "
+                f"Check write permissions. Error: {e}"
             )
             return False
         except OSError as e:
             logger.error(
                 f"Erro de sistema ao escrever no arquivo to-do.md: {self.todo_file}. "
-                f"Não é possível adicionar tarefa '{text}'. "
-                f"Verifique se há espaço em disco e se o diretório existe. Erro: {e}"
+                f"Cannot add task '{text}'. "
+                f"Check disk space and that the directory exists. Error: {e}"
             )
             return False
         except Exception as e:
             logger.error(
                 f"Erro inesperado ao adicionar tarefa '{text}' no arquivo {self.todo_file}: {e}. "
                 f"Tipo de erro: {type(e).__name__}. "
-                "Verifique se o arquivo está acessível."
+                "Check that the file is accessible."
             )
             return False
 
@@ -376,7 +376,7 @@ def get_todo_tracker(scope: str = ".") -> TodoTracker:
         if container.has(Services.TODO_TRACKER):
             return container.resolve(Services.TODO_TRACKER)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_todo_tracker, using fallback", exc_info=True)
 
     # Fallback to legacy singleton
     global _global_tracker

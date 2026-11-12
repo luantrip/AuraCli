@@ -104,7 +104,7 @@ if hasattr(font, "getbbox"):
         ch_height = 16
 else:
     # Older Pillow versions
-    ch_width, ch_height = font.getsize("A")  # type: ignore
+    ch_width, ch_height = font.getsize("A")  # type: ignore[attr-defined]  # Pillow ImageFont.getsize deprecated in 10.0
 
 assert isinstance(ch_width, int)
 assert isinstance(ch_height, int)

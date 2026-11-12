@@ -11,13 +11,10 @@ from pathlib import Path
 import subprocess
 from typing import List, Optional
 
-from rich.console import Console
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class DatabaseType(Enum):
@@ -69,7 +66,6 @@ class DatabaseBackup:
         import time
 
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         start_time = time.time()
 
@@ -102,7 +98,7 @@ class DatabaseBackup:
         else:
             result = BackupResult(
                 success=False,
-                error=f"Tipo de banco '{config.db_type.value}' não suportado",
+                error=f"Database type '{config.db_type.value}' not supported",
             )
 
         result.duration = time.time() - start_time
@@ -114,16 +110,8 @@ class DatabaseBackup:
                 f"Backup created: {result.backup_path} "
                 f"({result.size / 1024 / 1024:.2f}MB, {result.duration:.2f}s)"
             )
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Backup created: {result.backup_path}[/{UIStyles.SUCCESS}]"
-            )
         else:
             logger.error(f"Error creating backup: {result.error}")
-            console.print(
-                f"[{UIStyles.ERROR}]{UIIcons.ERROR} "
-                f"Backup error: {result.error}[/{UIStyles.ERROR}]"
-            )
 
         self.stats.track_tool_usage("database_backup")
 
@@ -160,7 +148,7 @@ class DatabaseBackup:
                 import gzip
 
                 with gzip.open(output_file, "wb") as f:
-                    result = subprocess.run(  # type: ignore[call-overload]
+                    result = subprocess.run(  # type: ignore[call-overload]  # overload for capture_output
                         cmd,
                         stdout=f,
                         stderr=subprocess.PIPE,
@@ -232,7 +220,7 @@ class DatabaseBackup:
                 import gzip
 
                 with gzip.open(output_file, "wb") as f:
-                    result = subprocess.run(  # type: ignore[call-overload]
+                    result = subprocess.run(  # type: ignore[call-overload]  # overload for capture_output
                         cmd, stdout=f, stderr=subprocess.PIPE, text=True, timeout=300
                     )
             else:

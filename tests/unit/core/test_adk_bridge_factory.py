@@ -41,7 +41,7 @@ class TestADKBridgeFactory:
         assert isinstance(adapter, ADKAgentAdapter)
 
     def test_create_adapter_unknown_raises_value_error(self):
-        with pytest.raises(ValueError, match="não registrado"):
+        with pytest.raises(ValueError, match="not registered"):
             ADKBridgeFactory.create_adapter("nonexistent")
 
     def test_create_adapter_passes_kwargs(self):

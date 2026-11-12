@@ -34,10 +34,10 @@ def test_delegation_context_is_bounded_and_effective_prompt_wraps_task() -> None
 def test_planning_prompt_carries_mode_payload_and_json_constraints() -> None:
     prompt = build_ops_planning_prompt("docker", {"primary_request": "inspect"})
 
-    assert "**MODO ATUAL:** docker" in prompt
+    assert "**CURRENT MODE:** docker" in prompt
     assert "primary_request: inspect" in prompt
     assert '"mode": "docker"' in prompt
-    assert "Retorne APENAS o JSON" in prompt
+    assert "Return ONLY the JSON" in prompt
 
 
 def test_planning_prompt_includes_workspace_diff() -> None:

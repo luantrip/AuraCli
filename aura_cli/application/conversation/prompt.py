@@ -87,16 +87,16 @@ def prepare_prompt(
     used_context = bool(pending_context)
     if constitution:
         rendered = (
-            "Baseado na seguinte 'Constituição do Projeto', que define as regras e padrões, "
-            "processe o meu pedido. A constituição é imutável para esta tarefa.\n\n"
+            "Based on the following 'Project Constitution', which defines the rules and patterns, "
+            "process my request. The constitution is immutable for this task.\n\n"
             f"<constitution>\n{constitution}\n</constitution>\n\n"
-            f"Pedido do Usuário: {sanitize_prompt_text(command)}"
+            f"User Request: {sanitize_prompt_text(command)}"
         )
     if pending_context:
         rendered = (
-            "Com base no seguinte contexto de arquivos fornecido pelo usuário:\n"
+            "Based on the following file context provided by the user:\n"
             f"<context>\n{sanitize_prompt_text(pending_context)}\n</context>\n\n"
-            f"Agora, aqui está meu pedido: {rendered}"
+            f"Now, here is my request: {rendered}"
         )
     if reducer is not None and len(rendered) > reduce_above:
         rendered = reducer(rendered)

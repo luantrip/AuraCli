@@ -104,10 +104,10 @@ class ToolCard(Container):
                     )
             with HorizontalGroup(classes="tool-card-footer"):
                 if self.tool.available:
-                    yield Static("✓ Disponível", classes="tool-status-badge available")
+                    yield Static("✓ Available", classes="tool-status-badge available")
                 else:
                     yield Static(
-                        "○ Indisponível", classes="tool-status-badge unavailable"
+                        "○ Unavailable", classes="tool-status-badge unavailable"
                     )
 
     async def on_click(self, event) -> None:
@@ -133,13 +133,13 @@ class ToolsMenuScreen(Screen):
     """
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "return_to_chat", "Voltar", show=True),
-        Binding("q", "return_to_chat", "Voltar", show=False),
-        Binding("enter", "select_tool", "Selecionar", show=True),
+        Binding("escape", "return_to_chat", "Back", show=True),
+        Binding("q", "return_to_chat", "Back", show=False),
+        Binding("enter", "select_tool", "Select", show=True),
         Binding("up", "move_up", "Subir", show=False),
         Binding("down", "move_down", "Descer", show=False),
-        Binding("left", "move_left", "Esquerda", show=False),
-        Binding("right", "move_right", "Direita", show=False),
+        Binding("left", "move_left", "Left", show=False),
+        Binding("right", "move_right", "Right", show=False),
     ]
 
     def __init__(self, **kwargs):
@@ -159,7 +159,7 @@ class ToolsMenuScreen(Screen):
             ToolItem(
                 widget_id="aura",
                 name="Aura",
-                description="Voltar para a conversa principal",
+                description="Back to main conversation",
                 available=True,
                 action_name="action_back_to_chat",
                 category="Main",
@@ -168,7 +168,7 @@ class ToolsMenuScreen(Screen):
             ToolItem(
                 widget_id="paint",
                 name="Paint",
-                description="Editor de arte ANSI com animação, ferramentas e camadas",
+                description="ANSI art editor with animation, tools and layers",
                 available=self.tool_availability.paint,
                 action_name="action_push_paint_screen",
                 category="Creative",
@@ -176,8 +176,8 @@ class ToolsMenuScreen(Screen):
             ),
             ToolItem(
                 widget_id="file_manager",
-                name="Arquivos",
-                description="Navegador de arquivos com operações e pré-visualização",
+                name="Files",
+                description="File browser with operations and preview",
                 available=self.tool_availability.files,
                 action_name="action_push_file_manager_screen",
                 category="System",
@@ -186,7 +186,7 @@ class ToolsMenuScreen(Screen):
             ToolItem(
                 widget_id="monitor",
                 name="Monitor",
-                description="Navegador web de terminal para acompanhar conteúdo",
+                description="Terminal web browser for tracking content",
                 available=self.tool_availability.monitor,
                 action_name="action_push_monitor_screen",
                 category="System",
@@ -194,8 +194,8 @@ class ToolsMenuScreen(Screen):
             ),
             ToolItem(
                 widget_id="sessions",
-                name="Histórico",
-                description="Consultar e pesquisar sessões anteriores da Aura",
+                name="History",
+                description="Browse and search previous Aura sessions",
                 available=True,
                 action_name="action_push_history_screen",
                 category="Main",
@@ -210,14 +210,14 @@ class ToolsMenuScreen(Screen):
                 id="tools_container", classes="tools-container aura-tool-screen"
             ):
                 yield ToolScreenChrome(
-                    "Aura CLI · Ferramentas",
-                    "Paint · Arquivos · Monitor",
+                    "Aura CLI · Tools",
+                    "Paint · Files · Monitor",
                 )
                 yield Static(
                     (
-                        "Ferramentas opcionais verificadas agora."
+                        "Optional tools checked now."
                         if self.tool_availability.any_available
-                        else "Nenhuma ferramenta opcional disponível neste ambiente."
+                        else "No optional tools available in this environment."
                     ),
                     classes="tools-availability-summary",
                 )
@@ -234,7 +234,7 @@ class ToolsMenuScreen(Screen):
                     yield Static("↑↓←→", classes="action-key")
                     yield Static(" navegar · ", classes="action-hint-text")
                     yield Static("Enter", classes="action-key")
-                    yield Static(" selecionar · ", classes="action-hint-text")
+                    yield Static(" select · ", classes="action-hint-text")
                     yield Static("Esc", classes="action-key")
                     yield Static(" voltar", classes="action-hint-text")
 
@@ -324,7 +324,7 @@ class ToolsMenuScreen(Screen):
                     action()
             else:
                 self.notify(
-                    f"{tool.name} indisponível. Instale a dependência necessária e tente novamente.",
+                    f"{tool.name} unavailable. Install the required dependency and try again.",
                     severity="warning",
                 )
 

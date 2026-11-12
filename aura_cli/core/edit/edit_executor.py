@@ -111,7 +111,7 @@ class EditExecutor:
                 ):
                     if backup_path:
                         self._rollback(operation.file_path, backup_path)
-                    error_msg = "Sintaxe inválida após edição, rollback realizado"
+                    error_msg = "Invalid syntax after edit, rollback performed"
                     logger.error(error_msg)
                     return ExecutionResult(
                         success=False,

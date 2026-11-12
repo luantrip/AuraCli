@@ -7,23 +7,27 @@ from enum import Enum
 
 
 class TuiDensity(str, Enum):
+    """Display density level for the TUI layout."""
     COMPACT = "compact"
     COMFORTABLE = "comfortable"
     SPACIOUS = "spacious"
 
 
 class DrawerMode(str, Enum):
+    """Open/closed state of a TUI drawer panel."""
     OVERLAY = "overlay"
     SPLIT = "split"
 
 
 class TuiDrawer(str, Enum):
+    """Identifies a specific TUI drawer panel."""
     WORKSPACE = "workspace"
     ACTIVITY = "activity"
 
 
 @dataclass(frozen=True)
 class TuiLayoutState:
+    """Full layout state snapshot of the TUI surface."""
     width: int
     height: int
     requested_drawer: TuiDrawer | None = None

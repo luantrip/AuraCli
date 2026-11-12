@@ -101,11 +101,11 @@ def test_chat_event_persists_message_and_requests_visual_effects() -> None:
         event(
             AgiEventType.CHAT_MESSAGE,
             "root",
-            {"sender": "Aura", "content": "Pronto", "metadata": {"model": "local"}},
+            {"sender": "Aura", "content": "Ready", "metadata": {"model": "local"}},
         )
     )
 
-    assert store.get("messages")[0]["content"] == "Pronto"
+    assert store.get("messages")[0]["content"] == "Ready"
     assert reduction.hide_thinking is True
     assert reduction.chat is not None and reduction.chat.sender == "Aura"
 

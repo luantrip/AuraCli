@@ -49,7 +49,7 @@ class BaseDialog(Static):
     """
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "close_dialog", "Fechar", show=False),
+        Binding("escape", "close_dialog", "Close", show=False),
         Binding("enter", "confirm", "Confirm", show=False),
     ]
 
@@ -117,7 +117,7 @@ class BaseDialog(Static):
             List of (label, action_id, variant) tuples
         """
         return [
-            ("Fechar", "close", "default"),
+            ("Close", "close", "default"),
         ]
 
     def on_button_pressed(self, event: Button.Pressed) -> None:

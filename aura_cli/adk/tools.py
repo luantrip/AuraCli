@@ -103,7 +103,6 @@ class Tool:
     category: ToolCategory = ToolCategory.UTILITY
 
     def __init__(self):
-        """Initialize the instance."""
         self._schema: Optional[ToolSchema] = None
 
     @property
@@ -227,17 +226,17 @@ def tool(
                 logger.error(f"Tool {tool_name} failed: {e}")
                 return ToolResult.fail(str(e))
 
-        wrapper._tool_name = tool_name  # type: ignore[attr-defined]
-        wrapper._tool_description = tool_desc  # type: ignore[attr-defined]
-        wrapper._tool_category = category  # type: ignore[attr-defined]
-        wrapper._original_func = func  # type: ignore[attr-defined]
+        wrapper._tool_name = tool_name  # type: ignore[attr-defined]  # dynamic decorator attr
+        wrapper._tool_description = tool_desc  # type: ignore[attr-defined]  # dynamic decorator attr
+        wrapper._tool_category = category  # type: ignore[attr-defined]  # dynamic decorator attr
+        wrapper._original_func = func  # type: ignore[attr-defined]  # dynamic decorator attr
 
         registry = get_tool_registry()
         registry.register_function(
             tool_name, wrapper, description=tool_desc, category=category
         )
 
-        return wrapper  # type: ignore[return-value]
+        return wrapper  # type: ignore[return-value]  # Callable → tool type narrowed at call site
 
     return decorator
 
@@ -246,7 +245,6 @@ class ToolRegistry:
     """Central registry for managing, discovering, and invoking tools."""
 
     def __init__(self):
-        """Initialize the instance."""
         self._tools: Dict[str, Union[Tool, Callable]] = {}
         self._schemas: Dict[str, ToolSchema] = {}
         self._categories: Dict[ToolCategory, List[str]] = {

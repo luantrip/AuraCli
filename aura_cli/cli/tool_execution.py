@@ -39,7 +39,7 @@ from aura_cli.application.tools.capability_broker import (
     decide_tool_capability,
 )
 from aura_cli.application.tools.execution_policy import get_execution_policy
-from aura_cli.cli.ui.components.tool_result import ToolResult
+from aura_cli.cli.ui.components.agent.tool_result import ToolResult
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.cli.ui.loading_states import LoadingState, show_tool_loading
 from aura_cli.cli.ui.manager import UIManager
@@ -73,10 +73,10 @@ try:
     INTERVENTION_AVAILABLE = True
 except ImportError:
     INTERVENTION_AVAILABLE = False
-    HumanInterventionAdapter = None  # type: ignore[assignment,misc]
-    InterventionHelper = None  # type: ignore[assignment,misc]
-    InterventionContext = None  # type: ignore[assignment,misc]
-    RiskLevel = None  # type: ignore[assignment,misc]
+    HumanInterventionAdapter = None  # type: ignore[assignment,misc]  # optional dep
+    InterventionHelper = None  # type: ignore[assignment,misc]  # optional dep
+    InterventionContext = None  # type: ignore[assignment,misc]  # optional dep
+    RiskLevel = None  # type: ignore[assignment,misc]  # optional dep
 
 
 # Lazy singletons for ToolInterceptor and PolicyManager (INFRA-NEW-05)
@@ -97,7 +97,7 @@ def _get_tool_interceptor():
 
                     _tool_interceptor = ToolInterceptor()
                 except Exception as _e:
-                    logger.debug(f"ToolInterceptor não disponível: {_e}")
+                    logger.debug(f"ToolInterceptor not available: {_e}")
     return _tool_interceptor
 
 
@@ -114,7 +114,7 @@ def _get_policy_manager():
 
                     _policy_manager = PolicyManager()
                 except Exception as _e:
-                    logger.debug(f"PolicyManager não disponível: {_e}")
+                    logger.debug(f"PolicyManager not available: {_e}")
     return _policy_manager
 
 
@@ -124,8 +124,8 @@ try:
         get_service_registry,
     )
 except ImportError:
-    ServiceRegistry = None  # type: ignore[assignment,misc]
-    get_service_registry = None  # type: ignore[assignment]
+    ServiceRegistry = None  # type: ignore[assignment,misc]  # optional dep
+    get_service_registry = None  # type: ignore[assignment]  # optional dep
 
 try:
     from aura_cli.core.hooks import HookEvent, HookManager
@@ -142,10 +142,10 @@ try:
         return _hook_manager
 
 except ImportError:
-    HookManager = None  # type: ignore[assignment,misc]
-    HookEvent = None  # type: ignore[assignment,misc]
-    set_hook_manager = None  # type: ignore[assignment]
-    get_hook_manager = None  # type: ignore[assignment]
+    HookManager = None  # type: ignore[assignment,misc]  # optional dep
+    HookEvent = None  # type: ignore[assignment,misc]  # optional dep
+    set_hook_manager = None  # type: ignore[assignment]  # optional dep
+    get_hook_manager = None  # type: ignore[assignment]  # optional dep
 
 
 _intervention_adapter: Optional[Any] = None
@@ -237,7 +237,7 @@ def _present_capability_decision(
             logger.debug("Capability decision presentation failed: %s", error)
     warning_presenter = getattr(ui, "display_warning", None)
     if callable(warning_presenter):
-        warning_presenter(f"Execução de {function_name} bloqueada: {decision.reason}")
+        warning_presenter(f"Execution of {function_name} blocked: {decision.reason}")
 
 
 def _reject_capability(
@@ -302,10 +302,10 @@ def _announce_risky_tool(
 ) -> None:
     """Show the existing high-impact banner in the selected UI surface."""
     if risk_level == RiskLevel.CRITICAL:
-        message = f"[bold red]▲  OPERAÇÃO CRÍTICA: {function_name}[/bold red]"
+        message = f"[bold red]▲  CRITICAL OPERATION: {function_name}[/bold red]"
     elif risk_level == RiskLevel.HIGH:
         message = (
-            f"[bold yellow]🔶 Operação de alto impacto: {function_name}[/bold yellow]"
+            f"[bold yellow]🔶 High-impact operation: {function_name}[/bold yellow]"
         )
     else:
         return
@@ -330,11 +330,11 @@ def _request_tool_confirmation(
             timeout=timeout_sec,
         )
 
-    from aura_cli.cli.ui.components.confirmation import ask_confirmation
+    from aura_cli.cli.ui.components.input.confirmation import ask_confirmation
 
     context_str = None
     if context and (context.tool_name or context.tool_args):
-        context_str = f"Ferramenta: {context.tool_name or 'N/A'}"
+        context_str = f"Tool: {context.tool_name or 'N/A'}"
         if context.tool_args:
             try:
                 context_str += "\nArgumentos: " + safe_tool_args_json(context.tool_args)
@@ -352,7 +352,7 @@ def _report_confirmation_cancelled(
     function_name: str, console: Console, ui: Optional[UIManager]
 ) -> None:
     """Report a user-declined confirmation through the selected UI surface."""
-    message = f"Execução de {function_name} cancelada pelo usuário."
+    message = f"Execution of {function_name} cancelled by user."
     if ui is not None:
         ui.display_warning(message)
     else:
@@ -377,7 +377,7 @@ def _risk_without_intervention(
                 return risk, True
         except Exception as error:
             logger.warning(
-                "Não foi possível classificar risco de %s sem intervenção: %s",
+                "Could not classify risk of %s without intervention: %s",
                 function_name,
                 error,
             )
@@ -421,8 +421,8 @@ def _check_tool_requires_confirmation(
                 allowed=False,
                 requires_confirmation=False,
                 reason=(
-                    "Operação rejeitada: camada de intervenção e classificação "
-                    "de risco indisponíveis."
+                    "Operation rejected: intervention and risk classification layer "
+                    "unavailable."
                 ),
                 risk_level=risk_level,
             )
@@ -439,8 +439,8 @@ def _check_tool_requires_confirmation(
                     allowed=False,
                     requires_confirmation=False,
                     reason=(
-                        "Operação requer confirmação explícita, mas a camada de "
-                        "intervenção está indisponível."
+                        "Operation requires explicit confirmation, but the "
+                        "intervention layer is unavailable."
                     ),
                     risk_level=risk_level,
                 )
@@ -534,9 +534,9 @@ def _generate_diff_lines(file_path: str, new_content: str) -> list:
             return generate_unified_diff(file_path, old_content, new_content)
         return generate_new_file_diff(file_path, new_content)
     except (OSError, UnicodeDecodeError) as e:
-        logger.warning(f"Não foi possível gerar diff: {e}", exc_info=True)
+        logger.warning(f"Could not generate diff: {e}", exc_info=True)
     except Exception as e:
-        logger.error(f"Erro inesperado ao gerar diff: {e}", exc_info=True)
+        logger.error(f"Unexpected error generating diff: {e}", exc_info=True)
     return []
 
 
@@ -686,7 +686,7 @@ async def _show_diff_confirmation(
                 f"Failed to use TUI diff screen, using terminal: {e}", exc_info=True
             )
         except Exception as e:
-            logger.error(f"Erro inesperado na tela de diff TUI: {e}", exc_info=True)
+            logger.error(f"Unexpected error in TUI diff screen: {e}", exc_info=True)
 
     diff_content = _build_diff_content(diff_lines)
     panel_content = (
@@ -739,7 +739,7 @@ async def _run_hooks(
     except (AttributeError, TypeError) as e:
         logger.warning(f"Error executing hooks {label}: {e}", exc_info=True)
     except Exception as e:
-        logger.error(f"Erro inesperado ao executar hooks {label}: {e}", exc_info=True)
+        logger.error(f"Unexpected error executing hooks {label}: {e}", exc_info=True)
 
 
 def _run_ops_audit(function_name: str, function_args: dict, console: Any) -> bool:
@@ -752,7 +752,7 @@ def _run_ops_audit(function_name: str, function_args: dict, console: Any) -> boo
 
         audit = audit_tool_call(function_name, function_args)
         if audit.blocked:
-            from aura_cli.cli.ui.components.confirmation import ask_confirmation
+            from aura_cli.cli.ui.components.input.confirmation import ask_confirmation
 
             console.print(f"[bold yellow]{format_audit_warning(audit)}[/bold yellow]")
             if not ask_confirmation(
@@ -760,7 +760,7 @@ def _run_ops_audit(function_name: str, function_args: dict, console: Any) -> boo
             ):
                 return False
     except Exception as _e:
-        logger.error("Auditoria de segurança indisponível; operação bloqueada: %s", _e)
+        logger.error("Security audit unavailable; operation blocked: %s", _e)
         return False
     return True
 
@@ -804,7 +804,7 @@ def _call_tool(
             return call_result.result
         raise ToolExecutionError(
             tool_name=function_name,
-            message=call_result.error or f"Ferramenta '{function_name}' falhou",
+            message=call_result.error or f"Tool \'{function_name}\' failed",
         )
     except ImportError:
         return available_tools[function_name](**function_args)
@@ -818,7 +818,7 @@ def _evaluate_policy_access(
     policy_manager = _get_policy_manager()
     if policy_manager is None:
         if policy and policy.fail_closed_policy_errors:
-            return False, "Não foi possível avaliar a política da ferramenta."
+            return False, "Could not evaluate tool policy."
         return True, None
     try:
         typed_evaluator = getattr(type(policy_manager), "evaluate_access", None)
@@ -832,9 +832,9 @@ def _evaluate_policy_access(
             )
             access = ToolAccessDecision(allowed=allowed, reason=reason)
         if not isinstance(access, ToolAccessDecision):
-            raise TypeError("resultado de acesso incompatível")
+            raise TypeError("incompatible access result")
         if not access.allowed:
-            return False, f"Acesso negado pela política: {access.reason}"
+            return False, f"Access denied by policy: {access.reason}"
         return True, access.reason
     except Exception as error:
         if policy and policy.fail_closed_policy_errors:
@@ -857,7 +857,7 @@ def _commit_policy_access(
             decision = CapabilityDecision(
                 allowed=False,
                 requires_confirmation=False,
-                reason="Não foi possível avaliar a política da ferramenta.",
+                reason="Could not evaluate tool policy.",
             )
             _present_capability_decision(
                 ui,
@@ -879,12 +879,12 @@ def _commit_policy_access(
     try:
         access = policy_manager.commit_access(function_name, "cli_agent", function_args)
         if not isinstance(access, ToolAccessDecision):
-            raise TypeError("resultado de commit incompatível")
+            raise TypeError("incompatible commit result")
         if not access.allowed:
             decision = CapabilityDecision(
                 allowed=False,
                 requires_confirmation=False,
-                reason=f"Acesso negado pela política: {access.reason}",
+                reason=f"Access denied by policy: {access.reason}",
             )
             _present_capability_decision(
                 ui,
@@ -904,7 +904,7 @@ def _commit_policy_access(
             CapabilityDecision(
                 allowed=True,
                 requires_confirmation=False,
-                reason="Rate limit reservado para execução.",
+                reason="Rate limit reserved for execution.",
             ),
             task_id=policy.task_id if policy else None,
             phase="commit",
@@ -941,7 +941,7 @@ def _run_policy_check(function_name: str, function_args: dict) -> None:
     if not allowed:
         raise ToolExecutionError(
             tool_name=function_name,
-            message=reason or "Acesso negado pela política.",
+            message=reason or "Access denied by policy.",
         )
 
 
@@ -988,14 +988,14 @@ def _raise_tool_exception(
             ) from e
         raise ToolExecutionError(
             tool_name=function_name,
-            message=f"Falha na operação de arquivo: {e}",
+            message=f"File operation failed: {e}",
             original_error=e,
         ) from e
     logger.error(
-        f"Erro inesperado ao executar ferramenta '{function_name}': {e}", exc_info=True
+        f"Unexpected error executing tool \'{function_name}\': {e}", exc_info=True
     )
     raise ToolExecutionError(
-        tool_name=function_name, message=f"Erro inesperado: {e}", original_error=e
+        tool_name=function_name, message=f"Unexpected error: {e}", original_error=e
     ) from e
 
 
@@ -1031,10 +1031,10 @@ def _run_tool_with_interceptors(
         try:
             from rich.console import Console as _C
 
-            from aura_cli.cli.ui.components.investigator_file_progress import (
+            from aura_cli.cli.ui.components.agent.investigator_file_progress import (
                 AuraInvestigatorFileProgress,
             )
-            from aura_cli.cli.ui.components.investigator_step import (
+            from aura_cli.cli.ui.components.agent.investigator_step import (
                 AuraInvestigatorStep,
             )
 
@@ -1044,7 +1044,7 @@ def _run_tool_with_interceptors(
             )
             _c.print(
                 AuraInvestigatorStep().render(
-                    "Investigação", "running", function_args.get("path", ".")
+                    "Investigation", "running", function_args.get("path", ".")
                 )
             )
         except Exception as e:
@@ -1081,7 +1081,7 @@ async def execute_tool_call(
         registry and registry.get_tool(function_name) is not None
     ):
         raise KeyError(
-            f"Ferramenta '{function_name}' não encontrada em AVAILABLE_TOOLS"
+            f"Tool '{function_name}' not found in AVAILABLE_TOOLS"
         )
 
     hook_manager = get_hook_manager() if get_hook_manager is not None else None
@@ -1233,7 +1233,7 @@ def _check_execution_guards(
 ) -> Optional[Tuple[str, float]]:
     """Run audit and one broker-backed capability guard before execution."""
     if not _run_ops_audit(function_name, function_args, console):
-        return f"Operação '{function_name}' bloqueada pela auditoria de segurança.", 0.0
+        return f"Operation '{function_name}' blocked by security audit.", 0.0
 
     access_allowed, access_reason = _evaluate_policy_access(
         function_name, function_args
@@ -1256,7 +1256,7 @@ def _check_execution_guards(
         )
         raise ToolExecutionError(
             tool_name=function_name,
-            message=f"Execução de {function_name} bloqueada: {decision.reason}",
+            message=f"Execution of {function_name} blocked: {decision.reason}",
         )
 
     if function_name not in WRITE_TOOLS and not _check_tool_requires_confirmation(
@@ -1268,7 +1268,7 @@ def _check_execution_guards(
         access_reason=access_reason,
         capability_audit=capability_audit,
     ):
-        return f"Execução de {function_name} cancelada pelo usuário", 0.0
+        return f"Execution of {function_name} cancelled by user", 0.0
     return None
 
 
@@ -1289,8 +1289,8 @@ async def _execute_with_loading_and_heal(
             function_name, function_args, ui, console
         )
         if not should_execute:
-            ui.display_warning("Alteração rejeitada pelo usuário.")
-            return "Alteração em arquivo rejeitada pelo usuário", 0.0
+            ui.display_warning("Change rejected by user.")
+            return "File change rejected by user", 0.0
 
     start_time = time.time()
     result: Optional[str] = None
@@ -1335,7 +1335,7 @@ async def _execute_with_loading_and_heal(
                 with open(path, encoding="utf-8") as _f:
                     result = append_python_syntax_diagnostic(result, path, _f.read())
             except OSError as error:
-                logger.debug(f"Validação pós-escrita ignorada para {path}: {error}")
+                logger.debug(f"Post-write validation skipped for {path}: {error}")
 
     return result, execution_time
 
@@ -1354,7 +1354,7 @@ def _emit_tool_result(
     """Render to UI, append to history, update stats."""
     tool_result_renderable = ToolResult().render(
         tool_name=function_name,
-        result=str(result),
+        result=result,
         execution_time=execution_time,
         status="done",
         args=function_args,

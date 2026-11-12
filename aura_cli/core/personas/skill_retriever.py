@@ -150,7 +150,7 @@ class SkillRetriever:
             )
             if is_connection_err:
                 logger.debug(
-                    f"Embeddings indisponível (servidor iniciando?): {err_str[:60]}"
+                    f"Embeddings unavailable (server starting?): {err_str[:60]}"
                 )
                 # Do not disable permanently — server may be loading the model
                 return None
@@ -162,7 +162,7 @@ class SkillRetriever:
                 return None
             # Other errors (404, invalid JSON, etc.) = disable for the session
             logger.warning(
-                f"Embeddings indisponível: {err_str[:60]}. Busca por palavras-chave."
+                f"Embeddings unavailable: {err_str[:60]}. Keyword search."
             )
             self._embedding_server_ok = False
             return None
@@ -304,7 +304,7 @@ def get_skill_retriever() -> SkillRetriever:
         if container.has(Services.SKILL_RETRIEVER):
             return container.resolve(Services.SKILL_RETRIEVER)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_skill_retriever, using fallback", exc_info=True)
 
     # Fallback to legacy singleton
     global _retriever

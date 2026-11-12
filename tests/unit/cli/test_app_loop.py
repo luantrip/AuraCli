@@ -326,7 +326,7 @@ class TestAppLoop:
 
         assert app_loop.conversation_history[0]["content"] == "base system"
         assert app_loop.conversation_history[1]["content"] == "runtime note"
-        assert "caderno de memória" in app_loop.conversation_history[2]["content"]
+        assert "memory notebook" in app_loop.conversation_history[2]["content"]
         stats.increment_notebook_snapshots.assert_called_once()
 
     def test_conversation_with_consciousness_skills_returns_copy_without_skills(self):

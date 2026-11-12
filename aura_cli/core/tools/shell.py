@@ -48,15 +48,15 @@ def shell_execution_status() -> tuple[bool, str]:
     except Exception as error:
         return (
             False,
-            "Execução de shell bloqueada: configuração indisponível "
+            "Shell execution blocked: configuration unavailable "
             f"({type(error).__name__}).",
         )
 
     if enabled is not True:
         return (
             False,
-            "Execução de shell desabilitada. Habilite em /settings → "
-            "Configurações do sistema e do agente → Permitir exec. shell.",
+            "Shell execution disabled. Enable in /settings → "
+            "System and agent settings → Allow shell exec.",
         )
     return True, ""
 
@@ -104,7 +104,7 @@ def _run_supervised(
                 timeout=True,
                 exit_code=-1,
                 stdout="",
-                stderr="Timeout: comando excedeu o tempo limite",
+                stderr="Timeout: command exceeded the time limit",
             )
         except FileNotFoundError:
             return SubprocessResult(
@@ -227,13 +227,13 @@ def execute_shell_command(
     if not _is_safe_command(command):
         return (
             False,
-            "Comando bloqueado por segurança: contém caracteres perigosos (|, &, ;, `, $)",
+            "Command blocked for security: contains dangerous characters (|, &, ;, `, $)",
         )
 
     try:
         command_args = shlex.split(command)
         if not command_args:
-            return False, "Erro: comando vazio após parsing"
+            return False, "Error: empty command after parsing"
 
         result = _run_supervised(
             command_args,
@@ -247,14 +247,14 @@ def execute_shell_command(
         output = output.rstrip()
 
         if result.timeout:
-            return False, f"⏱️ Timeout: comando excedeu {timeout}s"
+            return False, f"⏱️ Timeout: command exceeded {timeout}s"
         if command.strip().lower() == "clear" and result.success:
             return True, "__CLEAR_SCREEN__"
         if not output:
             output = (
                 "[Command executed successfully]"
                 if result.success
-                else f"Comando terminou com código {result.exit_code}"
+                else f"Command exited with code {result.exit_code}"
             )
         return result.success, output
 
@@ -263,7 +263,7 @@ def execute_shell_command(
     except FileNotFoundError:
         return False, "\u274c Error: command not found"
     except PermissionError:
-        return False, "\u274c Erro: sem permissão para executar comando"
+        return False, "\u274c Error: no permission to run command"
     except OSError as e:
         return False, f"\u274c Erro de sistema: {e!s}"
 
@@ -288,7 +288,7 @@ def _start_background_command(
 
     command_args = shlex.split(command)
     if not command_args:
-        error_msg = "Erro: comando vazio após parsing"
+        error_msg = "Error: empty command after parsing"
         console.print(f"[red]x {error_msg}[/red]")
         return ShellCommandResult(error_msg, exit_code=-1, background=True)
 
@@ -303,7 +303,7 @@ def _start_background_command(
         console.print(f"[red]x {error_msg}[/red]")
         return ShellCommandResult(error_msg, exit_code=127, background=True)
     except PermissionError:
-        error_msg = "Erro: sem permissão para executar comando"
+        error_msg = "Error: no permission to run command"
         console.print(f"[red]x {error_msg}[/red]")
         return ShellCommandResult(error_msg, exit_code=126, background=True)
     except OSError as error:
@@ -361,7 +361,7 @@ def run_shell_command(
     )
 
     if not _is_safe_command(command):
-        error_msg = "Comando bloqueado por segurança: contém caracteres perigosos (|, &, ;, `, $)"
+        error_msg = "Command blocked for security: contains dangerous characters (|, &, ;, `, $)"
         console.print(f"[red]x {error_msg}[/red]")
         return ShellCommandResult(error_msg, exit_code=-1)
 
@@ -387,7 +387,7 @@ def run_shell_command(
         warning_style = UIStyles.safe_style("WARNING", "yellow")
         console.print(f"[{warning_style}]{UIIcons.CANCEL} Cancelled[/{warning_style}]")
         return ShellCommandResult(
-            "Execução de comando cancelada pelo usuário.", exit_code=None
+            "Command execution cancelled by user.", exit_code=None
         )
 
     command_lower = command.lower()
@@ -404,13 +404,13 @@ def run_shell_command(
         if needs_interactive_handling:
             info_style = UIStyles.safe_style("INFO", "cyan")
             console.print(
-                f"[{info_style}]{UIIcons.INFO} Executando em modo não-interativo (auto-confirmando todas as perguntas)[/{info_style}]"
+                f"[{info_style}]{UIIcons.INFO} Running in non-interactive mode (auto-confirming all prompts)."
             )
 
             input_data = "y\n" * 10
             command_args = shlex.split(command)
             if not command_args:
-                error_msg = "Erro: comando vazio após parsing"
+                error_msg = "Error: empty command after parsing"
                 console.print(f"[red]x {error_msg}[/red]")
                 return error_msg
 
@@ -432,7 +432,7 @@ def run_shell_command(
                 f"\n{result.stderr}" if result.stderr else ""
             )
             if result.timeout:
-                output = f"Timeout: comando excedeu {LONG_SHELL_TIMEOUT}s"
+                output = f"Timeout: command exceeded {LONG_SHELL_TIMEOUT}s"
             return ShellCommandResult(
                 output if output else "Command executed with no output.",
                 exit_code=exit_code,
@@ -442,7 +442,7 @@ def run_shell_command(
         command_args = shlex.split(command)
         if not command_args:
             box.finish(-1)
-            return ShellCommandResult("Erro: comando vazio após parsing", exit_code=-1)
+            return ShellCommandResult("Error: empty command after parsing", exit_code=-1)
 
         result = _run_supervised(
             command_args,
@@ -459,7 +459,7 @@ def run_shell_command(
             "Command executed with no output."
         )
         if result.timeout:
-            output = f"Timeout: comando excedeu {LONG_SHELL_TIMEOUT}s"
+            output = f"Timeout: command exceeded {LONG_SHELL_TIMEOUT}s"
 
         stats.add_shell_command(command, box.execution_time or 0)
         return ShellCommandResult(output, exit_code=exit_code)
@@ -475,7 +475,7 @@ def run_shell_command(
         box.exit_code = -1
         present_shell_feedback(console, box)
         return ShellCommandResult(
-            "Timeout: comando excedeu o tempo limite", exit_code=-1
+            "Timeout: command exceeded the time limit", exit_code=-1
         )
 
     except Exception as e:

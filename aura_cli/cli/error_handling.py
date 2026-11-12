@@ -41,12 +41,12 @@ def handle_rate_limit_error(
     if is_free_tier:
         return (
             f"{UIIcons.WARNING} [{UIStyles.WARNING}]Quota do Plano Gratuito Excedida[/]\n\n"
-            f"Limite diário do plano gratuito do Gemini (20 req/dia).{retry_msg}\n\n"
+            f"Gemini free tier daily limit (20 req/day).{retry_msg}\n\n"
             f"{UIIcons.INFO} [{UIStyles.MUTED}]Tente: aguardar 24h, /settings (outro provedor) ou upgrade em ai.google.dev/pricing[/]"
         )
     return (
         f"{UIIcons.WARNING} [{UIStyles.WARNING}]Limite de uso atingido[/]\n\n"
-        f"Limite de requisições da API ({error_model}).{retry_msg}\n\n"
+        f"API request limit ({error_model}).{retry_msg}\n\n"
         f"{UIIcons.INFO} [{UIStyles.MUTED}]Tente: aguardar alguns minutos, /model ou /settings[/]"
     )
 
@@ -95,7 +95,7 @@ def handle_api_key_error(
 
             import keyring
 
-            from aura_cli.core.secure_config import secure_config_manager
+            from aura_cli.core.config import get_config_manager
 
             try:
                 keyring.delete_password("aura_cli", "google_api_key")
@@ -103,7 +103,7 @@ def handle_api_key_error(
                 logger.warning(f"Failed to remove key from keyring: {e}")
 
             try:
-                secure_config_manager.delete_api_key("google")
+                get_config_manager().set_api_key("google", None)
             except Exception as e:
                 logger.warning(f"Failed to remove key from SecureConfig: {e}")
 
@@ -111,12 +111,12 @@ def handle_api_key_error(
                 if env_key in os.environ:
                     del os.environ[env_key]
 
-            logger.info("Chave vazada removida automaticamente")
+            logger.info("Leaked key removed automatically")
         except Exception as e:
             logger.warning(f"Failed to remove leaked key: {e}")
 
     api_key_error = APIKeyError(
-        message="Chave de API vazada" if is_leaked else "Erro de chave de API",
+        message="Leaked API key" if is_leaked else "API key error",
         provider=provider,
         details=str(error),
     )
@@ -138,23 +138,23 @@ def handle_api_key_error(
     if is_leaked:
         response_content = (
             f"{UIIcons.WARNING} [{UIStyles.ERROR}]Problema com sua chave de API[/]\n\n"
-            "Sua chave de API do Gemini foi reportada como vazada e foi desativada por segurança.\n\n"
+            "Your Gemini API key has been reported as leaked and was disabled for security.\n\n"
             f"{UIIcons.EDIT} [{UIStyles.TITLE}]O que fazer:[/]\n"
             "  1. Acesse /settings para configurar uma nova chave\n"
             "  2. Obtenha uma nova chave em: https://makersuite.google.com/app/apikey\n"
             "  3. Ou use outro provedor (GPT, Claude) configurando suas chaves\n"
-            "  4. Consulte os provedores disponíveis com /model\n\n"
+            "  4. Check available providers with /model\n\n"
             f"{UIIcons.INFO} [{UIStyles.MUTED}]Dica: Mantenha suas chaves de API seguras e nunca as compartilhe publicamente.[/]"
         )
     else:
         response_content = (
-            f"{UIIcons.WARNING} [{UIStyles.ERROR}]Erro de autenticação[/]\n\n"
-            "Sua chave de API foi rejeitada ou não está configurada corretamente.\n\n"
+            f"{UIIcons.WARNING} [{UIStyles.ERROR}]Authentication error[/]\n\n"
+            "Your API key was rejected or is not configured correctly.\n\n"
             f"{UIIcons.EDIT} [{UIStyles.TITLE}]O que fazer:[/]\n"
             "  1. Acesse /settings para verificar suas chaves\n"
-            "  2. Verifique se a chave está correta e ativa\n"
+            "  2. Verify that the key is correct and active\n"
             "  3. Tente usar outro modelo: /model\n"
-            "  4. Consulte os provedores disponíveis com /model\n\n"
+            "  4. Check available providers with /model\n\n"
             f"{UIIcons.INFO} [{UIStyles.MUTED}]Need help? Type /help to see all commands.[/]"
         )
 
@@ -180,7 +180,7 @@ def handle_llm_errors(error: Exception, current_model: str, ui: Any = None) -> N
             error_body = error.response.text or str(error.response.content)
             logger.error(f"LLM API Error Body: {error_body}")
         except Exception as e:
-            logger.debug(f"Não foi possível ler error body: {e}")
+            logger.debug(f"Could not read error body: {e}")
 
     if (
         "api key" in error_str
@@ -286,8 +286,8 @@ def handle_generic_exception(error: Exception, model: str, ui: Any = None) -> No
     if "'Console' object has no attribute" in str(error):
         if ui:
             ui.display_error(
-                f"{UIIcons.WARNING} [{UIStyles.WARNING}]Erro interno de renderização[/]\n\n"
-                "Problema ao exibir informações na tela.\n\n"
+                f"{UIIcons.WARNING} [{UIStyles.WARNING}]Internal rendering error[/]\n\n"
+                "Problem displaying information on screen.\n\n"
                 f"{UIIcons.INFO} [{UIStyles.MUTED}]Tente: redimensionar o terminal ou reiniciar o Aura CLI[/]"
             )
         return

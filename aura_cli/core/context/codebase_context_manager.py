@@ -36,7 +36,7 @@ class CodebaseContextManager:
     def start_analysis(self):
         """Mark the start of the analysis."""
         self.metadata["analysis_start"] = datetime.now()
-        logger.debug("Análise iniciada")
+        logger.debug("Analysis started")
 
     def end_analysis(self):
         """Mark the end of the analysis."""
@@ -45,7 +45,7 @@ class CodebaseContextManager:
             self.metadata["analysis_end"] - self.metadata["analysis_start"]
         ).total_seconds()
         self.metadata["duration"] = duration
-        logger.info(f"Análise concluída em {duration:.2f}s")
+        logger.info(f"Analysis complete in {duration:.2f}s")
 
     def store_file_analysis(self, file_path: str, ast_data: Dict[str, Any]):
         """Store analysis results for a file."""

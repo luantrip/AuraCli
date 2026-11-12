@@ -35,7 +35,6 @@ class AgiValidator:
         tester_worker_class: Any = None,
         headless: bool = False,
     ):
-        """Initialize the instance."""
         self.constitution = constitution
         self.agi_event_adapter = agi_event_adapter
         self.linter_manager = linter_manager
@@ -47,7 +46,7 @@ class AgiValidator:
         if self.constitution:
             self.constitution_validator = ConstitutionValidator(self.constitution)
         else:
-            self.constitution_validator = None  # type: ignore[assignment]
+            self.constitution_validator = None  # type: ignore[assignment]  # optional dep
 
         self.learned_rules: list[Any] = []
 
@@ -71,7 +70,7 @@ class AgiValidator:
         if not is_valid and violations:
             violation_msg = (
                 f"› [Aura AGI] {UIIcons.WARNING} "
-                f"Violações da Constituição detectadas ({len(violations)}):"
+                f"Constitution violations detected ({len(violations)}):"
             )
             self.agi_event_adapter.emit_chat_message(
                 sender="system",
@@ -98,7 +97,7 @@ class AgiValidator:
                 return sanitized
 
         sanitized_prompt = (
-            f"Baseado na Constituição do Projeto (que já está no seu contexto de sistema), "
+            f"Based on the Project Constitution (already in your system context), "
             f"processe o seguinte pedido:\n\n{prompt}"
         )
         logger.info("User prompt sanitized with Constitution for AGI")
@@ -114,15 +113,15 @@ class AgiValidator:
         patterns = [
             (
                 r"(?:decidimos|vamos usar|escolhemos|adotamos|we decided|we'll use|we chose|we adopted)\s+([^\.]+)",
-                "decisão",
+                "decision",
             ),
             (
                 r"(?:padrão|convenção|regra|pattern|convention|rule|standard)\s+([^\.]+)",
-                "padrão",
+                "pattern",
             ),
             (
                 r"(?:não usar|evitar|proibido|avoid|don't use|never use|forbidden)\s+([^\.]+)",
-                "proibição",
+                "prohibition",
             ),
         ]
 
@@ -183,7 +182,7 @@ class AgiValidator:
                             sender="system",
                             content=(
                                 f"› [Aura AGI] {UIIcons.SUCCESS} "
-                                f"Regras consolidadas na Constituição do Projeto"
+                                f"Rules consolidated in the Project Constitution"
                             ),
                         )
             else:
@@ -193,7 +192,7 @@ class AgiValidator:
                         content=(
                             f"› [Aura AGI] {UIIcons.INFO} "
                             f"{rules_count} regra(s) salva(s) no Rascunho. "
-                            f"Use '/consolidate' para consolidar na Constituição."
+                            f"Use '/consolidate' to consolidate in the Constitution."
                         ),
                     )
 
@@ -231,7 +230,7 @@ class AgiValidator:
                     sender="system",
                     content=(
                         f"› [Aura AGI] {UIIcons.SUCCESS} "
-                        f"Código gerado validado com sucesso! "
+                        f"Generated code validated successfully! "
                         f"Nenhum erro de sintaxe encontrado em {len(valid_files)} arquivo(s)."
                     ),
                 )
@@ -246,8 +245,8 @@ class AgiValidator:
                     sender="system",
                     content=(
                         f"› [Aura AGI] {UIIcons.WARNING} "
-                        f"Validação automática detectou erros:\n{error_summary}"
-                        f"Recomendação: Revise o código gerado antes de usar."
+                        f"Automatic validation detected errors:\n{error_summary}"
+                        f"Recommendation: Review the generated code before using."
                     ),
                 )
             logger.warning(f"Auto-validation found errors in {len(errors_found)} files")
@@ -275,7 +274,7 @@ class AgiValidator:
 
         self.agi_event_adapter.emit_chat_message(
             sender="agent",
-            content=f"› [Aura AGI] {UIIcons.THINKING} Iniciando validação adversária de {len(files_to_validate)} arquivo(s)...",
+            content=f"› [Aura AGI] {UIIcons.THINKING} Starting adversarial validation of {len(files_to_validate)} files...",
         )
 
         validation_results = []
@@ -356,7 +355,7 @@ class AgiValidator:
                         self.agi_event_adapter.emit_chat_message(
                             sender="agent",
                             content=f"› [TesterWorker] {UIIcons.SUCCESS} {os.path.basename(file_path)}: "
-                            f"Nenhum problema crítico encontrado",
+                            f"No critical issues found",
                         )
 
             except Exception as e:
@@ -375,7 +374,7 @@ class AgiValidator:
 
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura AGI] {UIIcons.INFO} Validação concluída: "
+                content=f"› [Aura AGI] {UIIcons.INFO} Validation complete: "
                 f"{total_issues} problema(s) em {len(validation_results)} arquivo(s), "
                 f"{total_tests} teste(s) sugerido(s)",
             )

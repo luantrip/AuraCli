@@ -14,7 +14,10 @@ Features:
 import os
 from typing import Dict, List
 
-from pyfiglet import Figlet, FigletFont  # type: ignore
+from pyfiglet import (  # type: ignore[import-untyped]  # no stub for pyfiglet
+    Figlet,
+    FigletFont,
+)
 
 
 class MetaGlyphFont:

@@ -22,7 +22,7 @@ def test_live_dashboard_uses_injected_console_and_compact_layout() -> None:
     assert "Tarefas:" in output
 
 
-def test_live_dashboard_wide_layout_shows_task_table_in_portuguese() -> None:
+def test_live_dashboard_wide_layout_shows_task_table() -> None:
     output_console = Console(record=True, width=120)
     dashboard = LiveAgentDashboard(console=output_console)
     dashboard.add_task("t1", "Tarefa de teste")
@@ -34,7 +34,7 @@ def test_live_dashboard_wide_layout_shows_task_table_in_portuguese() -> None:
 
     assert "Tarefa" in output
     assert "Estado" in output
-    assert "concluída" in output
+    assert "completed" in output
     assert "Processing" not in output
 
 

@@ -252,7 +252,7 @@ def compare_project_fronts(
     fronts_to_compare = fronts if fronts else all_fronts
 
     if not fronts_to_compare:
-        return {"error": "Nenhuma frente encontrada para comparar"}
+        return {"error": "No fronts found to compare"}
     comparison: Dict[str, Any] = {
         "fronts": fronts_to_compare,
         "technologies": {},
@@ -300,8 +300,8 @@ def _analyze_complexity(project_root: Path, max_files: int) -> List[Dict[str, An
         complexity_items.append(
             {
                 "type": "long_functions",
-                "description": "Funções com muitas linhas podem indicar alta complexidade",
-                "recommendation": "Considerar refatoração em funções menores",
+                "description": "Functions with many lines may indicate high complexity",
+                "recommendation": "Consider refactoring into smaller functions",
             }
         )
     except Exception as e:
@@ -355,7 +355,7 @@ def _analyze_structure_issues(project_root: Path) -> List[Dict[str, Any]]:
                 {
                     "type": "flat_structure",
                     "description": f"Muitos arquivos na raiz ({file_count} arquivos)",
-                    "recommendation": "Considerar organizar em subdiretórios",
+                    "recommendation": "Consider organizing into subdirectories",
                 }
             )
     except Exception as e:
@@ -409,9 +409,9 @@ def _check_dependency_vulnerabilities(project_root: Path) -> List[Dict[str, Any]
                                 }
                             )
             except Exception as _e:
-                logger.debug(f"Ignorado: {_e}")
+                logger.debug(f"Ignored: {_e}")
     except Exception as _e:
-        logger.debug(f"Ignorado: {_e}")
+        logger.debug(f"Ignored: {_e}")
 
     return vulnerabilities
 
@@ -421,21 +421,21 @@ def _generate_quality_recommendations(result: Dict[str, Any]) -> List[str]:
     recommendations = []
 
     if result.get("duplication"):
-        recommendations.append("Refatorar código duplicado para reduzir manutenção")
+        recommendations.append("Refactor duplicate code to reduce maintenance overhead")
 
     if result.get("complexity"):
         recommendations.append(
-            "Simplificar funções complexas para melhorar legibilidade"
+            "Simplify complex functions to improve readability"
         )
 
     if result.get("smells"):
-        recommendations.append("Refatorar code smells identificados")
+        recommendations.append("Refactor identified code smells")
 
     if result.get("structure_issues"):
-        recommendations.append("Reorganizar estrutura do projeto conforme necessário")
+        recommendations.append("Reorganize project structure as needed")
 
     if not recommendations:
-        recommendations.append("Código parece estar em boa qualidade geral")
+        recommendations.append("Code appears to be in good overall quality")
 
     return recommendations
 
@@ -445,22 +445,22 @@ def _generate_security_recommendations(result: Dict[str, Any]) -> List[str]:
     recommendations = []
 
     if result.get("secrets_found") or result.get("insecure_patterns"):
-        recommendations.append("Remover secrets hardcoded e usar variáveis de ambiente")
+        recommendations.append("Remove hardcoded secrets and use environment variables")
         recommendations.append(
-            "Usar gerenciador de secrets (ex: AWS Secrets Manager, HashiCorp Vault)"
+            "Use a secrets manager (e.g. AWS Secrets Manager, HashiCorp Vault)"
         )
 
     if result.get("vulnerable_dependencies"):
         recommendations.append(
-            "Atualizar dependências vulneráveis para versões seguras"
+            "Update vulnerable dependencies to secure versions"
         )
         recommendations.append(
-            "Executar auditoria de segurança regular (ex: npm audit, pip-audit)"
+            "Run regular security audits (e.g. npm audit, pip-audit)"
         )
 
     if not recommendations:
-        recommendations.append("Nenhum problema de segurança óbvio encontrado")
-        recommendations.append("Considere executar auditoria de segurança profissional")
+        recommendations.append("No obvious security issues found")
+        recommendations.append("Consider running a professional security audit")
 
     return recommendations
 
@@ -485,7 +485,7 @@ def _check_readme_completeness(project_root: Path) -> Dict[str, Any]:
             )
             status["completeness_score"] = (found_sections / len(sections)) * 100
         except Exception as _e:
-            logger.debug(f"Ignorado: {_e}")
+            logger.debug(f"Ignored: {_e}")
 
     return status
 
@@ -507,10 +507,10 @@ def _check_code_documentation(project_root: Path) -> Dict[str, Any]:
 
         if results:
             doc_stats["files_with_docstrings"] = (
-                results.count("Encontrados") if "Encontrados" in results else 0
+                results.count("Found") if "Found" in results else 0
             )
     except Exception as _e:
-        logger.debug(f"Ignorado: {_e}")
+        logger.debug(f"Ignored: {_e}")
 
     return doc_stats
 
@@ -521,21 +521,21 @@ def _generate_documentation_recommendations(result: Dict[str, Any]) -> List[str]
 
     readme_status = result.get("readme_status", {})
     if not readme_status.get("root_readme"):
-        recommendations.append("Adicionar README.md na raiz do projeto")
+        recommendations.append("Add README.md to the project root")
 
     if readme_status.get("completeness_score", 100) < 70:
         recommendations.append(
-            "Melhorar completude do README (instalação, uso, contribuição)"
+            "Improve README completeness (installation, usage, contribution)"
         )
 
     code_docs = result.get("code_documentation", {})
     if code_docs.get("coverage_percentage", 100) < 50:
         recommendations.append(
-            "Aumentar cobertura de documentação no código (docstrings)"
+            "Increase code documentation coverage (docstrings)"
         )
 
     if not recommendations:
-        recommendations.append("Documentação parece adequada")
+        recommendations.append("Documentation appears adequate")
 
     return recommendations
 
@@ -556,7 +556,7 @@ def _extract_front_technologies(key_files: Dict[str, str]) -> List[str]:
             if "angular" in deps:
                 technologies.append("Angular")
         except Exception as _e:
-            logger.debug(f"Ignorado: {_e}")
+            logger.debug(f"Ignored: {_e}")
 
     if "requirements.txt" in key_files or "pyproject.toml" in key_files:
         technologies.append("Python")

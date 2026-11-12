@@ -23,25 +23,27 @@ class SessionEntry:
     external: bool = False
 
     def relative_time(self, now: datetime | None = None) -> str:
+        """Format a datetime as a human-readable relative time string."""
         current = now or datetime.now(self.timestamp.tzinfo)
         seconds = max(0, int((current - self.timestamp).total_seconds()))
         if seconds < 60:
-            return f"{seconds}s atrá"
+            return f"{seconds}s ago"
         minutes = seconds // 60
         if minutes < 60:
-            return f"{minutes}m atrá"
+            return f"{minutes}m ago"
         hours = minutes // 60
         if hours < 24:
-            return f"{hours}h atrá"
+            return f"{hours}h ago"
         days = hours // 24
         if days < 30:
-            return f"{days}d atrá"
+            return f"{days}d ago"
         if days < 365:
-            return f"{days // 30}mo atrá"
-        return f"{days // 365}a atrá"
+            return f"{days // 30}mo ago"
+        return f"{days // 365}y ago"
 
     @property
     def short_cwd(self) -> str:
+        """Return a shortened version of the current working directory path."""
         if not self.cwd:
             return "—"
         parts = Path(self.cwd).parts
@@ -51,6 +53,7 @@ class SessionEntry:
 def session_entry_from_snapshot(
     data: Mapping[str, Any], *, path: Path, fallback_timestamp: datetime
 ) -> SessionEntry:
+    """Build a session history entry from a session snapshot."""
     history = data.get("conversation_history", [])
     timestamp = _parse_timestamp(
         data.get("updated_at") or data.get("created_at"), fallback_timestamp
@@ -67,6 +70,7 @@ def session_entry_from_snapshot(
 def session_entry_from_jsonl(
     lines: Iterable[str], *, path: Path, timestamp: datetime
 ) -> SessionEntry:
+    """Build a session history entry from a JSONL log line."""
     entries = []
     cwd = None
     for line in lines:
@@ -87,6 +91,7 @@ def query_session_history(
     query: str = "",
     cwd: str | None = None,
 ) -> list[SessionEntry]:
+    """Query the session history store with the given filters."""
     tokens = query.casefold().split()
     return [
         entry

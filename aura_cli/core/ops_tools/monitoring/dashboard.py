@@ -12,9 +12,6 @@ from typing import (
     Tuple,
 )
 
-from rich.console import Console
-from rich.table import Table
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.ops_tools.monitoring.alerting_system import AlertingSystem
 from aura_cli.core.ops_tools.monitoring.logs_aggregator import LogsAggregator
@@ -22,7 +19,6 @@ from aura_cli.core.ops_tools.monitoring.metrics_collector import MetricsCollecto
 from aura_cli.core.ops_tools.monitoring.performance_monitor import PerformanceMonitor
 
 logger = get_logger(__name__)
-console = Console()
 
 
 @dataclass
@@ -58,65 +54,20 @@ class MonitoringDashboard:
 
     def display_overview(self) -> None:
         """Display a monitoring overview to the console."""
-        from aura_cli.core.ui_bridge import UIStyles
-
-        console.print("\n[bold][S] Dashboard de Monitoramento[/bold]\n")
+        logger.info("MonitoringDashboard: display_overview called")
 
         if self.performance_monitor:
             summary = self.performance_monitor.get_performance_summary(cpu_interval=0.0)
             system = summary.get("system", {})
-
-            table = Table(title="Métricas do Sistema", show_header=True)
-            table.add_column("Métrica", style=UIStyles.PRIMARY)
-            table.add_column("Valor", style=UIStyles.SECONDARY)
-
-            if "cpu" in system:
-                table.add_row("CPU", f"{system['cpu']['percent']:.1f}%")
-            if "memory" in system:
-                table.add_row("Memória", f"{system['memory']['percent']:.1f}%")
-            if "disk" in system:
-                table.add_row("Disco", f"{system['disk']['percent']:.1f}%")
-
-            console.print(table)
+            logger.debug(f"Performance summary collected: {list(system.keys())}")
 
         if self.alerting_system:
             alerts = self.alerting_system.get_active_alerts()
-
-            if alerts:
-                alert_table = Table(title="Alertas Ativos", show_header=True)
-                alert_table.add_column("Severidade", style=UIStyles.PRIMARY)
-                alert_table.add_column("Mensagem", style=UIStyles.BODY)
-                alert_table.add_column("Data", style=UIStyles.MUTED)
-
-                for alert in alerts[:10]:  # Top 10
-                    severity_style = {
-                        "critical": UIStyles.ERROR,
-                        "error": UIStyles.ERROR,
-                        "warning": UIStyles.WARNING,
-                        "info": UIStyles.INFO,
-                    }.get(alert.severity.value, UIStyles.BODY)
-
-                    alert_table.add_row(
-                        f"[{severity_style}]{alert.severity.value.upper()}[/{severity_style}]",
-                        alert.message[:50],
-                        alert.timestamp.strftime("%H:%M:%S"),
-                    )
-
-                console.print(alert_table)
+            logger.debug(f"Active alerts collected: {len(alerts)}")
 
         if self.logs_aggregator:
             recent_logs = self.logs_aggregator.logs[-10:]
-
-            if recent_logs:
-                log_table = Table(title="Logs Recentes", show_header=True)
-                log_table.add_column("Nível", style=UIStyles.PRIMARY)
-                log_table.add_column("Fonte", style=UIStyles.SECONDARY)
-                log_table.add_column("Mensagem", style=UIStyles.BODY)
-
-                for log in reversed(recent_logs):
-                    log_table.add_row(log.level.value, log.source, log.message[:60])
-
-                console.print(log_table)
+            logger.debug(f"Recent logs collected: {len(recent_logs)}")
 
     def add_widget(self, widget: DashboardWidget) -> None:
         """

@@ -134,7 +134,6 @@ class PersistentStore:
     """
 
     def __init__(self, db_path: Optional[str] = None):
-        """Initialize the instance."""
         self.db_path = Path(db_path or DEFAULT_DB_PATH).expanduser()
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         self._init_db()

@@ -35,7 +35,6 @@ class GraphService:
     """Manager for the Nexus binary with a Python fallback."""
 
     def __init__(self, project_root: Optional[Path] = None):
-        """Initialize the instance."""
         self.project_root = (project_root or Path.cwd()).expanduser().resolve()
         self.executable_path = self._find_binary()
         self.last_error: Optional[str] = None
@@ -44,7 +43,7 @@ class GraphService:
         if not self.executable_path:
             self.last_error = "Nexus binary not found."
             logger.warning(
-                "Nexus binary not found. Análise Python de dependências será usada."
+                "Nexus binary not found. Python dependency analysis will be used."
             )
 
     def _find_binary(self) -> Optional[Path]:
@@ -93,9 +92,9 @@ class GraphService:
                 max_output_bytes=4 * 1024 * 1024,
             )
             if result.timed_out:
-                raise TimeoutError("Nexus excedeu o timeout de 30 segundos")
+                raise TimeoutError("Nexus timed out after 30 seconds")
             if result.output_limited:
-                raise ValueError("Nexus excedeu o limite de saída")
+                raise ValueError("Nexus exceeded output limit")
             if result.returncode != 0:
                 stderr = result.stderr.decode("utf-8", errors="replace").strip()
                 raise RuntimeError(
@@ -135,7 +134,7 @@ class GraphService:
             json.JSONDecodeError,
         ) as exc:
             self.last_error = f"Nexus failed: {exc}"
-            logger.warning("%s; usando fallback Python", self.last_error)
+            logger.warning("%s; falling back to Python", self.last_error)
             try:
                 return self._python_fallback()
             except Exception as fallback_exc:

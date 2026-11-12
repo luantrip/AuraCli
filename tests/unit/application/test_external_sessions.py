@@ -58,7 +58,7 @@ def test_normalizes_codex_response_items_without_executing_tools() -> None:
     assert result.cwd == "/tmp/app"
     assert result.skipped_events == 1
     assert all(item["metadata"]["executable"] is False for item in result.messages)
-    assert "nenhum foi executado" in result.warnings[0]
+    assert "none were executed" in result.warnings[0]
 
 
 def test_normalizer_deduplicates_adjacent_stream_chunks() -> None:

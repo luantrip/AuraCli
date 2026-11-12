@@ -144,7 +144,7 @@ class InternalProcessingWindow:
             (
                 ("list_directory", "listando"),
                 UIIcons.DIR,
-                "Explorando estrutura de diretórios...",
+                "Exploring directory structure...",
             ),
             (("read_file", "lendo"), UIIcons.FILE, "Lendo arquivos do projeto..."),
             (
@@ -156,12 +156,12 @@ class InternalProcessingWindow:
             (
                 ("search", "grep", "buscando"),
                 UIIcons.SEARCH,
-                "Buscando padrões no código...",
+                "Searching patterns in code...",
             ),
-            (("analis", "analyz"), UIIcons.STATS, "Analisando código e arquitetura..."),
-            (("git",), UIIcons.OPS, "Verificando repositório Git..."),
+            (("analis", "analyz"), UIIcons.STATS, "Analyzing code and architecture..."),
+            (("git",), UIIcons.OPS, "Checking Git repository..."),
             (("docker",), UIIcons.OPS, "Analisando containers Docker..."),
-            (("run_shell", "executando"), UIIcons.RUN, "Executando comando..."),
+            (("run_shell", "running"), UIIcons.RUN, "Running command..."),
         ]
         for keywords, icon, label in _KEYWORD_STATUS:
             if any(kw in content for kw in keywords):
@@ -240,14 +240,14 @@ class InternalProcessingWindow:
             "encontrei",
             "descobri",
             "identifiquei",
-            "concluí",
+            "completed",
             "resultado",
             "encontrado",
             "detectado",
             "analisado",
             "completo",
-            "sucesso",
-            "erro",
+            "success",
+            "error",
             "problema",
             "issue",
             "bug",
@@ -325,7 +325,7 @@ class InternalProcessingWindow:
             from aura_cli.cli.ui.constants import UIIcons, UIStyles
             from aura_cli.cli.ui.terminal_display import create_status_badge
 
-            badge = create_status_badge("warning", "Nenhuma resposta foi gerada")
+            badge = create_status_badge("warning", "No response was generated")
             return Panel(
                 badge,
                 title=f"[{UIStyles.TITLE}]{UIIcons.AGENT} {self.agent_name}[/{UIStyles.TITLE}]",
@@ -375,7 +375,7 @@ class InternalProcessingWindow:
             border_style=UIStyles.BORDER_MUTED,
             box=None,
             padding=(0, 1),
-            title="[dim]Atividade[/dim]",
+            title="[dim]Activity[/dim]",
             expand=True,
         )
 
@@ -390,16 +390,16 @@ class InternalProcessingWindow:
             content = msg.get("content", "").lower()
             if "tool" in content or any(tool in content for tool in self.tools_used):
                 event_icon = UIIcons.TOOL
-                event_text = f"{event_icon} Execução de ferramenta"
+                event_text = f"{event_icon} Tool execution"
             elif "error" in content or "failed" in content:
                 event_icon = UIIcons.ERROR
-                event_text = f"{event_icon} Erro"
+                event_text = f"{event_icon} Error"
             elif "complete" in content or "done" in content:
                 event_icon = UIIcons.SUCCESS
-                event_text = f"{event_icon} Concluído"
+                event_text = f"{event_icon} Completed"
             else:
                 event_icon = UIIcons.BULLET
-                event_text = f"{event_icon} Processando"
+                event_text = f"{event_icon} Processing"
 
             table.add_row(
                 f"[{UIStyles.MUTED}]{time_str}[/]",
@@ -447,7 +447,7 @@ class InternalProcessingWindow:
         """Return the full message history."""
         lines = []
         lines.append(f"\n{'=' * 80}")
-        lines.append(f"HISTÓRICO COMPLETO - {self.agent_name}")
+        lines.append(f"FULL HISTORY - {self.agent_name}")
         lines.append(f"{'=' * 80}\n")
 
         for i, msg in enumerate(self.chat_history, 1):

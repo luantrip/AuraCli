@@ -13,7 +13,7 @@ import threading
 from typing import Any, Optional, Tuple
 
 from rich.columns import Columns
-from rich.console import Console, Group
+from rich.console import Group
 from rich.panel import Panel
 from rich.text import Text
 
@@ -25,6 +25,7 @@ from aura_cli.cli.helpers import (
 )
 from aura_cli.cli.ops_tools_map import OPS_TOOLS
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
+from aura_cli.cli.ui.display_facade import get_console
 from aura_cli.cli.ui.formatters import format_agent_status
 from aura_cli.cli.utils.worker_factory import (
     create_agi_worker_thread,
@@ -56,7 +57,7 @@ def handle_agi(
     if agi_thread and agi_thread.is_alive():
         return (
             True,
-            f"[{UIStyles.WARNING}]{UIIcons.WARNING} A Aura AGI já está trabalhando. Para uma nova tarefa, reinicie a sessão.[/{UIStyles.WARNING}]",
+            f"[{UIStyles.WARNING}]{UIIcons.WARNING} Aura AGI is already working. To start a new task, reinitialize the session.[/{UIStyles.WARNING}]",
             None,
             None,
             None,
@@ -146,7 +147,7 @@ def handle_ops(
     if ops_thread and ops_thread.is_alive():
         return (
             True,
-            f"[{UIStyles.WARNING}]{UIIcons.WARNING} A Aura Ops já está trabalhando. Para uma nova tarefa, reinicie a sessão.[/{UIStyles.WARNING}]",
+            f"[{UIStyles.WARNING}]{UIIcons.WARNING} Aura Ops is already working. To start a new task, reinitialize the session.[/{UIStyles.WARNING}]",
             None,
             None,
             None,
@@ -202,7 +203,7 @@ def handle_ops(
 
 def handle_tools() -> None:
     """List all available tools in columns."""
-    console = Console()
+    console = get_console()
 
     agi_tools_list = []
     tools_dict = get_tools_dict()
@@ -214,7 +215,7 @@ def handle_tools() -> None:
         ops_tools_list.append(f"[green]{name}[/green]")
 
     agi_header = Text(
-        f"🛠️ AGI Tools · catálogo principal ({len(agi_tools_list)})",
+        f"🛠️ AGI Tools · main catalog ({len(agi_tools_list)})",
         style=UIStyles.TITLE,
     )
     ops_header = Text(
@@ -227,32 +228,32 @@ def handle_tools() -> None:
     console.print()
     console.print(Group(ops_header, Columns(ops_tools_list, equal=True, expand=True)))
     console.print(
-        f"\n[{UIStyles.MUTED}]▪ Use [bold]/tool <nome>[/bold] para ver detalhes de uma ferramenta específica.[/]"
+        f"\n[{UIStyles.MUTED}]▪ Use [bold]/tool <name>[/bold] to see details of a specific tool.[/{UIStyles.MUTED}]"
     )
     console.print()
 
 
 def handle_tool_details(tool_name: str) -> None:
     """Display details of specific tool."""
-    console = Console()
+    console = get_console()
     tool_name = tool_name.strip()
 
     if not tool_name:
-        console.print(f"[{UIStyles.ERROR}]Erro: Nome da ferramenta não fornecido.[/]")
+        console.print(f"[{UIStyles.ERROR}]Error: Tool name not provided.[/]")
         return
 
     tools_dict = get_tools_dict()
     tool_func = tools_dict.get(tool_name) or OPS_TOOLS.get(tool_name)
 
     if not tool_func:
-        console.print(f"[{UIStyles.ERROR}]Ferramenta '{tool_name}' não encontrada.[/]")
+        console.print(f"[{UIStyles.ERROR}]Tool '{tool_name}' not found.[/]")
         return
 
-    sig = inspect.signature(tool_func)  # type: ignore[arg-type]
-    doc = inspect.getdoc(tool_func) or "Sem documentação."
+    sig = inspect.signature(tool_func)  # type: ignore[arg-type]  # Callable narrowing for inspect
+    doc = inspect.getdoc(tool_func) or "No documentation."
 
     panel = Panel(
-        f"[bold white]Assinatura:[/]\n[yellow]def {tool_name}{sig}[/]\n\n[bold white]Descrição:[/]\n{doc}",
+        f"[bold white]Signature:[/]\n[yellow]def {tool_name}{sig}[/]\n\n[bold white]Description:[/]\n{doc}",
         title=f"[{UIStyles.TITLE}]🛠️ {tool_name}[/]",
         border_style=UIStyles.BORDER_ACCENT,
     )

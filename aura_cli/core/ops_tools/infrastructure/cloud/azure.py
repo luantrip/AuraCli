@@ -4,14 +4,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from rich.console import Console
-from rich.table import Table
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.ops_tools.infrastructure.cloud.base import CloudProviderManager
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class AzureManager(CloudProviderManager):
@@ -70,21 +66,36 @@ class AzureManager(CloudProviderManager):
             self._credentials = None
             return None
 
+    def _sdk_installed(self) -> bool:
+        """Whether the Azure SDK is importable (independent of credentials)."""
+        import importlib.util
+        return importlib.util.find_spec("azure.identity") is not None
+
+    def availability_error(self) -> str | None:
+        """Actionable reason the Azure provider is unavailable, or None if ready."""
+        if self.is_available():
+            return None
+        if not self._sdk_installed():
+            return (
+                "Azure SDK not installed. Install it with: "
+                "pip install azure-identity azure-mgmt-compute"
+            )
+        return (
+            "Azure credentials not configured. Run 'az login' or set "
+            "AZURE_CLIENT_ID / AZURE_TENANT_ID / AZURE_CLIENT_SECRET."
+        )
+
     def is_available(self) -> bool:
         """Check if Azure SDK is available and credentials are configured."""
         if self._available is not None:
             return self._available
 
-        try:
-            import azure.identity as _azure_identity
-
-            self._available = (
-                _azure_identity is not None and self._get_credentials() is not None
-            )
-        except ImportError:
+        if not self._sdk_installed():
             logger.debug("azure-identity not installed")
             self._available = False
+            return self._available
 
+        self._available = self._get_credentials() is not None
         return self._available
 
     def list_resources(self, resource_type: str, **filters) -> List[Dict[str, Any]]:
@@ -179,26 +190,6 @@ class AzureManager(CloudProviderManager):
                 except Exception as e:
                     logger.debug(f"Error listing VMs in resource group {rg_name}: {e}")
 
-            if vms:
-                table = Table(title="☁️ Azure Virtual Machines")
-                table.add_column("Name", style="cyan")
-                table.add_column("Resource Group", style="green")
-                table.add_column("Size")
-                table.add_column("Status")
-                table.add_column("OS")
-
-                for vm in vms:
-                    status_style = "green" if vm["status"] == "VM running" else "yellow"
-                    table.add_row(
-                        vm["name"],
-                        vm["resource_group"],
-                        vm["vm_size"] or "-",
-                        f"[{status_style}]{vm['status']}[/{status_style}]",
-                        vm["os_type"] or "-",
-                    )
-
-                console.print(table)
-
             self.stats.track_tool_usage("azure_list_vm")
             logger.info(f"Listed {len(vms)} Virtual Machines")
             return vms
@@ -235,23 +226,6 @@ class AzureManager(CloudProviderManager):
                     }
                 )
 
-            if accounts:
-                table = Table(title="☁️ Azure Storage Accounts")
-                table.add_column("Name", style="cyan")
-                table.add_column("Resource Group", style="green")
-                table.add_column("Location")
-                table.add_column("SKU")
-
-                for account in accounts:
-                    table.add_row(
-                        account["name"],
-                        account["resource_group"] or "-",
-                        account["location"],
-                        account["sku"] or "-",
-                    )
-
-                console.print(table)
-
             self.stats.track_tool_usage("azure_list_storage")
             logger.info(f"Listed {len(accounts)} Storage Accounts")
             return accounts
@@ -285,24 +259,6 @@ class AzureManager(CloudProviderManager):
                         "default_host_name": app.default_host_name,
                     }
                 )
-
-            if apps:
-                table = Table(title="☁️ Azure App Services")
-                table.add_column("Name", style="cyan")
-                table.add_column("Resource Group", style="green")
-                table.add_column("State")
-                table.add_column("Hostname", style="yellow")
-
-                for app in apps:
-                    state_style = "green" if app["state"] == "Running" else "yellow"
-                    table.add_row(
-                        app["name"],
-                        app["resource_group"],
-                        f"[{state_style}]{app['state']}[/{state_style}]",
-                        app["default_host_name"] or "-",
-                    )
-
-                console.print(table)
 
             self.stats.track_tool_usage("azure_list_appservice")
             logger.info(f"Listed {len(apps)} App Services")

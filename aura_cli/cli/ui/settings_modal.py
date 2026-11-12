@@ -58,7 +58,7 @@ def build_model_options(
     """Build stable, provider-grouped labels for the modal model picker."""
     projected = []
     for model_id, info in models.items():
-        provider = str(info.get("provider", "Outro")).strip().title()
+        provider = str(info.get("provider", "Other")).strip().title()
         name = str(info.get("name", model_id)).strip()
         active = model_id == current_model
         marker = "●" if active else "○"
@@ -80,10 +80,17 @@ def build_model_options(
 
 
 def settings_summary(active_providers: int, model: str, theme: str) -> str:
-    """Compact modal header with explicit hierarchy and navigation hint."""
+    """Compact modal header with explicit hierarchy and navigation hint.
+
+    The provider total is derived from ``PROVIDER_SPECS`` (single source of truth)
+    so it tracks new providers automatically without touching this function.
+    """
+    from aura_cli.core.llm.provider_spec import PROVIDER_SPECS
+
+    total = len(PROVIDER_SPECS)
     return (
-        f"{active_providers}/6 provedores  ·  {model}  ·  {theme}\n"
-        "↑↓ navegar   Enter abrir   Esc voltar"
+        f"{active_providers}/{total} providers  ·  {model}  ·  {theme}\n"
+        "↑↓ navigate   Enter open   Esc back"
     )
 
 

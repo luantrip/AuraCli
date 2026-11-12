@@ -103,7 +103,7 @@ def investigate_codebase(
     """
     from aura_cli.core.context import CodebaseContextManager
 
-    logger.info(f"Iniciando investigação do codebase: {root_path}")
+    logger.info(f"Starting codebase investigation: {root_path}")
     if objective:
         logger.info(f"Objetivo: {objective}")
 
@@ -141,10 +141,10 @@ def investigate_codebase(
     files_to_analyze = files_found[:max_files]
     if len(files_found) > max_files:
         logger.warning(
-            f"Limitando análise a {max_files} arquivos (de {len(files_found)} encontrados)"
+            f"Limiting analysis to {max_files} files (of {len(files_found)} found)"
         )
 
-    logger.info("Etapa 2: Análise AST e extração de símbolos")
+    logger.info("Step 2: AST analysis and symbol extraction")
 
     analyzed_count = 0
     error_count = 0
@@ -194,7 +194,7 @@ def investigate_codebase(
     summary["index_stats"] = index.get_stats()
 
     logger.info(
-        f"Análise concluída: {analyzed_count} arquivos processados, {error_count} erros"
+        f"Analysis complete: {analyzed_count} files processed, {error_count} errors"
     )
 
     result = {
@@ -235,7 +235,7 @@ def investigate_codebase_deep(
     Returns:
         Dictionary with analysis results including CodeGraph
     """
-    logger.info(f"Iniciando análise profunda do codebase: {root_path}")
+    logger.info(f"Starting deep codebase analysis: {root_path}")
 
     code_graph = CodeGraph()
 
@@ -358,7 +358,7 @@ def _insights_where(code_graph, question, result):
     words = question.split()
     search_term = None
     for i, word in enumerate(words):
-        if word.lower() in ("is", "find", "está", "definido"):
+        if word.lower() in ("is", "find", "esta", "defined"):
             if i + 1 < len(words):
                 search_term = words[i + 1].strip("?.,")
                 break
@@ -470,7 +470,7 @@ def get_code_insights(
             _insights_callers,
         ),
         (
-            ["what does", "what functions does", "o que", "quais funções"],
+            ["what does", "what functions does", "o que", "what functions"],
             _insights_callees,
         ),
         (["inherit", "subclass", "herda", "estende"], _insights_subclasses),
@@ -483,16 +483,16 @@ def get_code_insights(
             ],
             "complexity",
         ),
-        (["where is", "find", "onde está", "encontre", "definido"], _insights_where),
+        (["where is", "find", "where is", "encontre", "definido"], _insights_where),
         (["impact", "break", "affect", "impacto", "afeta"], _insights_impact),
         (
             [
                 "statistic",
                 "overview",
                 "summary",
-                "estatística",
+                "statistics",
                 "resumo",
-                "visão geral",
+                "overview",
             ],
             "stats",
         ),
@@ -514,7 +514,7 @@ def get_code_insights(
                     "files_analyzed": analysis["files_analyzed"],
                 }
             else:
-                handler(code_graph, question, result)  # type: ignore[operator]
+                handler(code_graph, question, result)  # type: ignore[operator]  # Callable[..., Any] narrowing
             return result
 
     _insights_fallback(code_graph, question, result)

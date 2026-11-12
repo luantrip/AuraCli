@@ -101,7 +101,7 @@ class NLPAnalyzer:
             from transformers import AutoModel, AutoTokenizer
 
             model_to_use = self.model_name or self.default_model
-            logger.info(f"Carregando modelo para análise NLP: {model_to_use}")
+            logger.info(f"Loading model for NLP analysis: {model_to_use}")
 
             self._tokenizer = AutoTokenizer.from_pretrained(  # nosec B615
                 model_to_use, revision="main"
@@ -120,10 +120,10 @@ class NLPAnalyzer:
 
         except ImportError:
             logger.warning(
-                "transformers não instalado, análise NLP limitada (usando heurísticas)"
+                "transformers not installed, NLP analysis limited (using heuristics)"
             )
             self._model_loaded = False
-            self._load_error = ImportError("transformers não instalado")
+            self._load_error = ImportError("transformers not installed")
             return False
         except Exception as e:
             error_msg = str(e)
@@ -133,14 +133,14 @@ class NLPAnalyzer:
                 or "torch to at least v2.6" in error_msg
             ):
                 logger.warning(
-                    "⚠️  Análise NLP avançada não disponível: torch>=2.6.0 requerido mas ainda não lançado. "
-                    "Usando análise heurística (funcionalidades básicas continuam disponíveis). "
-                    "Quando torch 2.6.0 estiver disponível, execute: pip install --upgrade torch"
+                    "⚠️  Advanced NLP analysis unavailable: torch>=2.6.0 required but not yet released. "
+                    "Using heuristic analysis (basic functionality still available). "
+                    "When torch 2.6.0 is available, run: pip install --upgrade torch"
                 )
             else:
                 logger.warning(
                     f"Error loading NLP model (using heuristic analysis): {e}. "
-                    f"Funcionalidades básicas continuam disponíveis."
+                    f"Basic functionality remains available."
                 )
             self._model_loaded = False
             self._load_error = e
@@ -171,7 +171,7 @@ class NLPAnalyzer:
             metadata={"method": "heuristic", "model_available": self._model_loaded},
         )
 
-        logger.debug(f"Código classificado: {function_type.value}, {complexity.value}")
+        logger.debug(f"Code classified: {function_type.value}, {complexity.value}")
         self.stats.track_tool_usage("nlp_classify")
 
         return classification
@@ -199,7 +199,7 @@ class NLPAnalyzer:
             suggestions=suggestions[:3],
         )
 
-        logger.debug(f"Código sumarizado: {len(summary)} caracteres")
+        logger.debug(f"Code summarized: {len(summary)} characters")
         self.stats.track_tool_usage("nlp_summarize")
 
         return result
@@ -309,7 +309,7 @@ class NLPAnalyzer:
         func_match = re.search(r"def\s+([a-z_][a-z0-9_]*)", code, re.IGNORECASE)
         if func_match:
             func_name = func_match.group(1)
-            return f"Função {func_name}: {self._extract_intent(code)}"
+            return f"Function {func_name}: {self._extract_intent(code)}"
 
         lines = [
             line.strip()
@@ -319,7 +319,7 @@ class NLPAnalyzer:
         if lines:
             return lines[0][:100]
 
-        return "Código não documentado"
+        return "Undocumented code"
 
     def _extract_key_points(self, code: str) -> List[str]:
         """Extract key points from code."""
@@ -329,13 +329,13 @@ class NLPAnalyzer:
 
         func_match = re.search(r"def\s+([a-z_][a-z0-9_]*)", code, re.IGNORECASE)
         if func_match:
-            points.append(f"Define função: {func_match.group(1)}")
+            points.append(f"Defines function: {func_match.group(1)}")
 
         param_match = re.search(r"def\s+\w+\s*\((.*?)\)", code, re.DOTALL)
         if param_match:
             params = param_match.group(1).strip()
             if params:
-                points.append(f"Parâmetros: {params[:50]}")
+                points.append(f"Parameters: {params[:50]}")
 
         if "return" in code:
             return_match = re.search(r"return\s+(.+?)(?:\n|$)", code)
@@ -343,11 +343,11 @@ class NLPAnalyzer:
                 points.append(f"Retorna: {return_match.group(1).strip()[:50]}")
 
         if "if " in code:
-            points.append("Contém condicionais")
+            points.append("Contains conditionals")
         if "for " in code or "while " in code:
-            points.append("Contém loops")
+            points.append("Contains loops")
         if "try:" in code:
-            points.append("Contém tratamento de exceções")
+            points.append("Contains exception handling")
 
         return points
 
@@ -369,7 +369,7 @@ class NLPAnalyzer:
             suggestions.append("Considerar refatorar para reduzir complexidade")
 
         if "try:" not in code and ("open(" in code or "requests." in code):
-            suggestions.append("Considerar adicionar tratamento de exceções")
+            suggestions.append("Consider adding exception handling")
 
         return suggestions
 

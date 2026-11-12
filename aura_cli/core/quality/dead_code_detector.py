@@ -42,7 +42,7 @@ def _find_unused_imports(tree: ast.Module) -> list[dict]:
             used_names.add(node.id)
         elif isinstance(node, ast.Attribute):
             # Handle cases like `os.path` where `os` is a Name
-            pass  # Name node for `os` already captured by ast.walk
+            continue  # Name node for `os` already captured by ast.walk
 
     findings: list[dict] = []
     for name, lineno in imports.items():

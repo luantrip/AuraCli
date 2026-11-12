@@ -8,7 +8,7 @@ from aura_cli.application.presentation.codebase_analysis import (
 
 
 def test_investigation_request_and_objective_are_case_insensitive() -> None:
-    command = "ANALISAR CÓDIGO: com foco na fronteira de persistência"
+    command = "ANALYZE CODE: com foco na fronteira de persistência"
     assert requests_codebase_investigation(command)
     assert (
         codebase_investigation_objective(command)
@@ -19,7 +19,7 @@ def test_investigation_request_and_objective_are_case_insensitive() -> None:
 def test_empty_objective_gets_an_explicit_default() -> None:
     assert (
         codebase_investigation_objective("investigar o projeto")
-        == "Análise completa do codebase"
+        == "Full codebase analysis"
     )
 
 

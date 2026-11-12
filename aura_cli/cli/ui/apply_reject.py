@@ -61,7 +61,6 @@ class ApplyRejectManager:
     """
 
     def __init__(self):
-        """Initialize the instance."""
         self.pending_changes: dict = {}
         self.applied_changes: dict = {}
         self.rejected_changes: dict = {}
@@ -280,7 +279,7 @@ class ApplyRejectManager:
             conf_style = UIStyles.ERROR
             risk_label = "Risco Elevado"
 
-        stats_text.append("  │  Confiança: ", style=UIStyles.MUTED)
+        stats_text.append("  │  Confidence: ", style=UIStyles.MUTED)
         stats_text.append(f"{confidence}%", style=f"bold {conf_style}")
         stats_text.append(f" ({risk_label})", style=f"dim {conf_style}")
 
@@ -295,7 +294,7 @@ class ApplyRejectManager:
 
         return Panel(
             Group(diff_display, Text(), stats_text),
-            title=f"Prévia da alteração - {change_id[:8]}  [ [y] aplicar  │  [n] rejeitar  │  [a] auto-run ]",
+            title=f"Change preview - {change_id[:8]}  [ [y] apply  │  [n] reject  │  [a] auto-run ]",
             border_style=UIStyles.BORDER_PRIMARY,
             padding=(1, 2),
         )
@@ -310,15 +309,15 @@ class ApplyRejectManager:
             Rich Table with timestamp, file, action and status columns.
         """
         table = Table(
-            title="Histórico de alterações",
+            title="Change history",
             show_header=True,
             header_style=UIStyles.SUBTITLE,
             border_style=UIStyles.BORDER_PRIMARY,
         )
 
         table.add_column("Hora", width=12)
-        table.add_column("Arquivo", width=25)
-        table.add_column("Ação", width=10)
+        table.add_column("File", width=25)
+        table.add_column("Action", width=10)
         table.add_column("Status", width=10)
 
         for entry in self.change_history[-limit:]:
@@ -339,7 +338,7 @@ class ApplyRejectManager:
                 f"[{UIStyles.MUTED}]{timestamp}[/]",
                 f"[{UIStyles.PRIMARY}]{file_path}[/]",
                 f"[{action_style}]{action_icon} {action_label}[/]",
-                f"[{action_style}]Concluído[/]",
+                f"[{action_style}]Completed[/]",
             )
 
         return table

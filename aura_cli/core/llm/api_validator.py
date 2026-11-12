@@ -103,7 +103,7 @@ def validate_google_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.SUCCESS,
                     provider=provider,
-                    message="✅ API Key válida e funcionando!",
+                    message="✅ API Key valid and working!",
                     model_tested=model,
                     response_preview=preview,
                 )
@@ -135,28 +135,28 @@ def validate_google_api_key(api_key: str) -> ValidationResult:
             return ValidationResult(
                 status=ValidationStatus.INVALID_KEY,
                 provider=provider,
-                message=f"❌ API Key inválida: {str(e)[:100]}",
+                message=f"❌ Invalid API Key: {str(e)[:100]}",
                 model_tested=model,
             )
         elif "429" in error_str or "rate" in error_str or "quota" in error_str:
             return ValidationResult(
                 status=ValidationStatus.RATE_LIMITED,
                 provider=provider,
-                message="⚠️ API Key válida, mas com limite de uso atingido",
+                message="⚠️ API Key valid, but usage limit reached",
                 model_tested=model,
             )
         elif "timeout" in error_str:
             return ValidationResult(
                 status=ValidationStatus.TIMEOUT,
                 provider=provider,
-                message="⚠️ Timeout na conexão (pode estar funcionando)",
+                message="⚠️ Connection timeout (may still be working)",
                 model_tested=model,
             )
         elif "connection" in error_str or "network" in error_str:
             return ValidationResult(
                 status=ValidationStatus.NETWORK_ERROR,
                 provider=provider,
-                message="❌ Erro de conexão - verifique sua internet",
+                message="❌ Connection error - check your internet",
                 model_tested=model,
             )
         else:
@@ -204,7 +204,7 @@ def validate_openai_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.SUCCESS,
                     provider=provider,
-                    message="✅ API Key válida e funcionando!",
+                    message="✅ API Key valid and working!",
                     model_tested=model,
                     response_preview=preview,
                 )
@@ -234,21 +234,21 @@ def validate_openai_api_key(api_key: str) -> ValidationResult:
             return ValidationResult(
                 status=ValidationStatus.INVALID_KEY,
                 provider=provider,
-                message=f"❌ API Key inválida: {str(e)[:100]}",
+                message=f"❌ Invalid API Key: {str(e)[:100]}",
                 model_tested=model,
             )
         elif "429" in error_str or "rate" in error_str or "quota" in error_str:
             return ValidationResult(
                 status=ValidationStatus.RATE_LIMITED,
                 provider=provider,
-                message="⚠️ API Key válida, mas com limite de uso atingido",
+                message="⚠️ API Key valid, but usage limit reached",
                 model_tested=model,
             )
         elif "timeout" in error_str:
             return ValidationResult(
                 status=ValidationStatus.TIMEOUT,
                 provider=provider,
-                message="⚠️ Timeout na conexão (pode estar funcionando)",
+                message="⚠️ Connection timeout (may still be working)",
                 model_tested=model,
             )
         else:
@@ -296,7 +296,7 @@ def validate_anthropic_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.SUCCESS,
                     provider=provider,
-                    message="✅ API Key válida e funcionando!",
+                    message="✅ API Key valid and working!",
                     model_tested=model,
                     response_preview=preview,
                 )
@@ -322,9 +322,9 @@ def validate_anthropic_api_key(api_key: str) -> ValidationResult:
             return ValidationResult(
                 status=ValidationStatus.RATE_LIMITED,  # Treat as rate limited to allow saving
                 provider=provider,
-                message="⚠️ API Key válida, mas conta sem créditos.\n\n"
-                "💡 Acesse https://console.anthropic.com/settings/plans para adicionar créditos.\n"
-                "Você pode salvar a chave agora e usar quando tiver créditos.",
+                message="⚠️ API Key valid, but account has no credits.\n\n"
+                "💡 Go to https://console.anthropic.com/settings/plans to add credits.\n"
+                "You can save the key now and use it when you have credits.",
                 model_tested=model,
             )
         elif (
@@ -336,21 +336,21 @@ def validate_anthropic_api_key(api_key: str) -> ValidationResult:
             return ValidationResult(
                 status=ValidationStatus.INVALID_KEY,
                 provider=provider,
-                message="❌ API Key inválida ou expirada.\n\nVerifique se a chave está correta em https://console.anthropic.com/settings/keys",
+                message="❌ Invalid or expired API Key.\n\nCheck that the key is correct at https://console.anthropic.com/settings/keys",
                 model_tested=model,
             )
         elif "429" in error_str or "rate" in error_str:
             return ValidationResult(
                 status=ValidationStatus.RATE_LIMITED,
                 provider=provider,
-                message="⚠️ API Key válida, mas com limite de uso atingido",
+                message="⚠️ API Key valid, but usage limit reached",
                 model_tested=model,
             )
         elif "timeout" in error_str:
             return ValidationResult(
                 status=ValidationStatus.TIMEOUT,
                 provider=provider,
-                message="⚠️ Timeout na conexão (pode estar funcionando)",
+                message="⚠️ Connection timeout (may still be working)",
                 model_tested=model,
             )
         else:
@@ -360,9 +360,9 @@ def validate_anthropic_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.RATE_LIMITED,
                     provider=provider,
-                    message="⚠️ API Key válida, mas conta sem créditos.\n\n"
-                    "💡 Acesse https://console.anthropic.com/settings/plans para adicionar créditos.\n"
-                    "Você pode salvar a chave agora e usar quando tiver créditos.",
+                    message="⚠️ API Key valid, but account has no credits.\n\n"
+                    "💡 Go to https://console.anthropic.com/settings/plans to add credits.\n"
+                    "You can save the key now and use it when you have credits.",
                     model_tested=model,
                 )
             return ValidationResult(
@@ -409,7 +409,7 @@ def validate_openrouter_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.SUCCESS,
                     provider=provider,
-                    message="✅ API Key válida e funcionando!",
+                    message="✅ API Key valid and working!",
                     model_tested=model,
                     response_preview=preview,
                 )
@@ -439,21 +439,21 @@ def validate_openrouter_api_key(api_key: str) -> ValidationResult:
             return ValidationResult(
                 status=ValidationStatus.INVALID_KEY,
                 provider=provider,
-                message=f"❌ API Key inválida: {str(e)[:100]}",
+                message=f"❌ Invalid API Key: {str(e)[:100]}",
                 model_tested=model,
             )
         elif "429" in error_str or "rate" in error_str:
             return ValidationResult(
                 status=ValidationStatus.RATE_LIMITED,
                 provider=provider,
-                message="⚠️ API Key válida, mas com limite de uso atingido",
+                message="⚠️ API Key valid, but usage limit reached",
                 model_tested=model,
             )
         elif "timeout" in error_str:
             return ValidationResult(
                 status=ValidationStatus.TIMEOUT,
                 provider=provider,
-                message="⚠️ Timeout na conexão (pode estar funcionando)",
+                message="⚠️ Connection timeout (may still be working)",
                 model_tested=model,
             )
         else:
@@ -503,7 +503,7 @@ def validate_nvidia_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.SUCCESS,
                     provider=provider,
-                    message="✅ NVIDIA API Key válida e funcionando!",
+                    message="✅ NVIDIA API Key valid and working!",
                     model_tested=model,
                     response_preview=preview,
                 )
@@ -528,21 +528,21 @@ def validate_nvidia_api_key(api_key: str) -> ValidationResult:
             return ValidationResult(
                 status=ValidationStatus.INVALID_KEY,
                 provider=provider,
-                message=f"❌ API Key inválida: {str(e)[:100]}",
+                message=f"❌ Invalid API Key: {str(e)[:100]}",
                 model_tested=model,
             )
         elif "429" in error_str or "rate" in error_str:
             return ValidationResult(
                 status=ValidationStatus.RATE_LIMITED,
                 provider=provider,
-                message="⚠️ API Key válida, mas com limite de uso atingido",
+                message="⚠️ API Key valid, but usage limit reached",
                 model_tested=model,
             )
         elif "timeout" in error_str:
             return ValidationResult(
                 status=ValidationStatus.TIMEOUT,
                 provider=provider,
-                message="⚠️ Timeout na conexão (pode estar funcionando)",
+                message="⚠️ Connection timeout (may still be working)",
                 model_tested=model,
             )
         else:
@@ -577,7 +577,7 @@ def validate_groq_api_key(api_key: str) -> ValidationResult:
                 return ValidationResult(
                     status=ValidationStatus.SUCCESS,
                     provider=provider,
-                    message="✅ Groq API Key válida e funcionando!",
+                    message="✅ Groq API Key valid and working!",
                     model_tested=model,
                     response_preview=content[:50],
                 )
@@ -597,16 +597,77 @@ def validate_groq_api_key(api_key: str) -> ValidationResult:
         lowered = error.lower()
         if "401" in lowered or "api key" in lowered or "unauthorized" in lowered:
             status = ValidationStatus.INVALID_KEY
-            message = f"❌ API Key Groq inválida: {error[:100]}"
+            message = f"❌ Invalid Groq API Key: {error[:100]}"
         elif "429" in lowered or "rate" in lowered:
             status = ValidationStatus.RATE_LIMITED
-            message = "⚠️ API Key Groq válida, mas com limite de uso atingido"
+            message = "⚠️ Groq API Key valid, but usage limit reached"
         elif "timeout" in lowered:
             status = ValidationStatus.TIMEOUT
-            message = "⚠️ Timeout na conexão (pode estar funcionando)"
+            message = "⚠️ Connection timeout (may still be working)"
         else:
             status = ValidationStatus.UNKNOWN_ERROR
             message = f"❌ Erro Groq: {error[:100]}"
+        return ValidationResult(
+            status=status,
+            provider=provider,
+            message=message,
+            model_tested=model,
+        )
+
+
+def validate_cerebras_api_key(api_key: str) -> ValidationResult:
+    """Validate a Cerebras API key with the default free-tier model."""
+    provider = "Cerebras"
+    model = "cerebras/gpt-oss-120b"
+
+    try:
+        import litellm
+
+        original_key = os.environ.get("CEREBRAS_API_KEY")
+        os.environ["CEREBRAS_API_KEY"] = api_key
+        try:
+            response = litellm.completion(
+                model=model,
+                messages=[{"role": "user", "content": "Reply with OK."}],
+                max_tokens=8,
+                timeout=15.0,
+                api_key=api_key,
+            )
+            if response and response.choices:
+                content = response.choices[0].message.content or "OK"
+                return ValidationResult(
+                    status=ValidationStatus.SUCCESS,
+                    provider=provider,
+                    message="✅ Cerebras API Key valid and working!",
+                    model_tested=model,
+                    response_preview=content[:50],
+                )
+            return ValidationResult(
+                status=ValidationStatus.UNKNOWN_ERROR,
+                provider=provider,
+                message="⚠️ Resposta vazia do modelo",
+                model_tested=model,
+            )
+        finally:
+            if original_key:
+                os.environ["CEREBRAS_API_KEY"] = original_key
+            else:
+                os.environ.pop("CEREBRAS_API_KEY", None)
+    except Exception as exc:
+        error = str(exc)
+        lowered = error.lower()
+        if "401" in lowered or "api key" in lowered or "unauthorized" in lowered:
+            status = ValidationStatus.INVALID_KEY
+            message = f"❌ Invalid Cerebras API Key: {error[:100]}"
+        elif "429" in lowered or "rate" in lowered:
+            status = ValidationStatus.RATE_LIMITED
+            message = "⚠️ Cerebras API Key valid, but usage limit reached"
+        elif "timeout" in lowered:
+            status = ValidationStatus.TIMEOUT
+            message = "⚠️ Connection timeout (may still be working)"
+        else:
+            status = ValidationStatus.UNKNOWN_ERROR
+            message = f"❌ Erro Cerebras: {error[:100]}"
         return ValidationResult(
             status=status,
             provider=provider,
@@ -633,6 +694,7 @@ def validate_api_key(provider: str, api_key: str) -> ValidationResult:
         "openrouter": validate_openrouter_api_key,
         "nvidia": validate_nvidia_api_key,
         "groq": validate_groq_api_key,
+        "cerebras": validate_cerebras_api_key,
     }
 
     validator = validators.get(normalize_provider_name(provider))
@@ -640,7 +702,7 @@ def validate_api_key(provider: str, api_key: str) -> ValidationResult:
         return ValidationResult(
             status=ValidationStatus.UNKNOWN_ERROR,
             provider=provider,
-            message=f"❌ Provedor não suportado: {provider}",
+            message=f"❌ Unsupported provider: {provider}",
         )
 
     return validator(api_key)

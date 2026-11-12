@@ -2,10 +2,10 @@ from types import SimpleNamespace
 
 from rich.console import Console
 
-from aura_cli.cli.ui.components.panel import AuraPanel
-from aura_cli.cli.ui.components.section_header import AuraSectionHeader
-from aura_cli.cli.ui.components.shell_box import ShellCommandBox
-from aura_cli.cli.ui.components.task_board import TaskBoard
+from aura_cli.cli.ui.components.agent.task_board import TaskBoard
+from aura_cli.cli.ui.components.display.section_header import AuraSectionHeader
+from aura_cli.cli.ui.components.input.shell_box import ShellCommandBox
+from aura_cli.cli.ui.components.layout.panel import AuraPanel
 from aura_cli.cli.ui.tools.tool_history import ToolHistoryViewer
 
 _BOX_CHARS = "╭╮╰╯│┏┓┗┛┃┌┐└┘"
@@ -50,7 +50,7 @@ def test_task_board_and_shell_are_open_surfaces() -> None:
     task_output = _render_text(TaskBoard(tracker=tracker).render(), width=80)
     shell_output = _render_text(ShellCommandBox("printf ok").render(), width=80)
 
-    assert "Quadro de tarefas" in task_output
+    assert "Task board" in task_output
     assert "Comando shell" in shell_output
     assert not any(char in task_output for char in _BOX_CHARS)
     assert not any(char in shell_output for char in _BOX_CHARS)
@@ -62,8 +62,8 @@ def test_tool_history_empty_state_is_open(monkeypatch) -> None:
 
     output = _render_text(viewer.render(Console(record=True, width=80)))
 
-    assert "Histórico de ferramentas" in output
-    assert "Nenhuma execução de tool" in output
+    assert "Tool history" in output
+    assert "No tool executions" in output
     assert not any(char in output for char in _BOX_CHARS)
 
 

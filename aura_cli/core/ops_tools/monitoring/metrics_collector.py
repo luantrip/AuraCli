@@ -68,7 +68,7 @@ class MetricsCollector:
 
         self._cleanup_old_metrics()
 
-        logger.debug(f"Métrica registrada: {name}={value}")
+        logger.debug(f"Metric registered: {name}={value}")
 
     def get_metric(
         self, name: str, labels: Optional[Dict[str, str]] = None
@@ -146,7 +146,7 @@ class MetricsCollector:
 
         removed = original_count - len(self.metrics)
         if removed > 0:
-            logger.debug(f"{removed} métricas antigas removidas")
+            logger.debug(f"{removed} old metrics removed")
 
     def get_statistics(self) -> Dict[str, Any]:
         """Return collector statistics as a dict."""

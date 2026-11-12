@@ -32,7 +32,7 @@ def create_task_list(tasks: List[str], objective: str = "") -> str:
     MAX_TASKS = 100
     if isinstance(tasks, str):
         error_msg = (
-            f"ERRO: 'tasks' deve ser uma LISTA de strings, não uma string única.\n"
+            f"ERROR: 'tasks' must be a LIST of strings, not a single string.\n"
             f"Recebido: tipo string com {len(tasks)} caracteres.\n"
             f'Exemplo correto: ["Tarefa 1", "Tarefa 2", "Tarefa 3"]'
         )
@@ -56,7 +56,7 @@ def create_task_list(tasks: List[str], objective: str = "") -> str:
                 valid_tasks.append(task)
         else:
             logger.warning(
-                f"Tarefa {i} ignorada: não é string (tipo: {type(task).__name__})"
+                f"Task {i} skipped: not a string (type: {type(task).__name__})"
             )
 
     if not valid_tasks:
@@ -101,8 +101,8 @@ def create_task_list(tasks: List[str], objective: str = "") -> str:
             output.append(f"  ... e mais {len(valid_tasks) - 20} tarefas")
 
         output.append("")
-        output.append("Use 'complete_task' para marcar tarefas como concluídas.")
-        output.append("Use 'get_next_task' para ver a próxima tarefa pendente.")
+        output.append("Use 'complete_task' to mark tasks as completed.")
+        output.append("Use 'get_next_task' to see the next pending task.")
 
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(
@@ -141,19 +141,19 @@ def complete_task(
         elif task_text:
             success, completed_text = tracker.mark_task_by_text(task_text)
         else:
-            return "Erro: Forneça task_id ou task_text para identificar a tarefa."
+            return "Error: Provide task_id or task_text to identify the task."
 
         if success:
             stats = tracker.get_stats()
             progress = f"{stats['done']}/{stats['total']}"
 
-            output = f"{UIIcons.SUCCESS} Tarefa concluída: {completed_text}\n"
+            output = f"{UIIcons.SUCCESS} Task completed: {completed_text}\n"
             output += f"📊 Progresso: {progress} tarefas completadas"
             next_task = tracker.get_current_task()
             if next_task:
-                output += f"\n⏭️  Próxima: {next_task.text}"
+                output += f"\n⏭️  Next: {next_task.text}"
             else:
-                output += "\n🎉 Todas as tarefas foram concluídas!"
+                output += "\n🎉 All tasks completed!"
 
             success_style = UIStyles.safe_style("SUCCESS", "green")
             rprint(
@@ -162,7 +162,7 @@ def complete_task(
 
             return output
         else:
-            return "Não foi possível completar a tarefa. Verifique se o ID/texto está correto."
+            return "Could not complete the task. Check that the ID/text is correct."
 
     except Exception as e:
         error_msg = f"Error completing task: {e}"
@@ -187,7 +187,7 @@ def view_tasks() -> str:
         stats = tracker.get_stats()
 
         if not all_tasks:
-            return "📋 Nenhuma tarefa cadastrada. Use 'create_task_list' para criar tarefas."
+            return "📋 No tasks registered. Use 'create_task_list' to create tasks."
 
         output = [
             "📋 Lista de Tarefas",
@@ -205,13 +205,13 @@ def view_tasks() -> str:
             output.append("")
         done = tracker.get_done_tasks()
         if done:
-            output.append("✅ Concluídas:")
+            output.append("✅ Completed:")
             for task in done:
                 output.append(f"  {task.id}. [x] {task.text}")
         current = tracker.get_current_task()
         if current:
             output.append("")
-            output.append(f"⏭️  Próxima tarefa: {current.text}")
+            output.append(f"⏭️  Next task: {current.text}")
 
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(
@@ -282,10 +282,10 @@ def get_next_task() -> str:
 
         if current:
             stats = tracker.get_stats()
-            output = f"⏭️  Próxima tarefa (ID: {current.id}):\n"
+            output = f"⏭️  Next task (ID: {current.id}):\n"
             output += f"   {current.text}\n"
             output += (
-                f"📊 Progresso: {stats['done']}/{stats['total']} tarefas concluídas"
+                f"📊 Progress: {stats['done']}/{stats['total']} tasks completed"
             )
 
             success_style = UIStyles.safe_style("SUCCESS", "green")
@@ -295,7 +295,7 @@ def get_next_task() -> str:
 
             return output
         else:
-            return "🎉 Todas as tarefas foram concluídas! Nenhuma tarefa pendente."
+            return "🎉 All tasks completed! No pending tasks."
 
     except Exception as e:
         error_msg = f"Error fetching next task: {e}"
@@ -326,40 +326,40 @@ def start_autonomous_mode() -> str:
         if not current:
             if stats["total"] == 0:
                 return (
-                    "❌ Nenhuma lista de tarefas encontrada.\n\n"
-                    "Para usar o modo autônomo, primeiro crie uma lista de tarefas com:\n"
+                    "❌ No task list found.\n\n"
+                    "To use autonomous mode, first create a task list with:\n"
                     "create_task_list(tasks=[...], objective='...')"
                 )
             else:
-                return "🎉 Todas as tarefas já foram concluídas!"
+                return "🎉 All tasks are already completed!"
 
         pending = stats["total"] - stats["done"]
 
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(
-            f"[{success_style}]{UIIcons.SUCCESS} Modo autônomo ativado[/{success_style}]"
+            f"[{success_style}]{UIIcons.SUCCESS} Autonomous mode activated[/{success_style}]"
         )
 
         output = f"""
-🤖 MODO AUTÔNOMO ATIVADO
+🤖 AUTONOMOUS MODE ACTIVATED
 {"=" * 50}
 
-📊 Status: {stats["done"]}/{stats["total"]} tarefas concluídas ({pending} pendentes)
+📊 Status: {stats["done"]}/{stats["total"]} tasks completed ({pending} pending)
 
 📋 TAREFA ATUAL (ID: {current.id}):
    {current.text}
 
-⚡ INSTRUÇÕES PARA AUTOMAÇÃO:
-   1. Execute esta tarefa usando as ferramentas disponíveis
-   2. Após concluir, chame: complete_task(task_id={current.id})
+⚡ AUTOMATION INSTRUCTIONS:
+   1. Execute this task using the available tools
+   2. After completing, call: complete_task(task_id={current.id})
    3. Em seguida, chame: get_next_task() para continuar
-   4. Repita até todas as tarefas serem finalizadas
+   4. Repeat until all tasks are completed
 
 💡 DICAS:
    - Use read_file, write_file, edit_file para arquivos
    - Use run_shell_command para comandos do sistema
    - Use list_directory, tree_view para explorar estrutura
-   - Seja proativo e execute sem pedir confirmação
+   - Be proactive and execute without asking for confirmation
 
 🚀 Comece agora executando a tarefa acima!
 """
@@ -387,7 +387,7 @@ def get_automation_status() -> str:
         all_tasks = tracker.get_all_tasks()
 
         if not all_tasks:
-            return "📋 Nenhuma tarefa cadastrada."
+            return "📋 No tasks registered."
 
         pending = tracker.get_pending_tasks()
         done = tracker.get_done_tasks()
@@ -397,16 +397,16 @@ def get_automation_status() -> str:
         bar = "█" * filled + "░" * (bar_length - filled)
 
         output = f"""
-📊 STATUS DA AUTOMAÇÃO
+📊 AUTOMATION STATUS
 {"=" * 50}
 
 Progresso: [{bar}] {percent:.0f}%
-Tarefas: {stats["done"]}/{stats["total"]} concluídas
+Tasks: {stats["done"]}/{stats["total"]} completed
 
 """
 
         if done:
-            output += "✅ CONCLUÍDAS:\n"
+            output += "✅ COMPLETED:\n"
             for task in done[-5:]:  # Last 5 completed
                 output += (
                     f"   • {task.text[:60]}{'...' if len(task.text) > 60 else ''}\n"
@@ -421,9 +421,9 @@ Tarefas: {stats["done"]}/{stats["total"]} concluídas
                 output += f"   • [{task.id}] {task.text[:60]}{'...' if len(task.text) > 60 else ''}\n"
             if len(pending) > 5:
                 output += f"   ... e mais {len(pending) - 5} tarefas\n"
-            output += f"\n⏭️  Próxima: {pending[0].text}\n"
+            output += f"\n⏭️  Next: {pending[0].text}\n"
         else:
-            output += "🎉 TODAS AS TAREFAS CONCLUÍDAS!\n"
+            output += "🎉 ALL TASKS COMPLETED!\n"
 
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(f"[{success_style}]{UIIcons.SUCCESS} Status obtido[/{success_style}]")

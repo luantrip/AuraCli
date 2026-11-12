@@ -9,6 +9,7 @@ import threading
 import time
 from typing import Any
 
+from aura_cli.application.conversation import estimate_context_tokens
 from aura_cli.application.sessions import (
     build_snapshot_history,
     plan_snapshot,
@@ -19,7 +20,7 @@ from aura_cli.cli.ui.display_facade import register_ui, unregister_ui
 from aura_cli.cli.utils.exceptions import RateLimitError
 from aura_cli.cli.utils.thread_manager import get_thread_manager
 from aura_cli.core.config import config_manager
-from aura_cli.core.constants import COMPRESSION_THRESHOLD
+from aura_cli.core.constants import COMPRESSION_THRESHOLD, FALLBACK_CHARS_PER_TOKEN
 from aura_cli.core.context.base import (
     compress_conversation_history,
     compression_threshold_for_model,
@@ -91,10 +92,10 @@ class SessionLifecycleMixin:
         all_success = True
         for thread_name, success in results.items():
             if success:
-                self.logger.info(f"Thread '{thread_name}' parou com sucesso")
+                self.logger.info(f"Thread '{thread_name}' stopped successfully")
             else:
                 self.logger.warning(
-                    f"Thread '{thread_name}' não parou dentro do timeout"
+                    f"Thread '{thread_name}' did not stop within timeout"
                 )
                 all_success = False
 
@@ -106,7 +107,7 @@ class SessionLifecycleMixin:
             )
             agi_thread.join(timeout=remaining_timeout)
             if agi_thread.is_alive():
-                self.logger.warning("Thread AGI não parou dentro do timeout")
+                self.logger.warning("AGI thread did not stop within timeout")
                 all_success = False
 
         if ops_thread:
@@ -115,7 +116,7 @@ class SessionLifecycleMixin:
             )
             ops_thread.join(timeout=remaining_timeout)
             if ops_thread.is_alive():
-                self.logger.warning("Thread Ops não parou dentro do timeout")
+                self.logger.warning("Ops thread did not stop within timeout")
                 all_success = False
 
         try:
@@ -231,6 +232,22 @@ class SessionLifecycleMixin:
                 ),
             )
 
+    def _refresh_context_measure(self) -> None:
+        """Re-measure the history so the status bar never shows a stale context %.
+
+        ``stats.context_tokens`` was only written right before an LLM call, so after
+        a reply (history grew) or a compaction (history shrank) the footer showed the
+        previous turn's size. Measuring here, once per prompt, keeps it truthful.
+        """
+        try:
+            self.stats.context_tokens = estimate_context_tokens(
+                self.conversation_history,
+                None,
+                chars_per_token=FALLBACK_CHARS_PER_TOKEN,
+            )
+        except Exception as exc:  # a broken footer must never block the prompt
+            self.logger.debug("Context measure skipped: %s", exc)
+
     def run(self):
         """Start and execute main interaction loop.
 
@@ -254,6 +271,7 @@ class SessionLifecycleMixin:
                     )
 
                     tangent_indicator = self.tangent_manager.get_indicator()
+                    self._refresh_context_measure()
                     self.ui.display_status_bar()
                     command = self.ui.prompt(tangent_indicator=tangent_indicator)
 
@@ -285,11 +303,11 @@ class SessionLifecycleMixin:
                             f"Loop iteration exceeded timeout ({_elapsed:.1f}s > {_ITERATION_TIMEOUT}s)"
                         )
                         self.ui.display_warning(
-                            f"Operação demorou {_elapsed:.0f}s — verifique se há travamento."
+                            f"Operation took {_elapsed:.0f}s — check for deadlock."
                         )
 
                 except (KeyboardInterrupt, EOFError):
-                    self.ui.display_warning("Operação cancelada pelo usuário.")
+                    self.ui.display_warning("Operation cancelled by user.")
                     break
                 except RateLimitError as e:
                     error_msg = self._handle_rate_limit_error(
@@ -303,7 +321,7 @@ class SessionLifecycleMixin:
                 except Exception as e:
                     self._handle_generic_exception(e)
 
-            self.ui.display_success("Sessão encerrada.")
+            self.ui.display_success("Session ended.")
         finally:
             try:
                 self.shutdown()

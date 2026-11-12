@@ -20,7 +20,7 @@ def test_footer_starts_with_ready_label() -> None:
     footer = AuraFooter()
 
     assert footer.runtime_phase == RuntimePhase.READY.value
-    assert footer.status_message == "Pronto"
+    assert footer.status_message == "Ready"
 
 
 def test_footer_cancels_stale_terminal_timer_on_new_state() -> None:
@@ -29,12 +29,12 @@ def test_footer_cancels_stale_terminal_timer_on_new_state() -> None:
     second_timer = Mock()
 
     with patch.object(footer, "set_timer", side_effect=[first_timer, second_timer]):
-        footer.set_runtime_state(TuiRuntimeState(RuntimePhase.COMPLETED, "Concluído"))
-        footer.set_runtime_state(TuiRuntimeState(RuntimePhase.CANCELLED, "Cancelado"))
+        footer.set_runtime_state(TuiRuntimeState(RuntimePhase.COMPLETED, "Completed"))
+        footer.set_runtime_state(TuiRuntimeState(RuntimePhase.CANCELLED, "Cancelled"))
 
     first_timer.stop.assert_called_once_with()
     assert footer.runtime_phase == RuntimePhase.CANCELLED.value
-    assert footer.status_message == "Cancelado"
+    assert footer.status_message == "Cancelled"
 
 
 def test_footer_keeps_error_and_waiting_states_persistent() -> None:
@@ -45,11 +45,11 @@ def test_footer_keeps_error_and_waiting_states_persistent() -> None:
             TuiRuntimeState(RuntimePhase.WAITING_INPUT, "Confirmar?")
         )
         assert footer.status_message == "Confirmar?"
-        footer.set_runtime_state(TuiRuntimeState(RuntimePhase.ERROR, "Falhou"))
+        footer.set_runtime_state(TuiRuntimeState(RuntimePhase.ERROR, "Failed"))
 
     set_timer.assert_not_called()
     assert footer.runtime_phase == RuntimePhase.ERROR.value
-    assert footer.status_message == "Falhou"
+    assert footer.status_message == "Failed"
 
 
 @pytest.mark.asyncio
@@ -61,38 +61,38 @@ async def test_mounted_app_derives_loading_and_footer_from_runtime_state() -> No
     app = AuraTUI(app_loop=app_loop)
 
     async with app.run_test() as pilot:
-        app._transition_runtime(RuntimeAction.EXECUTING, "Executando")
+        app._transition_runtime(RuntimeAction.EXECUTING, "Executing")
         await pilot.pause()
         loading = app.query_one("#loading_indicator")
         footer = app.query_one("#footer")
         assert loading.is_visible is True
-        assert footer.status_message == "Executando"
+        assert footer.status_message == "Executing"
         assert footer.has_class("runtime-executing")
 
         app.present_surface(
             SurfaceRequest(
-                PresentationIntent.DECISION, "Executar shell?", task_id="task-1"
+                PresentationIntent.DECISION, "Run shell?", task_id="task-1"
             )
         )
         await pilot.pause()
         assert loading.is_visible is False
         assert footer.runtime_phase == RuntimePhase.WAITING_INPUT.value
-        assert footer.status_message == "Executar shell?"
+        assert footer.status_message == "Run shell?"
         assert footer.has_class("runtime-waiting_input")
 
         app.present_surface(
-            SurfaceRequest(PresentationIntent.ERROR, "Falhou", task_id="task-1")
+            SurfaceRequest(PresentationIntent.ERROR, "Failed", task_id="task-1")
         )
         await pilot.pause()
         assert loading.is_visible is False
         assert footer.runtime_phase == RuntimePhase.ERROR.value
-        assert footer.status_message == "Falhou"
+        assert footer.status_message == "Failed"
         assert footer.has_class("runtime-error")
 
         app._transition_runtime(RuntimeAction.READY)
         await pilot.pause()
         assert loading.is_visible is False
-        assert footer.status_message == "Pronto"
+        assert footer.status_message == "Ready"
         assert footer.has_class("runtime-ready")
 
 
@@ -113,4 +113,4 @@ async def test_footer_renders_key_hints_as_distinct_controls() -> None:
         assert len(hints) == 2
         hint_text = " ".join(label.render().plain for label in hints[0].query("Label"))
         assert "Shift+Tab" in hint_text
-        assert "modo" in hint_text
+        assert "mode" in hint_text

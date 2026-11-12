@@ -30,8 +30,8 @@ def _retry_hint(retry_after: int | None) -> str:
         return ""
     minutes, seconds = divmod(retry_after, 60)
     if minutes:
-        return f"\n○  Tente novamente em ~{minutes}min {seconds}s"
-    return f"\n○  Tente novamente em ~{seconds}s"
+        return f"\n○  Try again in ~{minutes}min {seconds}s"
+    return f"\n○  Try again in ~{seconds}s"
 
 
 def friendly_provider_error(error: Exception) -> str:

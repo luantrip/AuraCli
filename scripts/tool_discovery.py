@@ -26,6 +26,10 @@ _REFLECTION_GARBAGE = {
     "get_logger",
     "get_stats",
     "get_embedding_model",
+    # Internal helper on specialized agents: selects tool schemas by category for
+    # the agent itself. Reflection captured it as "<agent>_schemas_for_categories"
+    # and mis-listed it as an LLM-callable tool (F-P1-4).
+    "schemas_for_categories",
 }
 
 # Singleton getter suffixes — both bare (func_name in prefixed loops) and prefixed forms
@@ -74,6 +78,7 @@ class CoreToolDiscovery:
         self._register_codebase_tools(registry)
         self._register_shell_tools(registry)
         self._register_web_tools(registry)
+        self._register_vision_tools(registry)
 
         self._register_git_tools(registry)
         self._register_docker_tools(registry)
@@ -289,6 +294,32 @@ class CoreToolDiscovery:
                     self.tools_registered += 1
         except Exception as e:
             logger.warning(f"Erro ao registrar web tools: {e}")
+
+    def _register_vision_tools(self, registry):
+        """Register vision tools (image/screenshot/visual URL inspection).
+
+        These were callable at runtime (listed in the AGI allowlist and tracked
+        via track_tool_usage) but absent from discovery, so they never reached the
+        manifest or /tools. Registering them here makes the catalog honest.
+        """
+        try:
+            from aura_cli.core.service_registry import ToolCategory
+            from aura_cli.core.tools import vision_tools
+
+            tools = [
+                ("view_image", vision_tools.view_image),
+                ("take_screenshot", vision_tools.take_screenshot),
+                ("describe_url_visual", vision_tools.describe_url_visual),
+            ]
+
+            for name, func in tools:
+                if inspect.isfunction(func) or inspect.ismethod(func):
+                    registry._register_tool(
+                        name, ToolCategory.VISION, f"Vision: {name}", func, {}
+                    )
+                    self.tools_registered += 1
+        except Exception as e:
+            logger.warning(f"Erro ao registrar vision tools: {e}")
 
     def _register_git_tools(self, registry):
         """Registra ferramentas Git."""

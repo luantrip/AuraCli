@@ -1,50 +1,14 @@
-"""Advanced UI components — interactive dashboard, toasts and virtualised list.
+"""CLI UI components — input, display, layout, and agent sub-packages.
 
-Re-exports InteractiveDashboard (keyboard/mouse navigation), ToastManager
-(non-intrusive temporary notifications) and VirtualList (high-volume data).
+For new code, import directly from the sub-package:
+    from aura_cli.cli.ui.components.input import BaseComponent
+    from aura_cli.cli.ui.components.display import MessageBubble
+    from aura_cli.cli.ui.components.layout import StatusBar
+    from aura_cli.cli.ui.components.agent import TaskBoard
 """
 
-from aura_cli.cli.ui.components.collapsed_text import (
-    CHAR_THRESHOLD,
-    LINE_THRESHOLD,
-    CollapsedTextDisplay,
-    format_user_input_display,
-    render_collapsed_input,
-    should_collapse,
-)
-from aura_cli.cli.ui.components.interactive_dashboard import (
-    DashboardColumn,
-    DashboardFilter,
-    InteractiveDashboard,
-    SortOrder,
-)
-from aura_cli.cli.ui.components.subagent_panel import SubAgentPanel
-from aura_cli.cli.ui.components.toast import (
-    Toast,
-    ToastManager,
-    ToastPosition,
-    ToastType,
-    get_toast_manager,
-)
-from aura_cli.cli.ui.components.workspace_diff import WorkspaceDiffDisplay
-
-__all__ = [
-    "CHAR_THRESHOLD",
-    "LINE_THRESHOLD",
-    # Collapsed text display
-    "CollapsedTextDisplay",
-    "DashboardColumn",
-    "DashboardFilter",
-    "InteractiveDashboard",
-    "SortOrder",
-    "SubAgentPanel",
-    "Toast",
-    "ToastManager",
-    "ToastPosition",
-    "ToastType",
-    "WorkspaceDiffDisplay",
-    "format_user_input_display",
-    "get_toast_manager",
-    "render_collapsed_input",
-    "should_collapse",
-]
+# Re-export everything from sub-packages for backwards compatibility
+from aura_cli.cli.ui.components.agent import *  # noqa: F403
+from aura_cli.cli.ui.components.display import *  # noqa: F403
+from aura_cli.cli.ui.components.input import *  # noqa: F403
+from aura_cli.cli.ui.components.layout import *  # noqa: F403

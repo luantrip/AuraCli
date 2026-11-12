@@ -101,7 +101,7 @@ class TokenUsageScreen(BaseAuraModalScreen[None]):
 
         if s.tool_definitions_count:
             text.append(
-                f"◆ Definições de tools     · {s.tool_definitions_count} tools\n",
+                f"◆ Tool definitions     · {s.tool_definitions_count} tools\n",
                 style="cyan",
             )
         if s.skills_count:
@@ -119,7 +119,7 @@ class TokenUsageScreen(BaseAuraModalScreen[None]):
 
         remaining = max(0, total_tokens - used_tokens)
         text.append(
-            f"◇ Disponível             ~{remaining / 1000:.0f}k tokens\n\n",
+            f"◇ Available             ~{remaining / 1000:.0f}k tokens\n\n",
             style="dim white",
         )
 
@@ -133,7 +133,7 @@ class TokenUsageScreen(BaseAuraModalScreen[None]):
             text.append(f"{line}\n", style="dim white")
 
         text.append(
-            "Esc / Enter: fechar  |  ←: recolher",
+            "Esc / Enter: close  |  ←: collapse",
             style="bold white",
         )
 

@@ -5,9 +5,6 @@ Utility functions for Aura CLI
 import logging
 import os
 
-from rich.console import Console
-
-console = Console()
 logger = logging.getLogger(__name__)
 
 
@@ -19,7 +16,9 @@ def clear_screen() -> None:
     import sys
 
     if os.name == "nt":
-        console.clear()
+        from aura_cli.cli.ui.display_facade import get_console
+
+        get_console().clear()
     else:
         sys.stdout.write("\033[2J\033[H")
         sys.stdout.flush()
@@ -70,34 +69,35 @@ def set_environment_for_litellm() -> None:
 def _try_load_from_secure_config() -> bool:
     """Attempt to load API keys from SecureConfig (keyring). Returns True if any key was set."""
     try:
-        from aura_cli.core.secure_config import secure_config_manager
+        from aura_cli.core.config import get_config_manager as _gcm
+        _cm = _gcm()
 
         keys_loaded = False
         keys_loaded |= _set_env_key(
             "GOOGLE_API_KEY",
-            secure_config_manager.get_api_key("google"),
+            _cm.get_api_key("google"),
             "GEMINI_API_KEY",
         )
         keys_loaded |= _set_env_key(
-            "OPENAI_API_KEY", secure_config_manager.get_api_key("openai")
+            "OPENAI_API_KEY", _cm.get_api_key("openai")
         )
         keys_loaded |= _set_env_key(
-            "ANTHROPIC_API_KEY", secure_config_manager.get_api_key("anthropic")
+            "ANTHROPIC_API_KEY", _cm.get_api_key("anthropic")
         )
         keys_loaded |= _set_env_key(
-            "NVIDIA_API_KEY", secure_config_manager.get_api_key("nvidia")
+            "NVIDIA_API_KEY", _cm.get_api_key("nvidia")
         )
         keys_loaded |= _set_env_key(
-            "CEREBRAS_API_KEY", secure_config_manager.get_api_key("cerebras")
+            "CEREBRAS_API_KEY", _cm.get_api_key("cerebras")
         )
         keys_loaded |= _set_env_key(
-            "OPENROUTER_API_KEY", secure_config_manager.get_api_key("openrouter")
+            "OPENROUTER_API_KEY", _cm.get_api_key("openrouter")
         )
         keys_loaded |= _set_env_key(
-            "GROQ_API_KEY", secure_config_manager.get_api_key("groq")
+            "GROQ_API_KEY", _cm.get_api_key("groq")
         )
         # Register Gemini keys for round-robin rotation (supports comma-separated multi-key)
-        google_key = secure_config_manager.get_api_key("google") or ""
+        google_key = _cm.get_api_key("google") or ""
         if google_key:
             try:
                 from aura_cli.core.llm.key_rotation import register_keys

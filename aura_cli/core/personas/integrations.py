@@ -52,7 +52,6 @@ class ConsciousnessManager:
         return cls._instance
 
     def __init__(self):
-        """Initialize the instance."""
         if self._initialized:
             return
 
@@ -199,7 +198,7 @@ class ConsciousnessManager:
                 get_config_manager().get("consciousness_threshold") or threshold
             )
         except Exception as _e:
-            pass  # silenced: {_e}
+            logger.debug("Config threshold unavailable, using default: %s", _e)
         return self._build_skills_section(query, max_skills, threshold)
 
     def _build_skills_section(
@@ -236,7 +235,7 @@ class ConsciousnessManager:
             body = parts[2].strip() if len(parts) >= 3 else raw_content
 
         if len(body) > max_chars:
-            body = body[:max_chars] + "\n\n*[conteúdo truncado para economizar tokens]*"
+            body = body[:max_chars] + "\n\n*[content truncated to save tokens]*"
         return body
 
     def _build_persona_section(self, agent_name: str) -> Optional[str]:
@@ -386,7 +385,7 @@ def get_consciousness_manager() -> ConsciousnessManager:
         if container.has(Services.CONSCIOUSNESS_MANAGER):
             return container.resolve(Services.CONSCIOUSNESS_MANAGER)
     except Exception:
-        pass
+        logger.debug("DI container unavailable in get_consciousness_manager, using fallback", exc_info=True)
 
     # Fallback to legacy singleton
     global _manager

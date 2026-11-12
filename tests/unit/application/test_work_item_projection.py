@@ -87,7 +87,7 @@ def test_approval_is_blocking_attention_but_not_chat_telemetry() -> None:
     assert projection.conversation is None
     assert projection.attention is not None
     assert projection.attention.blocking is True
-    assert projection.attention.title == "Ação necessária"
+    assert projection.attention.title == "Action required"
 
 
 def test_checkpoint_stays_in_activity_and_inspection() -> None:

@@ -42,7 +42,7 @@ class BaseToolScreen(Screen):
     CHROME_ID: ClassVar[str] = "tool_screen_chrome"
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "pop_screen", "Voltar", show=True),
+        Binding("escape", "pop_screen", "Back", show=True),
     ]
 
     def compose(self) -> ComposeResult:

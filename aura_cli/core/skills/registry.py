@@ -19,4 +19,15 @@ class SkillRegistry:
         data = self.list()
         data[name] = metadata
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.path.write_text(json.dumps(data, indent=2, sort_keys=True), encoding="utf-8")
+        self.path.write_text(
+            json.dumps(data, indent=2, sort_keys=True), encoding="utf-8"
+        )
+
+    def remove(self, name: str) -> None:
+        data = self.list()
+        if data.pop(name, None) is None:
+            return
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        self.path.write_text(
+            json.dumps(data, indent=2, sort_keys=True), encoding="utf-8"
+        )

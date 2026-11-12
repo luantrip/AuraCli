@@ -10,8 +10,6 @@ from enum import Enum
 import os
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from rich.console import Console
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
@@ -22,7 +20,6 @@ if TYPE_CHECKING:
     )
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class MigrationStatus(Enum):
@@ -151,7 +148,7 @@ class DatabaseMigration:
         self.migrations[migration_id] = migration
         self._save_migration(migration)
 
-        logger.info(f"Migração '{name}' (v{version}) criada")
+        logger.info(f"Migration '{name}' (v{version}) created")
 
         return migration
 
@@ -163,12 +160,11 @@ class DatabaseMigration:
             DatabaseConnection,
         )
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call("apply_migration", {"migration_id": migration_id})
 
         if migration_id not in self.migrations:
-            error_msg = f"Migração {migration_id} não encontrada"
+            error_msg = f"Migration {migration_id} not found"
             logger.error(error_msg)
             return error_msg
 
@@ -184,7 +180,7 @@ class DatabaseMigration:
             self._ensure_migrations_table(connection)
             applied = self._get_applied_migrations(connection)
             if migration_id in applied:
-                return f"Migração {migration_id} já está aplicada"
+                return f"Migration {migration_id} is already applied"
 
             executor = self._get_executor()
             statements = [s.strip() for s in migration.up_sql.split(";") if s.strip()]
@@ -202,16 +198,11 @@ class DatabaseMigration:
             migration.status = MigrationStatus.APPLIED
             migration.applied_at = datetime.now()
 
-            logger.info(f"Migração {migration_id} aplicada com sucesso")
-
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Migração '{migration.name}' aplicada[/{UIStyles.SUCCESS}]"
-            )
+            logger.info(f"Migration {migration_id} applied successfully")
 
             self.stats.track_tool_usage("database_migration")
 
-            return "Migração aplicada com sucesso"
+            return "Migration applied successfully"
 
         except Exception as e:
             migration.status = MigrationStatus.FAILED
@@ -227,12 +218,11 @@ class DatabaseMigration:
             DatabaseConnection,
         )
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call("rollback_migration", {"migration_id": migration_id})
 
         if migration_id not in self.migrations:
-            return f"Migração {migration_id} não encontrada"
+            return f"Migration {migration_id} not found"
 
         migration = self.migrations[migration_id]
 
@@ -244,7 +234,7 @@ class DatabaseMigration:
         try:
             applied = self._get_applied_migrations(connection)
             if migration_id not in applied:
-                return "Migração não está aplicada, não pode ser revertida"
+                return "Migration is not applied, cannot be reverted"
 
             executor = self._get_executor()
 
@@ -262,14 +252,9 @@ class DatabaseMigration:
             migration.status = MigrationStatus.ROLLED_BACK
             migration.applied_at = None
 
-            logger.info(f"Migração {migration_id} revertida com sucesso")
+            logger.info(f"Migration {migration_id} reverted successfully")
 
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Migração '{migration.name}' revertida[/{UIStyles.SUCCESS}]"
-            )
-
-            return "Migração revertida com sucesso"
+            return "Migration reverted successfully"
 
         except Exception as e:
             error_msg = f"Error reverting migration: {e}"
@@ -295,7 +280,7 @@ class DatabaseMigration:
         ]
 
         if not pending:
-            return "Nenhuma migração pendente"
+            return "No pending migrations"
 
         applied_count = 0
         for migration in pending:
@@ -303,9 +288,9 @@ class DatabaseMigration:
             if "sucesso" in result.lower():
                 applied_count += 1
             else:
-                return f"Erro após aplicar {applied_count} migrações: {result}"
+                return f"Error after applying {applied_count} migrations: {result}"
 
-        return f"{applied_count} migrações aplicadas com sucesso"
+        return f"{applied_count} migrations applied successfully"
 
     def _load_migrations(self) -> None:
         """Load migrations from the migrations directory."""
@@ -367,7 +352,7 @@ class DatabaseMigration:
                 f.write("\n\n-- DOWN\n")
                 f.write(migration.down_sql)
 
-            logger.debug(f"Migração salva em {filepath}")
+            logger.debug(f"Migration saved at {filepath}")
 
         except Exception as e:
             logger.error(f"Error saving migration: {e}", exc_info=True)

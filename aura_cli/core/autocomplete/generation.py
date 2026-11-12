@@ -68,7 +68,7 @@ class AutocompleteGenerator:
             from transformers import AutoModelForCausalLM, AutoTokenizer
 
             model_name = "Salesforce/codet5-base"
-            logger.info(f"Carregando modelo de geração: {model_name}")
+            logger.info(f"Loading generation model: {model_name}")
 
             self._generation_tokenizer = AutoTokenizer.from_pretrained(  # nosec B615
                 model_name, revision="main"
@@ -82,7 +82,7 @@ class AutocompleteGenerator:
             logger.info(f"Generation model loaded: {model_name}")
 
         except ImportError:
-            logger.warning("transformers não instalado, code completion limitado")
+            logger.warning("transformers not installed, code completion limited")
             self._model_loaded = False
         except Exception as e:
             logger.warning(f"Error loading generation model: {e}, using fallback")
@@ -111,7 +111,7 @@ class AutocompleteGenerator:
 
         suggestions = suggestions[:max_suggestions]
 
-        logger.debug(f"{len(suggestions)} sugestões geradas para prefixo '{prefix}'")
+        logger.debug(f"{len(suggestions)} suggestions generated for prefix '{prefix}'")
 
         self.stats.track_tool_usage("autocomplete_generation")
 
@@ -272,7 +272,7 @@ class AutocompleteGenerator:
                         )
                     )
 
-            logger.debug(f"Geradas {len(suggestions)} sugestões ML")
+            logger.debug(f"Generated {len(suggestions)} ML suggestions")
             return suggestions[:max_suggestions]
 
         except Exception as e:

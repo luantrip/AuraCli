@@ -367,7 +367,7 @@ class TestToastNotifications:
 
     def test_toast_creation(self):
         """Testa criação de toast."""
-        from aura_cli.cli.ui.components.toast import Toast, ToastType
+        from aura_cli.cli.ui.components.layout.toast import Toast, ToastType
 
         toast = Toast(id="test1", message="Test message", type=ToastType.SUCCESS)
 
@@ -377,7 +377,7 @@ class TestToastNotifications:
 
     def test_toast_manager(self):
         """Testa manager de toasts."""
-        from aura_cli.cli.ui.components.toast import ToastManager
+        from aura_cli.cli.ui.components.layout.toast import ToastManager
 
         manager = ToastManager(max_visible=3)
 
@@ -387,7 +387,7 @@ class TestToastNotifications:
 
     def test_toast_dismiss(self):
         """Testa dismiss de toast."""
-        from aura_cli.cli.ui.components.toast import ToastManager
+        from aura_cli.cli.ui.components.layout.toast import ToastManager
 
         manager = ToastManager()
 
@@ -402,7 +402,7 @@ class TestInteractiveDashboard:
 
     def test_dashboard_creation(self):
         """Testa criação de dashboard."""
-        from aura_cli.cli.ui.components.interactive_dashboard import (
+        from aura_cli.cli.ui.components.layout.interactive_dashboard import (
             InteractiveDashboard,
         )
 
@@ -411,7 +411,7 @@ class TestInteractiveDashboard:
 
     def test_add_columns(self):
         """Testa adicionar colunas."""
-        from aura_cli.cli.ui.components.interactive_dashboard import (
+        from aura_cli.cli.ui.components.layout.interactive_dashboard import (
             InteractiveDashboard,
         )
 
@@ -423,7 +423,7 @@ class TestInteractiveDashboard:
 
     def test_set_data(self):
         """Testa definir dados."""
-        from aura_cli.cli.ui.components.interactive_dashboard import (
+        from aura_cli.cli.ui.components.layout.interactive_dashboard import (
             InteractiveDashboard,
         )
 
@@ -442,7 +442,7 @@ class TestInteractiveDashboard:
 
     def test_sorting(self):
         """Testa ordenação."""
-        from aura_cli.cli.ui.components.interactive_dashboard import (
+        from aura_cli.cli.ui.components.layout.interactive_dashboard import (
             InteractiveDashboard,
             SortOrder,
         )

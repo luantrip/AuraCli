@@ -59,7 +59,7 @@
       "blocking_keys": [],
       "announcements": [],
       "conversation": [
-        "agi task complete · completed\nPronto"
+        "Responder · completed\nPronto"
       ],
       "density": "spacious",
       "drawer_mode": "split",
@@ -95,7 +95,7 @@
       "blocking_keys": [],
       "announcements": [],
       "conversation": [
-        "agi task error · falhou\nFalha real",
+        "Testar · falhou\nFalha real",
         "Falha real"
       ],
       "density": "spacious",
@@ -205,7 +205,7 @@
       "announcements": [],
       "conversation": [
         "Pausado · interrupted\nPausado",
-        "agi task complete · completed\nRetomado"
+        "Retomar · completed\nRetomado"
       ],
       "density": "spacious",
       "drawer_mode": "split",
@@ -297,10 +297,10 @@
       ],
       "blocking_keys": [],
       "announcements": [
-        "[bg] agi task complete · completed — Índice pronto · 4s"
+        "[bg] Indexar · completed — Índice pronto · 4s"
       ],
       "conversation": [
-        "agi task complete · completed\nÍndice pronto"
+        "Indexar · completed\nÍndice pronto"
       ],
       "density": "spacious",
       "drawer_mode": "split",

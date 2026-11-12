@@ -8,6 +8,7 @@ from typing import Any, Sequence
 
 
 class MonitorContentMode(Enum):
+    """Content rendering mode for the monitor panel."""
     EMPTY = "empty"
     LOADING = "loading"
     ERROR = "error"
@@ -18,12 +19,14 @@ class MonitorContentMode(Enum):
 
 @dataclass(frozen=True)
 class MonitorContentView:
+    """View model for monitor content display."""
     mode: MonitorContentMode
     content: str
 
 
 @dataclass(frozen=True)
 class MonitorAddressView:
+    """View model for the monitor address bar."""
     url: str
     secure: bool
     can_back: bool
@@ -34,6 +37,7 @@ class MonitorAddressView:
 
 @dataclass(frozen=True)
 class MonitorTabView:
+    """View model for monitor tab navigation."""
     index: int
     label: str
     active: bool

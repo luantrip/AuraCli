@@ -23,7 +23,7 @@ class RefactorAgent(AgentBase):
         super().__init__(
             agent_id=agent_id,
             name="Refactor Agent",
-            description="Agente especializado em refatoração de código",
+            description="Specialized agent for code refactoring",
             model=model,
         )
 
@@ -52,7 +52,7 @@ class RefactorAgent(AgentBase):
         strategy = task.parameters.get("strategy", "incremental")
 
         if not all([pattern, replacement]):
-            raise ValueError("Parâmetros 'pattern' e 'replacement' são obrigatórios")
+            raise ValueError("Parameters 'pattern' and 'replacement' are required")
 
         return str(
             plan_refactoring(
@@ -74,7 +74,7 @@ class RefactorAgent(AgentBase):
         scope = task.parameters.get("scope", ".")
 
         if not file_path:
-            raise ValueError("Parâmetro 'file_path' é obrigatório")
+            raise ValueError("Parameter 'file_path' is required")
 
         return analyze_impact_for_refactoring(file_path, action, scope)
 
@@ -86,7 +86,7 @@ class RefactorAgent(AgentBase):
 
         plan = task.parameters.get("plan")
         if not plan:
-            raise ValueError("Parâmetro 'plan' é obrigatório")
+            raise ValueError("Parameter 'plan' is required")
 
         return str(apply_refactoring_plan(plan))
 
@@ -98,7 +98,7 @@ class RefactorAgent(AgentBase):
         scope = task.parameters.get("scope", ".")
 
         if not pattern:
-            raise ValueError("Parâmetro 'pattern' é obrigatório")
+            raise ValueError("Parameter 'pattern' is required")
 
         return str(suggest_strategy(pattern, scope))
 

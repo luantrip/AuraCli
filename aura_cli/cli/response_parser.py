@@ -125,7 +125,7 @@ def extract_tool_call_data(tool_call: Any, call_index: int = 0) -> Tuple[str, st
 
         if not function_name:
             raise ValueError(
-                f"Não foi possível extrair nome da função do tool call: {tool_call}"
+                f"Could not extract function name from tool call: {tool_call}"
             )
 
         return function_name, function_args_str, tool_call_id
@@ -141,9 +141,9 @@ def extract_tool_call_data(tool_call: Any, call_index: int = 0) -> Tuple[str, st
 
         if not function_name:
             raise ValueError(
-                f"Não foi possível extrair nome da função do tool call: {tool_call}"
+                f"Could not extract function name from tool call: {tool_call}"
             )
 
         return function_name, function_args_str, tool_call_id
 
-    raise ValueError(f"Formato de tool call não suportado: {type(tool_call)}")
+    raise ValueError(f"Unsupported tool call format: {type(tool_call)}")

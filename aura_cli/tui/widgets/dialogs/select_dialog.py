@@ -99,7 +99,7 @@ class SelectDialog(BaseDialog):
         if self.multi_select:
             return [
                 ("Concluir", "done", "primary"),
-                ("Cancelar", "cancel", "default"),
+                ("Cancel", "cancel", "default"),
             ]
         return [
             ("Cancel", "cancel", "default"),

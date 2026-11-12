@@ -16,13 +16,11 @@ from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 # Cryptography is now essential
 CRYPTOGRAPHY_AVAILABLE = True
 import keyring
-from rich.console import Console
 
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 class SecretType(Enum):
@@ -141,7 +139,6 @@ class SecretManager:
     ) -> str:
         """Store a secret (value will be encrypted)."""
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call("store_secret", {"name": name, "type": secret_type.value})
 
@@ -170,11 +167,6 @@ class SecretManager:
         self.secrets[secret_id] = secret
 
         logger.info(f"Secret '{name}' armazenado")
-
-        console.print(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-            f"Secret '{name}' armazenado com sucesso[/{UIStyles.SUCCESS}]"
-        )
 
         self.stats.track_tool_usage("secret_manager")
 

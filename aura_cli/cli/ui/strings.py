@@ -22,13 +22,13 @@ class UIStrings:
     CLICK_TO_EXPAND = "clique para expandir"
 
     # Status
-    COMPLETED = "concluídas"
-    COMPLETED_SINGULAR = "concluída"
+    COMPLETED = "completed"
+    COMPLETED_SINGULAR = "completed"
     PENDING = "pendentes"
     WORKING_ON = "Trabalhando em"
-    ALL_DONE = "Tudo concluído"
-    CANCELLED = "cancelada"
-    TASK_COMPLETED = "Tarefa concluída"
+    ALL_DONE = "All done"
+    CANCELLED = "cancelled"
+    TASK_COMPLETED = "Task completed"
     PROGRESS = "Progresso"
     CURRENT = "atual"
 
@@ -40,7 +40,7 @@ class UIStrings:
     CHARACTERS = "caracteres"
 
     # Messages
-    COMMANDS_AVAILABLE = "Comandos Disponíveis"
+    COMMANDS_AVAILABLE = "Available Commands"
 
     @staticmethod
     def expand_hint(remaining: int, unit: str = "linhas") -> str:

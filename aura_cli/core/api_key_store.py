@@ -9,29 +9,19 @@ from __future__ import annotations
 import os
 from typing import Dict, List, Optional, Tuple
 
+from aura_cli.core.llm.provider_spec import PROVIDER_SPECS
 from aura_cli.core.logger import get_logger
 
 logger = get_logger(__name__)
 
-# (provider_id, display_name, primary_env_key)
-API_PROVIDERS: Tuple[Tuple[str, str, str], ...] = (
-    ("google", "Google Gemini", "GOOGLE_API_KEY"),
-    ("cerebras", "Cerebras", "CEREBRAS_API_KEY"),
-    ("groq", "Groq", "GROQ_API_KEY"),
-    ("openrouter", "OpenRouter", "OPENROUTER_API_KEY"),
-    ("openai", "OpenAI", "OPENAI_API_KEY"),
-    ("anthropic", "Anthropic", "ANTHROPIC_API_KEY"),
-    ("nvidia", "NVIDIA", "NVIDIA_API_KEY"),
+# (provider_id, display_name, primary_env_key) — derived from ProviderSpec.
+API_PROVIDERS: Tuple[Tuple[str, str, str], ...] = tuple(
+    (spec.id, spec.label, spec.primary_env_key) for spec in PROVIDER_SPECS
 )
 
+# provider_id -> accepted env var names (primary first) — derived from ProviderSpec.
 PROVIDER_ENV_KEYS: Dict[str, List[str]] = {
-    "google": ["GOOGLE_API_KEY", "GEMINI_API_KEY"],
-    "cerebras": ["CEREBRAS_API_KEY"],
-    "groq": ["GROQ_API_KEY"],
-    "openrouter": ["OPENROUTER_API_KEY"],
-    "openai": ["OPENAI_API_KEY"],
-    "anthropic": ["ANTHROPIC_API_KEY"],
-    "nvidia": ["NVIDIA_API_KEY"],
+    spec.id: list(spec.env_keys) for spec in PROVIDER_SPECS
 }
 
 
@@ -48,19 +38,14 @@ def clear_env_keys_for_provider(provider: str) -> None:
 def clear_api_key_for_provider(provider: str) -> None:
     """Remove stored API key for a provider from all backends."""
     provider = _normalize_provider(provider)
-    try:
-        from aura_cli.core.secure_config import secure_config_manager
-
-        secure_config_manager.delete_api_key(provider)
-    except Exception as exc:
-        logger.debug("SecureConfig delete failed for %s: %s", provider, exc)
-
+    # ConfigCompat.set_api_key delegates to SecureConfig for key deletion
+    # and keeps the JSON config free of secret material.
     try:
         from aura_cli.core.config import ConfigCompat
 
         ConfigCompat().set_api_key(provider, None)
     except Exception as exc:
-        logger.debug("Pydantic clear failed for %s: %s", provider, exc)
+        logger.debug("Config clear failed for %s: %s", provider, exc)
 
     clear_env_keys_for_provider(provider)
 

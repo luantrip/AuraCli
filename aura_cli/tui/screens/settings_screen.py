@@ -15,7 +15,7 @@ from aura_cli.tui.widgets.settings_panel import LLMSettingsPanel
 class SettingsScreen(BaseAuraModalScreen[None]):
     """API keys section + LLM panel (shell base modal)."""
 
-    TITLE = "⚙ Configurações"
+    TITLE = "⚙ Settings"
     INITIAL_FOCUS_SELECTOR = "#provider_select"
 
     def compose_body(self) -> ComposeResult:

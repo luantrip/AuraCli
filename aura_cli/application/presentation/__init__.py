@@ -49,6 +49,10 @@ from aura_cli.application.presentation.codebase_analysis import (
     codebase_investigation_objective,
     requests_codebase_investigation,
 )
+from aura_cli.application.presentation.color_palette import (
+    SHARED_PALETTE,
+    shared_color,
+)
 from aura_cli.application.presentation.dashboard_query import (
     DashboardFilter,
     SortOrder,
@@ -72,6 +76,10 @@ from aura_cli.application.presentation.file_browser import (
     plan_duplicate_destination,
     plan_transfer_destination,
     resolve_child_path,
+)
+from aura_cli.application.presentation.glyph_vocabulary import (
+    SHARED_GLYPHS,
+    shared_glyph,
 )
 from aura_cli.application.presentation.input_routing import (
     PresentationInputRoute,
@@ -123,6 +131,13 @@ from aura_cli.application.presentation.realtime_execution import (
     RealtimeExecution,
     describe_realtime_execution,
     format_elapsed,
+)
+from aura_cli.application.presentation.semantic_tokens import (
+    AGENT_ROLES,
+    ALL_COLOR_ROLES,
+    CHAT_ROLES,
+    COLOR_ROLES,
+    STATUS_ROLES,
 )
 from aura_cli.application.presentation.state_store import (
     ReactiveStateStore,
@@ -204,6 +219,13 @@ from aura_cli.application.presentation.work_items import (
 )
 
 __all__ = [
+    "AGENT_ROLES",
+    "ALL_COLOR_ROLES",
+    "CHAT_ROLES",
+    "COLOR_ROLES",
+    "SHARED_GLYPHS",
+    "SHARED_PALETTE",
+    "STATUS_ROLES",
     "TERMINAL_WORK_ITEM_STATES",
     "VISUAL_CAPABILITIES",
     "ActivityFeed",
@@ -331,6 +353,8 @@ __all__ = [
     "select_activity",
     "set_spatial_focus",
     "set_task_filter",
+    "shared_color",
+    "shared_glyph",
     "summarize_interactions",
     "surface_requests_from_projection",
     "toggle_drawer",

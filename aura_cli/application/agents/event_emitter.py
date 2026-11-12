@@ -125,6 +125,7 @@ class AgiEventAdapter:
     def error_task(
         self, error: Any, *, details: Optional[Dict[str, Any]] = None
     ) -> None:
+        """Emit an error event for a task that failed."""
         self.emit_lifecycle(
             AgiEventType.TASK_ERROR,
             status="failed",
@@ -135,6 +136,7 @@ class AgiEventAdapter:
         )
 
     def cancel_task(self, reason: str = "cancelled by user") -> None:
+        """Emit a cancellation event for a task."""
         self.emit_lifecycle(
             AgiEventType.TASK_CANCELLED,
             status="cancelled",
@@ -144,6 +146,7 @@ class AgiEventAdapter:
         )
 
     def interrupt_task(self, reason: str, *, resumable: bool = True) -> None:
+        """Emit an interruption event for a running task."""
         self.emit_lifecycle(
             AgiEventType.TASK_INTERRUPTED,
             status="interrupted",
@@ -155,6 +158,7 @@ class AgiEventAdapter:
     def start_external_wait(
         self, message: str, *, reason: Optional[str] = None
     ) -> None:
+        """Emit an event signalling the agent is waiting for external input."""
         self.emit_lifecycle(
             AgiEventType.EXTERNAL_WAIT_STARTED,
             status="waiting_external",
@@ -164,6 +168,7 @@ class AgiEventAdapter:
         )
 
     def end_external_wait(self, message: str = "External wait resolved") -> None:
+        """Emit an event signalling the external wait has ended."""
         self.emit_lifecycle(
             AgiEventType.EXTERNAL_WAIT_ENDED,
             status="running",
@@ -179,6 +184,7 @@ class AgiEventAdapter:
         scope: str = "once",
         policy_key: str | None = None,
     ) -> None:
+        """Emit an approval-request event for a pending action."""
         self.emit_lifecycle(
             AgiEventType.APPROVAL_REQUESTED,
             status="awaiting_user",
@@ -198,6 +204,7 @@ class AgiEventAdapter:
         message: str = "Approval resolved",
         scope: str = "once",
     ) -> None:
+        """Emit an event resolving a pending approval request."""
         self.emit_lifecycle(
             AgiEventType.APPROVAL_RESOLVED,
             status="running" if approved else "declined",
@@ -209,6 +216,7 @@ class AgiEventAdapter:
         )
 
     def checkpoint_created(self, name: str, artifact: str) -> None:
+        """Emit an event signalling a new checkpoint was created."""
         if not self.current_task_id:
             return
         _safe_put(
@@ -282,7 +290,7 @@ class AgiEventAdapter:
 
         _safe_put(self.status_queue, event)
         logger.debug(
-            f"Ferramenta {tool_name} iniciada na tarefa {self.current_task_id}"
+            f"Tool {tool_name} started in task {self.current_task_id}"
         )
         return execution_id
 
@@ -328,9 +336,9 @@ class AgiEventAdapter:
 
         _safe_put(self.status_queue, event)
         logger.debug(
-            f"Ferramenta {tool_name} concluída: success={success}, time={execution_time:.2f}s"
+            f"Tool {tool_name} completed: success={success}, time={execution_time:.2f}s"
             if execution_time
-            else f"Ferramenta {tool_name} concluída: success={success}"
+            else f"Tool {tool_name} completed: success={success}"
         )
 
     def get_current_task_id(self) -> Optional[str]:

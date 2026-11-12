@@ -77,10 +77,9 @@ class TestDockerOperations:
 
         result = docker_logs("nonexistent", tail=50)
 
-        # Aceita múltiplos formatos de erro
+        # Accept multiple error phrasings (product messages are English).
         assert any(
-            x in result.lower()
-            for x in ["erro", "error", "não encontrado", "docker não disponível"]
+            x in result.lower() for x in ["error", "not found", "docker not available"]
         )
 
 

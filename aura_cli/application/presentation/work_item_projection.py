@@ -27,6 +27,7 @@ from aura_cli.application.presentation.work_items import (
 
 
 class ProjectionTone(str, Enum):
+    """Tone applied to a projected work item display."""
     MUTED = "muted"
     INFO = "info"
     SUCCESS = "success"
@@ -36,12 +37,14 @@ class ProjectionTone(str, Enum):
 
 @dataclass(frozen=True)
 class ConversationProjection:
+    """Projected view of the conversation work item."""
     content: str
     persistent: bool = True
 
 
 @dataclass(frozen=True)
 class ActivityProjection:
+    """Projected view of the activity feed work item."""
     key: str
     label: str
     detail: str | None
@@ -51,6 +54,7 @@ class ActivityProjection:
 
 @dataclass(frozen=True)
 class AttentionProjection:
+    """Projected view of attention-required work items."""
     key: str
     title: str
     message: str
@@ -73,6 +77,7 @@ class InspectionProjection:
 
 @dataclass(frozen=True)
 class WorkItemProjection:
+    """Combined projection of all work item surfaces."""
     identity_key: str
     conversation: ConversationProjection | None
     activity: ActivityProjection | None
@@ -104,7 +109,11 @@ def project_work_item(
         heartbeat_seconds=heartbeat_seconds,
         background=background,
     )
-    detail_suffix = f" — {activity_detail}" if activity_detail else ""
+    detail_suffix = (
+        f" — {activity_detail}"
+        if activity_detail and activity_detail not in item.summary
+        else ""
+    )
     activity = ActivityProjection(
         key=key,
         label=f"{task_prefix}{item.summary} · {state_label}{detail_suffix}",
@@ -189,12 +198,16 @@ def surface_requests_from_projection(
     return tuple(requests)
 
 
+_SELF_NAMING_FIELDS = ("description", "message", "name")
+
+
 class RealtimeProjectionReducer:
     """Preserve timing across event snapshots and emit periodic heartbeats."""
 
     def __init__(self, *, heartbeat_seconds: int = 15) -> None:
         self.heartbeat_seconds = heartbeat_seconds
         self._active: dict[str, WorkItemEnvelope] = {}
+        self._titles: dict[str, str] = {}
         self._heartbeat_buckets: dict[str, int] = {}
         self._background: dict[str, bool] = {}
 
@@ -218,6 +231,16 @@ class RealtimeProjectionReducer:
                         paths=item.evidence.paths or previous.evidence.paths,
                     ),
                 )
+        if event.type == AgiEventType.TASK_START and item.summary:
+            self._titles[key] = item.summary
+        elif (
+            item.kind is not WorkItemKind.TOOL
+            and key in self._titles
+            and not any(event.data.get(name) for name in _SELF_NAMING_FIELDS)
+        ):
+            # Terminal events carry no name; show the task's own title, not the
+            # raw event type ("agi task complete").
+            item = replace(item, summary=self._titles[key])
         projection = project_work_item(
             item,
             now=datetime.fromtimestamp(event.timestamp, timezone.utc),
@@ -228,6 +251,7 @@ class RealtimeProjectionReducer:
             self._active.pop(key, None)
             self._heartbeat_buckets.pop(key, None)
             self._background.pop(key, None)
+            self._titles.pop(key, None)
         else:
             self._active[key] = item
             self._background[key] = bool(event.data.get("background", False))
@@ -304,7 +328,7 @@ def _attention(
     if item.attention is WorkItemAttention.NONE:
         return None
     blocking = item.attention is WorkItemAttention.ACTION
-    title = "Ação necessária" if blocking else _state_label(item.state).capitalize()
+    title = "Action required" if blocking else _state_label(item.state).capitalize()
     return AttentionProjection(
         key=key,
         title=title,
@@ -336,12 +360,12 @@ def _state_label(state: WorkItemState) -> str:
     return {
         WorkItemState.QUEUED: "na fila",
         WorkItemState.PREPARING: "preparando",
-        WorkItemState.RUNNING: "em execução",
+        WorkItemState.RUNNING: "running",
         WorkItemState.STREAMING: "transmitindo",
         WorkItemState.WAITING_EXTERNAL: "waiting for external operation",
         WorkItemState.AWAITING_USER: "waiting for you",
         WorkItemState.COMPLETED: "completed",
-        WorkItemState.PARTIAL: "conclusão parcial",
+        WorkItemState.PARTIAL: "partial completion",
         WorkItemState.FAILED: "falhou",
         WorkItemState.DECLINED: "recusado",
         WorkItemState.CANCELLED: "cancelled",

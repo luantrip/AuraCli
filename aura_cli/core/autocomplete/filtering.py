@@ -64,7 +64,7 @@ class SuggestionFilter:
         elif self.strategy == FilterStrategy.LENIENT:
             filtered = self._filter_lenient(filtered)
 
-        logger.debug(f"Sugestões filtradas: {len(suggestions)} -> {len(filtered)}")
+        logger.debug(f"Suggestions filtered: {len(suggestions)} -> {len(filtered)}")
 
         self.stats.track_tool_usage("suggestion_filtering")
 

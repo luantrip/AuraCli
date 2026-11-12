@@ -39,7 +39,7 @@ class KnightRiderSpinner(Static):
         "pulse": ["⣿", "⣷", "⣯", "⣟", "⡿", "⢿", "⣻", "⣽", " "],
     }
 
-    message = reactive("Carregando...")
+    message = reactive("Loading...")
     running = reactive(True)
 
     def __init__(
@@ -47,7 +47,7 @@ class KnightRiderSpinner(Static):
         width: int = 20,
         style: Literal["block", "diamond", "dot", "wave", "pulse"] = "block",
         color: str = "#00d9ff",
-        message: str = "Carregando...",
+        message: str = "Loading...",
         trail_length: int = 4,
         fps: int = 30,
         **kwargs,
@@ -89,7 +89,7 @@ class KnightRiderSpinner(Static):
             self._timer.stop()
             self._timer = None
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Advance one animation frame."""
         if not self.running:
             return
@@ -171,7 +171,6 @@ class CompactSpinner(Static):
     message = reactive("")
 
     def __init__(self, message: str = "", color: str = "#00d9ff", **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self.message = message
         self.color = color
@@ -187,7 +186,7 @@ class CompactSpinner(Static):
         if self._timer:
             self._timer.stop()
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Advance one animation frame."""
         self._frame = (self._frame + 1) % len(self.FRAMES)
         self.refresh()
@@ -207,7 +206,6 @@ class ProgressSpinner(Static):
     message = reactive("")
 
     def __init__(self, message: str = "", **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self.message = message
         self._spinner = "⠋"
@@ -224,7 +222,7 @@ class ProgressSpinner(Static):
         if self._timer:
             self._timer.stop()
 
-    def _animate(self) -> None:  # type: ignore[override]
+    def _animate(self) -> None:  # type: ignore[override]  # Textual private override
         """Advance one animation frame."""
         self._frame = (self._frame + 1) % len(self._spinner_frames)
         self._spinner = self._spinner_frames[self._frame]

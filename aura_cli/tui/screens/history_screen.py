@@ -19,16 +19,16 @@ from aura_cli.tui.widgets.history.browser_panel import HistoryBrowserPanel
 class HistoryScreen(BaseToolScreen):
     """Browse past JSONL sessions under ~/.aura/sessions."""
 
-    SCREEN_TITLE = "◇ Histórico de Sessões"
-    SCREEN_SUBTITLE = "Buscar · filtrar por CWD · pré-visualizar"
+    SCREEN_TITLE = "◇ Session History"
+    SCREEN_SUBTITLE = "Search · filter by CWD · preview"
 
     BINDINGS: ClassVar[list] = [
         *BaseToolScreen.BINDINGS,
-        Binding("/", "focus_search", "Buscar", show=True),
+        Binding("/", "focus_search", "Search", show=True),
         Binding("f", "toggle_cwd_filter", "Filtrar CWD"),
-        Binding("enter", "open_session", "Abrir"),
+        Binding("enter", "open_session", "Open"),
         Binding("r", "refresh", "Atualizar"),
-        Binding("c", "clear_search", "Limpar busca"),
+        Binding("c", "clear_search", "Clear search"),
     ]
 
     def __init__(self, sessions_dir: Optional[Path] = None, **kwargs):
@@ -73,12 +73,12 @@ class HistoryScreen(BaseToolScreen):
             restore_session_to_chat(cast(Any, self.app), session)
             pop_screen_and_restore_focus(self.app)
             self.app.notify(
-                f"Sessão restaurada: {entry.session_id}",
-                title="◇ Sessão",
+                f"Session restored: {entry.session_id}",
+                title="◇ Session",
             )
         else:
             self.notify(
-                f"Não foi possível carregar: {entry.session_id}",
+                f"Could not load: {entry.session_id}",
                 severity="warning",
             )
 
@@ -107,8 +107,8 @@ class HistoryScreen(BaseToolScreen):
                 restore_session_to_chat(cast(Any, self.app), session)
                 pop_screen_and_restore_focus(self.app)
                 self.app.notify(
-                    f"Sessão externa restaurada: {entry.session_id}",
-                    title="◇ Sessão",
+                    f"External session restored: {entry.session_id}",
+                    title="◇ Session",
                 )
             except ValueError as exc:
                 self.notify(str(exc), severity="error")
@@ -119,10 +119,10 @@ class HistoryScreen(BaseToolScreen):
             reasons = "; ".join(preview.divergence_reasons)
             push_confirm(
                 self.app,
-                title="Importar sessão externa",
+                title="Import external session",
                 message=(
-                    f"Esta sessão diverge ({reasons}) e será importada somente como "
-                    "histórico. Nenhuma tool será executada. Continuar?"
+                    f"This session diverges ({reasons}) and will be imported as "
+                    "history only. No tools will be executed. Continue?"
                 ),
                 on_result=restore,
                 confirm_label="Importar",

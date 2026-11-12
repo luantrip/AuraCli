@@ -25,7 +25,7 @@ try:
     HAS_LITELLM = True
 except ImportError:
     HAS_LITELLM = False
-    logger.warning("litellm não disponível. Multi-model intelligence limitado.")
+    logger.warning("litellm not available. Multi-model intelligence limited.")
 
 
 class ModelQuality(Enum):
@@ -48,7 +48,7 @@ class ModelResponse:
     quality: ModelQuality
     tokens_used: Optional[int] = None
     latency_ms: Optional[float] = None
-    metadata: Dict[str, Any] = None  # type: ignore[assignment]
+    metadata: Dict[str, Any] = None  # type: ignore[assignment]  # default None, narrowed before use
 
     def __post_init__(self):
         """Post-initialization setup for dataclass fields."""
@@ -79,7 +79,7 @@ class MultiModelIntelligence:
             models: List of models to use. If None, uses defaults.
         """
         if not HAS_LITELLM:
-            raise ImportError("litellm é necessário para multi-model intelligence")
+            raise ImportError("litellm is required for multi-model intelligence")
 
         self.default_models = get_default_multi_model_candidates()
         requested_models = models or self.default_models
@@ -225,7 +225,7 @@ class MultiModelIntelligence:
     def compare_responses(self, responses: List[ModelResponse]) -> Dict[str, Any]:
         """Compare responses from multiple models for the same prompt."""
         if not responses:
-            return {"error": "Nenhuma resposta para comparar"}
+            return {"error": "No responses to compare"}
 
         sorted_responses = sorted(
             responses, key=lambda r: r.quality_score, reverse=True
@@ -306,7 +306,7 @@ class MultiModelIntelligence:
             Resultado do ensemble
         """
         if not responses:
-            raise ValueError("Nenhuma resposta fornecida para ensemble")
+            raise ValueError("No responses provided for ensemble")
 
         if strategy == "best":
             best = max(responses, key=lambda r: r.quality_score)
@@ -370,10 +370,10 @@ class MultiModelIntelligence:
                 consensus_score = 0.0
                 agreement_level = "low"
                 reasoning = (
-                    "Nenhuma resposta de qualidade suficiente, usando primeira resposta"
+                    "No response of sufficient quality, using first response"
                 )
         else:
-            raise ValueError(f"Estratégia desconhecida: {strategy}")
+            raise ValueError(f"Unknown strategy: {strategy}")
 
         return EnsembleResult(
             best_response=best,
@@ -395,7 +395,7 @@ class MultiModelIntelligence:
         responses = self.query_models(prompt, system_message)
 
         if not responses:
-            return {"error": "Nenhuma resposta recebida dos models"}
+            return {"error": "No response received from models"}
 
         ensemble = self.create_ensemble(responses, strategy=ensemble_strategy)
 
@@ -420,7 +420,7 @@ class MultiModelIntelligence:
         }
 
         if return_all:
-            result["all_responses"] = [  # type: ignore[assignment]
+            result["all_responses"] = [  # type: ignore[assignment]  # TypedDict key broadening
                 {
                     "model": r.model,
                     "content": r.content,
@@ -440,7 +440,7 @@ def query_multiple_models(
 ) -> List[Dict[str, Any]]:
     """Query multiple models in parallel and return all responses."""
     if not HAS_LITELLM:
-        raise ImportError("litellm é necessário para multi-model queries")
+        raise ImportError("litellm is required for multi-model queries")
 
     mmi = MultiModelIntelligence(models=models)
     responses = mmi.query_models(prompt, system_message)
@@ -465,7 +465,7 @@ def compare_model_responses(
 ) -> Dict[str, Any]:
     """Compare responses from different models and rank them."""
     if not HAS_LITELLM:
-        raise ImportError("litellm é necessário para multi-model comparison")
+        raise ImportError("litellm is required for multi-model comparison")
 
     mmi = MultiModelIntelligence(models=models)
     responses = mmi.query_models(prompt, system_message)
@@ -480,7 +480,7 @@ def smart_model_query(
 ) -> Dict[str, Any]:
     """Execute a smart query with automatic model selection."""
     if not HAS_LITELLM:
-        raise ImportError("litellm é necessário para smart model queries")
+        raise ImportError("litellm is required for smart model queries")
 
     mmi = MultiModelIntelligence(models=models)
     return mmi.smart_query(prompt, system_message, ensemble_strategy=ensemble_strategy)

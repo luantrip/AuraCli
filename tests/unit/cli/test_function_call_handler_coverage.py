@@ -31,7 +31,7 @@ class TestSummarizeToolResult:
         assert result is None
 
     def test_list_directory_success(self):
-        result = self._fn("list_directory", "Listou 3 itens em '.'")
+        result = self._fn("list_directory", "Listed 3 items in '.'")
         assert result is not None
 
     def test_list_directory_no_listou(self):

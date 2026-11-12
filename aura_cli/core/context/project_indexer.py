@@ -142,7 +142,7 @@ class ProjectContextManager:
                 )
         except Exception as e:
             logger.warning(f"Sentinel initialization failed: {e}")
-            self.sentinel = None  # type: ignore[assignment]
+            self.sentinel = None  # type: ignore[assignment]  # optional dep
             self.changes = None
 
         self._ensure_dirs()
@@ -176,7 +176,7 @@ class ProjectContextManager:
             self.index["last_updated"] = datetime.now().isoformat()
             with open(self.index_path, "w", encoding="utf-8") as f:
                 json.dump(self.index, f, indent=2, ensure_ascii=False)
-            logger.debug("Índice salvo")
+            logger.debug("Index saved")
         except Exception as e:
             logger.error(f"Error saving index: {e}")
 
@@ -269,15 +269,15 @@ class ProjectContextManager:
 
         if len(content) > 100_000:
             logger.warning(f"File {file_path} too large, truncating")
-            content = content[:100_000] + "\n\n[... conteúdo truncado ...]"
+            content = content[:100_000] + "\n\n[... content truncated ...]"
 
-        prompt = f"""Analise este arquivo e forneça um resumo técnico conciso (máximo 300 palavras):
+        prompt = f"""Analyze this file and provide a concise technical summary (max 300 words):
 
-1. **Propósito:** O que este arquivo faz?
-2. **Componentes:** Classes, funções ou módulos principais
-3. **Dependências:** Imports e dependências importantes
-4. **Padrões:** Padrões de código ou arquitetura utilizados
-5. **Integração:** Como este arquivo se integra ao projeto
+1. **Purpose:** What does this file do?
+2. **Components:** Main classes, functions or modules
+3. **Dependencies:** Key imports and dependencies
+4. **Patterns:** Code or architecture patterns used
+5. **Integration:** How this file integrates with the project
 
 Arquivo: `{file_path}`
 
@@ -290,9 +290,9 @@ Arquivo: `{file_path}`
             {
                 "role": "system",
                 "content": (
-                    "Você é um analisador de código especializado. "
-                    "Forneça resumos técnicos, concisos e úteis para desenvolvedores. "
-                    "Use markdown para formatação."
+                    "You are a specialized code analyzer. "
+                    "Provide concise, technical summaries useful for developers. "
+                    "Use markdown for formatting."
                 ),
             },
             {"role": "user", "content": prompt},
@@ -392,7 +392,7 @@ Arquivo: `{file_path}`
                 except Exception as _e:
                     logger.debug(f"Ignorado: {_e}")
 
-        logger.info("Índice limpo")
+        logger.info("Index cleared")
 
 
 def generate_file_tree(
@@ -468,22 +468,22 @@ async def _identify_key_files(model, tree, max_files, ui_callback):
     if ui_callback:
         ui_callback("🔍 Identificando files-chave...")
     identify_prompt = (
-        f"Analise esta árvore de files de um projeto de software.\n"
-        f"Identifique os {max_files} files mais importantes para entender a arquitetura e funcionamento do projeto.\n\n"
-        "Critérios de importância:\n"
-        "1. Arquivos de entrada/configuração (main, config, settings)\n"
-        "2. Definições de API/rotas\n"
-        "3. Modelos de dados/schemas\n"
-        "4. Serviços/lógica de negócio principais\n"
-        "5. Arquivos de documentação importantes\n\n"
-        "Retorne APENAS os caminhos dos files, um por linha, sem explicações.\n"
-        "NÃO inclua diretórios, apenas files.\n\n"
-        f"Árvore do projeto:\n```\n{tree}\n```\n"
+        f"Analyze this file tree from a software project.\n"
+        f"Identify the {max_files} most important files for understanding the project architecture and behavior.\n\n"
+        "Importance criteria:\n"
+        "1. Entry/config files (main, config, settings)\n"
+        "2. API/route definitions\n"
+        "3. Data models/schemas\n"
+        "4. Core services/business logic\n"
+        "5. Important documentation files\n\n"
+        "Return ONLY file paths, one per line, no explanations.\n"
+        "Do NOT include directories, only files.\n\n"
+        f"Project tree:\n```\n{tree}\n```\n"
     )
     messages = [
         {
             "role": "system",
-            "content": "Você é um arquiteto de software experiente. Analise projetos e identifique files-chave.",
+            "content": "You are an experienced software architect. Analyze projects and identify key files.",
         },
         {"role": "user", "content": identify_prompt},
     ]
@@ -505,22 +505,22 @@ async def _generate_conventions(model, all_context, ctx_manager, ui_callback, re
     if not all_context:
         return
     if ui_callback:
-        ui_callback("📐 Inferindo convenções do projeto...")
+        ui_callback("📐 Inferring project conventions...")
     conventions_prompt = (
-        "Baseado nos resumos dos files analisados, infira as convenções de código deste projeto:\n\n"
-        "1. **Padrões de Nomenclatura:** Como variáveis, funções, classes são nomeadas\n"
-        "2. **Estrutura de Diretórios:** Organização do projeto\n"
-        "3. **Padrões de Arquitetura:** MVC, Clean Architecture, etc.\n"
+        "Based on the analyzed file summaries, infer this project's code conventions:\n\n"
+        "1. **Naming Patterns:** How variables, functions, classes are named\n"
+        "2. **Directory Structure:** Project organization\n"
+        "3. **Architecture Patterns:** MVC, Clean Architecture, etc.\n"
         "4. **Bibliotecas/Frameworks:** Principais tecnologias utilizadas\n"
-        "5. **Estilo de Código:** Formatação, documentação, etc.\n"
-        "6. **Padrões de Teste:** Se houver\n"
-        "7. **Configuração:** Como o projeto é configurado\n\n"
+        "5. **Code Style:** Formatting, documentation, etc.\n"
+        "6. **Test Patterns:** If any\n"
+        "7. **Configuration:** How the project is configured\n\n"
         f"Contexto dos files analisados:\n{all_context[:50000]}\n"
     )
     messages = [
         {
             "role": "system",
-            "content": "Você é um especialista em padrões de código e boas práticas.",
+            "content": "You are an expert in code patterns and best practices.",
         },
         {"role": "user", "content": conventions_prompt},
     ]
@@ -538,7 +538,7 @@ async def _generate_conventions(model, all_context, ctx_manager, ui_callback, re
 
                 memory_service = get_memory_service(ctx_manager.project_root)
                 if memory_service.save_conventions(conventions_content):
-                    logger.info("Convenções salvas no notebook (Nim)")
+                    logger.info("Conventions saved to notebook (Nim)")
                 else:
                     logger.warning("Failed to save conventions to notebook")
             except Exception as notebook_error:
@@ -547,7 +547,7 @@ async def _generate_conventions(model, all_context, ctx_manager, ui_callback, re
                 )
             results["conventions_generated"] = True
             if ui_callback:
-                ui_callback("  ✓ Convenções geradas")
+                ui_callback("  ✓ Conventions generated")
     except Exception as e:
         logger.error(f"Error generating conventions: {e}")
 
@@ -561,20 +561,20 @@ async def _generate_overview(
     if ui_callback:
         ui_callback("📖 Criando overview do projeto...")
     overview_prompt = (
-        "Crie um overview de alto nível deste projeto de software:\n\n"
-        "1. **Propósito:** O que o projeto faz\n"
-        "2. **Arquitetura:** Estrutura principal e padrões\n"
-        "3. **Componentes:** Módulos/pacotes principais e suas responsabilidades\n"
+        "Create a high-level overview of this software project:\n\n"
+        "1. **Purpose:** What the project does\n"
+        "2. **Architecture:** Main structure and patterns\n"
+        "3. **Components:** Main modules/packages and their responsibilities\n"
         "4. **Fluxo de Dados:** Como os dados fluem pelo sistema\n"
-        "5. **Pontos de Extensão:** Onde e como o projeto pode ser estendido\n"
-        "6. **Dependências Principais:** Bibliotecas e frameworks críticos\n\n"
-        f"Árvore do projeto:\n```\n{tree[:5000]}\n```\n\n"
+        "5. **Extension Points:** Where and how the project can be extended\n"
+        "6. **Main Dependencies:** Critical libraries and frameworks\n\n"
+        f"Project tree:\n```\n{tree[:5000]}\n```\n\n"
         f"Contexto dos files:\n{all_context[:30000]}\n"
     )
     messages = [
         {
             "role": "system",
-            "content": "Você é um arquiteto de software técnico. Crie documentação clara e útil.",
+            "content": "You are a technical software architect. Create clear and useful documentation.",
         },
         {"role": "user", "content": overview_prompt},
     ]
@@ -641,7 +641,7 @@ async def handle_init_command(
     }
 
     if ui_callback:
-        ui_callback("📂 Gerando árvore de files...")
+        ui_callback("📂 Generating file tree...")
 
     tree = generate_file_tree(ctx_manager.project_root, max_depth=4)
     tree_lines = tree.split("\n")

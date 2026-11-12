@@ -50,7 +50,7 @@ def test_delegation_panel_reattach_falls_back_to_ops():
     panel = DelegationPanel()
     app_loop = Mock()
     app_loop.get_latest_delegated_task.side_effect = [
-        "Nenhuma tarefa delegada encontrada.",
+        "No delegated task found for agent_type='agi'.",
         "task_id=ops-1",
     ]
     app_loop.reattach_delegated_task_context.return_value = "reattached-ops"

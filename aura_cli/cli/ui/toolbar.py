@@ -40,7 +40,6 @@ class ToolbarAction:
         callback: Optional[Callable] = None,
         enabled: bool = True,
     ):
-        """Initialize the instance."""
         self.key = key
         self.label = label
         self.style = style
@@ -82,7 +81,7 @@ def create_toolbar_actions(
     actions = []
 
     if can_copy:
-        actions.append(ToolbarAction("c", "copiar", UIStyles.MUTED, on_copy))
+        actions.append(ToolbarAction("c", "copy", UIStyles.MUTED, on_copy))
 
     if can_expand:
         expand_label = "recolher" if is_expanded else "expandir"
@@ -95,7 +94,7 @@ def create_toolbar_actions(
         actions.append(ToolbarAction("n", "rejeitar", UIStyles.ERROR, on_reject))
 
     if can_run:
-        actions.append(ToolbarAction("r", "executar", UIStyles.SUCCESS, on_run))
+        actions.append(ToolbarAction("r", "execute", UIStyles.SUCCESS, on_run))
 
     if has_output:
         actions.append(ToolbarAction("v", "ver", UIStyles.MUTED, None))

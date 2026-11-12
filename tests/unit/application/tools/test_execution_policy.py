@@ -213,8 +213,8 @@ def test_blocked_capability_falls_back_to_headless_warning() -> None:
             )
 
     ui.display_warning.assert_called_once_with(
-        "Execução de run_shell_command bloqueada: "
-        "Operação de alto risco rejeitada: adapter de intervenção ausente."
+        "Execution of run_shell_command blocked: "
+        "High-risk operation rejected: intervention adapter absent."
     )
 
 
@@ -230,7 +230,7 @@ def test_guard_uses_broker_for_one_policy_access_decision() -> None:
         with execution_policy_context(TaskExecutionPolicy(task_id="task-access")):
             with pytest.raises(
                 ToolExecutionError,
-                match="Execução de write_file bloqueada: Acesso negado pela política",
+                match="Execution of write_file blocked: Access denied by policy",
             ):
                 tool_execution._check_execution_guards(
                     "write_file", {"path": "sentinel.txt"}, Mock(), ui
@@ -357,7 +357,7 @@ def test_policy_denial_is_typed_and_stops_tool_execution() -> None:
     manager.check_access.return_value = (False, "somente leitura")
 
     with patch.object(tool_execution, "_get_policy_manager", return_value=manager):
-        with pytest.raises(ToolExecutionError, match="Acesso negado pela política"):
+        with pytest.raises(ToolExecutionError, match="Access denied by policy"):
             tool_execution._run_policy_check("write_file", {"path": "x"})
 
 

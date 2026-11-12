@@ -40,7 +40,7 @@ def test_loop_repairs_then_falls_back_when_model_claims_unexecuted_mutation() ->
     assert llm.await_count == 2
     assert (
         content
-        == "Nenhuma operação foi executada; não posso confirmar a ação solicitada."
+        == "No operation was executed; I cannot confirm the requested action."
     )
 
 
@@ -64,5 +64,5 @@ def test_loop_stops_with_explicit_time_reason() -> None:
         )
     )
 
-    assert "limite de tempo" in content
+    assert "time limit" in content
     assert response is None

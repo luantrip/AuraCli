@@ -123,7 +123,7 @@ class FileManagerStatusBar(Widget):
                     files = len(items) - dirs
                     info = f"▷ {path.name} | {dirs} folders, {files} files"
                 except PermissionError:
-                    info = f"▷ {path.name} | Acesso negado"
+                    info = f"▷ {path.name} | Access denied"
             else:
                 # Show file info
                 size = format_file_size(stat_info.st_size)
@@ -132,7 +132,7 @@ class FileManagerStatusBar(Widget):
 
             left.update(info)
         except Exception as e:
-            left.update(f"Erro: {e}")
+            left.update(f"Error: {e}")
 
     def _update_disk_info(self, path: Optional[Path] = None) -> None:
         """Update disk usage information."""
@@ -276,7 +276,7 @@ class FilePreview(Widget):
 
     def compose(self) -> ComposeResult:
         yield Static(
-            "Selecione um arquivo para visualizar",
+            "Select a file to preview",
             classes="no-preview",
             id="preview-content",
         )
@@ -290,7 +290,7 @@ class FilePreview(Widget):
         content = self.query_one("#preview-content", Static)
 
         if not path:
-            content.update("Selecione um arquivo para visualizar")
+            content.update("Select a file to preview")
             content.add_class("no-preview")
             return
 
@@ -316,12 +316,12 @@ class FilePreview(Widget):
             size = path.stat().st_size
             if size > self.MAX_PREVIEW_SIZE:
                 content.update(
-                    f"Arquivo muito grande para visualizar ({format_file_size(size)})"
+                    f"File too large to preview ({format_file_size(size)})"
                 )
                 content.add_class("no-preview")
                 return
         except Exception:
-            content.update("Não foi possível ler o arquivo")
+            content.update("Could not read file")
             content.add_class("no-preview")
             return
 
@@ -362,7 +362,7 @@ class FilePreview(Widget):
             content.update("\n".join(lines))
             content.remove_class("no-preview")
         except PermissionError:
-            content.update("Permissão negada")
+            content.update("Permission denied")
             content.add_class("no-preview")
 
     def _preview_binary(self, path: Path, content: Static) -> None:
@@ -377,15 +377,15 @@ class FilePreview(Widget):
             if suffix in {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".webp", ".ico"}:
                 icon = "◇ Imagem"
             elif suffix in {".mp3", ".wav", ".flac", ".m4a", ".ogg", ".aac"}:
-                icon = "♪ Áudio"
+                icon = "♪ Audio"
             elif suffix in {".mp4", ".mkv", ".avi", ".mov", ".webm"}:
-                icon = "▶ Vídeo"
+                icon = "▶ Video"
             elif suffix in {".zip", ".tar", ".gz", ".rar", ".7z"}:
                 icon = "◇ Arquivo compactado"
             elif suffix in {".pdf"}:
                 icon = "◇ Documento PDF"
             elif suffix in {".exe", ".msi", ".dmg", ".app"}:
-                icon = "◎ Executável"
+                icon = "◎ Executable"
             else:
                 icon = "◇ Binary File"
 
@@ -396,11 +396,11 @@ class FilePreview(Widget):
                 f"Tamanho: {size}",
                 f"Modificado: {modified.strftime('%Y-%m-%d %H:%M:%S')}",
                 "",
-                "(Arquivo binário - visualização não disponível)",
+                "(Binary file – preview unavailable)",
             ]
 
             content.update("\n".join(info))
             content.add_class("no-preview")
         except Exception as e:
-            content.update(f"Erro: {e}")
+            content.update(f"Error: {e}")
             content.add_class("no-preview")

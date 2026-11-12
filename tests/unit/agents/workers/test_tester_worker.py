@@ -208,3 +208,69 @@ class TestTesterWorker:
     def test_run_adversarial_validation_exists(self):
         """Test that run_adversarial_validation function exists."""
         assert callable(run_adversarial_validation)
+
+
+class TestBaseWorkerMigration:
+    """TesterWorker is a BaseWorker and never injects os.environ."""
+
+    def test_is_a_base_worker(self):
+        from aura_cli.cli.workers.base_worker import BaseWorker
+
+        worker = TesterWorker(
+            code_to_test="x", model="m", api_keys={}, available_tools={}
+        )
+        assert isinstance(worker, BaseWorker)
+        # Inherited lifecycle surface from the shared base.
+        assert hasattr(worker, "_shutdown_event")
+        assert callable(worker.cancel)
+        assert worker.task_id == "tester"
+
+    def test_source_does_not_inject_api_keys_into_os_environ(self):
+        """The old code did ``os.environ[key] = value`` per API key, racing across
+        concurrent workers. Credentials now flow through the LLM layer's
+        thread-local storage, so no assignment to os.environ may remain in code.
+        """
+        import ast
+        import inspect
+
+        from aura_cli.cli.workers import tester_worker as module
+
+        tree = ast.parse(inspect.getsource(module))
+        offenders = []
+        for node in ast.walk(tree):
+            # Match ``os.environ[...] = ...`` assignments only (reads are fine).
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if (
+                        isinstance(target, ast.Subscript)
+                        and isinstance(target.value, ast.Attribute)
+                        and target.value.attr == "environ"
+                    ):
+                        offenders.append(ast.dump(node))
+        assert offenders == [], offenders
+
+    def test_terminal_result_is_normalized_with_task_id(self):
+        worker = TesterWorker(
+            code_to_test="x",
+            model="m",
+            api_keys={},
+            available_tools={},
+            headless=True,
+        )
+        worker._publish_terminal_result({"status": "completed", "analysis": "ok"})
+        result = worker.get_result(timeout=1.0)
+        assert result["status"] == "completed"
+        assert result["task_id"] == "tester"  # normalized by BaseWorker
+
+    def test_short_code_publishes_error_through_the_base_lifecycle(self):
+        worker = TesterWorker(
+            code_to_test="short",
+            model="m",
+            api_keys={},
+            available_tools={},
+            headless=True,
+        )
+        worker._run_impl()
+        result = worker.get_result(timeout=1.0)
+        assert result["status"] == "error"
+        assert "short" in result["error"]

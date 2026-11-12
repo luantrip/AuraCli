@@ -95,7 +95,6 @@ class FocusIndicator:
     """Professional focus indicator manager."""
 
     def __init__(self, console: Optional[Console] = None):
-        """Initialize the instance."""
         self.console = console if console is not None else get_console()
         self.focused_element: str | None = None
 
@@ -132,7 +131,6 @@ class KeyboardNavigation:
     """Keyboard navigation manager."""
 
     def __init__(self):
-        """Initialize the instance."""
         self.focusable_elements = []
         self.current_index = 0
 
@@ -179,23 +177,23 @@ class AlternativeText:
             "+": "sucesso",
             "x": "erro",
             "!": "aviso",
-            "i": "informação",
+            "i": "information",
             "*": "ativo",
             "o": "inativo",
             "...": "carregando",
             "[T]": "ferramenta",
             "[F]": "arquivo",
-            "[D]": "diretório",
+            "[D]": "directory",
             ">": "executar",
             "?": "buscar",
             UIIcons.SUCCESS: "sucesso",
             UIIcons.ERROR: "erro",
             UIIcons.WARNING: "aviso",
-            UIIcons.INFO: "informação",
+            UIIcons.INFO: "information",
             UIIcons.LOADING: "carregando",
             UIIcons.TOOL: "ferramenta",
             UIIcons.FILE: "arquivo",
-            UIIcons.DIR: "diretório",
+            UIIcons.DIR: "directory",
             UIIcons.RUN: "executar",
             UIIcons.SEARCH: "buscar",
             UIIcons.CANCEL: "cancelled",
@@ -210,8 +208,8 @@ class AlternativeText:
             theme.get_color("success"): "verde (sucesso)",
             theme.get_color("error"): "vermelho (erro)",
             theme.get_color("warning"): "amarelo (aviso)",
-            theme.get_color("info"): "azul (informação)",
-            theme.get_color("primary"): "ciano (ação)",
+            theme.get_color("info"): "blue (information)",
+            theme.get_color("primary"): "cyan (action)",
         }
         return descriptions.get(color.lower(), color)
 
@@ -220,7 +218,6 @@ class AccessibilityChecker:
     """Verificador de acessibilidade."""
 
     def __init__(self):
-        """Initialize the instance."""
         self.issues = []
 
     def check_contrast(
@@ -273,7 +270,7 @@ class AccessibilityChecker:
                 {
                     "type": "keyboard",
                     "severity": "error",
-                    "message": "Elemento não acessível por teclado",
+                    "message": "Element not keyboard accessible",
                 }
             )
             return False
@@ -301,7 +298,7 @@ class AccessibilityChecker:
 
         # Tabela de issues
         table = Table(
-            title="Relatório de acessibilidade",
+            title="Accessibility report",
             show_header=True,
             header_style=UIStyles.SUBTITLE,
             border_style=UIStyles.BORDER_WARNING
@@ -329,7 +326,7 @@ class AccessibilityChecker:
         if len(errors) == 0 and len(warnings) == 0:
             summary_text.append("✓ ", style=UIStyles.SUCCESS)
             summary_text.append(
-                "Todas as verificações de acessibilidade passaram!",
+                "All accessibility checks passed!",
                 style=UIStyles.SUCCESS,
             )
         else:
@@ -344,7 +341,7 @@ class AccessibilityChecker:
 
         return Panel(
             Group(table, summary_text),
-            title="[bold cyan]Verificação de acessibilidade[/bold cyan]",
+            title="[bold cyan]Accessibility check[/bold cyan]",
             border_style=UIStyles.BORDER_ERROR
             if errors
             else UIStyles.BORDER_WARNING

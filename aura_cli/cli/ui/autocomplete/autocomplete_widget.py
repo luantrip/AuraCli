@@ -188,7 +188,7 @@ class AutocompleteWidget:
             ]
 
         table = Table(
-            title=f"▪ Sugestões de autocomplete{' - ' + query if query else ''}",
+            title=f"▪ Autocomplete suggestions{(' - ' + query) if query else ''}",
             title_style=UIStyles.TITLE,
             show_header=True,
             header_style=UIStyles.SUBTITLE,
@@ -198,10 +198,10 @@ class AutocompleteWidget:
 
         table.add_column("", width=3)  # Selection marker
         table.add_column("", width=3)  # Icon
-        table.add_column("Sugestão", width=25)
-        table.add_column("Tipo", width=12)
-        table.add_column("Descrição", width=35)
-        table.add_column("Pontuação", justify="right", width=10)
+        table.add_column("Suggestion", width=25)
+        table.add_column("Type", width=12)
+        table.add_column("Description", width=35)
+        table.add_column("Score", justify="right", width=10)
 
         type_icons = {
             SuggestionType.FUNCTION: "ƒ",
@@ -249,28 +249,28 @@ class AutocompleteWidget:
 
         selected = suggestions[0]
         preview_text = Text()
-        preview_text.append("Prévia: ", style=UIStyles.LABEL)
+        preview_text.append("Preview: ", style=UIStyles.LABEL)
         preview_text.append(f"{selected.text}", style=UIStyles.PRIMARY)
         preview_text.append("\n\n", style=UIStyles.MUTED)
         preview_text.append(
-            selected.documentation or "Nenhuma documentação disponível",
+            selected.documentation or "No documentation available",
             style=UIStyles.BODY,
         )
 
         preview = Panel(
             preview_text,
-            title="Documentação",
+            title="Documentation",
             title_align="left",
             border_style=UIStyles.BORDER_PRIMARY,
         )
 
         stats_text = Text()
         stats_text.append(f"\n{UIIcons.INFO} ", style=UIStyles.INFO)
-        stats_text.append("Total de sugestões: ", style=UIStyles.LABEL)
+        stats_text.append("Total suggestions: ", style=UIStyles.LABEL)
         stats_text.append(f"{len(suggestions)} ", style=UIStyles.PRIMARY)
         stats_text.append("| Exibindo: ", style=UIStyles.LABEL)
         stats_text.append("Top 5 ", style=UIStyles.SUCCESS)
-        stats_text.append("| Pontuação média: ", style=UIStyles.LABEL)
+        stats_text.append("| Avg score: ", style=UIStyles.LABEL)
         avg_score = sum(s.score for s in suggestions) / len(suggestions)
         stats_text.append(f"{avg_score:.0%}", style=UIStyles.INFO)
 
@@ -360,7 +360,7 @@ class SnippetBrowser:
 
         table.add_column("Nome", width=22)
         table.add_column("Linguagem", width=10)
-        table.add_column("Descrição", width=30)
+        table.add_column("Description", width=30)
         table.add_column("Uso", justify="right", width=8)
         table.add_column("Tags", width=25)
 
@@ -392,7 +392,7 @@ class SnippetBrowser:
 
         preview = Panel(
             syntax,
-            title=f"Prévia: {selected.name}",
+            title=f"Preview: {selected.name}",
             title_align="left",
             border_style=UIStyles.BORDER_PRIMARY,
         )
@@ -409,7 +409,7 @@ class SnippetBrowser:
         stats_text.append(f"{total_snippets} ", style=UIStyles.PRIMARY)
         stats_text.append("| Uso total: ", style=UIStyles.LABEL)
         stats_text.append(f"{total_usage} ", style=UIStyles.SUCCESS)
-        stats_text.append("| Tags únicas: ", style=UIStyles.LABEL)
+        stats_text.append("| Unique tags: ", style=UIStyles.LABEL)
         stats_text.append(f"{len(all_tags)}", style=UIStyles.INFO)
 
         return Group(table, preview, stats_text)
@@ -589,6 +589,7 @@ def show_autocomplete_dashboard(
             console=console,
             refresh_per_second=1 / refresh_rate,
             screen=False,
+            transient=True,
         ) as live_display:
             import time
 

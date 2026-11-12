@@ -48,4 +48,4 @@ def test_snapshot_history_preserves_base_prompts_and_describes_page() -> None:
     assert history[0] is not base[0]
     assert "notebooks/page-1" in history[1]["content"]
     assert "refinado" in history[1]["content"]
-    assert "12 mensagens" in history[1]["content"]
+    assert "12 messages" in history[1]["content"]

@@ -1,7 +1,7 @@
 """Neutral parsing of localized confirmation answers."""
 
 YES_ANSWERS = frozenset(("y", "yes", "s", "sim", "a", "aceitar", "t"))
-NO_ANSWERS = frozenset(("n", "no", "nao", "não", "r", "rejeitar"))
+NO_ANSWERS = frozenset(("n", "no", "nao", "não", "r", "reject"))
 
 
 def parse_confirmation_answer(answer: str, default: bool) -> bool | None:

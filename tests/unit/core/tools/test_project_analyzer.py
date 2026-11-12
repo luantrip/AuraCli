@@ -96,7 +96,7 @@ class TestExtractTechnologies:
 class TestExtractPurpose:
     def test_empty(self):
         result = _extract_purpose({})
-        assert result == "Não especificado"
+        assert result == "Not specified"
 
     def test_extracts_from_readme(self):
         readme = "# Title\n\nThis is a long enough description of the project purpose here.\n"

@@ -33,20 +33,14 @@ from aura_cli.core.llm.provider_policy import (
     provider_policy,
     structural_completion_params,
 )
+from aura_cli.core.llm.provider_spec import all_env_keys, env_keys_for
 from aura_cli.core.llm.rate_limiter import get_rate_limiter
 from aura_cli.core.logger import get_logger
 
 _thread_local = threading.local()
 
 _LLM_ENV_KEYS = [
-    "GOOGLE_API_KEY",
-    "GEMINI_API_KEY",
-    "OPENAI_API_KEY",
-    "ANTHROPIC_API_KEY",
-    "OPENROUTER_API_KEY",
-    "NVIDIA_API_KEY",
-    "CEREBRAS_API_KEY",
-    "GROQ_API_KEY",
+    *all_env_keys(),
     "GEMINI_API_VERSION",
     "GOOGLE_API_VERSION",
 ]
@@ -296,12 +290,12 @@ def _handle_llm_error(
                     f"Aguardando {backoff}s...",
                 )
             logger.debug(
-                f"Erro recuperável ({current_model}): {error}. "
+                f"Recoverable error ({current_model}): {error}. "
                 f"Retry {attempt + 1}/{max_retries} em {backoff}s"
             )
             time.sleep(backoff)
     else:
-        logger.warning(f"Erro não recuperável ({current_model}): {error}")
+        logger.warning(f"Non-recoverable error ({current_model}): {error}")
 
 
 def _setup_api_keys() -> None:
@@ -337,7 +331,7 @@ def _resolve_model(model: str, messages: List[Dict[str, str]]) -> str:
             model = get_task_router().select_model(prompt_text)
             logger.debug(f"TaskRouter.select_model selecionou: {model}")
         except Exception as e:
-            logger.debug(f"TaskRouter indisponível: {e}")
+            logger.debug(f"TaskRouter unavailable: {e}")
             model = DEFAULT_MODEL
     return model or DEFAULT_MODEL
 
@@ -384,39 +378,29 @@ def _append_cross_provider_fallbacks(
             models = get_models_for_provider(provider)
             return models[index] if len(models) > index else fallback
 
+        # (catalog provider, fallback model index/default, spec provider id).
+        # The credential name comes from ProviderSpec, never a literal here.
         candidates = [
-            ("gemini", catalog_model("gemini", 0, DEFAULT_MODEL), "GOOGLE_API_KEY"),
-            (
-                "cerebras",
-                catalog_model("cerebras", 0, DEFAULT_MODEL),
-                "CEREBRAS_API_KEY",
-            ),
-            (
-                "openrouter",
-                catalog_model("openrouter", 0, DEFAULT_MODEL),
-                "OPENROUTER_API_KEY",
-            ),
-            ("gpt", catalog_model("gpt", 1, "gpt-4o-mini"), "OPENAI_API_KEY"),
+            ("gemini", catalog_model("gemini", 0, DEFAULT_MODEL), "google"),
+            ("cerebras", catalog_model("cerebras", 0, DEFAULT_MODEL), "cerebras"),
+            ("openrouter", catalog_model("openrouter", 0, DEFAULT_MODEL), "openrouter"),
+            ("gpt", catalog_model("gpt", 1, "gpt-4o-mini"), "openai"),
             (
                 "anthropic",
                 catalog_model("claude", 1, "claude-haiku-4-5-20251001"),
-                "ANTHROPIC_API_KEY",
+                "anthropic",
             ),
-            (
-                "nvidia",
-                catalog_model("nvidia", 0, DEFAULT_MODEL),
-                "NVIDIA_API_KEY",
-            ),
+            ("nvidia", catalog_model("nvidia", 0, DEFAULT_MODEL), "nvidia"),
             (
                 "groq",
                 catalog_model("groq", 0, "groq/openai/gpt-oss-20b"),
-                "GROQ_API_KEY",
+                "groq",
             ),
         ]
-        for cp, cp_model, cp_key in candidates:
+        for cp, cp_model, cp_id in candidates:
             if (
                 cp != current_provider
-                and available_keys.get(cp_key)
+                and any(available_keys.get(key) for key in env_keys_for(cp_id))
                 and cp_model not in models
             ):
                 models.append(cp_model)
@@ -464,7 +448,7 @@ def _apply_cache_control(
         if config.get("prompt_caching") is False:
             return messages
     except Exception:
-        pass  # If config unavailable, default to enabled
+        logger.debug("llm.base: config unavailable, defaulting to enabled")
 
     # Deep copy messages to avoid mutating the original list
     cached_messages: List[Dict[str, Any]] = []
@@ -628,7 +612,7 @@ def _try_single_model(
                 current_model, max_wait=max(timeout, 1.0)
             ):
                 raise RateLimitError(
-                    message="Rate limiter local excedeu o tempo máximo de espera",
+                    message="Local rate limiter exceeded maximum wait time",
                     model=current_model,
                     retry_after=int(max(timeout, 1.0)),
                 )
@@ -753,8 +737,8 @@ def query_with_fallback(
                         loading.error(f"Erro: {type(e).__name__}")
                     raise
                 if loading:
-                    loading.update(LoadingState.PREPARING, "Tentando próximo modelo...")
-                logger.debug(f"{current_model} falhou: {e}. Tentando próximo...")
+                    loading.update(LoadingState.PREPARING, "Trying next model...")
+                logger.debug(f"{current_model} failed: {e}. Trying next...")
 
         # All models exhausted
         last_error_str = str(last_error).lower() if last_error else ""
@@ -762,7 +746,7 @@ def query_with_fallback(
             x in last_error_str for x in ["429", "rate limit", "quota", "exceeded"]
         )
         if loading:
-            loading.error("Limite atingido" if is_rate_limit else "Falha na conexão")
+            loading.error("Limit reached" if is_rate_limit else "Connection failure")
         if is_rate_limit:
             retry_after = None
             if last_error:
@@ -805,7 +789,7 @@ def estimate_tokens(text: str, model: Optional[str] = None) -> int:
                 encoding = tiktoken.encoding_for_model(model)
                 return len(encoding.encode(text))
             except (KeyError, ValueError):
-                pass  # Model not recognised by tiktoken — fall back to cl100k_base
+                logger.debug("tiktoken: model not recognised, falling back to cl100k_base")
 
         encoding = tiktoken.get_encoding("cl100k_base")
         return len(encoding.encode(text))

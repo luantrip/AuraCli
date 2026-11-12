@@ -74,7 +74,6 @@ class TestRunnerPanel(Static):
         """Emitted when test execution begins."""
 
         def __init__(self, test_count: int):
-            """Initialize the widget."""
             super().__init__()
             self.test_count = test_count
 
@@ -82,7 +81,6 @@ class TestRunnerPanel(Static):
         """Emitted when test execution finishes."""
 
         def __init__(self, result: TestSuiteResult):
-            """Initialize the widget."""
             super().__init__()
             self.result = result
 
@@ -90,12 +88,10 @@ class TestRunnerPanel(Static):
         """Emitted when a test result is updated."""
 
         def __init__(self, test: TestResult):
-            """Initialize the widget."""
             super().__init__()
             self.test = test
 
     def __init__(self, test_path: str = ".", **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self.test_path = test_path
         self.discovered_tests: Dict[str, TestResult] = {}
@@ -109,7 +105,7 @@ class TestRunnerPanel(Static):
         """Compose the widget layout."""
         with Horizontal():
             with Vertical(classes="test-list-pane"):
-                yield Static("◆ Suíte de testes", classes="pane-header")
+                yield Static("◆ Test suite", classes="pane-header")
 
                 with Horizontal(classes="summary-bar"):
                     yield Static("✔ 0", id="passed_count", classes="summary-passed")
@@ -122,11 +118,11 @@ class TestRunnerPanel(Static):
 
                 with Horizontal(classes="action-bar"):
                     yield Button("⚲ Descobrir", id="discover_btn")
-                    yield Button("▶ Executar tudo", id="run_all_btn", variant="primary")
-                    yield Button("▶ Executar selecionado", id="run_selected_btn")
+                    yield Button("▶ Run all", id="run_all_btn", variant="primary")
+                    yield Button("▶ Run selected", id="run_selected_btn")
 
             with Vertical(classes="test-output-pane"):
-                yield Static("↑ Saída dos testes", classes="pane-header")
+                yield Static("↑ Test output", classes="pane-header")
                 yield ProgressBar(
                     id="test_progress", classes="progress-container", show_eta=True
                 )
@@ -134,9 +130,9 @@ class TestRunnerPanel(Static):
 
                 with Horizontal(classes="action-bar"):
                     yield Button(
-                        "⏹ Parar", id="stop_btn", variant="error", disabled=True
+                        "⏹ Stop", id="stop_btn", variant="error", disabled=True
                     )
-                    yield Button("✖ Limpar", id="clear_btn")
+                    yield Button("✖ Clear", id="clear_btn")
                     yield Button("⊞ Exportar", id="export_btn")
 
     def on_mount(self) -> None:
@@ -288,7 +284,7 @@ class TestRunnerPanel(Static):
 
         self._write_log(f"▶ Executando {len(test_names)} testes...", "log-start")
         self._write_log(
-            f"Iniciado às {datetime.now().strftime('%H:%M:%S')}", "log-info"
+            f"Started at {datetime.now().strftime('%H:%M:%S')}", "log-info"
         )
         self._write_log("", "log-info")
 
@@ -343,7 +339,7 @@ class TestRunnerPanel(Static):
                 elif outcome == TestStatus.FAILED:
                     self.current_suite.failed += 1
                     test.error_message = (
-                        output or f"pytest encerrou com código {process.returncode}"
+                        output or f"pytest exited with code {process.returncode}"
                     )
                     self._write_log(f"  ✖ FALHOU ({test.duration_ms}ms)", "log-error")
                     self._write_log(f"    {test.error_message}", "log-error")
@@ -380,7 +376,7 @@ class TestRunnerPanel(Static):
                 f"  Cancelados: {self.current_suite.cancelled}", "log-warning"
             )
             self._write_log(
-                f"  Duração: {self.current_suite.duration_ms}ms", "log-info"
+                f"  Duration: {self.current_suite.duration_ms}ms", "log-info"
             )
 
             if self.current_suite.failed == 0:
@@ -446,7 +442,7 @@ class TestRunnerPanel(Static):
         """Return the user-facing Portuguese label for a test status."""
         labels = {
             TestStatus.PENDING: "pendente",
-            TestStatus.RUNNING: "em execução",
+            TestStatus.RUNNING: "running",
             TestStatus.PASSED: "passou",
             TestStatus.FAILED: "falhou",
             TestStatus.SKIPPED: "ignorado",
@@ -477,7 +473,7 @@ class TestRunnerPanel(Static):
             if process is not None and process.returncode is None:
                 process.terminate()
             self._write_log("", "log-info")
-            self._write_log("⏹ Execução de testes interrompida", "log-warning")
+            self._write_log("⏹ Test execution interrupted", "log-warning")
             self.notify("Testes interrompidos", severity="warning")
 
     def _export_results(self) -> None:
@@ -538,11 +534,11 @@ class TestRunnerPanel(Static):
                 if test_node.data:
                     test_name = test_node.data.get("name", "")
                     visible = not query or query_lower in test_name.lower()
-                    test_node.display = visible  # type: ignore[attr-defined]
+                    test_node.display = visible  # type: ignore[attr-defined]  # Textual TreeNode dynamic attr
                     if visible:
                         file_visible = True
 
-            file_node.display = file_visible  # type: ignore[attr-defined]
+            file_node.display = file_visible  # type: ignore[attr-defined]  # Textual TreeNode dynamic attr
 
     def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         """Handle tree node selection."""
@@ -569,7 +565,7 @@ class TestRunnerPanel(Static):
         )
 
         if test.duration_ms:
-            self._write_log(f"Duração: {test.duration_ms}ms", "log-label")
+            self._write_log(f"Duration: {test.duration_ms}ms", "log-label")
 
         if test.error_message:
             self._write_log("", "log-content")
@@ -578,5 +574,5 @@ class TestRunnerPanel(Static):
 
         if test.stdout:
             self._write_log("", "log-content")
-            self._write_log("Saída:", "log-label")
+            self._write_log("Output:", "log-label")
             self._write_log(test.stdout, "log-content")

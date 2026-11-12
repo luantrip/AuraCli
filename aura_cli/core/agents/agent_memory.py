@@ -133,7 +133,7 @@ class AgentMemory:
         self.total_stored += 1
         self.stats.track_tool_usage("agent_memory_store")
 
-        logger.debug(f"Memória {memory_id} armazenada para agente {agent_id}: {key}")
+        logger.debug(f"Memory {memory_id} stored for agent {agent_id}: {key}")
 
         return memory_id
 
@@ -178,7 +178,7 @@ class AgentMemory:
         self.total_retrieved += len(results)
         self.stats.track_tool_usage("agent_memory_retrieve")
 
-        logger.debug(f"Recuperadas {len(results)} memórias para agente {agent_id}")
+        logger.debug(f"Retrieved {len(results)} memories for agent {agent_id}")
 
         return results
 
@@ -220,7 +220,7 @@ class AgentMemory:
         if agent_id in self.memories:
             self.memories[agent_id].clear()
             self._save_agent_memories(agent_id)
-            logger.info(f"Memórias do agente {agent_id} limpas")
+            logger.info(f"Memories of agent {agent_id} cleared")
 
     def _cleanup_expired(self, agent_id: str) -> None:
         """Remove expired memories for an agent."""
@@ -238,7 +238,7 @@ class AgentMemory:
         if expired:
             self._save_agent_memories(agent_id)
             logger.debug(
-                f"Removidas {len(expired)} memórias expiradas do agente {agent_id}"
+                f"Removed {len(expired)} expired memories of agent {agent_id}"
             )
 
     def _save_agent_memories(self, agent_id: str) -> None:

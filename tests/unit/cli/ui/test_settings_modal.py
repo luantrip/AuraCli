@@ -30,9 +30,14 @@ def test_model_options_put_active_model_first_and_group_stably() -> None:
 
 
 def test_settings_summary_contains_navigation_contract() -> None:
+    """Provider count is dynamic (len(PROVIDER_SPECS)) and text is English."""
+    from aura_cli.core.llm.provider_spec import PROVIDER_SPECS
+
     summary = settings_summary(3, "Gemini", "grafite")
-    assert "3/6 provedores" in summary
-    assert "Esc voltar" in summary
+    # Dynamic total: matches the current PROVIDER_SPECS length (not a hard-coded /6).
+    assert f"3/{len(PROVIDER_SPECS)} providers" in summary
+    # Navigation hint is English.
+    assert "Esc back" in summary
 
 
 def test_model_command_opens_graphite_catalog_with_current_model_first() -> None:
@@ -46,7 +51,7 @@ def test_model_command_opens_graphite_catalog_with_current_model_first() -> None
     with (
         patch("aura_cli.cli.commands.config.get_valid_models", return_value=models),
         patch(
-            "prompt_toolkit.shortcuts.radiolist_dialog", return_value=application
+            "aura_cli.cli.ui.prompts.select_dialog", return_value=application
         ) as dialog,
     ):
         from aura_cli.cli.commands.config import handle_model

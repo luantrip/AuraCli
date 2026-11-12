@@ -73,7 +73,7 @@ class ContextPreprocessor:
             processed = processed[:half] + "\n...\n" + processed[-half:]
 
         logger.debug(
-            f"Contexto pré-processado: {len(context)} -> {len(processed)} chars"
+            f"Context pre-processed: {len(context)} -> {len(processed)} chars"
         )
 
         return processed
@@ -171,7 +171,7 @@ class ContextPreprocessor:
         relevant = context[start:end]
 
         logger.debug(
-            f"Contexto relevante extraído: {len(relevant)} chars ao redor da posição {cursor_position}"
+            f"Relevant context extracted: {len(relevant)} chars around position {cursor_position}"
         )
 
         return relevant
@@ -199,7 +199,7 @@ class ContextPreprocessor:
                     structure.append(line)
             processed = "\n".join(structure[: max_tokens // 10])
 
-        logger.info(f"Poluição reduzida: {len(context)} -> {len(processed)} chars")
+        logger.info(f"Noise reduced: {len(context)} -> {len(processed)} chars")
 
         self.stats.track_tool_usage("context_preprocessing")
 

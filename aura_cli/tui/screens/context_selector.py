@@ -114,7 +114,7 @@ def get_project_files(
         List of file paths
     """
     root = root or Path.cwd()
-    files = []  # type: ignore[var-annotated]
+    files = []  # type: ignore[var-annotated]  # List[Path] narrowed at use
 
     def walk(path: Path, depth: int = 0):
         """Walk the directory tree and yield matching paths."""
@@ -202,13 +202,13 @@ def run_context_selector(
         console.print()
         console.print("[bold cyan]▷ Select files for context[/bold cyan]")
         console.print(
-            f"[dim]({len(relative_files)} arquivos disponíveis, mostrando até 50)[/dim]"
+            f"[dim]({len(relative_files)} files available, showing up to 50)[/dim]"
         )
         console.print()
 
         result = checkboxlist_dialog(
-            title="Seleção de Contexto",
-            text="Use ESPAÇO para selecionar, ENTER para confirmar:",
+            title="Context Selection",
+            text="Use SPACE to select, ENTER to confirm:",
             values=values,
             style=dialog_style,
         ).run()
@@ -224,7 +224,7 @@ def run_context_selector(
 
 def _parse_selection(selection: str, files: List[str]) -> List[str]:
     """Parse comma-separated numbers/ranges into file list."""
-    selected = []  # type: ignore[var-annotated]
+    selected = []  # type: ignore[var-annotated]  # List[str] narrowed at use
     for part in selection.split(","):
         part = part.strip()
         if "-" in part:
@@ -268,7 +268,7 @@ def _simple_selector(
     # Show files in a table
     table = Table(show_header=True, header_style="bold cyan")
     table.add_column("#", style="dim", width=4)
-    table.add_column("Arquivo", style="white")
+    table.add_column("File", style="white")
     table.add_column("Tamanho", style="dim", width=10)
 
     for i, f in enumerate(files[:30], 1):  # Limit display
@@ -286,16 +286,16 @@ def _simple_selector(
         table.add_row(str(i), f, size_str)
 
     if len(files) > 30:
-        table.add_row("...", f"... e mais {len(files) - 30} arquivos", "")
+        table.add_row("...", f"... and {len(files) - 30} more files", "")
 
     console.print(table)
     console.print()
 
     # Get selection
     console.print(
-        "[bold]Digite os números dos arquivos separados por vírgula (ex: 1,3,5):[/bold]"
+        "[bold]Enter file numbers separated by commas (e.g. 1,3,5):[/bold]"
     )
-    console.print("[dim]Ou 'all' para selecionar todos, 'q' para cancelar[/dim]")
+    console.print("[dim]Ou 'all' to select all, 'q' to cancel[/dim]")
 
     try:
         selection = input("> ").strip().lower()
@@ -375,7 +375,7 @@ def handle_context_command(conversation_history: List[dict]) -> int:
             return 0
 
         # Aggregate context
-        console.print(f"[cyan]✎ Agregando {len(selected_files)} arquivo(s)...[/cyan]")
+        console.print(f"[cyan]✎ Aggregating {len(selected_files)} file(s)...[/cyan]")
         context = aggregate_context(selected_files)
 
         if not context:

@@ -25,7 +25,7 @@ try:
 
     _TUI_AVAILABLE = True
 except Exception:
-    AnsiArtDocument = None  # type: ignore[assignment,misc]
+    AnsiArtDocument = None  # type: ignore[assignment,misc]  # optional dep
     _TUI_AVAILABLE = False
 
 logger = get_logger(__name__)

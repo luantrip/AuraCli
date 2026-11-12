@@ -138,7 +138,8 @@ class StyledTextEngine:
                     value = func()
                     result = result.replace(f"[{macro_name}]", value)
                 except Exception as _e:
-                    pass  # silenced: {_e}
+                    import logging as _log
+                    _log.getLogger(__name__).debug("Macro expansion failed: %s", _e)
 
         if len(self._cache) >= 512:
             self._cache.pop(next(iter(self._cache)))

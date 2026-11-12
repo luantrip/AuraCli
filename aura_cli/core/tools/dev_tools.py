@@ -28,9 +28,9 @@ from aura_cli.application.execution_feedback import (
 from aura_cli.core.cache import cache_result
 from aura_cli.core.logger import get_logger
 
-# NOTE: AgentTask, TestAgent, NLPAnalyzer, CodeTokenizer, Language,
-#       SearchQuery, SemanticSearch, ForgeManager are lazy-imported inside
-#       functions to avoid circular: dev_tools → refactoring → dev_tools
+# AgentTask, TestAgent, NLPAnalyzer, CodeTokenizer, Language,
+# SearchQuery, SemanticSearch, ForgeManager are lazy-imported inside
+# functions to break the circular: dev_tools → refactoring → dev_tools.
 from aura_cli.core.stats import get_stats
 from aura_cli.core.tools.human_intervention_adapter import (
     confirm_tool_execution_locally,
@@ -91,7 +91,7 @@ def edit_file(path: str, old_content: str, new_content: str) -> str:
         confirm = confirm_tool_execution_locally(
             "edit_file",
             {"path": path, "old_content": old_content, "new_content": new_content},
-            fallback_message="Confirmar edição do arquivo?",
+            fallback_message="Confirm file edit?",
             fallback_context=path,
             console=console,
             auto_confirm_message=(
@@ -124,9 +124,7 @@ def edit_file(path: str, old_content: str, new_content: str) -> str:
                 with contextlib.suppress(Exception):
                     present_file_edit(path, old_content, new_content, show_preview=True)
 
-                success_msg = (
-                    f"Arquivo '{path}' editado com sucesso. Conteúdo atualizado."
-                )
+                success_msg = f"File '{path}' edited successfully. Content updated."
                 success_style = UIStyles.safe_style("SUCCESS", "green")
                 console.print(
                     f"[{success_style}]{UIIcons.SUCCESS} Arquivo editado[/{success_style}]"
@@ -142,9 +140,9 @@ def edit_file(path: str, old_content: str, new_content: str) -> str:
         else:
             warning_style = UIStyles.safe_style("WARNING", "yellow")
             console.print(
-                f"[{warning_style}]{UIIcons.CANCEL} Edição cancelada pelo usuário.[/{warning_style}]"
+                f"[{warning_style}]{UIIcons.CANCEL} Edit cancelled by user.[/{warning_style}]"
             )
-            return "Edição cancelada pelo usuário."
+            return "Edit cancelled by user."
 
     except FileNotFoundError:
         error_msg = f"Error: File '{path}' not found."
@@ -311,7 +309,7 @@ def tree_view(path: str = ".", max_depth: int = 3, show_hidden: bool = False) ->
 
         except PermissionError:
             error_style = UIStyles.safe_style("ERROR", "red")
-            tree.add(f"[{error_style}]Permissão negada[/{error_style}]")
+            tree.add(f"[{error_style}]Permission denied[/{error_style}]")
 
     try:
         root_path = Path(path)
@@ -340,7 +338,7 @@ def tree_view(path: str = ".", max_depth: int = 3, show_hidden: bool = False) ->
 
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(
-            f"[{success_style}]{UIIcons.SUCCESS} Árvore de diretórios gerada para '{path}'[/{success_style}]"
+            f"[{success_style}]{UIIcons.SUCCESS} Directory tree generated for '{path}'[/{success_style}]"
         )
         return result
 
@@ -366,7 +364,7 @@ def analyze_code(file_path: str) -> str:
             return error_msg
 
         if path_obj.is_dir():
-            error_msg = f"Erro: '{path}' é um diretório, não um arquivo. Use 'list_directory' para listar diretórios ou especifique um arquivo específico."
+            error_msg = f"Error: '{path}' is a directory, not a file. Use 'list_directory' to list directories or specify a specific file."
             error_style = UIStyles.safe_style("ERROR", "red")
             rprint(f"[{error_style}]{error_msg}[/{error_style}]")
             return error_msg
@@ -390,7 +388,7 @@ def analyze_code(file_path: str) -> str:
             rprint(f"[{error_style}]{error_msg}[/{error_style}]")
             return error_msg
         except IsADirectoryError:
-            error_msg = f"Erro: '{path}' é um diretório, não um arquivo. Use 'list_directory' para explorar diretórios."
+            error_msg = f"Error: '{path}' is a directory, not a file. Use 'list_directory' to explore directories."
             error_style = UIStyles.safe_style("ERROR", "red")
             rprint(f"[{error_style}]{error_msg}[/{error_style}]")
             return error_msg
@@ -468,13 +466,13 @@ def _analyze_python(file_path: str, content: str) -> str:
         )
 
         result = [
-            f"[FILE] Análise de {file_path}",
+            f"[FILE] Analysis of {file_path}",
             "",
-            "[STATS] Estatísticas:",
+            "[STATS] Statistics:",
             f"  * Total de linhas: {total_lines}",
-            f"  * Linhas de código: {code_lines}",
+            f"  * Lines of code: {code_lines}",
             f"  * Classes: {len(classes)}",
-            f"  * Funções: {len(functions)}",
+            f"  * Functions: {len(functions)}",
             f"  * Imports: {len(imports)}",
             "",
         ]
@@ -493,7 +491,7 @@ def _analyze_python(file_path: str, content: str) -> str:
         result.extend(
             _format_item_list(
                 UIIcons.RUN,
-                "Funções",
+                "Functions",
                 functions,
                 lambda f: (
                     f"  • {f['name']}({', '.join(f['args'])}) (linha {f['line']})"
@@ -504,7 +502,7 @@ def _analyze_python(file_path: str, content: str) -> str:
         output = "\n".join(result)
         success_style = UIStyles.safe_style("SUCCESS", "green")
         rprint(
-            f"[{success_style}]{UIIcons.SUCCESS} Análise Python completa de '{file_path}'[/{success_style}]"
+            f"[{success_style}]{UIIcons.SUCCESS} Python analysis complete for '{file_path}'[/{success_style}]"
         )
         return output
 
@@ -538,12 +536,12 @@ def _analyze_javascript(file_path: str, content: str) -> str:
             functions.append((match.group(1), i))
 
     result = [
-        f"{UIIcons.FILE} Análise de {file_path}",
+        f"{UIIcons.FILE} Analysis of {file_path}",
         "",
-        f"{UIIcons.STATS} Estatísticas:",
+        f"{UIIcons.STATS} Statistics:",
         f"  {UIIcons.BULLET} Total de linhas: {len(lines)}",
         f"  {UIIcons.BULLET} Imports: {len(imports)}",
-        f"  {UIIcons.BULLET} Funções: {len(functions)}",
+        f"  {UIIcons.BULLET} Functions: {len(functions)}",
         f"  {UIIcons.BULLET} Classes: {len(classes)}",
         "",
     ]
@@ -563,16 +561,16 @@ def _analyze_javascript(file_path: str, content: str) -> str:
         result.append("")
 
     if functions:
-        result.append(f"{UIIcons.RUN} Funções:")
+        result.append(f"{UIIcons.RUN} Functions:")
         for name, lineno in functions[:10]:
             result.append(f"  {UIIcons.BULLET} {name}() (linha {lineno})")
         if len(functions) > 10:
-            result.append(f"  ... e mais {len(functions) - 10} funções")
+            result.append(f"  ... and {len(functions) - 10} more functions")
 
     output = "\n".join(result)
     success_style = UIStyles.safe_style("SUCCESS", "green")
     rprint(
-        f"[{success_style}]{UIIcons.SUCCESS} Análise JavaScript/TypeScript de '{file_path}'[/{success_style}]"
+        f"[{success_style}]{UIIcons.SUCCESS} JavaScript/TypeScript analysis of '{file_path}'[/{success_style}]"
     )
     return output
 
@@ -584,18 +582,18 @@ def _analyze_generic(file_path: str, content: str) -> str:
     lines = content.split("\n")
 
     result = [
-        f"{UIIcons.FILE} Análise de {file_path}",
+        f"{UIIcons.FILE} Analysis of {file_path}",
         "",
-        f"{UIIcons.STATS} Estatísticas:",
+        f"{UIIcons.STATS} Statistics:",
         f"  {UIIcons.BULLET} Total de linhas: {len(lines)}",
         f"  {UIIcons.BULLET} Tamanho: {len(content)} bytes",
-        f"  {UIIcons.BULLET} Extensão: {Path(file_path).suffix}",
+        f"  {UIIcons.BULLET} Extension: {Path(file_path).suffix}",
     ]
 
     output = "\n".join(result)
     success_style = UIStyles.safe_style("SUCCESS", "green")
     rprint(
-        f"[{success_style}]{UIIcons.SUCCESS} Análise genérica de '{file_path}'[/{success_style}]"
+        f"[{success_style}]{UIIcons.SUCCESS} Generic analysis of '{file_path}'[/{success_style}]"
     )
     return output
 
@@ -699,7 +697,7 @@ def restore_backup(original_path: str, backup_path: Optional[str] = None) -> str
             )
             confirm = True
         else:
-            confirm = request_local_confirmation("Confirmar restauração do backup?")
+            confirm = request_local_confirmation("Confirm backup restore?")
 
         if confirm:
             try:
@@ -734,9 +732,9 @@ def restore_backup(original_path: str, backup_path: Optional[str] = None) -> str
         else:
             warning_style = UIStyles.safe_style("WARNING", "yellow")
             console.print(
-                f"[{warning_style}]{UIIcons.CANCEL} Restauração cancelada pelo usuário.[/{warning_style}]"
+                f"[{warning_style}]{UIIcons.CANCEL} Restore cancelled by user.[/{warning_style}]"
             )
-            return "Restauração cancelada pelo usuário."
+            return "Restore cancelled by user."
 
     except Exception as e:
         error_msg = f"Error restoring backup: {e}"
@@ -756,7 +754,7 @@ def verify_code_snippet(code: str, language: str = "python", fix: bool = True) -
     try:
         forge = ForgeManager()
         if not forge.available:
-            return "Forge (Sandbox) não disponível. Compile os módulos Nim e verifique 'nim_binary_path' em /settings."
+            return "Forge (Sandbox) not available. Compile Nim modules and verify 'nim_binary_path' in /settings."
 
         result = forge.validate_and_fix(code, language, fix)
 
@@ -766,24 +764,24 @@ def verify_code_snippet(code: str, language: str = "python", fix: bool = True) -
         if result.success:
             if result.code != code:
                 console.print(
-                    f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Código verificado e formatado.[/{UIStyles.SUCCESS}]"
+                    f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Code verified and formatted.[/{UIStyles.SUCCESS}]"
                 )
-                return f"Código Verificado e Polido:\n\n{result.code}"
+                return f"Code Verified and Polished:\n\n{result.code}"
             else:
                 console.print(
-                    f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Código verificado (sem alterações).[/{UIStyles.SUCCESS}]"
+                    f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Code verified (no changes).[/{UIStyles.SUCCESS}]"
                 )
-                return "Código válido."
+                return "Valid code."
         else:
             error_msg = "\n".join(result.errors)
             console.print(
-                f"[{UIStyles.ERROR}]{UIIcons.ERROR} Erros encontrados no código.[/{UIStyles.ERROR}]"
+                f"[{UIStyles.ERROR}]{UIIcons.ERROR} Errors found in code.[/{UIStyles.ERROR}]"
             )
-            return f"Erros de validação:\n{error_msg}"
+            return f"Validation errors:\n{error_msg}"
 
     except Exception as e:
         logger.error(f"Error checking code: {e}", exc_info=True)
-        return f"Erro interno ao verificar código: {e}"
+        return f"Internal error verifying code: {e}"
 
 
 def validate_syntax(content: str, language: str) -> str:
@@ -800,7 +798,7 @@ def validate_syntax(content: str, language: str) -> str:
             ast.parse(content)
             success_style = UIStyles.safe_style("SUCCESS", "green")
             rprint(
-                f"[{success_style}]{UIIcons.SUCCESS} Sintaxe Python válida[/{success_style}]"
+                f"[{success_style}]{UIIcons.SUCCESS} Valid Python syntax[/{success_style}]"
             )
             return "OK"
 
@@ -808,7 +806,7 @@ def validate_syntax(content: str, language: str) -> str:
             json.loads(content)
             success_style = UIStyles.safe_style("SUCCESS", "green")
             rprint(
-                f"[{success_style}]{UIIcons.SUCCESS} Sintaxe JSON válida[/{success_style}]"
+                f"[{success_style}]{UIIcons.SUCCESS} Valid JSON syntax[/{success_style}]"
             )
             return "OK"
 
@@ -818,12 +816,12 @@ def validate_syntax(content: str, language: str) -> str:
             yaml.safe_load(content)
             success_style = UIStyles.safe_style("SUCCESS", "green")
             rprint(
-                f"[{success_style}]{UIIcons.SUCCESS} Sintaxe YAML válida[/{success_style}]"
+                f"[{success_style}]{UIIcons.SUCCESS} Valid YAML syntax[/{success_style}]"
             )
             return "OK"
 
         else:
-            msg = f"Linguagem '{language}' não suportada para validação"
+            msg = f"Language '{language}' not supported for validation"
             warning_style = UIStyles.safe_style("WARNING", "yellow")
             rprint(f"[{warning_style}]{msg}[/{warning_style}]")
             return msg
@@ -839,7 +837,7 @@ def validate_syntax(content: str, language: str) -> str:
         rprint(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
     except Exception as e:
-        error_msg = f"Erro de validação: {e}"
+        error_msg = f"Validation error: {e}"
         error_style = UIStyles.safe_style("ERROR", "red")
         rprint(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
@@ -873,20 +871,20 @@ def tokenize_code(code: str, language: Optional[str] = None) -> str:
         analysis = tokenizer.analyze_tokens(result)
 
         output = [
-            f"{UIIcons.FILE} Tokenização de Código",
+            f"{UIIcons.FILE} Code Tokenization",
             "",
-            f"{UIIcons.STATS} Estatísticas:",
+            f"{UIIcons.STATS} Statistics:",
             f"  {UIIcons.BULLET} Total de tokens: {analysis['total_tokens']}",
-            f"  {UIIcons.BULLET} Tokens únicos: {analysis['unique_tokens']}",
+            f"  {UIIcons.BULLET} Unique tokens: {analysis['unique_tokens']}",
             f"  {UIIcons.BULLET} Linguagem: {result.language.value}",
-            f"  {UIIcons.BULLET} Comprimento médio: {analysis['avg_token_length']:.2f}",
+            f"  {UIIcons.BULLET} Average length: {analysis['avg_token_length']:.2f}",
             f"  {UIIcons.BULLET} Keywords: {analysis.get('keywords', 0)}",
             f"  {UIIcons.BULLET} Identificadores: {analysis.get('identifiers', 0)}",
             f"  {UIIcons.BULLET} Operadores: {analysis.get('operators', 0)}",
         ]
 
         rprint(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Código tokenizado: {analysis['total_tokens']} tokens[/{UIStyles.SUCCESS}]"
+            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Code tokenized: {analysis['total_tokens']} tokens[/{UIStyles.SUCCESS}]"
         )
         return "\n".join(output)
 
@@ -915,7 +913,7 @@ def analyze_code_nlp(file_path: str) -> str:
         return error_msg
 
     if path_obj.is_dir():
-        error_msg = f"Erro: '{file_path}' é um diretório, não um arquivo. Use 'list_directory' para explorar diretórios ou 'codebase_search' para buscar no código."
+        error_msg = f"Error: '{file_path}' is a directory, not a file. Use 'list_directory' to browse directories or 'codebase_search' to search code."
         error_style = UIStyles.safe_style("ERROR", "red")
         rprint(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
@@ -928,13 +926,13 @@ def analyze_code_nlp(file_path: str) -> str:
         summary = nlp_analyzer.summarize_code(content)
 
         output = [
-            f"{UIIcons.FILE} Análise NLP de {file_path}",
+            f"{UIIcons.FILE} NLP Analysis of {file_path}",
             "",
-            f"{UIIcons.AGENT} Classificação:",
-            f"  {UIIcons.BULLET} Tipo de Função: {classification.function_type.value}",
+            f"{UIIcons.AGENT} Classification:",
+            f"  {UIIcons.BULLET} Function Type: {classification.function_type.value}",
             f"  {UIIcons.BULLET} Complexidade: {classification.complexity.value}",
-            f"  {UIIcons.BULLET} Intenção: {classification.intent}",
-            f"  {UIIcons.BULLET} Confiança: {classification.confidence:.2%}",
+            f"  {UIIcons.BULLET} Intent: {classification.intent}",
+            f"  {UIIcons.BULLET} Confidence: {classification.confidence:.2%}",
             "",
             f"{UIIcons.INFO} Resumo:",
             f"  {summary.summary}",
@@ -947,17 +945,17 @@ def analyze_code_nlp(file_path: str) -> str:
 
         if summary.suggestions:
             output.append("")
-            output.append(f"{UIIcons.WARNING} Sugestões:")
+            output.append(f"{UIIcons.WARNING} Suggestions:")
             for suggestion in summary.suggestions[:3]:
                 output.append(f"  {UIIcons.BULLET} {suggestion}")
 
         rprint(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Análise NLP concluída para '{file_path}'[/{UIStyles.SUCCESS}]"
+            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} NLP analysis complete for '{file_path}'[/{UIStyles.SUCCESS}]"
         )
         return "\n".join(output)
 
     except Exception as e:
-        error_msg = f"Erro na análise NLP: {e}"
+        error_msg = f"NLP analysis error: {e}"
         error_style = UIStyles.safe_style("ERROR", "red")
         rprint(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
@@ -981,14 +979,14 @@ def classify_code(file_path: str) -> str:
         nlp_analyzer = NLPAnalyzer()
         classification = nlp_analyzer.classify_code(content)
 
-        output = f"""Classificação de {file_path}:
-  Tipo: {classification.function_type.value}
-  Complexidade: {classification.complexity.value}
-  Intenção: {classification.intent}
-  Confiança: {classification.confidence:.2%}"""
+        output = f"""Classification of {file_path}:
+  Type: {classification.function_type.value}
+  Complexity: {classification.complexity.value}
+  Intent: {classification.intent}
+  Confidence: {classification.confidence:.2%}"""
 
         rprint(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Código classificado[/{UIStyles.SUCCESS}]"
+            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Code classified[/{UIStyles.SUCCESS}]"
         )
         return output
 
@@ -1018,7 +1016,7 @@ def summarize_code(file_path: str) -> str:
         summary = nlp_analyzer.summarize_code(content)
 
         output = [
-            f"{UIIcons.INFO} Sumário de {file_path}:",
+            f"{UIIcons.INFO} Summary of {file_path}:",
             "",
             summary.summary,
             "",
@@ -1030,12 +1028,12 @@ def summarize_code(file_path: str) -> str:
 
         if summary.suggestions:
             output.append("")
-            output.append(f"{UIIcons.WARNING} Sugestões:")
+            output.append(f"{UIIcons.WARNING} Suggestions:")
             for suggestion in summary.suggestions:
                 output.append(f"  {UIIcons.BULLET} {suggestion}")
 
         rprint(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Código sumarizado[/{UIStyles.SUCCESS}]"
+            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Code summarized[/{UIStyles.SUCCESS}]"
         )
         return "\n".join(output)
 
@@ -1097,7 +1095,7 @@ def find_duplicate_code(path: str = ".", similarity_threshold: float = 0.85) -> 
                     continue
 
         if len(snippets) < 2:
-            msg = "Poucos snippets para análise de duplicação"
+            msg = "Too few snippets for duplication analysis"
             warning_style = UIStyles.safe_style("WARNING", "yellow")
             rprint(f"[{warning_style}]{msg}[/{warning_style}]")
             return msg
@@ -1106,12 +1104,12 @@ def find_duplicate_code(path: str = ".", similarity_threshold: float = 0.85) -> 
         duplicates = analyzer.find_duplicate_code(snippets)
 
         if not duplicates:
-            msg = f"Nenhum código duplicado encontrado (threshold: {similarity_threshold})"
+            msg = f"No duplicate code found (threshold: {similarity_threshold})"
             rprint(f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} {msg}[/{UIStyles.SUCCESS}]")
             return msg
 
         output = [
-            f"{UIIcons.SEARCH} Código Duplicado Encontrado ({len(duplicates)} pares):",
+            f"{UIIcons.SEARCH} Duplicate Code Found ({len(duplicates)} pairs):",
             "",
         ]
 
@@ -1164,7 +1162,7 @@ def semantic_search_advanced(
             return msg
 
         output = [
-            f"{UIIcons.SEARCH} Busca Semântica: '{query}'",
+            f"{UIIcons.SEARCH} Semantic Search: '{query}'",
             f"{UIIcons.SUCCESS} {len(results)} resultados encontrados:",
             "",
         ]
@@ -1175,12 +1173,12 @@ def semantic_search_advanced(
             output.append("")
 
         rprint(
-            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Busca concluída: {len(results)} resultados[/{UIStyles.SUCCESS}]"
+            f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} Search complete: {len(results)} results[/{UIStyles.SUCCESS}]"
         )
         return "\n".join(output)
 
     except Exception as e:
-        error_msg = f"Erro na busca semântica: {e}"
+        error_msg = f"Semantic search error: {e}"
         error_style = UIStyles.safe_style("ERROR", "red")
         rprint(f"[{error_style}]{error_msg}[/{error_style}]")
         return error_msg
@@ -1189,7 +1187,7 @@ def semantic_search_advanced(
 def generate_tests_ml(file_path: str) -> str:
     """Generate test cases using ML-based analysis."""
     from aura_cli.core.agents.agent_base import AgentTask
-    from aura_cli.core.agents.specialized_agents.test_agent import TestAgent
+    from aura_cli.core.agents.specialized_agents.tester_agent import TestAgent
     from aura_cli.core.ui import display_tool_call
     from aura_cli.core.ui_bridge import UIIcons, UIStyles
 

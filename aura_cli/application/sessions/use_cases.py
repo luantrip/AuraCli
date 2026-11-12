@@ -28,12 +28,14 @@ class WorkspaceSessionTarget(Protocol):
 
 @dataclass(frozen=True)
 class SaveSessionOutcome:
+    """Outcome of a session save operation."""
     session_id: str
     name: str
     message_count: int
 
 
 class LoadSessionStatus(str, Enum):
+    """Status of a session load attempt."""
     LOADED = "loaded"
     NOT_FOUND = "not_found"
     AMBIGUOUS = "ambiguous"
@@ -41,6 +43,7 @@ class LoadSessionStatus(str, Enum):
 
 @dataclass(frozen=True)
 class LoadSessionOutcome:
+    """Complete outcome of a session load operation."""
     status: LoadSessionStatus
     session: Any | None = None
     matches: tuple[Any, ...] = ()

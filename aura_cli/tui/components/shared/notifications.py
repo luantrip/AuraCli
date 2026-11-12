@@ -68,7 +68,6 @@ class Toast(Widget):
         """Message when toast is dismissed."""
 
         def __init__(self, toast_id: str) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.toast_id = toast_id
 
@@ -84,7 +83,6 @@ class Toast(Widget):
         toast_id: Optional[str] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.message = message
         self.toast_type = toast_type
@@ -154,7 +152,6 @@ class NotificationCenter(Widget):
     MAX_VISIBLE = 5
 
     def __init__(self, **kwargs):
-        """Initialize the widget."""
         super().__init__(**kwargs)
         self._queue: List[ToastData] = []
         self._visible: List[str] = []
@@ -163,7 +160,7 @@ class NotificationCenter(Widget):
         """Compose the widget layout."""
         yield Vertical(id="toast-container")
 
-    def notify(  # type: ignore[override]
+    def notify(  # type: ignore[override]  # Textual App.notify signature override
         self,
         message: str,
         toast_type: ToastType = ToastType.INFO,

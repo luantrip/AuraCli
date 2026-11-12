@@ -10,10 +10,14 @@ from rich.console import Console
 from rich.status import Status
 from rich.text import Text
 
-from aura_cli.cli.ui.components.error_display import AuraErrorDisplay
-from aura_cli.cli.ui.components.investigator_status_bar import AuraInvestigatorStatusBar
-from aura_cli.cli.ui.components.investigator_summary import AuraInvestigatorSummary
-from aura_cli.cli.ui.components.markdown_display import AuraMarkdownDisplay
+from aura_cli.cli.ui.components.agent.investigator_status_bar import (
+    AuraInvestigatorStatusBar,
+)
+from aura_cli.cli.ui.components.agent.investigator_summary import (
+    AuraInvestigatorSummary,
+)
+from aura_cli.cli.ui.components.display.markdown_display import AuraMarkdownDisplay
+from aura_cli.cli.ui.components.layout.error_display import AuraErrorDisplay
 from aura_cli.cli.ui.composition.visual_surface import VisualEmitter
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.core.stats import StatsTracker
@@ -23,7 +27,6 @@ class StatusManager:
     """Visual state manager for the system."""
 
     def __init__(self, console: Console, stats: StatsTracker):
-        """Initialize the instance."""
         self.console = console
         self.stats = stats
         self._current_status: Optional[Status] = None
@@ -46,13 +49,13 @@ class StatusManager:
         )
         self._current_status.start()
 
-    def set_working(self, message: str = "Processando"):
+    def set_working(self, message: str = "Processing"):
         """Set status to working with custom message."""
         self.stats.set_status("working", message)
         if self._current_status:
             self._current_status.stop()
         self._current_status = self.console.status(
-            f"[bold {UIStyles.STATUS_WORKING}]{UIIcons.WORKING} {message or 'Processando'}...[/bold {UIStyles.STATUS_WORKING}]",
+            f"[bold {UIStyles.STATUS_WORKING}]{UIIcons.WORKING} {message or 'Processing'}...[/bold {UIStyles.STATUS_WORKING}]",
             spinner="dots",
         )
         self._current_status.start()
@@ -69,11 +72,52 @@ class RenderCoordinator:
     """Content rendering coordinator."""
 
     def __init__(self, console: Console, stats: StatsTracker):
-        """Initialize the instance."""
         self.console = console
         self.stats = stats
         self.status = StatusManager(console, stats)
         self.emitter = VisualEmitter(console)
+
+    def present_surface(self, request: Any) -> None:
+        """Single intent-based ingress for CLI output (PE-1).
+
+        Mirrors the TUI's ``present_surface``: routes a ``SurfaceRequest`` by
+        meaning through ``decide_surface`` and materializes it with the right
+        renderer. Callers emit *intent* (what they mean), never pick a method.
+
+        Accepts a ``SurfaceRequest``; the decision engine maps the intent to a
+        surface and this method maps that to the existing render_* primitives.
+        """
+        from aura_cli.application.presentation.tui_surfaces import (
+            PresentationIntent,
+            decide_surface,
+        )
+
+        decision = decide_surface(request)  # validates intent (raises if unknown)
+        intent = request.intent
+        content = request.content
+
+        if intent is PresentationIntent.RESPONSE:
+            self.render_response(content, title=request.title or "Aura")
+        elif intent is PresentationIntent.ERROR:
+            self.render_error(content)
+        elif intent is PresentationIntent.SUCCESS:
+            self.render_success(content)
+        elif intent is PresentationIntent.WARNING:
+            self.render_warning(content)
+        elif intent is PresentationIntent.PROGRESS:
+            # Transient activity: drive the status line, do not persist a panel.
+            self.status.set_working(content)
+        elif intent in (
+            PresentationIntent.INFORMATION,
+            PresentationIntent.TOOL_RESULT,
+            PresentationIntent.TOOL_OPEN,
+            PresentationIntent.DECISION,
+        ):
+            self.render_info(content)
+        else:  # pragma: no cover - decide_surface already rejects unknowns
+            self.render_info(content)
+
+        _ = decision  # decision drives future multi-surface mirroring
 
     def render_response(self, content: str, title: str = "Aura"):
         """Render response panel."""
@@ -88,6 +132,20 @@ class RenderCoordinator:
         error_component = AuraErrorDisplay()
         panel = error_component.render(error_message=error)
         self.emitter.emit(panel, separate=True)
+
+    def render_activity_error(self, message: str):
+        """Render an error as a single themed line (for the activity trail).
+
+        ``render_error`` draws a full panel, which is right for an application
+        error but breaks the one-line-per-event rhythm of the worker activity
+        trail; a failed tool is just one more step. ``message`` is already escaped
+        by the caller, so it is rendered literally.
+        """
+        self.status.stop()
+        line = Text.from_markup(
+            f"[{UIStyles.ERROR}]{UIIcons.ERROR} {message}[/{UIStyles.ERROR}]"
+        )
+        self.emitter.emit(line, separate=True)
 
     def render_success(self, message: str):
         """Render success message."""

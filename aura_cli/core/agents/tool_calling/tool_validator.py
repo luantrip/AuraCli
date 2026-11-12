@@ -78,7 +78,7 @@ class ToolValidator:
                 errors.append(
                     ValidationError(
                         field=param,
-                        message=f"Parâmetro obrigatório '{param}' ausente",
+                        message=f"Required parameter '{param}' missing",
                         code="missing_required",
                     )
                 )
@@ -106,11 +106,11 @@ class ToolValidator:
 
         if errors:
             logger.warning(
-                f"Validação de parâmetros falhou para '{tool_name}': "
+                f"Parameter validation failed for '{tool_name}': "
                 f"{len(errors)} erros"
             )
         else:
-            logger.debug(f"Parâmetros de '{tool_name}' validados com sucesso")
+            logger.debug(f"Parameters of '{tool_name}' validated successfully")
 
         return errors
 
@@ -153,7 +153,7 @@ class ToolValidator:
         if not python_type:
             return True
 
-        return isinstance(value, python_type)  # type: ignore[arg-type]
+        return isinstance(value, python_type)  # type: ignore[arg-type]  # dynamic type narrowing
 
     def validate_call(
         self, tool_name: str, parameters: Dict[str, Any], result: Optional[Any] = None

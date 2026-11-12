@@ -20,6 +20,7 @@ class ArenaEngine:
         self.state: Optional[ArenaState] = None
 
     def init(self, n_agents: int, seed: int, task: str, baseline: Optional[str] = None) -> ArenaState:
+        """Initialise arena state for a new evaluation run."""
         if n_agents < 2:
             raise ValueError("n_agents must be at least 2")
         cards = self.deck.draw(n_agents, seed=seed)
@@ -31,6 +32,7 @@ class ArenaEngine:
         return self.state
 
     def resume(self) -> ArenaState:
+        """Resume an interrupted arena run from its saved state."""
         payload = json.loads(self.state_path.read_text(encoding="utf-8"))
         self.state = ArenaState(run_id=payload["run_id"], task=payload["task"], seed=payload["seed"],
                                 phase=payload.get("phase", "spawn"), round_number=payload.get("round_number", 0),
@@ -42,16 +44,19 @@ class ArenaEngine:
         return self.state
 
     def record_solution(self, agent_id: str, solution: str) -> None:
+        """Record a candidate solution submitted by an agent."""
         state = self._require_state()
         state.agents[agent_id].solution = solution
         self._persist()
 
     def pairings(self) -> list[tuple[str, str]]:
+        """Return the pairings for the current evaluation round."""
         alive = [agent_id for agent_id, agent in self._require_state().agents.items() if agent.alive]
         return list(zip(alive[::2], alive[1::2], strict=False))
 
     def record_match(self, agent_a: str, agent_b: str, winner: str,
                      scores: Optional[dict[str, dict[str, float]]] = None, reason: str = "") -> MatchResult:
+        """Record the result of a completed pairwise match."""
         state = self._require_state()
         if winner not in (agent_a, agent_b):
             raise ValueError("winner must be one of the match participants")
@@ -65,9 +70,11 @@ class ArenaEngine:
         return result
 
     def winner(self) -> Optional[AgentStanding]:
+        """Return the winning agent, or None if undecided."""
         return next((agent for agent in self._require_state().agents.values() if agent.alive), None)
 
     def status(self) -> dict:
+        """Return the current status of the arena run."""
         state = self._require_state()
         return {"run_id": state.run_id, "task": state.task, "phase": state.phase,
                 "round": state.round_number, "agents": len(state.agents),

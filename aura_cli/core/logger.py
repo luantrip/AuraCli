@@ -10,15 +10,12 @@ from __future__ import annotations
 
 from datetime import datetime
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from rich.console import Console
 from rich.logging import RichHandler
 
 from aura_cli.core.paths import aura_path
-
-if TYPE_CHECKING:
-    pass  # For future type imports
 
 LOG_DIR = aura_path("logs")
 LOG_FILE = LOG_DIR / f"aura_{datetime.now().strftime('%Y%m%d')}.log"
@@ -107,7 +104,12 @@ def setup_logger(
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """Return a configured logger instance."""
+    """Return a configured logger for the given module name.
+
+    Uses the ``aura_cli`` root logger by default.  The root logger is
+    configured once at import time (level, handler, formatter).
+    Pass ``__name__`` from the calling module to get a child logger.
+    """
     if name is None:
         name = "aura_cli"
 

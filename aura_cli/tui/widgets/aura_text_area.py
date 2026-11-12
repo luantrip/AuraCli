@@ -25,7 +25,6 @@ class AuraTextArea(TextArea):
     """
 
     def __init__(self, *args, **kwargs):
-        """Initialize the instance."""
         super().__init__(*args, **kwargs)
         self.auto_indent_enabled = True
         self.auto_pair_enabled = True

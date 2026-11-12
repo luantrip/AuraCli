@@ -9,10 +9,10 @@ FileDiff, ToolResult.
 from importlib import import_module
 
 _LAZY_EXPORTS = {
-    "ComponentBase": ("aura_cli.cli.ui.components.base", "ComponentBase"),
-    "FileDiff": ("aura_cli.cli.ui.components.file_diff", "FileDiff"),
-    "StatusBar": ("aura_cli.cli.ui.components.status_bar", "StatusBar"),
-    "ToolResult": ("aura_cli.cli.ui.components.tool_result", "ToolResult"),
+    "ComponentBase": ("aura_cli.cli.ui.components.input.base", "ComponentBase"),
+    "FileDiff": ("aura_cli.cli.ui.components.display.file_diff", "FileDiff"),
+    "StatusBar": ("aura_cli.cli.ui.components.layout.status_bar", "StatusBar"),
+    "ToolResult": ("aura_cli.cli.ui.components.agent.tool_result", "ToolResult"),
     "ToolStatus": ("aura_cli.cli.ui.tool_status", "ToolStatus"),
     "UIIcons": ("aura_cli.cli.ui.constants", "UIIcons"),
     "UILayout": ("aura_cli.cli.ui.constants", "UILayout"),

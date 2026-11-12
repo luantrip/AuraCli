@@ -42,7 +42,6 @@ class AuraInputBar(Container):
     show_suggestions: reactive[bool] = reactive(False)
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._history: List[str] = []
         self._history_index: int = -1

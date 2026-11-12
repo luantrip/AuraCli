@@ -35,7 +35,7 @@ ERROR = "✖"
 WARNING = "▲"
 INFO = "ℹ"
 LOADING = "⟳"
-IDLE = "⬡"
+IDLE = "○"
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Marca
@@ -72,8 +72,8 @@ IMPORT = "↓"
 # Agents (geometric)
 # ─────────────────────────────────────────────────────────────────────────────
 AGENT = "◈"
-AGI = "◉"
-OPS = "▶"
+AGI = "⬡"
+OPS = "⚡"
 USER = "▪"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -129,16 +129,16 @@ TOAST_SEVERITY_ICONS = {
 
 # Default titles by severity for toast notifications
 TOAST_SEVERITY_TITLES = {
-    "success": "Sucesso",
-    "error": "Erro",
-    "warning": "Aviso",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
     "info": "Info",
     "information": "Info",
-    "loading": "Aguarde",
+    "loading": "Please wait",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Indicadores de Modo
+# Mode indicators
 # ─────────────────────────────────────────────────────────────────────────────
 MODE_ICONS = {
     "normal": "N",
@@ -276,7 +276,7 @@ def configure_glyphs(mode: str | None = None) -> str:
             "WARNING": "▲",
             "INFO": "ℹ",
             "LOADING": "⟳",
-            "IDLE": "⬡",
+            "IDLE": "○",
             "AURA": "✦",
             "AURA_STAR": "✦",
             "FILE": "◇",
@@ -297,8 +297,8 @@ def configure_glyphs(mode: str | None = None) -> str:
             "EXPORT": "↑",
             "IMPORT": "↓",
             "AGENT": "◈",
-            "AGI": "◉",
-            "OPS": "▶",
+            "AGI": "⬡",
+            "OPS": "⚡",
             "USER": "▪",
             "CHAT": "▣",
             "THINKING": "⬢",
@@ -395,4 +395,4 @@ COLOR_ACCENT = _get_color("accent", "magenta")
 COLOR_TITLE = _get_color("title", "bold cyan")
 COLOR_LABEL = _get_color("label", "bold")
 COLOR_CODE = _get_color("code", "bright_white")
-COLOR_INFO = _get_color("info", "bright_blue")
+COLOR_INFO = _get_color("info", "blue")

@@ -314,7 +314,7 @@ class TestADKBridgeFactory:
 
     def test_create_adapter_not_registered(self):
         """Testa criação de adapter não registrado."""
-        with pytest.raises(ValueError, match="não registrado"):
+        with pytest.raises(ValueError, match="not registered"):
             ADKBridgeFactory.create_adapter("nonexistent_agent")
 
     def test_auto_registration(self):

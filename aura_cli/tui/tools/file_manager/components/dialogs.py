@@ -63,7 +63,7 @@ class FileContextMenu(Widget):
     """
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "dismiss", "Fechar"),
+        Binding("escape", "dismiss", "Close"),
         Binding("enter", "select", "Select"),
         Binding("up", "cursor_up", "Up"),
         Binding("down", "cursor_down", "Down"),
@@ -88,15 +88,15 @@ class FileContextMenu(Widget):
         """Set up menu actions based on file type."""
         if self.is_directory:
             self._actions = [
-                ("open", "◇ Abrir", ""),
-                ("open_in_new_pane", "◫ Abrir no Outro Painel", ""),
+                ("open", "◇ Open", ""),
+                ("open_in_new_pane", "◫ Open in Other Panel", ""),
                 ("separator", "", ""),
-                ("new_file", "◇ Novo Arquivo", "n"),
-                ("new_folder", "▷ Nova Pasta", "N"),
+                ("new_file", "◇ New File", "n"),
+                ("new_folder", "▷ New Folder", "N"),
                 ("separator", "", ""),
-                ("copy", "⊞ Copiar", "c"),
+                ("copy", "⊞ Copy", "c"),
                 ("cut", "⊟ Recortar", "x"),
-                ("paste", "↓ Colar", "v"),
+                ("paste", "↓ Paste", "v"),
                 ("separator", "", ""),
                 ("rename", "✎ Renomear", "r"),
                 ("delete", "✖ Excluir", "Del"),
@@ -110,7 +110,7 @@ class FileContextMenu(Widget):
             is_paintable = is_paint_compatible(str(self.file_path))
 
             self._actions = [
-                ("open", "◇ Abrir", "Enter"),
+                ("open", "◇ Open", "Enter"),
                 ("open_with_editor", "✎ Abrir no Editor", "e"),
             ]
 
@@ -120,9 +120,9 @@ class FileContextMenu(Widget):
 
             self._actions.extend(
                 [
-                    ("open_in_new_pane", "◫ Abrir no Outro Painel", ""),
+                    ("open_in_new_pane", "◫ Open in Other Panel", ""),
                     ("separator", "", ""),
-                    ("copy", "⊞ Copiar", "c"),
+                    ("copy", "⊞ Copy", "c"),
                     ("cut", "⊟ Recortar", "x"),
                     ("separator", "", ""),
                     ("rename", "✎ Renomear", "r"),
@@ -229,7 +229,7 @@ class RenameDialog(Widget):
             self.new_path = new_path
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "cancel", "Cancelar"),
+        Binding("escape", "cancel", "Cancel"),
     ]
 
     def __init__(self, file_path: Path, **kwargs: Any):
@@ -239,11 +239,11 @@ class RenameDialog(Widget):
 
     def compose(self) -> ComposeResult:
         with Vertical():
-            yield Static("Novo nome:")
+            yield Static("New name:")
             yield Input(value=self.file_path.name, id="rename-input")
             with Horizontal(classes="button-bar"):
-                yield Button("Renomear", id="btn-rename", variant="primary")
-                yield Button("Cancelar", id="btn-cancel")
+                yield Button("Rename", id="btn-rename", variant="primary")
+                yield Button("Cancel", id="btn-cancel")
 
     def on_mount(self) -> None:
         """Focus input and select text."""
@@ -327,14 +327,14 @@ class NewFileDialog(Widget):
             self.is_directory = is_directory
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "cancel", "Cancelar"),
+        Binding("escape", "cancel", "Cancel"),
     ]
 
     def __init__(self, parent_path: Path, is_directory: bool = False, **kwargs: Any):
         super().__init__(**kwargs)
         self.parent_path = parent_path
         self.is_directory = is_directory
-        self.border_title = "Nova Pasta" if is_directory else "Novo Arquivo"
+        self.border_title = "New Folder" if is_directory else "New File"
 
     def compose(self) -> ComposeResult:
         with Vertical():
@@ -343,7 +343,7 @@ class NewFileDialog(Widget):
             yield Input(placeholder=placeholder, id="new-name-input")
             with Horizontal(classes="button-bar"):
                 yield Button("Criar", id="btn-create", variant="primary")
-                yield Button("Cancelar", id="btn-cancel")
+                yield Button("Cancel", id="btn-cancel")
 
     def on_mount(self) -> None:
         self.query_one("#new-name-input", Input).focus()
@@ -424,8 +424,8 @@ class PropertiesDialog(Widget):
     """
 
     BINDINGS: ClassVar[list] = [
-        Binding("escape", "close", "Fechar"),
-        Binding("enter", "close", "Fechar"),
+        Binding("escape", "close", "Close"),
+        Binding("enter", "close", "Close"),
     ]
 
     def __init__(self, file_path: Path, **kwargs: Any):
@@ -528,7 +528,7 @@ class PropertiesDialog(Widget):
                     yield Static(f"Target unavailable: {error}", classes="prop-value")
 
             with Horizontal(classes="button-bar"):
-                yield Button("Fechar", id="btn-close", variant="primary")
+                yield Button("Close", id="btn-close", variant="primary")
 
     def on_mount(self) -> None:
         self.query_one("#btn-close", Button).focus()

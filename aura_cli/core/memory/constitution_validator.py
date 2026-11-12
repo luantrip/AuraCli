@@ -99,7 +99,7 @@ class ConstitutionValidator:
         defined = " ".join(self._rules[rule_key]).lower()
         conflicts = [t for t in candidates if t in prompt_lower and t not in defined]
         if conflicts:
-            return f"{label} conflitante detectada: {', '.join(conflicts)}. Constituição define: {', '.join(self._rules[rule_key])}"
+            return f"Conflicting {label} detected: {', '.join(conflicts)}. Constitution defines: {', '.join(self._rules[rule_key])}"
         return None
 
     def validate_prompt(self, prompt: str) -> Tuple[bool, List[str], Optional[str]]:
@@ -139,15 +139,15 @@ class ConstitutionValidator:
         if self._rules.get("prohibitions"):
             for prohibition in self._rules["prohibitions"]:
                 if prohibition.lower() in prompt_lower:
-                    violations.append(f"Violou proibição explícita: '{prohibition}'")
+                    violations.append(f"Violated explicit prohibition: '{prohibition}'")
 
         sanitized_prompt = None
         if violations:
             sanitized_prompt = (
-                f"ATENÇÃO: O prompt original pode violar regras da Constituição. "
+                f"WARNING: The original prompt may violate Constitution rules. "
                 f"Por favor, revise e ajuste conforme as regras do projeto.\n\n"
                 f"Prompt original: {prompt}\n\n"
-                f"Violações detectadas:\n" + "\n".join(f"- {v}" for v in violations)
+                f"Violations detected:\n" + "\n".join(f"- {v}" for v in violations)
             )
 
         is_valid = len(violations) == 0
@@ -171,9 +171,9 @@ class ConstitutionValidator:
             ]
             if critical_violations:
                 return (
-                    "CONFLITO CRÍTICO DETECTADO:\n\n"
+                    "CRITICAL CONFLICT DETECTED:\n\n"
                     + "\n".join(f"⚠️  {v}" for v in critical_violations)
-                    + "\n\nA Constituição do Projeto tem prioridade. "
+                    + "\n\nThe Project Constitution takes priority. "
                     "Deseja continuar mesmo assim ou ajustar o pedido?"
                 )
 

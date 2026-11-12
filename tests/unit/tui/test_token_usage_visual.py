@@ -63,8 +63,8 @@ def test_token_usage_content_does_not_repeat_modal_title() -> None:
 
     assert not content.startswith("Context")
     assert "0.0k / 500k tokens" in content
-    assert "Disponível" in content
-    assert "Esc / Enter: fechar  |  ←: recolher" in content
+    assert "Available" in content
+    assert "Esc / Enter: close  |  ←: collapse" in content
 
 
 def test_token_usage_clamps_negative_and_overflow_values() -> None:

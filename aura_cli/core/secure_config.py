@@ -63,7 +63,6 @@ class SecureConfig(BaseConfigManager):
         allow_insecure_file_storage: Optional[bool] = None,
         profile: Optional[str] = None,
     ):
-        """Initialize the instance."""
         self.profile = validate_profile_name(profile or os.environ.get("AURA_PROFILE", "default"))
         if path is None:
             path = CONFIG_FILE
@@ -113,7 +112,7 @@ class SecureConfig(BaseConfigManager):
             self.path.chmod(0o600)
         except OSError as exc:
             logger.warning(
-                f"Não foi possível restringir permissões de {self.path}: {exc}"
+                f"Could not restrict permissions of {self.path}: {exc}"
             )
 
     def get_api_key(self, provider: str) -> Optional[str]:
@@ -139,7 +138,7 @@ class SecureConfig(BaseConfigManager):
                     logger.info(f"Chave legada de {provider} migrada para o keyring")
             except Exception as exc:
                 # Preserve the legacy value when migration cannot be verified.
-                logger.warning(f"Migração automática de {provider} adiada: {exc}")
+                logger.warning(f"Automatic migration of {provider} deferred: {exc}")
         return legacy_key
 
     def set_api_key(self, provider: str, api_key: str) -> None:
@@ -158,13 +157,13 @@ class SecureConfig(BaseConfigManager):
                 logger.error(f"Error saving to keyring: {e}")
                 if not self._allow_insecure_file_storage:
                     raise InsecureKeyStorageDisabledError(
-                        "Keyring indisponível; armazenamento inseguro em arquivo "
-                        "não foi autorizado."
+                        "Keyring unavailable; insecure file storage "
+                        "was not authorized."
                     ) from e
 
         if not self._allow_insecure_file_storage:
             raise InsecureKeyStorageDisabledError(
-                "Armazenamento inseguro em arquivo não foi autorizado."
+                "Insecure file storage was not authorized."
             )
         if "api_keys" not in self.data:
             self.data["api_keys"] = {}
@@ -175,8 +174,8 @@ class SecureConfig(BaseConfigManager):
         if provider not in self._file_storage_warned:
             self._file_storage_warned.add(provider)
             warning_msg = (
-                f"⚠️  Chave de API {provider} armazenada em arquivo (não seguro). "
-                "Use keyring para segurança."
+                f"⚠️  API key {provider} stored in file (insecure). "
+                "Use keyring for security."
             )
             logger.warning(warning_msg)
             from rich.console import Console
@@ -195,7 +194,7 @@ class SecureConfig(BaseConfigManager):
             error_str = str(e).lower()
             if "item not found" in error_str or "-25300" in error_str:
                 logger.debug(
-                    f"Chave {provider} não encontrada no keyring (já removida ou nunca existiu)"
+                    f"Key {provider} not found in keyring (already removed or never existed)"
                 )
             else:
                 logger.warning(f"Error removing from keyring: {e}")
@@ -216,7 +215,7 @@ class SecureConfig(BaseConfigManager):
                     keyring.set_password(self.keyring_service, provider, key)
                     stored_key = keyring.get_password(self.keyring_service, provider)
                     if stored_key != key:
-                        raise RuntimeError("keyring não confirmou a chave persistida")
+                        raise RuntimeError("keyring did not confirm the persisted key")
                     self.data["api_keys"][provider] = None
                     migrated += 1
                     logger.info(f"Chave {provider_name} migrada para keyring")

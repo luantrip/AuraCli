@@ -16,8 +16,8 @@ def test_fatal_error_dialog_uses_portuguese_copy() -> None:
     assert any("Ocorreu um erro inesperado" in line for line in rendered)
     assert "Tipo: RuntimeError" in rendered
     assert "Mensagem: Falhou" in rendered
-    assert "Você pode tentar resetar a aplicação, relatar este bug ou sair." in rendered
-    assert labels == ["Resetar aplicação", "Relatar bug", "Sair"]
+    assert "You can try resetting the application, reporting this bug or quitting." in rendered
+    assert labels == ["Reset application", "Report bug", "Exit"]
 
 
 def test_fatal_error_dialog_uses_portuguese_fallbacks() -> None:
@@ -27,4 +27,4 @@ def test_fatal_error_dialog_uses_portuguese_fallbacks() -> None:
 
     assert "Tipo: Erro" in rendered
     assert "Mensagem: Erro desconhecido" in rendered
-    assert dialog.get_actions() == [("Sair", "exit", "error")]
+    assert dialog.get_actions() == [("Exit", "exit", "error")]

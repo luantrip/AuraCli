@@ -101,7 +101,7 @@ def preview_external_session(
         reasons.append(f"modelo externo: {data.model}")
     policy_summary = _policy_summary(data.metadata)
     if policy_summary:
-        reasons.append("políticas/permissões externas não verificadas")
+        reasons.append("external policies/permissions not verified")
     return ExternalSessionPreview(
         source_path=path,
         source_format=data.source_format,
@@ -125,9 +125,9 @@ def _resolve_source(source: str) -> Path:
             break
     path = Path(raw).expanduser()
     if not path.exists():
-        raise ExternalSessionImportError(f"Arquivo ou diretório externo não encontrado: {source}")
+        raise ExternalSessionImportError(f"External file or directory not found: {source}")
     if path.is_symlink():
-        raise ExternalSessionImportError("Importação de sessão por link simbólico não é permitida")
+        raise ExternalSessionImportError("Session import via symbolic link is not allowed")
     return path.resolve()
 
 
@@ -138,7 +138,7 @@ def _read_external(path: Path) -> ExternalSessionData:
         return _read_jsonl(path, source_format="jsonl")
     if path.suffix.casefold() == ".json":
         return _read_json(path)
-    raise ExternalSessionImportError("Formato externo suportado: .json, .jsonl ou diretório de sessão")
+    raise ExternalSessionImportError("Supported external format: .json, .jsonl or session directory")
 
 
 def _read_external_directory(path: Path) -> ExternalSessionData:
@@ -158,14 +158,14 @@ def _read_external_directory(path: Path) -> ExternalSessionData:
         candidate = path / filename
         if candidate.is_file():
             return _read_json(candidate)
-    raise ExternalSessionImportError(f"Nenhum arquivo de sessão reconhecido em: {path}")
+    raise ExternalSessionImportError(f"No recognized session file in: {path}")
 
 
 def _read_jsonl(path: Path, *, source_format: str) -> ExternalSessionData:
     try:
         records = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line.strip()]
     except (OSError, json.JSONDecodeError) as exc:
-        raise ExternalSessionImportError(f"JSONL inválido: {path}: {exc}") from exc
+        raise ExternalSessionImportError(f"Invalid JSONL: {path}: {exc}") from exc
     return normalize_external_records(records, source_format=source_format, metadata={"path": str(path)})
 
 
@@ -173,9 +173,9 @@ def _read_json(path: Path) -> ExternalSessionData:
     try:
         raw: Any = json.loads(path.read_text(encoding="utf-8"))
     except (OSError, json.JSONDecodeError) as exc:
-        raise ExternalSessionImportError(f"JSON inválido: {path}: {exc}") from exc
+        raise ExternalSessionImportError(f"Invalid JSON: {path}: {exc}") from exc
     if not isinstance(raw, Mapping):
-        raise ExternalSessionImportError(f"JSON de sessão deve ser um objeto: {path}")
+        raise ExternalSessionImportError(f"Session JSON must be an object: {path}")
     if isinstance(raw.get("session"), Mapping):
         raw = raw["session"]
     if isinstance(raw.get("conversation_history"), list):

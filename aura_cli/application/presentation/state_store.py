@@ -44,6 +44,7 @@ class ReactiveStateStore:
         self._snapshots: list[StateSnapshot] = []
 
     def get(self, path: str, default: Any = None) -> Any:
+        """Return the current value for the given state key."""
         if not path:
             return self._state
         current: Any = self._state
@@ -62,6 +63,7 @@ class ReactiveStateStore:
         return current
 
     def set(self, path: str, value: Any) -> None:
+        """Set the value for the given state key and notify subscribers."""
         keys = self._validated_keys(path)
         current = self._state
         for key in keys[:-1]:
@@ -81,9 +83,11 @@ class ReactiveStateStore:
             self._notify(path, value)
 
     def update(self, path: str, updater: Callable[[Any], Any]) -> None:
+        """Apply a partial update to the given state key."""
         self.set(path, updater(self.get(path)))
 
     def delete(self, path: str) -> bool:
+        """Remove the given state key from the store."""
         keys = self._validated_keys(path)
         current: Any = self._state
         for key in keys[:-1]:
@@ -100,9 +104,11 @@ class ReactiveStateStore:
         return True
 
     def subscribe(self, path: str, callback: StateListener) -> Callable[[], None]:
+        """Subscribe a callback to changes on the given state key."""
         self._listeners[path].append(callback)
 
         def unsubscribe() -> None:
+            """Remove a subscription callback from the given state key."""
             listeners = self._listeners[path]
             if callback in listeners:
                 listeners.remove(callback)
@@ -111,6 +117,7 @@ class ReactiveStateStore:
 
     @contextmanager
     def batch_update(self) -> Iterator[None]:
+        """Apply multiple state updates atomically."""
         self._batch_depth += 1
         try:
             yield
@@ -120,6 +127,7 @@ class ReactiveStateStore:
                 self._flush_notifications()
 
     def snapshot(self, description: str = "") -> StateSnapshot:
+        """Return a point-in-time snapshot of the entire state store."""
         snapshot = StateSnapshot(deepcopy(self._state), description=description)
         self._snapshots.append(snapshot)
         if len(self._snapshots) > self.MAX_SNAPSHOTS:
@@ -127,18 +135,22 @@ class ReactiveStateStore:
         return snapshot
 
     def restore(self, snapshot: StateSnapshot) -> None:
+        """Restore the state store from a previously taken snapshot."""
         self._state = deepcopy(snapshot.state)
         self._notify("", self._state)
 
     def get_snapshots(self) -> list[StateSnapshot]:
+        """Return all stored snapshots in chronological order."""
         return self._snapshots.copy()
 
     def clear(self) -> None:
+        """Remove all keys and notify subscribers of the reset."""
         self._state = deepcopy(self._initial_state)
         self._notify("", self._state)
 
     @property
     def state(self) -> State:
+        """Return the full current state dictionary."""
         return self._state.copy()
 
     @staticmethod

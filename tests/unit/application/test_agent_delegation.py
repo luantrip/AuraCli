@@ -80,9 +80,9 @@ def test_launch_assessment_and_formatting_cover_early_outcomes() -> None:
         has_credentials=False,
     )
     assert busy is not None and busy.status is DelegationLaunchStatus.BUSY
-    assert "já está em execução" in format_delegation_launch_outcome(busy)
+    assert "already running" in format_delegation_launch_outcome(busy)
     assert missing is not None
-    assert "Nenhuma API key" in format_delegation_launch_outcome(missing)
+    assert "No API key configured" in format_delegation_launch_outcome(missing)
 
 
 def test_started_outcome_bounds_request_excerpt() -> None:

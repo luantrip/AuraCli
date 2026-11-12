@@ -40,7 +40,7 @@ def test_codex_discovery_reports_ambiguous_prefix(tmp_path, monkeypatch) -> None
         "aura_cli.core.sessions.external_discovery._default_roots", lambda _provider: [root]
     )
 
-    with pytest.raises(ExternalSessionDiscoveryError, match="ambígua"):
+    with pytest.raises(ExternalSessionDiscoveryError, match="Ambiguous"):
         resolve_external_reference("codex:abc")
 
 

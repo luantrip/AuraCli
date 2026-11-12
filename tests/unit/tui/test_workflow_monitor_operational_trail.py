@@ -20,7 +20,7 @@ def test_workflow_monitor_formats_tool_execution_with_path_hint():
     line = monitor._format_operational_event(event)
 
     assert "Editar" in line
-    assert "em execução" in line
+    assert "running" in line
     assert "src/app.py" in line
 
 
@@ -35,7 +35,7 @@ def test_workflow_monitor_formats_task_update_humanly():
 
     line = monitor._format_operational_event(event)
 
-    assert "em execução" in line
+    assert "running" in line
     assert "setting up project tree" in line
 
 

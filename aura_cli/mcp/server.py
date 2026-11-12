@@ -22,6 +22,7 @@ class MCPServer:
         self.allow_writes = allow_writes
 
     def handle(self, request: dict[str, Any]) -> dict[str, Any] | None:
+        """Dispatch an incoming MCP request to the appropriate handler."""
         method = request.get("method")
         request_id = request.get("id")
         if method == "notifications/initialized":
@@ -49,6 +50,7 @@ class MCPServer:
         return {"jsonrpc": "2.0", "id": request_id, "result": result}
 
     def serve_stdio(self, input_stream=None, output_stream=None) -> None:
+        """Start the MCP server in stdio transport mode (blocking)."""
         input_stream = input_stream or sys.stdin
         output_stream = output_stream or sys.stdout
         for line in input_stream:
@@ -76,6 +78,7 @@ class MCPServer:
 
         class Handler(BaseHTTPRequestHandler):
             def do_GET(self):
+                """Handle HTTP GET requests — serves SSE event streams."""
                 if self.path != "/sse":
                     self.send_response(404)
                     self.end_headers()
@@ -93,6 +96,7 @@ class MCPServer:
                 self.wfile.flush()
 
             def do_POST(self):
+                """Handle HTTP POST requests — dispatches JSON-RPC tool calls."""
                 if not authorize(self.headers.get("Authorization", "").removeprefix("Bearer ").strip() or None):
                     self.send_response(401)
                     self.end_headers()
@@ -107,6 +111,7 @@ class MCPServer:
                     self.wfile.write(json.dumps(response).encode("utf-8"))
 
             def log_message(self, *_args):
+                """Suppress default HTTP server logging to keep output clean."""
                 return
 
         return ThreadingHTTPServer((host, port), Handler)

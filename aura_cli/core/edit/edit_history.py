@@ -75,7 +75,7 @@ class EditHistory:
 
         self._save_history()
 
-        logger.debug(f"Registro de edição {record.id} adicionado")
+        logger.debug(f"Edit record {record.id} added")
 
         return record.id
 

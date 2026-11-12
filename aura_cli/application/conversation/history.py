@@ -75,7 +75,7 @@ def summarize_tool_result(name: str, content: str) -> str | None:
             else None
         )
     if name == "list_directory":
-        return "Listagem de diretório concluída" if "Listou" in content else None
+        return "Directory listing completed" if "Listed" in content else None
     if name == "run_shell_command" and content:
         preview = content[:100].replace("\n", " ").strip()
         return f"Command executed: {preview}{'...' if len(content) > 100 else ''}"
@@ -99,20 +99,20 @@ def build_tool_result_response(
     if not summaries:
         if user_request:
             return (
-                f"Concluí a operação solicitada: {user_request[:100]}. "
+                f"I completed the requested operation: {user_request[:100]}. "
                 "As ferramentas foram executadas com sucesso."
             )
-        return "Operação concluída com sucesso."
+        return "Operation completed successfully."
 
     parts = []
     if user_request:
         request = user_request[:80] + ("..." if len(user_request) > 80 else "")
-        parts.append(f"Concluí: {request}")
+        parts.append(f"Completed: {request}")
     if len(summaries) == 1:
         parts.append(summaries[0])
     elif len(summaries) <= 3:
         parts.append(" ".join(summaries))
     else:
         parts.append(f"{summaries[0]}. {summaries[1]}")
-        parts.append(f"E mais {len(summaries) - 2} operações concluídas.")
+        parts.append(f"And {len(summaries) - 2} more completed operations.")
     return ". ".join(parts) + "."

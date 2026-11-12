@@ -65,7 +65,7 @@ Dependências:
 
 import queue
 
-from aura_cli.cli.ui.components.tool_result import ToolResult
+from aura_cli.cli.ui.components.agent.tool_result import ToolResult
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.cli.ui.key_bindings import create_key_bindings
 from aura_cli.cli.ui.status_panel import create_status_panel

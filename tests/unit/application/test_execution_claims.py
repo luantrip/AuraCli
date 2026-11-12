@@ -11,7 +11,7 @@ def test_rejects_mutation_claim_without_tool() -> None:
     result = validate_completion_claims("Crie App.tsx", "Criei App.tsx.", turn)
 
     assert result.supported is False
-    assert "Nenhuma operação" in factual_fallback(turn, result.issues)
+    assert "No operation" in factual_fallback(turn, result.issues)
 
 
 def test_rejects_test_success_after_nonzero_exit() -> None:
@@ -25,7 +25,7 @@ def test_rejects_test_success_after_nonzero_exit() -> None:
     )
 
     assert result.supported is False
-    assert any("falha" in issue for issue in result.issues)
+    assert any("fail" in issue.lower() or "error" in issue.lower() for issue in result.issues)
 
 
 def test_accepts_test_success_with_exit_zero() -> None:

@@ -51,14 +51,14 @@ def _check_vision_support(model: str) -> tuple[bool, str]:
     if not model:
         return (
             False,
-            "Não foi possível detectar o modelo ativo. "
+            "Could not detect the active model. "
             "Configure um modelo com suporte a vision (ex: gemini-2.5-flash).",
         )
     if not model_supports_vision(model):
         return (
             False,
-            f"O modelo '{model}' não suporta vision/imagens.\n"
-            "Modelos compatíveis: Gemini 1.5/2.5, GPT-4o, Claude 3+.\n"
+            f"Model '{model}' does not support vision/images.\n"
+            "Compatible models: Gemini 1.5/2.5, GPT-4o, Claude 3+.\n"
             f"Use {UIIcons.INFO} /model para trocar o modelo.",
         )
     return True, ""
@@ -105,13 +105,12 @@ def _vision_result(
     parts = []
     for i, (b64, mime) in enumerate(images, 1):
         parts.append(
-            f"[IMAGE_{i} mime={mime} size={len(b64)//1024}KB]\n"
+            f"[IMAGE_{i} mime={mime} size={len(b64) // 1024}KB]\n"
             f"data:{mime};base64,{b64[:80]}...{b64[-20:]}"
         )
     return (
-        f"Imagem preparada para análise visual.\n"
-        f"Modelo: {model}\nPrompt: {prompt}\n"
-        + "\n".join(parts)
+        f"Image prepared for visual analysis.\n"
+        f"Modelo: {model}\nPrompt: {prompt}\n" + "\n".join(parts)
     )
 
 
@@ -120,7 +119,7 @@ def _vision_result(
 
 def view_image(
     path: str,
-    prompt: str = "Descreva o que você vê nessa imagem em detalhes.",
+    prompt: str = "Describe what you see in this image in detail.",
     *,
     model: Optional[str] = None,
 ) -> str:
@@ -145,14 +144,14 @@ def view_image(
     active_model = model or _get_active_model()
     supported, err = _check_vision_support(active_model)
     if not supported:
-        return f"❌ Vision não disponível: {err}"
+        return f"❌ Vision not available: {err}"
 
     p = Path(path)
     if not p.exists():
         return f"❌ File not found: {path}"
     if p.suffix.lower() not in _SUPPORTED_EXTENSIONS:
         return (
-            f"❌ Formato não suportado: '{p.suffix}'.\n"
+            f"❌ Unsupported format: '{p.suffix}'.\n"
             f"Formatos aceitos: {', '.join(sorted(_SUPPORTED_EXTENSIONS))}"
         )
 
@@ -161,7 +160,7 @@ def view_image(
 
         b64, mime = encode_image_file(p)
     except ImportError as e:
-        return f"❌ Pillow não instalado: {e}\nInstale com: pip install pillow"
+        return f"❌ Pillow not installed: {e}\nInstall with: pip install pillow"
     except ValueError as e:
         return f"❌ Invalid image file: {e}"
     except Exception as e:
@@ -177,7 +176,7 @@ def view_image(
 
 
 def take_screenshot(
-    prompt: str = "Descreva o que está visível na tela.",
+    prompt: str = "Describe what is visible on the screen.",
     *,
     model: Optional[str] = None,
 ) -> str:
@@ -202,15 +201,15 @@ def take_screenshot(
     active_model = model or _get_active_model()
     supported, err = _check_vision_support(active_model)
     if not supported:
-        return f"❌ Vision não disponível: {err}"
+        return f"❌ Vision not available: {err}"
 
     from aura_cli.core.llm.vision import capture_screenshot
 
     raw = capture_screenshot()
     if raw is None:
         return (
-            "❌ Não foi possível capturar a tela.\n"
-            "macOS: requer permissão de Screen Recording (Preferências → Privacidade).\n"
+            "❌ Could not capture the screen.\n"
+            "macOS: requires Screen Recording permission (System Preferences → Privacy).\n"
             "Linux: instale gnome-screenshot, scrot ou ImageMagick (import).\n"
             "Alternativa: salve uma imagem e use view_image(path)."
         )
@@ -220,7 +219,7 @@ def take_screenshot(
 
         b64, mime = encode_image_bytes(raw)
     except ImportError as e:
-        return f"❌ Pillow não instalado: {e}"
+        return f"❌ Pillow not installed: {e}"
     except Exception as e:
         logger.error("take_screenshot: encode failed: %s", e, exc_info=True)
         return f"❌ Error encoding screenshot: {e}"
@@ -235,7 +234,7 @@ def take_screenshot(
 
 def describe_url_visual(
     url: str,
-    prompt: str = "Descreva o conteúdo visual desta página.",
+    prompt: str = "Describe the visual content of this page.",
     *,
     model: Optional[str] = None,
     include_text: bool = True,
@@ -258,7 +257,9 @@ def describe_url_visual(
     Returns:
         Combined text + vision analysis result, or text-only if vision unavailable.
     """
-    display_tool_call("describe_url_visual", {"url": url, "prompt": prompt[:60] + "..."})
+    display_tool_call(
+        "describe_url_visual", {"url": url, "prompt": prompt[:60] + "..."}
+    )
     stats = get_stats()
     stats.track_tool_usage("describe_url_visual")
 
@@ -295,13 +296,13 @@ def describe_url_visual(
         # Vision not available — return text-only result
         if text_content:
             return (
-                f"📄 Conteúdo de {url} (texto, vision não disponível):\n\n"
+                f"📄 Content from {url} (text, vision not available):\n\n"
                 + text_content[:4000]
                 + ("..." if len(text_content) > 4000 else "")
             )
         return (
-            f"❌ Vision não disponível para o modelo '{active_model}' "
-            f"e o monitor não retornou conteúdo para {url}."
+            f"❌ Vision not available for model '{active_model}' "
+            f"and the monitor returned no content for {url}."
         )
 
     # Vision available — try to capture a rendered screenshot
@@ -319,7 +320,7 @@ def describe_url_visual(
     if text_content:
         combined_prompt = (
             f"{prompt}\n\n"
-            f"Texto extraído da página (para contexto):\n"
+            f"Text extracted from page (for context):\n"
             + text_content[:2000]
             + ("..." if len(text_content) > 2000 else "")
         )
@@ -328,10 +329,10 @@ def describe_url_visual(
         # No screenshot — return just text
         if text_content:
             return (
-                f"📄 Conteúdo de {url} (screenshot não disponível):\n\n"
+                f"📄 Content from {url} (screenshot not available):\n\n"
                 + text_content[:4000]
             )
-        return f"❌ Não foi possível obter conteúdo visual ou textual de {url}."
+        return f"❌ Could not get visual or textual content from {url}."
 
     try:
         from aura_cli.core.llm.vision import encode_image_bytes

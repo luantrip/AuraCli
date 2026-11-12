@@ -44,7 +44,7 @@ def validate_edit_content(
         )
         syntax_valid = validate_python_syntax(resulting_content)
         if not syntax_valid:
-            errors.append("Sintaxe Python inválida no conteúdo resultante")
+            errors.append("Invalid Python syntax in resulting content")
     return EditValidationResult(
         valid=not errors,
         errors=errors,

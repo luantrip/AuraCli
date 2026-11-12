@@ -202,7 +202,6 @@ class AgiExecutionEngine:
         | None = None,
         tool_panel_context_factory: Callable[..., ContextManager[Any]] | None = None,
     ):
-        """Initialize the instance."""
         self.worker = agi_worker
         self.planner = planner
         self.context_manager = context_manager
@@ -233,7 +232,7 @@ class AgiExecutionEngine:
         try:
             api_key, actual_model = self._configure_environment()
             if not api_key:
-                error = "Credencial ausente ou provider não configurado."
+                error = "Missing credential or provider not configured."
                 self.worker._record_final_error(error, error_code="configuration")
                 if self.headless:
                     self.worker._publish_terminal_result(
@@ -249,7 +248,9 @@ class AgiExecutionEngine:
 
             if loading:
                 loading.update(LoadingState.PREPARING, "Configurando ambiente...")
-            if self.context_manager and hasattr(self.context_manager, "prepare_evidence"):
+            if self.context_manager and hasattr(
+                self.context_manager, "prepare_evidence"
+            ):
                 self.context_manager.prepare_evidence(prompt)
             user_proxy, aura_agi_agent = self._create_agents(
                 actual_model, api_key, prompt
@@ -273,7 +274,7 @@ class AgiExecutionEngine:
                         use_workflow = True
                         self.event_adapter.emit_chat_message(
                             sender="agent",
-                            content=f"› [Aura AGI] {UIIcons.INFO} Using workflow for {len(valid_tasks)} valid tasksdas",
+                            content=f"› [Aura AGI] {UIIcons.INFO} Using workflow for {len(valid_tasks)} valid tasks",
                         )
                         self.planner.sync_plan_to_todo(task_plan, prompt)
                     else:
@@ -284,12 +285,12 @@ class AgiExecutionEngine:
                         task_plan = None
             if loading:
                 loading.update(
-                    LoadingState.ANALYZING, "Iniciando análise de contexto..."
+                    LoadingState.ANALYZING, "Starting context analysis..."
                 )
             else:
                 self.event_adapter.emit_chat_message(
                     sender="agent",
-                    content=f"› [Aura AGI] {UIIcons.SUCCESS} Contexto analisado. Iniciando análise...",
+                    content=f"› [Aura AGI] {UIIcons.SUCCESS} Context analysed. Starting analysis...",
                 )
             if use_workflow and self.workflow_executor and task_plan:
                 self._execute_workflow(
@@ -346,9 +347,9 @@ class AgiExecutionEngine:
         api_key = self.api_keys.get(credential_name)
         if not api_key:
             if provider in credential_names:
-                message = f"{credential_name} não configurada. Configure com /settings"
+                message = f"{credential_name} not configured. Configure with /settings"
             else:
-                message = "Nenhuma API key configurada. Configure com /settings"
+                message = "No API key configured. Ask the user to configure with /settings before delegating to Ops."
             self._emit_warning(message)
             return None, None
 
@@ -494,7 +495,7 @@ class AgiExecutionEngine:
             logger.error(f"Error executing workflow: {e}", exc_info=True)
             self.event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura AGI] {UIIcons.WARNING} Erro no workflow, continuando com execução padrão",
+                content=f"› [Aura AGI] {UIIcons.WARNING} Workflow error, continuing with standard execution",
             )
             raise e
 
@@ -540,9 +541,18 @@ class AgiExecutionEngine:
     def _setup_agi_panel_tracking(self, workflow_executor, panel) -> None:
         """Install step_wrapper to track SubAgentPanel state during workflow."""
         step_start_times: Dict[str, float] = {}
+        step_start_tool_counts: Dict[str, int] = {}
+
+        def _tools_used_count() -> int:
+            """Cumulative count of distinct tools used so far this session."""
+            manager = self.context_manager
+            if manager is not None and hasattr(manager, "tools_used"):
+                return len(getattr(manager, "tools_used", []) or [])
+            return 0
 
         def _tracked_step_wrapper(wf, step, execute_fn):
             step_start_times[step.id] = time.time()
+            step_start_tool_counts[step.id] = _tools_used_count()
             panel.update_task(step.id, tool_count=0)
             if self.publish_progress:
                 self.publish_progress(self.worker.status_queue, panel)
@@ -550,8 +560,17 @@ class AgiExecutionEngine:
                 execute_fn()
             finally:
                 duration = time.time() - step_start_times.get(step.id, time.time())
+                # Real per-step tool count: distinct tools used during this step,
+                # not a hardcoded 1. tools_used is a session-cumulative unique list,
+                # so the delta is a lower bound (a tool reused across steps counts
+                # once), which is still far more informative than a constant.
+                step_tools = max(
+                    0, _tools_used_count() - step_start_tool_counts.get(step.id, 0)
+                )
                 if step.status.value == "completed":
-                    panel.complete_task(step.id, tool_count=1, duration=duration)
+                    panel.complete_task(
+                        step.id, tool_count=step_tools, duration=duration
+                    )
                 elif step.status.value == "failed":
                     panel.fail_task(step.id, error=step.error or "unknown")
                 if self.publish_progress:
@@ -566,7 +585,7 @@ class AgiExecutionEngine:
             self.publish_status(
                 self.worker.status_queue,
                 "agi",
-                f"{UIIcons.WARNING} Repositório Git em estado inseguro - prosseguindo com cuidado",
+                f"{UIIcons.WARNING} Git repository in unsafe state - proceeding with caution",
             )
         if self.validator:
             user_prompt = self.validator.validate_and_sanitize_prompt(prompt)
@@ -597,7 +616,7 @@ class AgiExecutionEngine:
 
         self.event_adapter.emit_chat_message(
             sender="agent",
-            content=f"› [Aura AGI] {UIIcons.SUCCESS} Análise concluída!",
+            content=f"› [Aura AGI] {UIIcons.SUCCESS} Analysis complete!",
         )
 
     def _check_git_safety(self, prompt):
@@ -666,7 +685,7 @@ class AgiExecutionEngine:
             if not self.headless:
                 self.event_adapter.emit_chat_message(
                     sender="system",
-                    content=f"› [Aura AGI] {UIIcons.SUCCESS} Análise salva no caderno: {Path(page_path).name}",
+                    content=f"› [Aura AGI] {UIIcons.SUCCESS} Analysis saved to notebook: {Path(page_path).name}",
                 )
         except Exception as e:
             logger.warning(f"Error saving final AGI snapshot: {e}")
@@ -675,7 +694,7 @@ class AgiExecutionEngine:
         """Handles execution errors."""
         if hasattr(self.worker, "_record_final_error"):
             self.worker._record_final_error(e)
-        # NOTE: skip_confirmations restoration is deferred — tracked via session state
+        # skip_confirmations is restored lazily via session state on the next run.
         logger.debug(f"Error handling workflow result: {e}")
         error_result = {"status": "error", "error": str(e), "prompt": prompt}
         if self.headless:
@@ -894,7 +913,7 @@ class AgiExecutionEngine:
                     "descobri",
                     "identifiquei",
                     "analisei",
-                    "concluí",
+                    "completed",
                 )
             ):
                 timestamp = time.time()
@@ -910,41 +929,41 @@ class AgiExecutionEngine:
 
     def _get_base_system_message(self):
         """Build the base system prompt for the AGI agent."""
-        base_message = """Você é a Aura AGI, uma gerente de projetos de software autônoma e experiente, operando dentro do ecossistema Aura CLI.
+        base_message = """You are Aura AGI, an experienced autonomous software project manager operating within the Aura CLI ecosystem.
 
-**SEU OBJETIVO**: Analisar, planejar e executar tarefas complexas de desenvolvimento de software com precisão e autonomia.
+**YOUR GOAL**: Analyze, plan and execute complex software development tasks with precision and autonomy.
 
-**ENGINES NIM (ALTA PERFORMANCE — USE PRIMEIRO):**
-- `scan_project(path=".")` — escaneia o projeto ultrarrápido via Imagination Engine. Use no início de qualquer análise.
-- `analyze_dependencies(path=".")` — grafo de imports/dependências via Nexus Engine.
-- `check_file_changes(path=".")` — detecta arquivos alterados via Sentinel.
-- `sanitize_code(code, fix=True)` — linta e formata código via Forge.
+**NIM ENGINES (HIGH PERFORMANCE — USE FIRST):**
+- `scan_project(path=".")` — scans the project at high speed via Imagination Engine. Use at the start of any analysis.
+- `analyze_dependencies(path=".")` — import/dependency graph via Nexus Engine.
+- `check_file_changes(path=".")` — detects modified files via Sentinel.
+- `sanitize_code(code, fix=True)` — lints and formats code via Forge.
 
-**FERRAMENTAS DE ARQUIVOS E CÓDIGO:**
+**FILE AND CODE TOOLS:**
 - `list_directory(path)`, `tree_view(path)`, `read_file(path)`, `write_file(path, content)`
 - `find_in_files(pattern, path)`, `glob_search(pattern)`, `codebase_search(query)`
 - `analyze_code(path)`, `validate_syntax(path)`, `summarize_code(path)`
-- `run_shell_command(command)` — executa comandos shell
+- `run_shell_command(command)` — runs shell commands
 
-**MEMÓRIA PERSISTENTE (NOTEBOOK):**
-- `notebook_write(content, summary)` — salva decisões e planos importantes
+**PERSISTENT MEMORY (NOTEBOOK):**
+- `notebook_write(content, summary)` — saves important decisions and plans
 - `notebook_read(page_path)`, `notebook_list()`, `notebook_search(query)`
 
-**PROCESSO DE TRABALHO (CHAIN OF THOUGHT):**
-1. **ANÁLISE**: Use `scan_project(".")` para visão rápida do projeto.
-2. **EXPLORAÇÃO**: Use `list_directory` e `read_file` para entender o código relevante.
-3. **PLANEJAMENTO**: Formule um plano claro antes de agir.
-4. **EXECUÇÃO**: Execute ferramentas passo-a-passo, verificando cada resultado.
-5. **VERIFICAÇÃO**: Confirme que o objetivo foi atingido. Valide sintaxe ou rode testes quando aplicável.
+**WORKFLOW (CHAIN OF THOUGHT):**
+1. **ANALYZE**: Use `scan_project(".")` for a quick project overview.
+2. **EXPLORE**: Use `list_directory` and `read_file` to understand the relevant code.
+3. **PLAN**: Formulate a clear plan before acting.
+4. **EXECUTE**: Run tools step by step, verifying each result.
+5. **VERIFY**: Confirm the goal was achieved. Validate syntax or run tests when applicable.
 
-**REGRAS DE OURO:**
-- **NÃO ALUCINE**: Só cite arquivos que você confirmou que existem.
-- **USE FERRAMENTAS**: Não peça para o usuário fazer coisas que você pode fazer com suas ferramentas.
-- **CONTEXT FIRST**: Sempre entenda o contexto antes de agir.
-- **SEJA PROFISSIONAL**: Tom técnico, objetivo e colaborativo.
+**GOLDEN RULES:**
+- **DO NOT HALLUCINATE**: Only reference files you have confirmed exist.
+- **USE TOOLS**: Do not ask the user to do things you can do with your tools.
+- **CONTEXT FIRST**: Always understand the context before acting.
+- **BE PROFESSIONAL**: Technical, objective and collaborative tone.
 
-**FINALIZAÇÃO:**
-Quando concluir a tarefa com sucesso, termine sua mensagem com "TERMINATE".
+**COMPLETION:**
+When the task is successfully completed, end your message with "TERMINATE".
 """
         delegation_payload = getattr(self.worker, "delegation_payload", None) or {}
         if not delegation_payload:

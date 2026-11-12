@@ -9,37 +9,70 @@ from aura_cli.cli.main import _init_core_services, start_interactive_session
 class TestMainIntegrationScenarios:
     """Covers boot sequencing and graceful degradation paths."""
 
-    def test_start_interactive_session_runs_onboarding_when_keys_missing(self):
-        """If keys are missing, settings flow should run before core init."""
+    def test_missing_keys_reenter_the_same_wizard(self):
+        """No key (skipped/incomplete setup) re-runs the wizard, not a second screen."""
         with (
             patch("aura_cli.cli.main.UIManager") as mock_ui_cls,
             patch("aura_cli.cli.main.Console"),
             patch("aura_cli.cli.main._init_embedding_server"),
-            patch("aura_cli.cli.main.check_api_keys", side_effect=[False, True]),
+            patch("aura_cli.cli.main.is_first_run", return_value=False),
+            patch("aura_cli.cli.main.check_api_keys", side_effect=[False, False, True]),
+            patch("aura_cli.cli.main.run_setup_wizard") as wizard,
             patch("aura_cli.cli.main.show_settings_menu") as show_settings,
             patch("aura_cli.cli.main.set_environment_for_litellm"),
             patch("aura_cli.cli.main.get_event_bus"),
             patch("aura_cli.cli.main._init_core_services") as init_core,
-            patch("aura_cli.cli.main.clear_screen"),
         ):
             ui = Mock()
             mock_ui_cls.return_value = ui
 
             start_interactive_session()
 
-        show_settings.assert_called_once()
+        wizard.assert_called_once_with(key_required=True)
+        show_settings.assert_not_called()
         init_core.assert_called_once()
         ui.display_error.assert_not_called()
 
-    def test_start_interactive_session_exits_when_keys_still_missing(self):
-        """If keys remain missing after settings, startup should abort."""
+    def test_first_run_with_keys_present_runs_wizard_once_without_requiring_key(self):
+        with (
+            patch("aura_cli.cli.main.UIManager"),
+            patch("aura_cli.cli.main.Console"),
+            patch("aura_cli.cli.main._init_embedding_server"),
+            patch("aura_cli.cli.main.is_first_run", return_value=True),
+            patch("aura_cli.cli.main.check_api_keys", return_value=True),
+            patch("aura_cli.cli.main.run_setup_wizard") as wizard,
+            patch("aura_cli.cli.main.set_environment_for_litellm"),
+            patch("aura_cli.cli.main.get_event_bus"),
+            patch("aura_cli.cli.main._init_core_services"),
+        ):
+            start_interactive_session()
+
+        wizard.assert_called_once_with(key_required=False)
+
+    def test_configured_user_never_sees_the_wizard(self):
+        with (
+            patch("aura_cli.cli.main.UIManager"),
+            patch("aura_cli.cli.main.Console"),
+            patch("aura_cli.cli.main._init_embedding_server"),
+            patch("aura_cli.cli.main.is_first_run", return_value=False),
+            patch("aura_cli.cli.main.check_api_keys", return_value=True),
+            patch("aura_cli.cli.main.run_setup_wizard") as wizard,
+            patch("aura_cli.cli.main.set_environment_for_litellm"),
+            patch("aura_cli.cli.main.get_event_bus"),
+            patch("aura_cli.cli.main._init_core_services"),
+        ):
+            start_interactive_session()
+
+        wizard.assert_not_called()
+
+    def test_exits_with_actionable_error_when_wizard_leaves_no_key(self):
         with (
             patch("aura_cli.cli.main.UIManager") as mock_ui_cls,
             patch("aura_cli.cli.main.Console"),
             patch("aura_cli.cli.main._init_embedding_server"),
-            patch("aura_cli.cli.main.check_api_keys", side_effect=[False, False]),
-            patch("aura_cli.cli.main.show_settings_menu"),
-            patch("aura_cli.cli.main.clear_screen"),
+            patch("aura_cli.cli.main.is_first_run", return_value=False),
+            patch("aura_cli.cli.main.check_api_keys", return_value=False),
+            patch("aura_cli.cli.main.run_setup_wizard"),
         ):
             ui = Mock()
             mock_ui_cls.return_value = ui
@@ -53,6 +86,7 @@ class TestMainIntegrationScenarios:
 
         assert raised is True
         ui.display_error.assert_called_once()
+        assert "aura settings" in ui.display_error.call_args.args[0]
 
     def test_init_core_services_continues_when_optional_components_fail(self):
         """Optional component failures should not block AppLoop startup."""

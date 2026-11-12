@@ -17,6 +17,18 @@ _console: Optional[Console] = None
 _current_ui: Optional[object] = None
 
 
+def _intent_by_method() -> dict:
+    """Map display_* method names to presentation intents (lazy import)."""
+    from aura_cli.application.presentation.tui_surfaces import PresentationIntent
+
+    return {
+        "display_error": PresentationIntent.ERROR,
+        "display_success": PresentationIntent.SUCCESS,
+        "display_warning": PresentationIntent.WARNING,
+        "display_info": PresentationIntent.INFORMATION,
+    }
+
+
 def _get_console() -> Console:
     """Return the shared Rich console instance (internal use)."""
     global _console
@@ -74,7 +86,21 @@ def _icon(icon: str) -> str:
 
 
 def _display_styled(message: str, *, method: str, icon: str, style: str) -> None:
-    """Shared implementation for all display_* functions."""
+    """Shared implementation for all display_* functions.
+
+    When a UIManager is registered, route by *intent* through the single
+    ``present_surface`` ingress (PE-2) so the display policy decides the
+    surface. Falls back to a raw console line only when no UI is registered.
+    """
+    if _current_ui is not None and hasattr(_current_ui, "present_surface"):
+        from aura_cli.application.presentation.tui_surfaces import (
+            PresentationIntent,
+            SurfaceRequest,
+        )
+
+        intent = _intent_by_method().get(method, PresentationIntent.INFORMATION)
+        _current_ui.present_surface(SurfaceRequest(intent=intent, content=message))
+        return
     if _current_ui is not None and hasattr(_current_ui, method):
         getattr(_current_ui, method)(message)
         return

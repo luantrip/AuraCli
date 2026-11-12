@@ -7,22 +7,21 @@ This module provides functions to check and configure API keys for LLM providers
 import os
 from typing import Any
 
-from prompt_toolkit.shortcuts import (
-    input_dialog as _input_dialog,
-)
-from prompt_toolkit.shortcuts import (
-    message_dialog as _message_dialog,
-)
-from prompt_toolkit.shortcuts import (
-    radiolist_dialog as _radiolist_dialog,
-)
-from prompt_toolkit.shortcuts import (
-    yes_no_dialog as _yes_no_dialog,
-)
-
 from aura_cli.cli.helpers import get_api_keys_dict
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.cli.ui.display_facade import get_console
+from aura_cli.cli.ui.prompts import (
+    confirm_dialog as _yes_no_dialog,
+)
+from aura_cli.cli.ui.prompts import (
+    input_dialog as _input_dialog,
+)
+from aura_cli.cli.ui.prompts import (
+    message_dialog as _message_dialog,
+)
+from aura_cli.cli.ui.prompts import (
+    select_dialog as _radiolist_dialog,
+)
 from aura_cli.cli.ui.settings_modal import graphite_dialog_style, settings_summary
 from aura_cli.cli.utils import clear_screen
 from aura_cli.core.config import get_config_manager
@@ -33,7 +32,6 @@ from aura_cli.core.llm.model_utils import (
     resolve_model_option,
 )
 from aura_cli.core.logger import get_logger
-from aura_cli.core.secure_config import secure_config_manager
 
 console = get_console()
 logger = get_logger(__name__)
@@ -43,7 +41,7 @@ def _model_preview(provider: str, limit: int = 2) -> str:
     """Render a short provider model preview from the canonical catalog."""
     models = get_models_for_provider(provider)
     if not models:
-        return "nenhum modelo catalogado"
+        return "no model cataloged"
     return " · ".join(format_model_display_name(model) for model in models[:limit])
 
 
@@ -96,13 +94,13 @@ def check_api_keys() -> bool:
         logger.debug(f"Ignorado: {_e}")
     return any(
         [
-            secure_config_manager.get_api_key("google"),
-            secure_config_manager.get_api_key("cerebras"),
-            secure_config_manager.get_api_key("openrouter"),
-            secure_config_manager.get_api_key("openai"),
-            secure_config_manager.get_api_key("anthropic"),
-            secure_config_manager.get_api_key("nvidia"),
-            secure_config_manager.get_api_key("groq"),
+            get_config_manager().get_api_key("google"),
+            get_config_manager().get_api_key("cerebras"),
+            get_config_manager().get_api_key("openrouter"),
+            get_config_manager().get_api_key("openai"),
+            get_config_manager().get_api_key("anthropic"),
+            get_config_manager().get_api_key("nvidia"),
+            get_config_manager().get_api_key("groq"),
         ]
     )
 
@@ -113,7 +111,7 @@ def clear_api_key(provider: str) -> None:
 
     try:
         clear_api_key_for_provider(provider)
-        console.print(f"[{UIStyles.SUCCESS}]✓ Chave de API {provider} removida![/]")
+        console.print(f"[{UIStyles.SUCCESS}]✓ API key {provider} removed![/]")
     except Exception as e:
         console.print(f"[{UIStyles.ERROR}]Error removing key: {e}[/]")
 
@@ -147,7 +145,7 @@ def _show_settings_tui() -> None:
         current_model = (
             format_model_display_name(resolve_model_option(raw_model))
             if raw_model
-            else "Não configurado"
+            else "Not configured"
         )
         log_level = config.get("log_level") or "INFO"
 
@@ -164,14 +162,14 @@ def _show_settings_tui() -> None:
         active_count = sum(providers.values())
         clear_screen()
         main_menu = radiolist_dialog(
-            title="Aura  /  Configurações",
+            title="Aura  /  Settings",
             text=settings_summary(active_count, current_model, str(current_theme)),
             values=[
-                    ("apis", f"Chaves e provedores · {active_count}/7 ativos"),
-                ("model", f"Modelo padrão · {current_model}"),
-                ("themes", f"Aparência · {current_theme}"),
+                ("apis", f"Chaves e provedores · {active_count}/7 ativos"),
+                ("model", f"Default model · {current_model}"),
+                ("themes", f"Appearance · {current_theme}"),
                 ("system", f"Sistema · log {log_level}"),
-                ("exit", "Fechar configurações"),
+                ("exit", "Close settings"),
             ],
         ).run()
 
@@ -208,10 +206,10 @@ def _handle_themes_menu() -> None:
         "aura_minimal": "Apple HIG-inspired minimal (default)",
         "cyberpunk": "Classic neon cyberpunk terminal",
         "macos": "Alias for aura_minimal",
-        "holographic": "Holográfico futurista",
-        "dark": "Escuro clássico",
+        "holographic": "Futuristic holographic",
+        "dark": "Classic dark",
         "light": "Claro para telas brilhantes",
-        "mono": "Monocromático para foco",
+        "mono": "Monochrome for focus",
         "default": "Alias for aura_minimal",
     }
 
@@ -224,7 +222,7 @@ def _handle_themes_menu() -> None:
     ]
 
     selected_theme = radiolist_dialog(
-        title="🎨 Selecionar Tema",
+        title="🎨 Select Theme",
         text="Escolha um tema de UI (aplicado em tempo real):",
         values=theme_values,
         default=current_theme if current_theme in available_themes else None,
@@ -251,7 +249,7 @@ def _handle_themes_menu() -> None:
 
             message_dialog(
                 title="✓ Tema Alterado",
-                text=f"Tema '{selected_theme}' aplicado com sucesso!\n\nAs mudanças são aplicadas em tempo real.\n\nReinicie o Aura para ver todas as mudanças.",
+                text=f"Theme '{selected_theme}' applied successfully!\n\nChanges are applied in real time.\n\nRestart Aura to see all changes.",
             ).run()
         except Exception as e:
             error_msg = f"Error loading theme: {e}"
@@ -262,21 +260,19 @@ def _handle_themes_menu() -> None:
 
 
 def _confirm_clear_key(provider: str, question: str) -> None:
-    if yes_no_dialog(title="Confirmar", text=question).run():
+    if yes_no_dialog(title="Confirm", text=question).run():
         clear_api_key(provider)
 
 
 def _confirm_clear_all() -> None:
     if yes_no_dialog(
-        title="▲  Confirmar",
-        text="Tem certeza que deseja remover TODAS as chaves de API?\n\nEsta ação não pode ser desfeita.",
+        title="▲  Confirm",
+        text="Are you sure you want to remove ALL API keys?\n\nThis action cannot be undone.",
     ).run():
         from aura_cli.core.api_key_store import clear_all_api_keys
 
         clear_all_api_keys()
-        message_dialog(
-            title="✓ Concluído", text="Todas as chaves de API foram removidas."
-        ).run()
+        message_dialog(title="✓ Done", text="All API keys have been removed.").run()
 
 
 def _handle_apis_menu() -> None:
@@ -327,8 +323,8 @@ def _handle_apis_menu() -> None:
                 ("remove_openai", "  ✗ Remover OpenAI"),
                 ("remove_anthropic", "  ✗ Remover Anthropic"),
                 ("remove_nvidia", "  ✗ Remover NVIDIA"),
-                ("clear_all", "  🗑️  Limpar tudo"),
-                ("back", "  ← Voltar"),
+                ("clear_all", "  🗑️  Clear all"),
+                ("back", "  ← Back"),
             ],
         ).run()
 
@@ -379,7 +375,7 @@ def _system_menu_nim(config: Any) -> None:
     status_text = "\n".join(lines)
     path = input_dialog(
         title="✦ F1 Engine (Nim)",
-        text=f"Status dos binários:\n{status_text}\n\nCaminho (vazio = auto-detectar):",
+        text=f"Binary status:\n{status_text}\n\nPath (empty = auto-detect):",
         default=config.get("nim_binary_path") or "",
     ).run()
     if path is not None:
@@ -388,13 +384,13 @@ def _system_menu_nim(config: Any) -> None:
 
 def _system_menu_log(config: Any) -> None:
     level = radiolist_dialog(
-        title="📝 Nível de log",
-        text="Selecione nível de detalhe dos logs:",
+        title="📝 Log level",
+        text="Select log detail level:",
         values=[
-            ("DEBUG", "DEBUG - Detalhe máximo (para desenvolvimento)"),
-            ("INFO", "INFO  - Operação normal (recomendado)"),
+            ("DEBUG", "DEBUG - Maximum detail (for development)"),
+            ("INFO", "INFO  - Normal operation (recommended)"),
             ("WARNING", "WARN  - Apenas avisos e erros"),
-            ("ERROR", "ERROR - Apenas erros críticos"),
+            ("ERROR", "ERROR - Critical errors only"),
         ],
         default=config.get("log_level") or "INFO",
     ).run()
@@ -404,8 +400,8 @@ def _system_menu_log(config: Any) -> None:
 
 def _system_menu_loops(config: Any) -> None:
     loops = input_dialog(
-        title="🔄 Máximo de loops do agente",
-        text="Máximo de iterações do agente (1-1000):",
+        title="🔄 Agent loop limit",
+        text="Maximum agent iterations (1-1000):",
         default=str(config.get("max_loops") or 50),
     ).run()
     if loops and loops.isdigit():
@@ -414,18 +410,18 @@ def _system_menu_loops(config: Any) -> None:
             config.set("max_loops", loops_int)
             message_dialog(
                 title="✓ Configurado",
-                text=f"Máximo de loops configurado para: {loops_int}",
+                text=f"Loop limit set to: {loops_int}",
             ).run()
         else:
             message_dialog(
-                title="▲ Valor Inválido", text="O valor deve estar entre 1 e 1000."
+                title="▲ Invalid Value", text="Value must be between 1 and 1000."
             ).run()
 
 
 def _system_menu_shell(config: Any) -> None:
     allow = yes_no_dialog(
-        title="🐚 Execução de shell",
-        text="Permitir que agentes executem comandos no terminal?\n(Recomendado: Sim, com supervisão)",
+        title="🐚 Shell execution",
+        text="Allow agents to run commands in the terminal?\n(Recommended: Yes, with supervision)",
     ).run()
     config.set("enable_shell", allow)
 
@@ -433,11 +429,11 @@ def _system_menu_shell(config: Any) -> None:
 def _system_menu_rag(config: Any) -> None:
     backend = radiolist_dialog(
         title="◈ Backend de armazenamento vetorial",
-        text="Selecione backend de memória vetorial:",
+        text="Select vector memory backend:",
         values=[
-            ("keyword", "Keyword (Padrão, zero deps)"),
-            ("chromadb", "ChromaDB (Semântico, requer extra [vector])"),
-            ("faiss", "FAISS (Rápido, requer extra [vector-faiss])"),
+            ("keyword", "Keyword (Default, zero deps)"),
+            ("chromadb", "ChromaDB (Semantic, requires extra [vector])"),
+            ("faiss", "FAISS (Fast, requires extra [vector-faiss])"),
         ],
         default=config.get("vector_backend") or "keyword",
     ).run()
@@ -447,8 +443,8 @@ def _system_menu_rag(config: Any) -> None:
 
 def _system_menu_ascii(config: Any) -> None:
     enable = yes_no_dialog(
-        title="🔤 Modo ASCII",
-        text="Ativar modo ASCII?\n\nUse em terminais sem suporte a Unicode/emoji.\nÍcones serão substituídos por caracteres ASCII.",
+        title="🔤 ASCII Mode",
+        text="Enable ASCII mode?\n\nUse in terminals without Unicode/emoji support.\nIcons will be replaced by ASCII characters.",
     ).run()
     config.set("ascii_mode", enable)
     from aura_cli.cli.ui.constants import UIIcons
@@ -459,7 +455,7 @@ def _system_menu_ascii(config: Any) -> None:
 def _system_menu_consciousness(config: Any) -> None:
     val = input_dialog(
         title="🎯 Threshold de Skills",
-        text="Relevância mínima para injetar skills no contexto (0.1 a 0.9):\n\nValor menor = mais skills injetadas\nValor maior = apenas skills muito relevantes",
+        text="Minimum relevance to inject skills into context (0.1 to 0.9):\n\nLower value = more skills injected\nValor maior = apenas skills muito relevantes",
         default=str(config.get("consciousness_threshold") or 0.35),
     ).run()
     if val:
@@ -469,18 +465,18 @@ def _system_menu_consciousness(config: Any) -> None:
                 config.set("consciousness_threshold", t)
             else:
                 message_dialog(
-                    title="▲ Valor Inválido", text="Use um valor entre 0.1 e 0.9."
+                    title="▲ Invalid Value", text="Use um valor entre 0.1 e 0.9."
                 ).run()
         except ValueError:
             message_dialog(
-                title="▲ Valor Inválido", text="Digite um número decimal (ex: 0.35)."
+                title="▲ Invalid Value", text="Enter a decimal number (e.g. 0.35)."
             ).run()
 
 
 def _system_menu_temperature(config: Any) -> None:
     val = input_dialog(
         title="🌡️ Temperatura LLM",
-        text="Temperatura para respostas (0.0 = determinístico, 1.0 = criativo):\n\nDeixe vazio para auto (recomendado).",
+        text="Response temperature (0.0 = deterministic, 1.0 = creative):\n\nLeave empty for auto (recommended).",
         default=str(config.get("temperature") or ""),
     ).run()
     if val is None:
@@ -502,7 +498,7 @@ def _system_menu_system_prompt(config: Any) -> None:
     current = config.get("system_prompt") or ""
     val = input_dialog(
         title="◇ System Prompt",
-        text="Prompt de sistema global (deixe vazio para padrão):",
+        text="Global system prompt (leave empty for default):",
         default=current,
     ).run()
     if val is not None:
@@ -545,27 +541,29 @@ def _handle_system_menu() -> None:
         ascii_mode = "✓" if config.get("ascii_mode") else "✗"
         consciousness_threshold = config.get("consciousness_threshold") or 0.35
         temperature = config.get("temperature") or "auto"
-        system_prompt = "Custom" if config.get("system_prompt") else "Padrão"
+        system_prompt = "Custom" if config.get("system_prompt") else "Default"
         skip_splash = "✓" if config.get("skip_splash") else "✗"
+        status_detail = "✓" if config.get("status_bar_verbose") else "✗"
 
         menu_choice = radiolist_dialog(
             title="🛠️  Sistema",
             text=f"─── F1 Engine: {nim_label} · Shell: {shell_exec} · Log: {log_level}\n",
             values=[
-                ("nim", f"✦ F1 Engine (Nim)        {nim_label} binários"),
-                ("log", f"📝 Nível de log           {log_level}"),
-                ("loops", f"🔄 Máx. loops agente      {max_loops}"),
-                ("shell", f"🐚 Execução shell         {shell_exec}"),
+                ("nim", f"✦ F1 Engine (Nim)        {nim_label} binaries"),
+                ("log", f"📝 Log level           {log_level}"),
+                ("loops", f"🔄 Agent max loops      {max_loops}"),
+                ("shell", f"🐚 Shell execution         {shell_exec}"),
                 ("rag", f"◈ Backend vetorial       {vector_backend}"),
                 ("temperature", f"🌡️  Temperatura LLM        {temperature}"),
                 ("system_prompt", f"◇ System prompt          {system_prompt}"),
                 ("ascii", f"🔤 Modo ASCII             {ascii_mode}"),
                 ("skip_splash", f"◈ Pular splash           {skip_splash}"),
+                ("status_detail", f"◈ Barra: custo/turno/git  {status_detail}"),
                 (
                     "consciousness",
                     f"🎯 Threshold skills       {consciousness_threshold}",
                 ),
-                ("back", "  ← Voltar"),
+                ("back", "  ← Back"),
             ],
         ).run()
 
@@ -578,6 +576,8 @@ def _handle_system_menu() -> None:
             _system_menu_system_prompt(config)
         elif menu_choice == "skip_splash":
             config.set("skip_splash", not config.get("skip_splash"))
+        elif menu_choice == "status_detail":
+            config.set("status_bar_verbose", not config.get("status_bar_verbose"))
         else:
             handler = _SYSTEM_MENU_HANDLERS.get(menu_choice)
             if handler:
@@ -604,18 +604,18 @@ def _verify_and_notify_key(provider: str, api_key: str, provider_name: str) -> N
         logger.debug(f"Error checking PydanticConfig: {e}")
     if not saved_key:
         try:
-            saved_key = secure_config_manager.get_api_key(provider)
+            saved_key = get_config_manager().get_api_key(provider)
         except Exception as e:
             logger.debug(f"Error checking SecureConfig: {e}")
     if saved_key and saved_key == api_key:
         message_dialog(
             title="✓ Sucesso",
-            text=f"{provider_name} API Key configurada e salva!\n\nA chave está disponível imediatamente.",
+            text=f"{provider_name} API Key saved!\n\nThe key is available immediately.",
         ).run()
         return
     if saved_key:
         message_dialog(
-            title="▲  Aviso",
+            title="▲  Warning",
             text=f"Chave salva, mas valor diferente do esperado.\n\nSalva: {saved_key[:20]}...\nEsperada: {api_key[:20]}...\n\nReinicie o Aura e verifique novamente.",
         ).run()
         return
@@ -633,12 +633,12 @@ def _verify_and_notify_key(provider: str, api_key: str, provider_name: str) -> N
     if file_has_key:
         message_dialog(
             title="✓ Sucesso",
-            text=f"{provider_name} API Key configurada e salva!\n\nA chave foi salva no arquivo. Reinicie o Aura para garantir que esteja disponível.",
+            text=f"{provider_name} API Key saved!\n\nThe key was saved to file. Restart Aura to ensure it is available.",
         ).run()
     else:
         message_dialog(
-            title="▲  Aviso",
-            text="Chave salva, mas não foi possível verificar.\n\nIsso pode ser normal se o keyring estiver sendo usado.\n\nReinicie o Aura e verifique em /settings.",
+            title="▲  Warning",
+            text="Key saved, but could not verify.\n\nThis may be normal if the keyring is in use.\n\nRestart Aura and check in /settings.",
         ).run()
 
 
@@ -657,8 +657,8 @@ def _configure_api_key(provider: str, provider_name: str) -> None:
         return
 
     test_connection = yes_no_dialog(
-        title="🔍 Testar Conexão",
-        text="Deseja testar a API Key antes de salvar?\n\nIsso fará uma requisição mínima para validar a chave.",
+        title="🔍 Test Connection",
+        text="Do you want to test the API Key before saving?\n\nThis will make a minimal request to validate the key.",
     ).run()
 
     if test_connection:
@@ -675,8 +675,8 @@ def _show_validation_popup(
 ) -> bool | None:
     """Display a centred popup during API key validation."""
     message_dialog(
-        title="🔍 Validando Conexão",
-        text=f"⏳ Testando API Key com {provider_name}...\n\nAguarde enquanto validamos a conexão.\n\nIsso pode levar alguns segundos.",
+        title="🔍 Validating Connection",
+        text=f"⏳ Testing API Key with {provider_name}...\n\nPlease wait while we validate the connection.\n\nThis may take a few seconds.",
     ).run()
     try:
         from aura_cli.core.llm.api_validator import (
@@ -688,7 +688,7 @@ def _show_validation_popup(
     except Exception as e:
         error_msg = str(e)[:250] if len(str(e)) > 250 else str(e)
         save_anyway = yes_no_dialog(
-            title="❌ Erro na Validação",
+            title="❌ Validation Error",
             text=f"Ocorreu um erro ao validar a chave:\n\n{error_msg}\n\nDeseja salvar a chave mesmo assim?",
         ).run()
         return save_anyway
@@ -699,20 +699,20 @@ def _show_validation_popup(
             else ""
         )
         message_dialog(
-            title="✅ Validação Bem-Sucedida",
+            title="✅ Validation Successful",
             text=f"{result.message}{preview_text}",
         ).run()
         return True
     elif result.status == ValidationStatus.RATE_LIMITED:
         message_dialog(
-            title="▲ Chave Válida (Limite/Créditos)",
+            title="▲ Valid Key (Limit/Credits)",
             text=f"{result.message}",
         ).run()
         return True
     elif result.status == ValidationStatus.TIMEOUT:
         save_anyway = yes_no_dialog(
-            title="▲ Timeout na Conexão",
-            text=f"{result.message}\n\nA chave pode ser válida, mas a conexão está lenta.\nDeseja salvar a chave mesmo assim?",
+            title="▲ Connection Timeout",
+            text=f"{result.message}\n\nThe key may be valid, but the connection is slow.\nSave the key anyway?",
         ).run()
         return save_anyway
     else:
@@ -720,7 +720,7 @@ def _show_validation_popup(
             result.message[:400] if len(result.message) > 400 else result.message
         )
         save_anyway = yes_no_dialog(
-            title="▲ Validação Falhou",
+            title="▲ Validation Failed",
             text=f"{error_msg}\n\nDeseja salvar a chave mesmo assim?",
         ).run()
         return save_anyway
@@ -731,13 +731,13 @@ def _model_menu_params(config: Any) -> None:
     while True:
         temp = config.get("temperature") or 0.7
         tokens = config.get("max_tokens") or 4096
-        prompt = config.get("system_prompt") or "Padrão"
+        prompt = config.get("system_prompt") or "Default"
         param = radiolist_dialog(
-            title="⚙️  Parâmetros do LLM",
-            text="Configure parâmetros de geração:",
+            title="⚙️  LLM Parameters",
+            text="Configure generation parameters:",
             values=[
                 ("temp", f"🌡️ Temperatura      [{temp}]"),
-                ("tokens", f"📏 Máx. tokens      [{tokens}]"),
+                ("tokens", f"📏 Max. tokens      [{tokens}]"),
                 ("prompt", f"📝 Prompt de sistema [{prompt[:20]}...]"),
                 ("back", "←  Voltar"),
             ],
@@ -757,7 +757,7 @@ def _model_menu_params(config: Any) -> None:
                     logger.debug(f"Ignorado: {_e}")
         elif param == "tokens":
             val = input_dialog(
-                title="📏 Máximo de tokens",
+                title="📏 Maximum tokens",
                 text="Limite de tokens na resposta:",
                 default=str(tokens),
             ).run()
@@ -769,7 +769,7 @@ def _model_menu_params(config: Any) -> None:
         elif param == "prompt":
             val = input_dialog(
                 title="📝 Prompt de sistema",
-                text="Prompt de sistema global (deixe vazio para padrão):",
+                text="Global system prompt (leave empty for default):",
                 default=config.get("system_prompt") or "",
             ).run()
             if val is not None:
@@ -786,17 +786,17 @@ def _handle_model_menu() -> None:
     current_model = (
         format_model_display_name(resolve_model_option(raw_model))
         if raw_model
-        else "Não configurado"
+        else "Not configured"
     )
 
     model_menu = radiolist_dialog(
         title="Aura  /  Modelo",
         text=(f"Atual · {current_model}\n↑↓ navegar   Enter abrir   Esc voltar"),
         values=[
-            ("select", "Escolher no catálogo"),
+            ("select", "Browse catalog"),
             ("manual", "Usar identificador manual"),
-            ("params", "Parâmetros de geração"),
-            ("back", "Voltar às configurações"),
+            ("params", "Generation parameters"),
+            ("back", "Back to settings"),
         ],
     ).run()
 
@@ -811,11 +811,44 @@ def _handle_model_menu() -> None:
             text=f"Identificador do modelo\nExemplo: {DEFAULT_MODEL}",
         ).run()
         if model:
+            from aura_cli.core.llm.model_utils import is_known_model
+
             canonical_model = resolve_model_option(model)
+            if not is_known_model(canonical_model):
+                proceed = yes_no_dialog(
+                    title="⚠ Modelo desconhecido",
+                    text=(
+                        f"'{canonical_model}' is not in the known catalog.\n"
+                        "It may not exist or not be supported. Use it anyway?"
+                    ),
+                ).run()
+                if not proceed:
+                    return
             config.set("default_model", canonical_model)
+            from aura_cli.cli.helpers import get_api_keys_dict
+            from aura_cli.core.llm.model_utils import (
+                provider_for_model,
+                provider_has_key,
+            )
+
+            _m_provider = provider_for_model(canonical_model)
+            _keys = get_api_keys_dict()
+            _key_missing = (
+                _m_provider
+                and _m_provider != "auto"
+                and not provider_has_key(_m_provider, _keys)
+            )
             message_dialog(
-                title="✓ Sucesso",
-                text=f"Modelo padrão configurado: {canonical_model}",
+                title="✓ Saved",
+                text=(
+                    f"Default model set to: {canonical_model}"
+                    + (
+                        f"\n\n⚠ No API key found for provider '{_m_provider}'.\n"
+                        "Add it in Settings → API Keys."
+                        if _key_missing
+                        else ""
+                    )
+                ),
             ).run()
     elif model_menu == "params":
         _model_menu_params(config)
@@ -827,16 +860,16 @@ def _fallback_set_key(provider: str, env_keys: list, label: str) -> None:
     api_key = console.input(f"[bold]Digite sua {label} API Key:[/bold] ").strip()
     if not api_key:
         return
-    secure_config_manager.set_api_key(provider, api_key)
+    get_config_manager().set_api_key(provider, api_key)
     for env_key in env_keys:
         os.environ.pop(env_key, None)
-    saved_key = secure_config_manager.get_api_key(provider)
+    saved_key = get_config_manager().get_api_key(provider)
     if saved_key == api_key:
         console.print(
             f"[{UIStyles.SUCCESS}]✓ {label} API Key configurada e verificada![/]"
         )
     else:
-        console.print(f"[{UIStyles.WARNING}]⚠ Chave salva, mas verificação falhou.[/]")
+        console.print(f"[{UIStyles.WARNING}]⚠ Key saved, but verification failed.[/]")
 
 
 def _show_settings_fallback() -> None:
@@ -855,24 +888,24 @@ def _show_settings_fallback() -> None:
     api_keys = get_api_keys_dict()
 
     def _st(k: str) -> str:
-        return "✓ Configurada" if api_keys.get(k) else "✗ Não configurada"
+        return "✓ Configured" if api_keys.get(k) else "✗ Not configured"
 
     raw_model = config.get("default_model") or ""
     current_model = (
         format_model_display_name(resolve_model_option(raw_model))
         if raw_model
-        else "Não configurado"
+        else "Not configured"
     )
 
     table = Table(
-        title=f"[{title_style}]{UIIcons.INFO} Menu de Configurações[/{title_style}]",
+        title=f"[{title_style}]{UIIcons.INFO} Settings Menu[/{title_style}]",
         show_header=True,
         header_style=title_style,
         border_style=border_style,
         title_style=title_style,
     )
-    table.add_column("Opção", style=primary_style + " bold", width=8, justify="center")
-    table.add_column("Ação", style=body_style, width=35)
+    table.add_column("Option", style=primary_style + " bold", width=8, justify="center")
+    table.add_column("Action", style=body_style, width=35)
     table.add_column("Status", style=body_style, ratio=1)
     table.add_row("1", "Configurar Google API Key (Gemini)", _st("GOOGLE_API_KEY"))
     table.add_row("2", "Configurar Cerebras API Key", _st("CEREBRAS_API_KEY"))
@@ -883,7 +916,7 @@ def _show_settings_fallback() -> None:
     )
     table.add_row("6", "Configurar NVIDIA API Key", _st("NVIDIA_API_KEY"))
     table.add_row("7", "Configurar Groq API Key", _st("GROQ_API_KEY"))
-    table.add_row("8", "Configurar modelo padrão", current_model[:30])
+    table.add_row("8", "Set default model", current_model[:30])
     table.add_row("9", "Limpar todas as chaves (reset)", "")
     table.add_row("10", "Voltar", "")
 
@@ -891,7 +924,7 @@ def _show_settings_fallback() -> None:
     console.print(table)
     console.print()
     choice = console.input(
-        f"[{primary_style} bold]Escolha uma opção (1-9):[/{primary_style} bold] "
+        f"[{primary_style} bold]Choose an option (1-10):[/{primary_style} bold] "
     ).strip()
 
     if choice == "1":
@@ -910,13 +943,13 @@ def _show_settings_fallback() -> None:
         _fallback_set_key("groq", ["GROQ_API_KEY"], "Groq")
     elif choice == "8":
         model = console.input(
-            f"[bold]Digite o modelo padrão (ex: {DEFAULT_MODEL}):[/bold] "
+            f"[bold]Enter the default model (e.g. {DEFAULT_MODEL}):[/bold] "
         ).strip()
         if model:
             canonical_model = resolve_model_option(model)
             config.set("default_model", canonical_model)
             console.print(
-                f"[{UIStyles.SUCCESS}]✓ Modelo padrão configurado: {canonical_model}[/]"
+                f"[{UIStyles.SUCCESS}]✓ Default model set: {canonical_model}[/]"
             )
     elif choice == "9":
         if (
@@ -941,4 +974,4 @@ def _show_settings_fallback() -> None:
     elif choice == "10":
         return
     else:
-        console.print(f"[{UIStyles.ERROR}]Opção inválida![/]")
+        console.print(f"[{UIStyles.ERROR}]Invalid option![/]")

@@ -82,8 +82,8 @@ class ErrorHandler:
         if isinstance(error, AuraError):
             error_info.update(
                 {
-                    "details": error.details,  # type: ignore[dict-item]
-                    "context_data": error.context,  # type: ignore[dict-item]
+                    "details": error.details,  # type: ignore[dict-item]  # AuraError.details is Any
+                    "context_data": error.context,  # type: ignore[dict-item]  # AuraError.context is Any
                 }
             )
 
@@ -167,13 +167,13 @@ class ErrorHandler:
         from aura_cli.core.exceptions import ToolExecutionError
 
         tool_error = ToolExecutionError(
-            message=f"Ferramenta '{tool_name}' falhou",
+            message=f"Ferramenta '{tool_name}' failed",
             tool_name=tool_name,
             tool_params=params or {},
             details=str(error),
         )
 
-        return self.handle_error(  # type: ignore[return-value]
+        return self.handle_error(  # type: ignore[return-value]  # covariant Dict narrowing
             tool_error,
             context=f"tool:{tool_name}",
             log=True,
@@ -205,18 +205,18 @@ class ErrorHandler:
                 model=model,
             )
         elif "api key" in error_str or "403" in error_str or "401" in error_str:
-            llm_error = APIKeyError(  # type: ignore[assignment]
+            llm_error = APIKeyError(  # type: ignore[assignment]  # narrowing Union[LLMError, ...]
                 message="Erro de chave de API",
                 provider=provider or "unknown",
                 details=str(error),
             )
         else:
-            llm_error = LLMError(  # type: ignore[assignment]
+            llm_error = LLMError(  # type: ignore[assignment]  # narrowing Union[LLMError, ...]
                 message=f"Erro LLM: {error!s}",
                 details=f"Provedor: {provider or 'desconhecido'}, Modelo: {model}",
             )
 
-        return self.handle_error(  # type: ignore[return-value]
+        return self.handle_error(  # type: ignore[return-value]  # covariant Dict narrowing
             llm_error,
             context=f"llm:{provider}:{model}",
             log=True,

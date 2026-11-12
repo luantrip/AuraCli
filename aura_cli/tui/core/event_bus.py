@@ -36,6 +36,7 @@ class TUIEvents:
             logger.warning("Could not register AGI event contracts: %s", error)
 
     class ToastShowPayload(BaseModel):
+        """Payload for a toast notification display event."""
         message: str
         severity: Literal["info", "success", "warning", "error"] = "info"
         title: str | None = None
@@ -44,6 +45,7 @@ class TUIEvents:
     ToastShow = bus.define("tui.toast.show", ToastShowPayload, "Show a toast")
 
     class ToastDismissPayload(BaseModel):
+        """Payload for a toast notification dismiss event."""
         toast_id: str | None = None
 
     ToastDismiss = bus.define(
@@ -51,6 +53,7 @@ class TUIEvents:
     )
 
     class PromptAppendPayload(BaseModel):
+        """Payload for appending text to the active prompt."""
         text: str
         cursor_position: int | None = None
 
@@ -64,6 +67,7 @@ class TUIEvents:
     PromptClear = bus.define("tui.prompt.clear", PromptClearPayload, "Clear the prompt")
 
     class PromptSubmitPayload(BaseModel):
+        """Payload for submitting the current prompt input."""
         content: str
         parts: list[dict[str, Any]] = Field(default_factory=list)
 
@@ -126,6 +130,7 @@ class TUIEvents:
     ThemeChange = bus.define("tui.theme.change", ThemeChangePayload, "Change theme")
 
     class ErrorPayload(BaseModel):
+        """Payload carrying an error event for display."""
         error_type: str
         message: str
         context: str = ""

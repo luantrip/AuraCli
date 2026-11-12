@@ -73,7 +73,7 @@ def resolve_external_reference(reference: str) -> Path | None:
     if len(matches) > 1:
         paths = ", ".join(str(item.path) for item in matches[:4])
         raise ExternalSessionDiscoveryError(
-            f"Referência externa ambígua: {reference} ({paths})"
+            f"Ambiguous external reference: {reference} ({paths})"
         )
     return matches[0].path if matches else None
 

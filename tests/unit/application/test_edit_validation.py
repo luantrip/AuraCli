@@ -38,4 +38,4 @@ def test_validation_rejects_invalid_resulting_python() -> None:
 
     assert result.valid is False
     assert result.syntax_valid is False
-    assert "resultante" in result.errors[-1]
+    assert "resulting content" in result.errors[-1]

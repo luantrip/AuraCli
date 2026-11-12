@@ -125,7 +125,7 @@ class TestOpsWorkerMethods:
 
         assert worker._resolve_api_key("nvidia") is None
         content = worker.agi_event_adapter.emit_chat_message.call_args.kwargs["content"]
-        assert "NVIDIA_API_KEY não configurada" in content
+        assert "NVIDIA_API_KEY not configured" in content
         assert "/settings" in content
 
     def test_cleanup(self, worker):

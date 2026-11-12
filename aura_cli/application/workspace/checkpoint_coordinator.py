@@ -45,10 +45,12 @@ class WorkerCheckpointCoordinator:
         self._hook_publisher = hook_publisher
 
     def initialize(self) -> bool:
+        """Initialise the checkpoint coordinator for the current workspace."""
         self._initialized = True
         return True
 
     def create_initial_checkpoint(self, description: str = "start") -> Optional[str]:
+        """Create the initial git checkpoint for a new session."""
         if not self._checkpoint_manager or not self._initialized:
             return None
         try:
@@ -68,6 +70,7 @@ class WorkerCheckpointCoordinator:
         return None
 
     def create_checkpoint_before_task(self, task_description: str) -> Optional[str]:
+        """Create a checkpoint before executing a potentially destructive task."""
         if not self._checkpoint_manager or not self._initialized:
             return None
         try:
@@ -79,6 +82,7 @@ class WorkerCheckpointCoordinator:
         return None
 
     def restore_on_failure(self) -> bool:
+        """Restore the workspace to the last checkpoint on task failure."""
         if (
             not self._checkpoint_manager
             or not self._initialized
@@ -101,6 +105,7 @@ class WorkerCheckpointCoordinator:
     def trigger_hook(
         self, event_type: str, context: Optional[Mapping[str, Any]] = None
     ) -> None:
+        """Trigger the registered checkpoint lifecycle hook."""
         if self._hook_publisher is None:
             return
         payload = dict(context or {})

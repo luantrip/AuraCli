@@ -39,7 +39,6 @@ class AuraToast(Container):
         timeout: float = 5.0,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.message = message
         self.severity = severity
@@ -97,11 +96,21 @@ class AuraToastContainer(Static):
     """
 
     def __init__(self, **kwargs):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._max_visible = 3
 
-    def show_toast(
+    # Default timeouts by severity (errors stay longer)
+_SEVERITY_TIMEOUTS: dict = {
+    "success": 4.0,
+    "info": 5.0,
+    "information": 5.0,
+    "warning": 6.0,
+    "error": 8.0,
+    "loading": 0.0,  # persistent until dismissed
+}
+
+
+def show_toast(
         self,
         message: str,
         severity: str = "info",
@@ -117,7 +126,8 @@ class AuraToastContainer(Static):
             timeout: Auto-dismiss time in seconds (0 for persistent)
         """
         toast = AuraToast(
-            message=message, severity=severity, title=title, timeout=timeout
+            message=message, severity=severity, title=title,
+        timeout=timeout if timeout != 5.0 else _SEVERITY_TIMEOUTS.get(severity, 5.0)
         )
 
         self.mount(toast)

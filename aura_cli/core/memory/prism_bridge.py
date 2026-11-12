@@ -40,7 +40,6 @@ class PrismManager:
     """Manager for the Prism binary."""
 
     def __init__(self, project_root: Optional[Path] = None):
-        """Initialize the manager."""
         self.project_root = (project_root or Path.cwd()).expanduser().resolve()
         self.executable_path = self._find_binary()
         self.last_error: Optional[str] = None

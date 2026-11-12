@@ -36,13 +36,13 @@ class WorkspaceDiff:
         """Render a bounded context block for an agent prompt."""
         patch = self.patch[:max_chars]
         suffix = "\n[diff truncada; use git_diff_context para consultar o restante]" if self.truncated else ""
-        files = ", ".join(self.changed_files) or "nenhum"
+        files = ", ".join(self.changed_files) or "none"
         return (
-            "**WORKSPACE DIFF (estado atual, não assuma que está limpo):**\n"
+            "**WORKSPACE DIFF (current state, do not assume it is clean):**\n"
             f"- raiz: {self.project_root}\n"
             f"- arquivos alterados: {files}\n"
             f"- status Git:\n{self.status or '(vazio)'}\n"
-            f"- patch:\n{patch or '(sem patch rastreável)'}{suffix}"
+            f"- patch:\n{patch or '(no traceable patch)'}{suffix}"
         )
 
 

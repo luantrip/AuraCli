@@ -464,7 +464,7 @@ def format_file(path: str) -> Dict[str, Any]:
         return {
             "ok": False,
             "path": path,
-            "message": "Resposta inválida do Forge.",
+            "message": "Invalid Forge response.",
             "details": sanitize_result,
         }
     if not sanitize_result.get("ok"):
@@ -472,7 +472,7 @@ def format_file(path: str) -> Dict[str, Any]:
             "ok": False,
             "path": path,
             "message": sanitize_result.get("error")
-            or "Forge não conseguiu validar o arquivo.",
+            or "Forge could not validate the file.",
             "details": sanitize_result,
         }
     fixed_code = sanitize_result.get("code")
@@ -488,13 +488,13 @@ def format_file(path: str) -> Dict[str, Any]:
         return {
             "ok": True,
             "path": path,
-            "message": f"Arquivo {path} formatado com sucesso.",
+            "message": f"File {path} formatted successfully.",
             "changed": True,
         }
     return {
         "ok": True,
         "path": path,
-        "message": f"Arquivo {path} verificado (sem alterações necessárias).",
+        "message": f"File {path} verified (no changes needed).",
         "changed": False,
         "details": sanitize_result,
     }

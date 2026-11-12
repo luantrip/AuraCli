@@ -28,7 +28,6 @@ from typing import Any, Dict, Optional
 from rich.console import Console, Group, RenderableType
 from rich.live import Live
 from rich.padding import Padding
-from rich.panel import Panel
 from rich.progress import (
     BarColumn,
     Progress,
@@ -45,6 +44,8 @@ from aura_cli.application.presentation import (
     build_dashboard_summary,
     classify_dashboard_message,
 )
+from aura_cli.application.presentation.cli_visual import SurfaceChrome
+from aura_cli.cli.ui.composition.visual_surface import surface_panel
 from aura_cli.cli.ui.constants import UIIcons, UIStyles
 from aura_cli.cli.ui.display_facade import get_console
 from aura_cli.cli.ui.layout_contract import layout_for_width
@@ -56,9 +57,9 @@ logger = get_logger(__name__)
 def _task_state_label(state: TaskState) -> str:
     """Return the stable display label for a task state."""
     labels = {
-        TaskState.PENDING: "pendente",
+        TaskState.PENDING: "pending",
         TaskState.RUNNING: "em andamento",
-        TaskState.COMPLETED: "concluída",
+        TaskState.COMPLETED: "completed",
         TaskState.FAILED: "falhou",
         TaskState.SKIPPED: "ignorada",
     }
@@ -281,7 +282,7 @@ class LiveAgentDashboard:
 
         if state.constitution_active:
             header.append("◇ ", style=UIStyles.SUCCESS)
-            header.append("Constituição: ", style=UIStyles.LABEL)
+            header.append("Constitution: ", style=UIStyles.LABEL)
             header.append("ativa\n", style=UIStyles.SUCCESS)
 
         return header
@@ -321,8 +322,8 @@ class LiveAgentDashboard:
         )
 
         table.add_column("", width=3)
-        table.add_column("Tarefa", ratio=3)
-        table.add_column("Estado", width=12)
+        table.add_column("Task", ratio=3)
+        table.add_column("Status", width=12)
         table.add_column("Tempo", width=8)
 
         state_icons = {
@@ -364,7 +365,7 @@ class LiveAgentDashboard:
             tools_text.append(tool, style=UIStyles.BODY)
 
         return Group(
-            Text(f"Operações ({len(state.tools_used)})", style=UIStyles.LABEL),
+            Text(f"Operations ({len(state.tools_used)})", style=UIStyles.LABEL),
             tools_text,
         )
 
@@ -375,7 +376,7 @@ class LiveAgentDashboard:
         for msg in state.messages[-5:]:  # Last 5 messages
             elapsed = time.time() - msg["time"]
             time_str = (
-                f"há {elapsed:.0f}s" if elapsed < 60 else f"há {elapsed / 60:.0f}min"
+                f"{elapsed:.0f}s ago" if elapsed < 60 else f"{elapsed / 60:.0f}min ago"
             )
 
             type_styles = {
@@ -397,9 +398,9 @@ class LiveAgentDashboard:
             log_lines.append(line)
 
         if not log_lines:
-            log_lines.append(Text("Aguardando atividade…", style=UIStyles.MUTED))
+            log_lines.append(Text("Waiting for activity…", style=UIStyles.MUTED))
 
-        return Group(Text("Atividade", style=UIStyles.LABEL), *log_lines)
+        return Group(Text("Activity", style=UIStyles.LABEL), *log_lines)
 
     def _render_footer(self, state: DashboardState, elapsed: float) -> Text:
         """Render footer with metrics."""
@@ -429,7 +430,7 @@ class LiveAgentDashboard:
         if state.memory_entries > 0:
             footer.append(" │ ", style=UIStyles.MUTED)
             footer.append("◇ ", style=UIStyles.INFO)
-            footer.append("Memória: ", style=UIStyles.LABEL)
+            footer.append("Memory: ", style=UIStyles.LABEL)
             footer.append(f"{state.memory_entries}", style=UIStyles.BODY)
 
         return footer
@@ -470,7 +471,7 @@ def create_mini_dashboard(
     progress: float,
     tools_count: int,
     elapsed: float,
-) -> Panel:
+) -> RenderableType:
     """
     Create a compact mini-dashboard for inline display.
 
@@ -501,9 +502,9 @@ def create_mini_dashboard(
     content.append(f"│ {UIIcons.TOOL} {tools_count} ", style=UIStyles.ACCENT)
     content.append(f"│ {UIIcons.TIMER} {elapsed:.0f}s", style=UIStyles.WARNING)
 
-    return Panel(
+    return surface_panel(
         content,
         title=f"[{mode_color}]{status[:40]}[/{mode_color}]",
+        chrome=SurfaceChrome.FOCUS,
         border_style=UIStyles.BORDER_MUTED,
-        padding=(0, 1),
     )

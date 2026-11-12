@@ -28,7 +28,7 @@ class ImaginationManager:
         if not self.executable_path:
             self.last_error = "Imagination binary not found."
             logger.warning(
-                "Imagination binary not found. Aceleração de varredura do projeto desabilitada."
+                "Imagination binary not found. Project scan acceleration disabled."
             )
 
     def _find_binary(self) -> Optional[Path]:
@@ -80,10 +80,10 @@ class ImaginationManager:
                 max_output_bytes=4 * 1024 * 1024,
             )
             if result.timed_out:
-                self.last_error = "Imagination excedeu o timeout de 60 segundos."
+                self.last_error = "Imagination timed out after 60 seconds."
                 return None
             if result.output_limited:
-                self.last_error = "Imagination excedeu o limite de saída."
+                self.last_error = "Imagination exceeded output limit."
                 return None
             if result.returncode != 0:
                 stderr = result.stderr.decode("utf-8", errors="replace").strip()

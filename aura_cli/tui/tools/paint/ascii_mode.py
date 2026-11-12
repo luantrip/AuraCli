@@ -34,7 +34,7 @@ def replace(obj: object, attr: str, ascii_only_value: object) -> None:
         Stores original value for toggling between modes.
     """
     if isinstance(obj, dict):
-        replacements.append((obj, attr, ascii_only_value, obj[attr]))  # type: ignore
+        replacements.append((obj, attr, ascii_only_value, obj[attr]))  # type: ignore[index]  # dynamic object access
     else:
         replacements.append((obj, attr, ascii_only_value, getattr(obj, attr)))
 

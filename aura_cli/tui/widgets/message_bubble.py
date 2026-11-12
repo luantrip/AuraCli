@@ -39,7 +39,6 @@ class MessageBubble(Container):
         message_id: Optional[str] = None,
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self.sender = sender
         self.content = content
@@ -210,7 +209,6 @@ class ThinkingBubble(MessageBubble):
     """Specialized bubble for thinking/typing indicators."""
 
     def __init__(self, sender: str = "Aura"):
-        """Initialize the instance."""
         self._frame = 0
         # Localised animation frames (PT-BR); MessageType.THINKING = "thinking" (canonical)
         self._frames = ["pensando", "pensando.", "pensando..", "pensando..."]
@@ -230,7 +228,6 @@ class StreamingBubble(MessageBubble):
     """Specialized bubble for streaming responses."""
 
     def __init__(self, sender: str = "Aura"):
-        """Initialize the instance."""
         self._buffer = ""
         super().__init__(
             sender=sender,

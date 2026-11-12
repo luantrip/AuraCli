@@ -73,16 +73,16 @@ class TuiRuntimeState:
     def footer_message(self) -> str:
         """Return the concise status suitable for footer chrome."""
         defaults = {
-            RuntimePhase.BOOTING: "Inicializando",
-            RuntimePhase.READY: "Pronto",
-            RuntimePhase.LOADING: "Carregando",
-            RuntimePhase.THINKING: "Pensando",
-            RuntimePhase.EXECUTING: "Executando",
-            RuntimePhase.WAITING_INPUT: "Aguardando sua decisão",
-            RuntimePhase.ERROR: "Erro",
-            RuntimePhase.COMPLETED: "Concluído",
-            RuntimePhase.CANCELLED: "Cancelado",
-            RuntimePhase.STOPPED: "Interrompido",
+            RuntimePhase.BOOTING: "Initializing",
+            RuntimePhase.READY: "Ready",
+            RuntimePhase.LOADING: "Loading",
+            RuntimePhase.THINKING: "Thinking",
+            RuntimePhase.EXECUTING: "Executing",
+            RuntimePhase.WAITING_INPUT: "Awaiting your decision",
+            RuntimePhase.ERROR: "Error",
+            RuntimePhase.COMPLETED: "Completed",
+            RuntimePhase.CANCELLED: "Cancelled",
+            RuntimePhase.STOPPED: "Stopped",
         }
         return self.message or defaults[self.phase]
 
@@ -126,7 +126,7 @@ def reduce_runtime_state(
     if intent is PresentationIntent.DECISION:
         return TuiRuntimeState(
             RuntimePhase.WAITING_INPUT,
-            request.content or "Aguardando sua decisão",
+            request.content or "Awaiting your decision",
             request.task_id,
         )
     if intent is PresentationIntent.SUCCESS:

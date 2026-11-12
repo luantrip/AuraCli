@@ -256,7 +256,7 @@ class TestSystemOperations:
 
         result = check_port("localhost", 8080)
 
-        assert "aberta" in result.lower() or "aberta" in result or "ABERTA" in result
+        assert "open" in result.lower()
 
     @patch("socket.socket")
     def test_check_port_closed(self, mock_socket):

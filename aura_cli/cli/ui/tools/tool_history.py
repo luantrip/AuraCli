@@ -98,7 +98,7 @@ class ToolHistoryViewer:
                         execution_time=0.0,
                         timestamp=now - timedelta(seconds=index * 20),
                         args={},
-                        result_preview=f"Usada {count} vez(es) nesta sessão",
+                        result_preview=f"Used {count} time(s) in this session",
                     )
                 )
             return executions
@@ -108,15 +108,15 @@ class ToolHistoryViewer:
     def _render_empty_state(self, console_width: int = 80) -> RenderableType:
         body = Text()
         body.append(
-            "Nenhuma execução de tool foi registrada nesta sessão.\n",
+            "No tool executions recorded in this session.\n",
             style=UIStyles.BODY,
         )
         body.append(
-            "Use o chat principal e o feedback operacional como superfícies canônicas.",
+            "Use the main chat and operational feedback as canonical surfaces.",
             style=UIStyles.MUTED,
         )
         header = Text(
-            f"{UIIcons.TOOL} Histórico de ferramentas",
+            f"{UIIcons.TOOL} Tool history",
             style=UIStyles.TITLE,
         )
         return Group(header, body)
@@ -146,7 +146,7 @@ class ToolHistoryViewer:
             return self._render_empty_state(console.width)
 
         header = Text(
-            f"{UIIcons.TOOL} Histórico de ferramentas",
+            f"{UIIcons.TOOL} Tool history",
             style=UIStyles.TITLE,
         )
         table = Table(
@@ -157,7 +157,7 @@ class ToolHistoryViewer:
         )
         compact = metrics.narrow
         table.add_column("Tempo", width=6 if compact else 8)
-        table.add_column("Ferramenta", width=14 if compact else 26)
+        table.add_column("Tool", width=14 if compact else 26)
         table.add_column("Categoria", width=9 if compact else 15)
         table.add_column("Estado", width=12 if compact else 10)
         table.add_column("Resultado", width=13 if compact else 36)
@@ -175,13 +175,13 @@ class ToolHistoryViewer:
             status_map = {
                 ExecutionStatus.SUCCESS: (
                     UIIcons.SUCCESS,
-                    "concluída",
+                    "completed",
                     UIStyles.SUCCESS,
                 ),
-                ExecutionStatus.ERROR: (UIIcons.ERROR, "falhou", UIStyles.ERROR),
+                ExecutionStatus.ERROR: (UIIcons.ERROR, "failed", UIStyles.ERROR),
                 ExecutionStatus.CANCELLED: (
                     UIIcons.CANCEL,
-                    "cancelada",
+                    "cancelled",
                     UIStyles.MUTED,
                 ),
             }

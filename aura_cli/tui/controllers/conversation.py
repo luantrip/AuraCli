@@ -25,9 +25,9 @@ class ConversationController:
             return MessageType.USER
         if sender in ("Sistema", "System"):
             return MessageType.SYSTEM
-        if sender in ("Tool", "Ferramenta"):
+        if sender in ("Tool", "Tool"):
             return MessageType.TOOL
-        if sender in ("Erro", "Error"):
+        if sender in ("Error", "Error"):
             return MessageType.ERROR
         return MessageType.ASSISTANT
 

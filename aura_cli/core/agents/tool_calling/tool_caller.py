@@ -122,7 +122,7 @@ class ToolCaller:
             duration = time.time() - start_time
             error_msg = str(e)
 
-            logger.error(f"Ferramenta {tool_name} falhou: {error_msg}", exc_info=True)
+            logger.error(f"Tool {tool_name} failed: {error_msg}", exc_info=True)
 
             return ToolCallResult(
                 success=False, duration=duration, attempts=1, error=error_msg
@@ -159,13 +159,13 @@ class ToolCaller:
                 if attempt < self.max_retries:
                     wait_time = attempt * 0.5
                     logger.warning(
-                        f"Ferramenta {tool_name} falhou (tentativa {attempt}/"
+                        f"Tool {tool_name} failed (attempt {attempt}/"
                         f"{self.max_retries}): {error_msg}. Waiting {wait_time}s..."
                     )
                     time.sleep(wait_time)
                 else:
                     logger.error(
-                        f"Ferramenta {tool_name} falhou após {attempt} tentativas: {error_msg}",
+                        f"Tool {tool_name} failed after {attempt} attempts: {error_msg}",
                         exc_info=True,
                     )
 

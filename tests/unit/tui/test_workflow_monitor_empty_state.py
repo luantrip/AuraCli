@@ -27,9 +27,9 @@ async def test_workflow_monitor_has_localized_empty_state_and_clear_cycle() -> N
 
         headers = [widget.render().plain for widget in monitor.query(".pane-header")]
         assert any("Trilha operacional" in header for header in headers)
-        assert "Atividade AGI/Ops" in monitor.query_one(".field-help").render().plain
+        assert "Real-time AGI/Ops" in monitor.query_one(".field-help").render().plain
         assert empty.display is True
-        assert str(monitor.query_one("#clear_btn", Button).label) == "✖ Limpar"
+        assert str(monitor.query_one("#clear_btn", Button).label) == "✖ Clear"
         assert str(monitor.query_one("#export_btn", Button).label) == "⊞ Exportar"
 
         monitor._format_operational_event = MagicMock(return_value="evento projetado")

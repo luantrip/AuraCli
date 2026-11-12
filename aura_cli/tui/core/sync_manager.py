@@ -253,7 +253,7 @@ class SyncManager:
             return
         with self._timer_lock:
             if self._batch_timer is None:
-                self._batch_timer = self.app.set_timer(  # type: ignore[assignment]
+                self._batch_timer = self.app.set_timer(  # type: ignore[assignment]  # Textual Timer → no public stub
                     self.BATCH_INTERVAL, self._process_batch
                 )
 
@@ -268,7 +268,7 @@ class SyncManager:
             if self._last_refresh_time:
                 elapsed = (now - self._last_refresh_time).total_seconds()
                 if elapsed < self.DEBOUNCE_INTERVAL:
-                    self._debounce_timer = self.app.set_timer(  # type: ignore[assignment]
+                    self._debounce_timer = self.app.set_timer(  # type: ignore[assignment]  # Textual Timer → no public stub
                         self.DEBOUNCE_INTERVAL - elapsed, self._do_refresh
                     )
                     return
@@ -333,7 +333,7 @@ class SyncManager:
         """
         try:
             event_stream = self.app.query_one("#event_stream_panel")
-            event_stream.write_event(event.to_dict())  # type: ignore[attr-defined]
+            event_stream.write_event(event.to_dict())  # type: ignore[attr-defined]  # dynamic widget attribute
         except Exception as error:
             logger.debug("Event stream unavailable during sync: %s", error)
 
@@ -361,7 +361,7 @@ class SyncManager:
         if reduction.chat:
             try:
                 self._safe_call_from_thread(
-                    self.app.post_message_to_chat,  # type: ignore[attr-defined]
+                    self.app.post_message_to_chat,  # type: ignore[attr-defined]  # Textual App subclass method
                     reduction.chat.sender,
                     reduction.chat.content,
                     task_id=reduction.chat.task_id,
@@ -391,7 +391,7 @@ class SyncManager:
 
         try:
             sidebar = self.app.query_one("AuraStatusSidebar")
-            sidebar.update_stats(stats_data)  # type: ignore[attr-defined]
+            sidebar.update_stats(stats_data)  # type: ignore[attr-defined]  # dynamic widget attribute
         except Exception as error:
             logger.debug("Sidebar unavailable during stats update: %s", error)
 

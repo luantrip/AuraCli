@@ -50,13 +50,13 @@ def decide_cli_visual(width: int) -> CliVisualPlan:
 
 
 CLI_LABELS = {
-    "operations": "Operações",
+    "operations": "Operations",
     "result": "Resultado",
-    "output": "Saída",
-    "parallel_work": "Trabalho paralelo",
-    "validation": "Validação",
-    "running": "Em execução",
-    "completed": "Concluído",
+    "output": "Output",
+    "parallel_work": "Parallel work",
+    "validation": "Validation",
+    "running": "Running",
+    "completed": "Completed",
     "failed": "Falhou",
 }
 

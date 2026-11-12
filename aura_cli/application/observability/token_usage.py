@@ -37,7 +37,7 @@ def build_token_usage_snapshot(
     tool_count = 0
     if tool_definitions is not None:
         try:
-            tool_count = len(tool_definitions)  # type: ignore[arg-type]
+            tool_count = len(tool_definitions)  # type: ignore[arg-type]  # Sized narrowing from Optional
         except TypeError:
             tool_count = sum(1 for _ in tool_definitions)
     budget = max(int(token_budget_warning or 0), 1)

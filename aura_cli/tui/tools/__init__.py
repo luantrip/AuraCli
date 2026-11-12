@@ -139,7 +139,7 @@ def launch_files(path: Optional[str] = None) -> int:
     """
     if not TUIFI_AVAILABLE or not get_tool_availability().files:
         print(
-            "TUIFIManager não está instalado; use Ctrl+F dentro da TUI "
+            "TUIFIManager is not installed; use Ctrl+F inside the TUI "
             "para o gerenciador integrado."
         )
         return 1

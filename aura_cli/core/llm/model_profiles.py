@@ -96,7 +96,7 @@ class ModelProfileManager:
             config_path: Optional custom path for configuration file.
                         Default: ~/.aura/model_profiles.json
         """
-        if hasattr(self, "_initialized") and self._initialized:  # type: ignore[has-type]
+        if hasattr(self, "_initialized") and self._initialized:  # type: ignore[has-type]  # sentinel attr
             return
 
         self.config_path = config_path or self._get_default_config_path()
@@ -201,7 +201,7 @@ class ModelProfileManager:
         profiles = self.profiles.get("profiles", {})
 
         if profile_type not in profiles:
-            logger.error(f"Perfil '{profile_type}' não existe")
+            logger.error(f"Profile '{profile_type}' does not exist")
             return False
 
         canonical_model = normalize_model_name(model_name) or DEFAULT_MODEL
@@ -225,7 +225,7 @@ class ModelProfileManager:
         profiles = self.profiles.get("profiles", {})
 
         if profile_type in profiles:
-            logger.warning(f"Perfil '{profile_type}' já existe, use update_profile()")
+            logger.warning(f"Profile '{profile_type}' already exists, use update_profile()")
             return False
 
         canonical_model = normalize_model_name(model_name) or DEFAULT_MODEL
@@ -269,12 +269,12 @@ class ModelProfileManager:
             True if successful, False if profile doesn't exist
         """
         if profile_type not in self.profiles.get("profiles", {}):
-            logger.error(f"Perfil '{profile_type}' não existe")
+            logger.error(f"Profile '{profile_type}' does not exist")
             return False
 
         self.profiles["default_profile"] = profile_type
         self._save_profiles(self.profiles)
-        logger.info(f"Perfil padrão definido como '{profile_type}'")
+        logger.info(f"Default profile set to '{profile_type}'")
         return True
 
     def detect_task_type(self, prompt: str) -> str:
@@ -301,14 +301,14 @@ class ModelProfileManager:
                 scores[profile_type] = score
 
         if scores:
-            best_match = max(scores, key=scores.get)  # type: ignore
+            best_match = max(scores, key=lambda k: scores.get(k) or 0)
             logger.debug(
                 f"Tipo de tarefa detectado: {best_match} (score: {scores[best_match]})"
             )
             return best_match
 
         default = self.get_default_profile()
-        logger.debug(f"Nenhum padrão detectado, usando perfil padrão: {default}")
+        logger.debug(f"No pattern detected, using default profile: {default}")
         return default
 
     def get_model_for_task(self, prompt: str) -> str:
@@ -392,7 +392,7 @@ class ModelProfileManager:
         """Reset all profiles to default configuration."""
         self.profiles = self._build_default_profiles()
         self._save_profiles(self.profiles)
-        logger.info("Perfis resetados para valores padrão")
+        logger.info("Profiles reset to default values")
 
 
 _profile_manager: Optional[ModelProfileManager] = None

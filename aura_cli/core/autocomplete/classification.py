@@ -122,7 +122,7 @@ class ContextClassifier:
         )
 
         logger.debug(
-            f"Contexto classificado como: {matched_type.value} (confiança: {best_confidence:.2f})"
+            f"Context classified as: {matched_type.value} (confidence: {best_confidence:.2f})"
         )
 
         self.stats.track_tool_usage("context_classification")

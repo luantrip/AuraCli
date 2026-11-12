@@ -1,7 +1,12 @@
+"""Internationalisation helpers for AuraPaint — string lookup and untranslated-key tracking."""
+
 import json
+import logging
 import os
 import re
 from typing import Dict, Set, Tuple
+
+logger = logging.getLogger(__name__)
 
 translations: Dict[str, str] = {}
 base_language = "en"
@@ -56,7 +61,7 @@ if TRACK_UNTRANSLATED:
         with open(untranslated_file, encoding="utf-8") as f:
             untranslated = set(f.read().splitlines())
     except FileNotFoundError as _e:
-        pass  # silenced
+        logger.debug("i18n: untranslated strings file not found: %s", _e)
 
 
 def get(base_language_str: str, *interpolations: str) -> str:

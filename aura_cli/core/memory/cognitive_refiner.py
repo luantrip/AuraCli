@@ -41,7 +41,7 @@ class CognitiveRefiner:
         estimated_tokens = self._estimate_tokens(conversation_history)
         if estimated_tokens < max_tokens * 0.8:
             logger.debug(
-                f"Contexto não precisa refinamento ({estimated_tokens} tokens < {max_tokens * 0.8})"
+                f"Context does not need refinement ({estimated_tokens} tokens < {max_tokens * 0.8})"
             )
             return {
                 "refined_content": self._format_history(conversation_history),
@@ -71,32 +71,32 @@ class CognitiveRefiner:
         """Refina contexto usando LLM."""
         history_text = self._format_history(conversation_history)
 
-        refinement_prompt = f"""Você é um sistema de refinamento cognitivo de memória para um agente AI.
+        refinement_prompt = f"""You are a cognitive memory refinement system for an AI agent.
 
-Sua tarefa é refinar o seguinte histórico de conversa, extraindo informações essenciais e criando um resumo inteligente.
+Your task is to refine the following conversation history, extracting essential information and creating an intelligent summary.
 
-MODO: {mode.upper()}
-- auto: Balance entre preservação e compressão
-- aggressive: Máxima compressão, mantendo apenas essenciais
-- conservative: Preservação máxima, compressão mínima
+MODE: {mode.upper()}
+- auto: Balance between preservation and compression
+- aggressive: Maximum compression, keeping only essentials
+- conservative: Maximum preservation, minimum compression
 
-REGRAS:
-1. Extraia informações essenciais (decisões, ações, resultados)
-2. Remova redundâncias e repetições
-3. Preserve contexto crítico para o agente
-4. Mantenha referências a arquivos, funções e decisões importantes
-5. Crie resumo estruturado e hierárquico
+RULES:
+1. Extract essential information (decisions, actions, results)
+2. Remove redundancies and repetitions
+3. Preserve critical context for the agent
+4. Keep references to files, functions and important decisions
+5. Create a structured, hierarchical summary
 
-HISTÓRICO:
+HISTORY:
 {history_text}
 
-Retorne um JSON com:
+Return a JSON with:
 {{
-    "summary": "Resumo executivo (2-3 parágrafos)",
-    "key_points": ["ponto 1", "ponto 2", ...],
-    "refined_content": "Conteúdo refinado completo (mantém estrutura mas remove redundâncias)",
-    "important_decisions": ["decisão 1", "decisão 2", ...],
-    "file_references": ["arquivo1.py", "arquivo2.py", ...]
+    "summary": "Executive summary (2-3 paragraphs)",
+    "key_points": ["point 1", "point 2", ...],
+    "refined_content": "Full refined content (keeps structure but removes redundancies)",
+    "important_decisions": ["decision 1", "decision 2", ...],
+    "file_references": ["file1.py", "file2.py", ...]
 }}
 """
 
@@ -122,7 +122,7 @@ Retorne um JSON com:
                 raise ValueError("Invalid LLM response format")
 
             if not content:
-                raise ValueError("Conteúdo vazio na resposta do LLM")
+                raise ValueError("Empty content in LLM response")
 
             content = content.strip()
             if content.startswith("```"):
@@ -182,7 +182,7 @@ Retorne um JSON com:
         self, conversation_history: List[Dict[str, Any]]
     ) -> Dict[str, Any]:
         """Heuristic fallback refinement (no LLM)."""
-        logger.info("Usando refinamento fallback (heurístico)")
+        logger.info("Using fallback refinement (heuristic)")
         important_messages = []
         file_refs = []
 
@@ -225,7 +225,7 @@ Retorne um JSON com:
 
         return {
             "refined_content": refined_text,
-            "summary": f"Refinamento heurístico: {len(important_messages)}/{len(conversation_history)} mensagens preservadas",
+            "summary": f"Heuristic refinement: {len(important_messages)}/{len(conversation_history)} messages preserved",
             "key_points": list(set(file_refs))[:10],
             "metadata": {
                 "refined": True,
@@ -253,5 +253,5 @@ Retorne um JSON com:
 def get_cognitive_refiner(model: Optional[str] = None) -> CognitiveRefiner:
     """Get singleton instance of CognitiveRefiner."""
     if not hasattr(get_cognitive_refiner, "_instance"):
-        get_cognitive_refiner._instance = CognitiveRefiner(model)  # type: ignore[attr-defined]
-    return get_cognitive_refiner._instance  # type: ignore[attr-defined]
+        get_cognitive_refiner._instance = CognitiveRefiner(model)  # type: ignore[attr-defined]  # function-level singleton attr
+    return get_cognitive_refiner._instance  # type: ignore[attr-defined]  # function-level singleton attr

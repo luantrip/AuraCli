@@ -15,13 +15,10 @@ from typing import (
     Tuple,
 )
 
-from rich.console import Console
-
 from aura_cli.core.logger import get_logger
 from aura_cli.core.stats import get_stats
 
 logger = get_logger(__name__)
-console = Console()
 
 
 @dataclass
@@ -65,7 +62,7 @@ class TerraformManager:
     ) -> Tuple[bool, str]:
         """Run a terraform command and return the output."""
         if not self.terraform_available:
-            return False, "Terraform não disponível"
+            return False, "Terraform not available"
 
         try:
             result = subprocess.run(
@@ -88,7 +85,6 @@ class TerraformManager:
     def init(self, working_dir: str = ".") -> str:
         """Initialise a Terraform project."""
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call("terraform_init", {"working_dir": working_dir})
 
@@ -96,10 +92,6 @@ class TerraformManager:
 
         if success:
             logger.info(f"Terraform initialized in {working_dir}")
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Terraform initialized[/{UIStyles.SUCCESS}]"
-            )
             self.stats.track_tool_usage("terraform_init")
             return "Terraform initialized successfully"
         else:
@@ -143,7 +135,6 @@ class TerraformManager:
     def apply(self, working_dir: str = ".", auto_approve: bool = False) -> str:
         """Apply Terraform changes."""
         from aura_cli.core.ui import display_tool_call
-        from aura_cli.core.ui_bridge import UIIcons, UIStyles
 
         display_tool_call(
             "terraform_apply",
@@ -160,10 +151,6 @@ class TerraformManager:
 
         if success:
             logger.info("Terraform apply executed successfully")
-            console.print(
-                f"[{UIStyles.SUCCESS}]{UIIcons.SUCCESS} "
-                f"Terraform apply completed[/{UIStyles.SUCCESS}]"
-            )
             self.stats.track_tool_usage("terraform_apply")
             return "Apply completed successfully"
         else:

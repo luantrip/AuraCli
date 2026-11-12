@@ -105,7 +105,7 @@ class AccessControl:
 
         if role_id not in self.user_roles[user_id]:
             self.user_roles[user_id].append(role_id)
-            logger.info(f"Role {role_id} atribuído ao usuário {user_id}")
+            logger.info(f"Role {role_id} assigned to user {user_id}")
 
     def check_permission(self, user_id: str, permission: Permission) -> bool:
         """Check if a role has a specific permission."""

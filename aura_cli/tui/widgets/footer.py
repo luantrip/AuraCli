@@ -35,7 +35,7 @@ class AuraFooter(Static):
     """
 
     mode: reactive[str] = reactive("NORMAL")
-    status_message: reactive[str] = reactive("Pronto")
+    status_message: reactive[str] = reactive("Ready")
     runtime_phase: reactive[str] = reactive(RuntimePhase.READY.value)
     active_agent: reactive[str] = reactive("")
     model_name: reactive[str] = reactive("")
@@ -45,20 +45,20 @@ class AuraFooter(Static):
         f"external-tool-{phase.value}" for phase in ExternalToolPhase
     )
     _EXTERNAL_PHASE_LABELS: ClassVar[dict[ExternalToolPhase, str]] = {
-        ExternalToolPhase.SUSPENDING: "preparando",
-        ExternalToolPhase.LAUNCHING: "abrindo",
-        ExternalToolPhase.ATTACHED: "aberta",
-        ExternalToolPhase.RETURNING: "retornando",
-        ExternalToolPhase.COMPLETED: "concluída",
-        ExternalToolPhase.FAILED: "falhou",
-        ExternalToolPhase.INTERRUPTED: "interrompida",
+        ExternalToolPhase.SUSPENDING: "preparing",
+        ExternalToolPhase.LAUNCHING: "opening",
+        ExternalToolPhase.ATTACHED: "open",
+        ExternalToolPhase.RETURNING: "returning",
+        ExternalToolPhase.COMPLETED: "completed",
+        ExternalToolPhase.FAILED: "failed",
+        ExternalToolPhase.INTERRUPTED: "interrupted",
     }
 
     # Fallback keybindings shown when KeybindManager is not yet available.
     # Once the app registers a KeybindManager, call update_keybindings() and
     # these defaults are replaced with the real registered shortcuts.
     KEYBINDINGS: ClassVar[list[tuple[str, str]]] = [
-        ("Shift+Tab", "modo"),
+        ("Shift+Tab", "mode"),
         ("Ctrl+.", "atalhos"),
     ]
 
@@ -106,9 +106,7 @@ class AuraFooter(Static):
             keybinds = keybind_manager.get_keybinds(include_leader=False)
             # Keep only show_in_help entries; cap at 4 to avoid overflow.
             pairs = [
-                (kb.display_key, kb.description)
-                for kb in keybinds
-                if kb.show_in_help
+                (kb.display_key, kb.description) for kb in keybinds if kb.show_in_help
             ][:4]
             if not pairs:
                 return
@@ -119,7 +117,9 @@ class AuraFooter(Static):
                 container = self.query_one("#footer-keybindings")
                 container.remove_children()
                 for key, action in self._keybindings:
-                    container.mount(AuraKeyHint(key, action, classes="footer-keybinding"))
+                    container.mount(
+                        AuraKeyHint(key, action, classes="footer-keybinding")
+                    )
             except Exception as mount_exc:
                 # Widget not mounted yet — keybindings will reflect on next compose.
                 logger.debug("footer keybindings container not ready: %s", mount_exc)
@@ -258,7 +258,7 @@ class AuraFooter(Static):
         self.runtime_phase = (
             RuntimePhase.EXECUTING.value if message else RuntimePhase.READY.value
         )
-        self.status_message = message or "Pronto"
+        self.status_message = message or "Ready"
         if message:
             self._status_timer = self.set_timer(5.0, self._clear_status)
 
@@ -298,7 +298,7 @@ class AuraFooter(Static):
         """Return transient terminal status to the ready label."""
         self._status_timer = None
         self.runtime_phase = RuntimePhase.READY.value
-        self.status_message = "Pronto"
+        self.status_message = "Ready"
 
 
 class AuraKeyHint(Static):

@@ -46,3 +46,40 @@ def test_low_terminal_uses_compact_density() -> None:
     assert plan.density is TuiDensity.COMPACT
     assert not plan.show_header
     assert not plan.show_footer_details
+
+
+def test_startup_state_opens_no_drawer_so_the_default_is_single_column_chat() -> None:
+    """P1-9 — the TUI boots conversation-first.
+
+    ``TuiSurfaceState`` starts with no active drawer, so with the default state the
+    layout plan allocates the full width to the conversation at every viewport.
+    This pins the default against a regression that re-opens a side panel on boot.
+    """
+    from aura_cli.application.presentation.tui_surface_state import TuiSurfaceState
+
+    startup = TuiSurfaceState()
+    assert startup.active_drawer is None
+
+    for width, height in ((200, 50), (120, 40), (100, 30), (80, 24), (70, 20)):
+        plan = decide_tui_layout(
+            TuiLayoutState(
+                width=width,
+                height=height,
+                requested_drawer=startup.active_drawer,
+                focus_mode=startup.spatial_focus,
+            )
+        )
+        assert plan.drawer is None, (width, height)
+        assert plan.conversation_width == 0, (width, height)  # no column stolen
+
+
+def test_a_drawer_appears_only_after_it_is_requested() -> None:
+    """The panels are on-demand, not default chrome."""
+    base = TuiLayoutState(width=160, height=40)
+    assert decide_tui_layout(base).drawer is None
+    assert (
+        decide_tui_layout(
+            TuiLayoutState(width=160, height=40, requested_drawer=TuiDrawer.ACTIVITY)
+        ).drawer
+        is TuiDrawer.ACTIVITY
+    )

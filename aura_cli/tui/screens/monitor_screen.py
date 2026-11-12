@@ -26,26 +26,26 @@ from aura_cli.tui.widgets.monitor import (
 class MonitorScreen(BaseToolScreen):
     """Terminal browser with tabs, vim-style navigation, and shared tool chrome."""
 
-    SCREEN_TITLE = "Monitor de Conteúdo"
-    SCREEN_SUBTITLE = "Navegador web no terminal · Ctrl+M no chat"
+    SCREEN_TITLE = "Content Monitor"
+    SCREEN_SUBTITLE = "Web browser in the terminal · Ctrl+M in chat"
 
     BINDINGS: ClassVar[list] = [
         *BaseToolScreen.BINDINGS,
-        Binding("g", "goto", "Abrir URL", show=True),
-        Binding("r", "reload", "Recarregar", show=True),
-        Binding("b", "back", "Voltar"),
-        Binding("f", "forward", "Avançar"),
-        Binding("H", "home", "Início"),
-        Binding("/", "search", "Pesquisar", show=True),
-        Binding("j", "scroll_down", "Rolar para baixo"),
-        Binding("k", "scroll_up", "Rolar para cima"),
-        Binding("ctrl+d", "page_down", "Próxima página"),
-        Binding("ctrl+u", "page_up", "Página anterior"),
-        Binding("t", "new_tab", "Nova aba"),
-        Binding("w", "close_tab", "Fechar aba"),
-        Binding("1", "tab_1", "Aba 1", show=False),
-        Binding("2", "tab_2", "Aba 2", show=False),
-        Binding("3", "tab_3", "Aba 3", show=False),
+        Binding("g", "goto", "Go to URL", show=True),
+        Binding("r", "reload", "Reload", show=True),
+        Binding("b", "back", "Back"),
+        Binding("f", "forward", "Forward"),
+        Binding("H", "home", "Home"),
+        Binding("/", "search", "Search", show=True),
+        Binding("j", "scroll_down", "Scroll down"),
+        Binding("k", "scroll_up", "Scroll up"),
+        Binding("ctrl+d", "page_down", "Next page"),
+        Binding("ctrl+u", "page_up", "Previous page"),
+        Binding("t", "new_tab", "New tab"),
+        Binding("w", "close_tab", "Close tab"),
+        Binding("1", "tab_1", "Tab 1", show=False),
+        Binding("2", "tab_2", "Tab 2", show=False),
+        Binding("3", "tab_3", "Tab 3", show=False),
     ]
 
     def __init__(self, initial_url: str = "about:blank", **kwargs):
@@ -96,13 +96,13 @@ Bem-vindo ao Monitor da Aura CLI, um navegador web completo para o terminal.
 * Pressione **g** para abrir uma URL
 * Pressione **r** para recarregar
 * Pressione **/** para pesquisar
-* Use **b** / **f** para voltar ou avançar
+* Use **b** / **f** to go back or forward
 
 ## Recursos
-* **Navegar**: histórico e abas
+* **Navigate**: history and tabs
 * **Visualizar**: suporte a Markdown, HTML e JSON
-* **Monitorar**: inspeção de endpoints
-* **Abas**: várias páginas na mesma sessão
+* **Monitor**: endpoint inspection
+* **Tabs**: multiple pages in the same session
 
 Experimente: [DuckDuckGo Lite](https://lite.duckduckgo.com)
 """
@@ -139,7 +139,7 @@ Experimente: [DuckDuckGo Lite](https://lite.duckduckgo.com)
             address.loading = False
 
             status = self.query_one("#status_bar", MonitorStatusBar)
-            status.message = f"Erro: {error}"
+            status.message = f"Error: {error}"
 
         except Exception as render_error:
             self.log.warning("Unable to render monitor error: %s", render_error)

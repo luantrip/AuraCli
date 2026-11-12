@@ -13,6 +13,8 @@ Usage:
 
 from typing import Optional
 
+from aura_cli.core.llm.provider_spec import PROVIDER_SPECS
+
 # Aura default model — validated against the configured Cerebras endpoint.
 DEFAULT_MODEL = "cerebras/gpt-oss-120b"
 DEFAULT_GEMINI_MODEL = "gemini/gemini-2.5-flash"
@@ -25,16 +27,8 @@ DEFAULT_NVIDIA_MODEL = "nvidia/nvidia/nemotron-3.5-lightning-30b-a3b"
 DEFAULT_GROQ_MODEL = "groq/openai/gpt-oss-20b"
 
 PROVIDER_ALIASES = {
-    "google": "gemini",
-    "gemini": "gemini",
-    "openai": "gpt",
-    "gpt": "gpt",
-    "anthropic": "claude",
-    "claude": "claude",
-    "cerebras": "cerebras",
-    "openrouter": "openrouter",
-    "nvidia": "nvidia",
-    "groq": "groq",
+    **{spec.id: spec.catalog for spec in PROVIDER_SPECS},
+    **{spec.catalog: spec.catalog for spec in PROVIDER_SPECS},
 }
 
 _PROVIDER_DEFAULTS = {
@@ -54,64 +48,84 @@ def normalize_provider_name(provider: Optional[str]) -> str:
     return PROVIDER_ALIASES.get(value, value)
 
 
-_BUILTIN_MODEL_PRESETS = {
-    "gemini": [
-        "gemini/gemini-2.5-flash",
-        "gemini/gemini-2.5-pro",
-        "gemini/gemini-2.5-flash-lite",
-        "gemini/gemini-3.8-flash",
-        "gemini/gemini-3.5-flash",
-    ],
-    "cerebras": [
-        "cerebras/gpt-oss-120b",
-        "cerebras/zai-glm-4.7",
-        "cerebras/llama3.1-8b",
-    ],
-    "openrouter": [
-        "openrouter/free",
-        "openrouter/nvidia/nemotron-3-super-120b-a12b:free",
-        "openrouter/nvidia/nemotron-3-ultra-550b-a55b:free",
-        "openrouter/nvidia/nemotron-3.5-super-vl:free",
-        "openrouter/cohere/north-mini-code:free",
-        "openrouter/qwen/qwen3-coder:free",
-    ],
-    "gpt": ["gpt-4o", "gpt-4o-mini"],
-    "claude": ["claude-sonnet-4-6", "claude-haiku-4-5-20251001"],
-    "nvidia": [
-        "nvidia/nvidia/nemotron-3.5-lightning-30b-a3b",
-        "nvidia/nvidia/nemotron-3-super-120b-a12b",
-        "nvidia/nvidia/nemotron-3-ultra-550b-a55b",
-        "nvidia/nvidia/nemotron-3.5-lightning-30b-a3b",
-        "nvidia/nvidia/nemotron-3.5-super-vl-120b-a12b",
-        "nvidia/google/gemma-4-31b-it",
-    ],
-    "groq": [
-        "groq/openai/gpt-oss-20b",
-        "groq/openai/gpt-oss-120b",
-    ],
+# Single source of truth: provider short name → API key env var name.
+# Derived from ProviderSpec; keeps model filtering aligned with api_keys.py.
+PROVIDER_ENV_KEYS = {spec.catalog: spec.primary_env_key for spec in PROVIDER_SPECS}
+
+
+def provider_for_model(model_id: Optional[str]) -> str:
+    """Return the short canonical provider name for a model id.
+
+    Single detection point (replaces the scattered if/elif prefix checks).
+    """
+    value = (model_id or "").strip().lower()
+    if not value or value == "auto":
+        return "auto" if value == "auto" else ""
+    if value.startswith("cerebras/"):
+        return "cerebras"
+    if value.startswith(("gemini/", "google/")):
+        return "gemini"
+    if value.startswith("openrouter/"):
+        return "openrouter"
+    if value.startswith(("nvidia/", "openai/nvidia/")):
+        return "nvidia"
+    if value.startswith("groq/"):
+        return "groq"
+    if value.startswith(("claude-", "anthropic/")):
+        return "claude"
+    if value.startswith("gpt-"):
+        return "gpt"
+    return ""
+
+
+def provider_has_key(provider: str, api_keys: Optional[dict] = None) -> bool:
+    """Return True if the configured api_keys dict has a key for the provider."""
+    env_name = PROVIDER_ENV_KEYS.get(normalize_provider_name(provider))
+    if not env_name or not api_keys:
+        return False
+    return bool(api_keys.get(env_name))
+
+
+# Last-resort catalog used ONLY when ``models.json`` cannot be read. It is kept
+# deliberately tiny — one default per provider, taken from the DEFAULT_* constants
+# above — so it cannot drift into a second, divergent catalog. The full catalog
+# lives in ``models.json`` (shipped via package-data).
+_EMERGENCY_MODEL_PRESETS = {
+    provider: [model] for provider, model in _PROVIDER_DEFAULTS.items()
 }
 
 
 def _load_model_presets():
-    """Load model presets from JSON, with one safe built-in fallback."""
+    """Load the canonical catalog from ``models.json``.
+
+    A missing or malformed file is an installation problem, so it is logged as an
+    error (not silently masked); the emergency catalog keeps the CLI usable.
+    """
     import json
     from pathlib import Path
 
     json_path = Path(__file__).with_name("models.json")
     try:
-        if json_path.exists():
-            with open(json_path, encoding="utf-8") as f:
-                loaded = json.load(f)
-            if isinstance(loaded, dict) and all(
-                isinstance(models, list) for models in loaded.values()
-            ):
-                return loaded
+        with open(json_path, encoding="utf-8") as f:
+            loaded = json.load(f)
+        if isinstance(loaded, dict) and all(
+            isinstance(models, list) for models in loaded.values()
+        ):
+            return loaded
+        reason = "expected an object mapping provider to a list of model ids"
     except (OSError, json.JSONDecodeError, ValueError) as error:
-        import logging
+        reason = str(error)
 
-        logging.getLogger(__name__).warning("Failed to load LLM presets: %s", error)
+    import logging
+
+    logging.getLogger(__name__).error(
+        "LLM model catalog %s is unusable (%s); using the minimal emergency "
+        "catalog. Reinstall aura-cli to restore the full model list.",
+        json_path,
+        reason,
+    )
     return {
-        provider: models.copy() for provider, models in _BUILTIN_MODEL_PRESETS.items()
+        provider: models.copy() for provider, models in _EMERGENCY_MODEL_PRESETS.items()
     }
 
 
@@ -418,31 +432,80 @@ def format_model_display_name(model_id: str) -> str:
     return name
 
 
-def get_valid_models() -> dict:
-    """Return the list of valid models for a provider."""
+def get_valid_models(
+    api_keys: Optional[dict] = None, only_configured: bool = False
+) -> dict:
+    """Return the catalog of valid models.
+
+    Args:
+        api_keys: Optional dict of configured API keys (env-var-style names).
+        only_configured: If True, only include models whose provider has a
+            configured API key in ``api_keys``. Requires ``api_keys``.
+
+    Returns:
+        Mapping of model_id → {"name", "provider"}.
+    """
+    _PROVIDER_DISPLAY = {
+        "auto": "Auto",
+        "cerebras": "Cerebras",
+        "gemini": "Google",
+        "gpt": "OpenAI",
+        "claude": "Anthropic",
+        "openrouter": "OpenRouter",
+        "nvidia": "NVIDIA",
+        "groq": "Groq",
+    }
     models = {}
     for _provider, model_list in MODEL_PRESETS.items():
         if not model_list:
             continue
         for model_id in model_list:
-            name = format_model_display_name(model_id)
-            if model_id == "auto":
-                provider_name = "Auto"
-            elif model_id.startswith("cerebras/"):
-                provider_name = "Cerebras"
-            elif model_id.startswith("gemini/"):
-                provider_name = "Google"
-            elif model_id.startswith("gpt-"):
-                provider_name = "OpenAI"
-            elif model_id.startswith("claude-"):
-                provider_name = "Anthropic"
-            elif model_id.startswith("openrouter/"):
-                provider_name = "OpenRouter"
-            elif model_id.startswith(("openai/nvidia/", "nvidia/")):
-                provider_name = "NVIDIA"
-            else:
-                provider_name = "Unknown"
-
-            models[model_id] = {"name": name, "provider": provider_name}
+            short = provider_for_model(model_id)
+            if (
+                only_configured
+                and model_id != "auto"
+                and not provider_has_key(short, api_keys)
+            ):
+                continue
+            provider_name = _PROVIDER_DISPLAY.get(short, "Unknown")
+            models[model_id] = {
+                "name": format_model_display_name(model_id),
+                "provider": provider_name,
+            }
 
     return models
+
+
+def is_known_model(model_id: Optional[str]) -> bool:
+    """Return True if ``model_id`` exists in the canonical preset catalog."""
+    if not model_id:
+        return False
+    normalized = (model_id or "").strip()
+    if not normalized:
+        return False
+    for model_list in MODEL_PRESETS.values():
+        if normalized in model_list:
+            return True
+    # Accept a normalized match as well (user may pass an alias/variant).
+    canonical = normalize_model_name(normalized)
+    if canonical and canonical != normalized:
+        for model_list in MODEL_PRESETS.values():
+            if canonical in model_list:
+                return True
+    return False
+
+
+def resolve_default_model(api_keys: Optional[dict] = None) -> str:
+    """Return a usable default model given the configured API keys.
+
+    Prefers ``DEFAULT_MODEL`` when its provider has a key; otherwise falls back
+    to the first provider (in a stable preference order) that has a configured
+    key. Returns ``DEFAULT_MODEL`` if nothing can be determined.
+    """
+    if provider_has_key(provider_for_model(DEFAULT_MODEL), api_keys):
+        return DEFAULT_MODEL
+    preference = ("gemini", "cerebras", "groq", "openrouter", "nvidia", "gpt", "claude")
+    for provider in preference:
+        if provider_has_key(provider, api_keys):
+            return get_default_model_for_provider(provider)
+    return DEFAULT_MODEL

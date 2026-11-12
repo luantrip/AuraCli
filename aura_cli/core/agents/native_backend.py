@@ -54,14 +54,14 @@ def _parse_retry_after_seconds(exc: BaseException) -> Optional[int]:
         try:
             return int(exc.retry_after)
         except (TypeError, ValueError):
-            pass  # non-numeric retry_after — fall through to regex parse
+            _logger.debug("native_backend: non-numeric retry_after header, trying regex parse")
     msg = str(exc)
     m = re.search(r"retry\s+in\s+([\d.]+)\s*s", msg, re.I)
     if m:
         try:
             return max(1, int(float(m.group(1))))
         except (TypeError, ValueError):
-            pass  # malformed float in retry message — return None
+            _logger.debug("native_backend: malformed float in retry message, returning None")
     return None
 
 
@@ -82,7 +82,6 @@ class NativeAgent:
     """
 
     def __init__(self, config: AgentConfig):
-        """Initialize the instance."""
         self.name = config.name
         self.role = config.role
         self.system_message = config.system_message
@@ -118,7 +117,6 @@ class NativeUserProxy:
     """
 
     def __init__(self, config: AgentConfig):
-        """Initialize the instance."""
         self.name = config.name
         self.max_consecutive_auto_reply = (
             config.max_consecutive_auto_reply or _DEFAULT_MAX_TURNS
@@ -228,7 +226,7 @@ class NativeUserProxy:
 
             if fn_name not in self.function_map:
                 result_str = json.dumps(
-                    {"error": f"Ferramenta '{fn_name}' não encontrada"}
+                    {"error": f"Tool '{fn_name}' not found"}
                 )
                 assistant.add_raw_message(
                     {

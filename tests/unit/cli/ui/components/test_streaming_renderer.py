@@ -13,7 +13,7 @@ class TestStreamingConfig:
 
     def test_streaming_config_defaults(self):
         """Test StreamingConfig has sensible defaults."""
-        from aura_cli.cli.ui.components.streaming_renderer import StreamingConfig
+        from aura_cli.cli.ui.components.agent.streaming_renderer import StreamingConfig
 
         config = StreamingConfig()
 
@@ -26,7 +26,7 @@ class TestStreamingConfig:
 
     def test_streaming_config_custom(self):
         """Test StreamingConfig with custom values."""
-        from aura_cli.cli.ui.components.streaming_renderer import StreamingConfig
+        from aura_cli.cli.ui.components.agent.streaming_renderer import StreamingConfig
 
         config = StreamingConfig(
             chunk_delay=0.05, cursor_char="|", cursor_blink=False, max_buffer_size=2048
@@ -44,7 +44,9 @@ class TestStreamingTextRenderer:
     @pytest.fixture
     def renderer(self):
         """Create StreamingTextRenderer instance."""
-        from aura_cli.cli.ui.components.streaming_renderer import StreamingTextRenderer
+        from aura_cli.cli.ui.components.agent.streaming_renderer import (
+            StreamingTextRenderer,
+        )
 
         return StreamingTextRenderer()
 
@@ -57,7 +59,7 @@ class TestStreamingTextRenderer:
 
     def test_renderer_with_custom_config(self):
         """Test renderer with custom config."""
-        from aura_cli.cli.ui.components.streaming_renderer import (
+        from aura_cli.cli.ui.components.agent.streaming_renderer import (
             StreamingConfig,
             StreamingTextRenderer,
         )
@@ -74,7 +76,7 @@ class TestStreamingTextRenderer:
 
     def test_append_buffer_limit(self):
         """Test append respects max_buffer_size."""
-        from aura_cli.cli.ui.components.streaming_renderer import (
+        from aura_cli.cli.ui.components.agent.streaming_renderer import (
             StreamingConfig,
             StreamingTextRenderer,
         )
@@ -89,7 +91,7 @@ class TestStreamingTextRenderer:
         assert len(renderer._buffer) <= 10
 
     def test_finish_preserves_full_content_beyond_display_buffer(self):
-        from aura_cli.cli.ui.components.streaming_renderer import (
+        from aura_cli.cli.ui.components.agent.streaming_renderer import (
             StreamingConfig,
             StreamingTextRenderer,
         )
@@ -156,7 +158,7 @@ class TestTypingIndicator:
 
     def test_typing_indicator_creation(self):
         """Test TypingIndicator can be created."""
-        from aura_cli.cli.ui.components.streaming_renderer import TypingIndicator
+        from aura_cli.cli.ui.components.agent.streaming_renderer import TypingIndicator
 
         indicator = TypingIndicator()
 
@@ -166,7 +168,7 @@ class TestTypingIndicator:
 
     def test_typing_indicator_stop(self):
         """Test stopping indicator."""
-        from aura_cli.cli.ui.components.streaming_renderer import TypingIndicator
+        from aura_cli.cli.ui.components.agent.streaming_renderer import TypingIndicator
 
         indicator = TypingIndicator()
         indicator._is_active = True
@@ -180,7 +182,7 @@ class TestTypingIndicator:
         """Test rendering animation frame."""
         from rich.text import Text
 
-        from aura_cli.cli.ui.components.streaming_renderer import TypingIndicator
+        from aura_cli.cli.ui.components.agent.streaming_renderer import TypingIndicator
 
         with patch(
             "aura_cli.cli.ui.components.streaming_renderer.get_theme_manager"
@@ -201,7 +203,7 @@ class TestCreateStreamingRenderer:
 
     def test_create_streaming_renderer(self):
         """Test create_streaming_renderer factory."""
-        from aura_cli.cli.ui.components.streaming_renderer import (
+        from aura_cli.cli.ui.components.agent.streaming_renderer import (
             StreamingTextRenderer,
             create_streaming_renderer,
         )
@@ -212,7 +214,7 @@ class TestCreateStreamingRenderer:
 
     def test_create_streaming_renderer_no_markdown(self):
         """Test create_streaming_renderer without markdown."""
-        from aura_cli.cli.ui.components.streaming_renderer import (
+        from aura_cli.cli.ui.components.agent.streaming_renderer import (
             create_streaming_renderer,
         )
 

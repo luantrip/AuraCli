@@ -23,8 +23,8 @@ try:
         InterventionHelper,
     )
 except ImportError:
-    HumanInterventionAdapter = None  # type: ignore[assignment,misc]
-    InterventionHelper = None  # type: ignore[assignment,misc]
+    HumanInterventionAdapter = None  # type: ignore[assignment,misc]  # optional dep
+    InterventionHelper = None  # type: ignore[assignment,misc]  # optional dep
 from aura_cli.core.agi.stage_ledger import StageLedger
 from aura_cli.core.events.human_intervention_events import (
     InterventionContext,
@@ -74,7 +74,6 @@ class AgiPlanner:
         use_advanced_features: bool = True,
         allowed_task_types: Optional[List[str]] = None,
     ):
-        """Initialize the instance."""
         self.model = model
         self.project_root = project_root
         self.agi_event_adapter = agi_event_adapter
@@ -121,71 +120,71 @@ class AgiPlanner:
             List of tasks with all necessary parameters or None
         """
         try:
-            default_prompt = """Você é um planejador de tasks especializado. Analise o pedido do usuário e crie um plano estruturado de tasks.
+            default_prompt = """You are a specialised task planner. Analyse the user's request and create a structured task plan.
 
-**IMPORTANTE**: Se o pedido do usuário for muito vago ou não tiver contexto suficiente (ex: "faz algo", "melhore", "analise este projeto"), você DEVE começar com tasks exploratórias para entender o contexto antes de criar tasks específicas.
+**IMPORTANT**: If the user's request is too vague or lacks sufficient context (e.g. "do something", "improve", "analyse this project"), you MUST start with exploratory tasks to understand the context before creating specific tasks.
 
-**ESTRATÉGIA DE ANÁLISE DE PROJETOS:**
-Quando o usuário pedir para analisar um projeto, entender código, ou explorar um codebase:
-1. PRIMEIRO: Use 'analyze_project_structure' para obter visão geral completa
-2. DEPOIS: Leia READMEs principais (root e frentes identificadas)
-3. ENTÃO: Explore estrutura com 'list_directory' se necessário
-4. DEPOIS: Use ferramentas de insights de projeto para análises profundas:
-   - 'analyze_project_quality' para qualidade de código
-   - 'analyze_project_security' para segurança
-   - 'analyze_project_documentation' para documentação
-   - 'compare_project_fronts' para comparar frentes (backend, frontend, mobile, etc.)
-5. FINALMENTE: Use ferramentas específicas para análise/edição/refatoração/testes quando necessário
+**PROJECT ANALYSIS STRATEGY:**
+When the user asks to analyse a project, understand code, or explore a codebase:
+1. FIRST: Use 'analyze_project_structure' to get a complete overview
+2. THEN: Read main READMEs (root and identified fronts)
+3. NEXT: Explore structure with 'list_directory' if needed
+4. AFTER: Use project insight tools for deep analysis:
+   - 'analyze_project_quality' for code quality
+   - 'analyze_project_security' for security
+   - 'analyze_project_documentation' for documentation
+   - 'compare_project_fronts' to compare fronts (backend, frontend, mobile, etc.)
+5. FINALLY: Use specific tools for analysis/editing/refactoring/testing as needed
 
-**FERRAMENTAS DISPONÍVEIS:**
-- 'analyze_project_structure': Análise estruturada completa de projetos (USE PRIMEIRO para projetos)
-- 'analyze_project_quality': Avaliação de qualidade de código em nível de projeto
-- 'analyze_project_security': Análise de segurança e dependências vulneráveis
-- 'analyze_project_documentation': Avaliação de documentação (READMEs, docstrings)
-- 'compare_project_fronts': Comparação entre diferentes frentes do projeto
-- 'list_directory': Lista conteúdo de diretórios (para explorar estrutura)
-- 'read_file': Lê arquivos específicos (README, configs, código)
-- 'codebase_search': Busca texto/padrões no código
-- 'investigate_codebase': Análise profunda com AST
-- 'analyze_code': Análise de ARQUIVO específico (não diretório)
-- 'analyze_code_nlp': Análise NLP de ARQUIVO específico (não diretório)
-- 'review_file': Revisão completa de arquivo com análise aprofundada
+**AVAILABLE TOOLS:**
+- 'analyze_project_structure': Complete structured project analysis (USE FIRST for projects)
+- 'analyze_project_quality': Project-level code quality assessment
+- 'analyze_project_security': Security analysis and vulnerable dependencies
+- 'analyze_project_documentation': Documentation assessment (READMEs, docstrings)
+- 'compare_project_fronts': Comparison between different project fronts
+- 'list_directory': Lists directory contents (for exploring structure)
+- 'read_file': Reads specific files (README, configs, code)
+- 'codebase_search': Searches text/patterns in code
+- 'investigate_codebase': Deep analysis with AST
+- 'analyze_code': Analysis of a SPECIFIC FILE (not directory)
+- 'analyze_code_nlp': NLP analysis of a SPECIFIC FILE (not directory)
+- 'review_file': Full file review with in-depth analysis
 - 'run_tests': Executa testes em um caminho ou suite
 - 'find_related_tests': Descobre testes relacionados a um arquivo
-- 'validate_tests_pass': Verifica se uma suite está passando
-- 'generate_tests': Gera testes para um arquivo específico
-- 'plan_refactoring': Planeja uma refatoração estruturada
-- 'analyze_impact': Analisa impacto de uma mudança
-- 'apply_refactoring': Aplica plano de refatoração
-- 'suggest_strategy': Sugere estratégia de refatoração
+- 'validate_tests_pass': Checks if a test suite is passing
+- 'generate_tests': Generates tests for a specific file
+- 'plan_refactoring': Plans a structured refactoring
+- 'analyze_impact': Analyses the impact of a change
+- 'apply_refactoring': Applies a refactoring plan
+- 'suggest_strategy': Suggests a refactoring strategy
 
 **FORMATO DE RESPOSTA (JSON):**
 {
   "tasks": [
     {
       "id": "tarefa_1",
-      "description": "Descrição clara da tarefa",
+      "description": "Clear task description",
       "type": "analyze_project_structure|analyze_project_quality|analyze_project_security|analyze_project_documentation|compare_project_fronts|read_file|write_file|list_directory|codebase_search|investigate_codebase|analyze_code|analyze_code_nlp|review_file|validate_syntax|edit_file|tree_view|find_in_files|run_tests|find_related_tests|validate_tests_pass|generate_tests|plan_refactoring|analyze_impact|apply_refactoring|suggest_strategy",
       "agent": "code_agent|review_agent|refactor_agent|test_agent",
       "priority": 5,
       "dependencies": [],
       "parameters": {
         "path": "caminho/do/arquivo",
-        "content": "conteúdo se for write_file",
-        "pattern": "padrão se for find_in_files",
+        "content": "content if write_file",
+        "pattern": "pattern if find_in_files",
         ...
       }
     }
   ]
 }
 
-**REGRAS OBRIGATÓRIAS:**
-1. Cada tarefa DEVE ter TODOS os parâmetros necessários
-2. Para read_file, write_file, edit_file, list_directory, tree_view: SEMPRE inclua "path" (use "." se não especificado)
+**MANDATORY RULES:**
+1. Each task MUST have ALL required parameters
+2. For read_file, write_file, edit_file, list_directory, tree_view: ALWAYS include "path" (use "." if not specified)
 3. Para analyze_code:
-   - Se agent="code_agent": use "path" (pode ser diretório ou arquivo)
-   - Se agent="review_agent" ou "refactor_agent": use "file_path" (NÃO "path")
-   - IMPORTANTE: analyze_code com review_agent/refactor_agent precisa de um ARQUIVO ESPECÍFICO, não um diretório!
+   - If agent="code_agent": use "path" (can be directory or file)
+   - If agent="review_agent" or "refactor_agent": use "file_path" (NOT "path")
+   - IMPORTANT: analyze_code with review_agent/refactor_agent needs a SPECIFIC FILE, not a directory!
    - Exemplo correto: {"file_path": "app.py"} ou {"file_path": "main.py"}
    - Exemplo ERRADO: {"file_path": "."} ou {"file_path": "templates/"}
 4. Para find_in_files: inclua "pattern" e "path"
@@ -195,24 +194,24 @@ Quando o usuário pedir para analisar um projeto, entender código, ou explorar 
 8. Para analyze_impact: inclua "file_path"
 9. Para apply_refactoring: inclua "plan"
 10. Para suggest_strategy: inclua "pattern"
-11. Dependências devem usar IDs de tasks anteriores
-12. Seja específico com caminhos e parâmetros
+11. Dependencies must use IDs from previous tasks
+12. Be specific with paths and parameters
 13. SEMPRE comece com list_directory(".") para entender o projeto
-14. Se o pedido for vago, crie tasks exploratórias primeiro
-15. Para analyze_code: Se não souber qual arquivo, use list_directory primeiro e depois analyze_code com arquivo específico
+14. If the request is vague, create exploratory tasks first
+15. For analyze_code: If unsure which file, use list_directory first then analyze_code with the specific file
 
-**ESTRATÉGIA:**
+**STRATEGY:**
 - Pedido vago → Comece explorando (list_directory, tree_view)
-- Pedido específico → Crie tasks diretas com parâmetros específicos
-- Sempre inclua parâmetros, mesmo que sejam valores padrão
+- Specific request → Create direct tasks with specific parameters
+- Always include parameters, even if they are default values
 
-Retorne APENAS o JSON, sem markdown, sem explicações."""
+Return ONLY the JSON, no markdown, no explanations."""
 
             planning_prompt = system_prompt or default_prompt
 
             messages = [
                 {"role": "system", "content": planning_prompt},
-                {"role": "user", "content": f"Pedido do usuário: {prompt}"},
+                {"role": "user", "content": f"User request: {prompt}"},
             ]
 
             self.agi_event_adapter.emit_chat_message(
@@ -226,22 +225,22 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
             return self._parse_plan_response(raw_content)
 
         except (ConnectionError, TimeoutError) as e:
-            logger.error(f"Erro de conexão ao planejar com LLM: {e}", exc_info=True)
-            raise LLMError(  # type: ignore[call-arg]
+            logger.error(f"Connection error while planning with LLM: {e}", exc_info=True)
+            raise LLMError(  # type: ignore[call-arg]  # LLMError accepts kwargs not in base signature
                 f"Connection error during planning: {e}",
                 model=self.model,
                 original_error=e,
             ) from e
         except (ValueError, TypeError) as e:
-            logger.error(f"Erro de validação ao planejar com LLM: {e}", exc_info=True)
-            raise LLMError(  # type: ignore[call-arg]
+            logger.error(f"Validation error while planning with LLM: {e}", exc_info=True)
+            raise LLMError(  # type: ignore[call-arg]  # LLMError accepts kwargs not in base signature
                 f"Validation error during planning: {e}",
                 model=self.model,
                 original_error=e,
             ) from e
         except Exception as e:
             logger.error(f"Unexpected error planning with LLM: {e}", exc_info=True)
-            raise LLMError(  # type: ignore[call-arg]
+            raise LLMError(  # type: ignore[call-arg]  # LLMError accepts kwargs not in base signature
                 f"Unexpected error during planning: {e}",
                 model=self.model,
                 original_error=e,
@@ -256,7 +255,7 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
             timeout=15.0,
         )
         if not response or not hasattr(response, "choices") or not response.choices:
-            logger.warning("LLM não retornou resposta para planejamento")
+            logger.warning("LLM returned no response for planning")
             return None
         content = response.choices[0].message.content.strip()
         for prefix in ("```json", "```"):
@@ -310,7 +309,7 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
                         )
                     else:
                         logger.warning(
-                            f"Normalização de parâmetros para {task_id}: {norm_errors}"
+                            f"Parameter normalization for {task_id}: {norm_errors}"
                         )
                 validated_tasks.append(
                     {
@@ -335,7 +334,7 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
             return validated_tasks
         except json.JSONDecodeError as e:
             logger.error(f"Error parsing planning JSON: {e}")
-            logger.debug(f"Conteúdo recebido: {content[:200]}")
+            logger.debug(f"Content received: {content[:200]}")
             return None
 
     def decompose_and_plan(
@@ -394,7 +393,7 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
                 self.agi_event_adapter.emit_chat_message(
                     sender="agent",
                     content=f"› [Aura AGI] {UIIcons.SUCCESS} Plan created with LLM: {len(plan.tasks)} tasks "
-                    f"(duração estimada: {plan.estimated_duration:.1f}s)",
+                    f"(estimated duration: {plan.estimated_duration:.1f}s)",
                 )
 
                 return plan
@@ -408,7 +407,7 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
 
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
-                content=f"› [Aura AGI] {UIIcons.INFO} Planejamento LLM não disponível, usando decomposição automática...",
+                content=f"› [Aura AGI] {UIIcons.INFO} LLM planning unavailable, using automatic decomposition...",
             )
 
             components = self.problem_decomposer.decompose(
@@ -452,7 +451,7 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
             self.agi_event_adapter.emit_chat_message(
                 sender="agent",
                 content=f"› [Aura AGI] {UIIcons.SUCCESS} Problema decomposto em {len(plan.tasks)} tasks "
-                f"(duração estimada: {plan.estimated_duration:.1f}s)",
+                f"(estimated duration: {plan.estimated_duration:.1f}s)",
             )
 
             return plan
@@ -557,12 +556,12 @@ Retorne APENAS o JSON, sem markdown, sem explicações."""
         if approved:
             self.agi_event_adapter.emit_chat_message(
                 sender="system",
-                content=f"✓ Execução de {tool_name} aprovada pelo usuário",
+                content=f"✓ Execution of {tool_name} approved by user",
             )
         else:
             self.agi_event_adapter.emit_chat_message(
                 sender="system",
-                content=f"✗ Execução de {tool_name} cancelada pelo usuário",
+                content=f"✗ Execution of {tool_name} cancelled by user",
             )
 
         return approved

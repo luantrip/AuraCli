@@ -69,4 +69,4 @@ def test_event_stream_does_not_preview_tool_values() -> None:
     )
 
     assert _SENTINEL not in content
-    assert "parâmetros ocultos" in content
+    assert "hidden parameters" in content

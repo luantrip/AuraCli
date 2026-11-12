@@ -106,7 +106,7 @@ def materialize_destinations(
                 AttentionEntry(
                     key=key,
                     task_id=request.task_id,
-                    title=request.title or "Ação necessária",
+                    title=request.title or "Action required",
                     message=request.content,
                     blocking=True,
                 ),
@@ -122,7 +122,7 @@ def materialize_destinations(
                     logger.debug("Could not reveal blocking surface: %s", error)
             app.notify(
                 request.content,
-                title=request.title or "Ação necessária",
+                title=request.title or "Action required",
                 severity="warning",
                 timeout=10,
             )

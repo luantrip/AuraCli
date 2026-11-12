@@ -31,7 +31,7 @@ def test_snapshot_supports_aware_timestamp_and_relative_time() -> None:
     assert entry.message_count == 3
     assert (
         entry.relative_time(datetime(2026, 8, 12, 12, 2, tzinfo=timezone.utc))
-        == "2m atrá"
+        == "2m ago"
     )
 
 

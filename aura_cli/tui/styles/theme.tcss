@@ -82,7 +82,6 @@ $theme-tree-line: #475569;
 Screen {
     background: $theme-background;
     color: $theme-foreground;
-    layers: base content overlay notification dialog palette imagination;
 }
 
 Screen:inline {
@@ -93,32 +92,13 @@ Screen:inline {
    MAIN GRID LAYOUT
    ============================================================================= */
 
-#main_grid {
-    layout: grid;
-    grid-size: 1 1;
-    grid-columns: 1fr;
-    grid-rows: 1fr;
-    height: 1fr;
-    width: 100%;
-}
-
-#main_grid.drawer-open {
-    grid-size: 2 1;
-}
-
-#main_grid.drawer-overlay {
-    grid-size: 1 1;
-}
-
 .panel-container {
-    height: 100%;
     border: none;
     padding: $spacing-1;
     background: $theme-surface;
 }
 
 .panel-title {
-    height: 1;
     background: transparent;
     color: $theme-foreground-muted;
     text-style: bold;
@@ -148,15 +128,8 @@ Screen:inline {
     border-left: solid $theme-border;
 }
 
-#left_panel.drawer-visible, #right_panel.drawer-visible {
-    display: block;
-}
-
 #main_grid.drawer-overlay #left_panel.drawer-visible,
 #main_grid.drawer-overlay #right_panel.drawer-visible {
-    layer: overlay;
-    width: 100%;
-    height: 100%;
     padding: $spacing-1;
     background: $theme-surface;
     border: round $theme-border;
@@ -223,10 +196,6 @@ Vertical#main_content {
 /* --- Chat Log --- */
 AuraChatLog {
     background: $theme-background;
-    padding: $spacing-1 $spacing-2;
-    overflow-y: scroll;
-    height: 1fr;
-    min-height: 10;
 }
 
 AuraChatLog .chat-divider {
@@ -362,15 +331,6 @@ MessageBubble .message-timestamp {
     margin: $spacing-0 $spacing-1;
 }
 
-#main_grid.density-compact MessageBubble .message-timestamp,
-#main_grid.density-comfortable MessageBubble .message-timestamp {
-    display: none;
-}
-
-#main_grid.density-compact AuraChatLog {
-    padding: $spacing-0;
-}
-
 #main_grid.density-compact MessageBubble {
     margin-bottom: $spacing-0;
     padding: $spacing-0 $spacing-1;
@@ -406,12 +366,7 @@ MessageBubble .message-reaction {
    ============================================================================= */
 
 AuraInputBar {
-    dock: bottom;
-    height: auto;
-    max-height: 8;
     background: $theme-background;
-    padding: $spacing-0 $spacing-2;
-    border-top: none;
 }
 
 AuraInputBar > Vertical {
@@ -461,7 +416,6 @@ AuraFooter {
     dock: bottom;
     height: 1;
     background: $theme-background;
-    border-top: none;
     padding: $spacing-0 $spacing-2;
 }
 
@@ -499,12 +453,6 @@ AuraFooter .footer-keybindings {
     margin: $spacing-0 $spacing-1;
 }
 
-AuraFooter.compact .footer-keybindings,
-AuraFooter.compact .footer-agent,
-AuraFooter.compact .footer-model {
-    display: none;
-}
-
 AuraFooter .footer-keybinding {
     color: $theme-foreground-muted;
     margin-right: $spacing-2;
@@ -530,7 +478,6 @@ AuraFooter .footer-action {
 }
 
 AuraFooter .footer-separator {
-    color: $theme-border;
     margin: $spacing-0 $spacing-1;
 }
 
@@ -1196,7 +1143,6 @@ CommandPalette {
     background: $theme-surface;
     border: round $theme-border;
     padding: $spacing-1 $spacing-2;
-    margin: $spacing-1 $spacing-2;
 }
 
 CommandPalette.-visible {
@@ -2478,4 +2424,1504 @@ TokenUsageScreen #token_usage_dialog {
     padding: 0;
     background: transparent;
     border: none;
+}
+
+
+/* ===== Merged widget rules (ex-macos_light.tcss), colors tokenized to $theme-* ===== */
+AuraStatusSidebar {
+    height: 1fr;
+    padding: 1;
+    width: 100%;
+    overflow-y: auto;
+    background: $theme-surface;
+}
+MetricsPanel #metrics_display {
+    width: 100%;
+    height: auto;
+    padding: 0 1;
+}
+MetricsPanel .metric-row {
+    height: 1;
+    margin-bottom: 1;
+}
+MetricsPanel .metric-key {
+    width: 20;
+    text-align: right;
+    color: $theme-foreground-muted;
+    text-style: dim;
+    padding-right: 1;
+}
+MetricsPanel .metric-value {
+    width: 1fr;
+    text-align: left;
+    color: $theme-success;
+    text-style: bold;
+}
+MessageBubble.message-user .message-body {
+    color: $theme-foreground;
+}
+MessageBubble.message-user .message-timestamp {
+    color: $theme-foreground-muted;
+}
+HolographicHeader .scan-indicator {
+    color: $theme-primary;
+    text-style: bold;
+    margin: 0 1;
+}
+HolographicHeader .title {
+    color: $theme-primary;
+    text-style: bold;
+}
+HolographicHeader .status-idle {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+HolographicHeader .status-scanning {
+    color: $theme-secondary;
+    text-style: bold;
+}
+HolographicHeader .status-watching {
+    color: $theme-success;
+    text-style: bold;
+}
+HolographicHeader .status-error {
+    color: $theme-error;
+    text-style: bold;
+}
+CategoryBreakdown .category-row {
+    height: 1;
+    margin-bottom: 1;
+}
+CategoryBreakdown .category-icon {
+    margin-right: 1;
+    text-style: bold;
+}
+CategoryBreakdown .category-name {
+    width: 10;
+    text-style: bold;
+}
+CategoryBreakdown .category-bar-fill {
+    background: $theme-primary;
+    height: 1;
+}
+CategoryBreakdown .category-bar-empty {
+    background: $theme-foreground-muted;
+    height: 1;
+    opacity: 0.3;
+}
+CategoryBreakdown .category-count {
+    margin-left: 1;
+    text-style: bold;
+}
+CategoryBreakdown .category-percent {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+RecentActivity .activity-header {
+    color: $theme-primary;
+    text-style: bold;
+    border-bottom: solid $theme-border;
+    margin-bottom: 1;
+    padding-bottom: 1;
+}
+RecentActivity .activity-item {
+    margin-bottom: 1;
+    padding: 0 1;
+}
+RecentActivity .activity-icon {
+    margin-right: 1;
+    text-style: bold;
+}
+RecentActivity .activity-name {
+    text-style: bold;
+    width: 25;
+}
+RecentActivity .activity-time {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+ExtensionCloud .extension-item {
+    margin: 0 1;
+}
+ExtensionCloud .extension-high {
+    color: $theme-primary;
+    text-style: bold;
+}
+ExtensionCloud .extension-medium {
+    color: $theme-primary;
+}
+ExtensionCloud .extension-low {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+ScanStats .stat-item {
+    margin: 0 1;
+}
+ScanStats .stat-label {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+ScanStats .stat-value {
+    color: $theme-primary;
+    text-style: bold;
+}
+ScanStats .stat-separator {
+    color: $theme-foreground-muted;
+    margin: 0 1;
+}
+TestRunnerPanel .action-bar {
+    height: 3;
+    margin-top: 1;
+    align: center middle;
+}
+TestRunnerPanel .progress-container {
+    height: 1;
+    margin: 1 0;
+}
+ToolRegistryPanel .status-idle {
+    color: $theme-foreground-muted;
+}
+ToolRegistryPanel .status-running {
+    color: $theme-warning;
+}
+ToolRegistryPanel .status-success {
+    color: $theme-success;
+}
+ToolRegistryPanel .status-failed {
+    color: $theme-error;
+}
+ToolRegistryPanel .progress-container {
+    height: 1;
+    margin-bottom: 1;
+}
+FileTreePanel {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+StatsDisplay {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+StatsDisplay .stats-title {
+    color: $theme-primary;
+    text-style: bold;
+}
+StatsDisplay .stats-border {
+    color: $theme-border;
+}
+StatsDisplay .stats-key {
+    color: $theme-foreground;
+    text-style: bold;
+}
+MiniSparkline {
+    width: auto;
+    height: 1;
+}
+CodeScreen {
+    background: $theme-background;
+}
+CodeScreen .screen-header {
+    text-align: center;
+    color: $theme-primary;
+    text-style: bold;
+    margin-bottom: 2;
+}
+CodeScreen .status-available {
+    color: $theme-success;
+    text-style: bold;
+}
+CodeScreen .status-unavailable {
+    color: $theme-error;
+    text-style: bold;
+}
+CodeScreen .description-text {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+CodeScreen .features-label {
+    color: $theme-warning;
+    text-style: bold;
+    margin-top: 1;
+}
+CodeScreen .action-hint {
+    color: $theme-success;
+    margin: 1 0;
+}
+CodeScreen .action-key {
+    color: $theme-primary;
+    text-style: bold;
+}
+CodeScreen .install-hint {
+    color: $theme-warning;
+    margin: 1 0;
+}
+CodeScreen .install-command {
+    color: $theme-primary;
+}
+PaintScreen {
+    background: $theme-background;
+}
+PaintScreen .screen-header {
+    text-align: center;
+    color: $theme-secondary;
+    text-style: bold;
+    margin-bottom: 2;
+}
+PaintScreen .status-available {
+    color: $theme-success;
+    text-style: bold;
+}
+PaintScreen .status-unavailable {
+    color: $theme-error;
+    text-style: bold;
+}
+PaintScreen .description-text {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+PaintScreen .features-label {
+    color: $theme-warning;
+    text-style: bold;
+    margin-top: 1;
+}
+PaintScreen .action-hint {
+    color: $theme-success;
+    margin: 1 0;
+}
+PaintScreen .action-key {
+    color: $theme-primary;
+    text-style: bold;
+}
+PaintScreen .install-hint {
+    color: $theme-warning;
+    margin: 1 0;
+}
+PaintScreen .install-command {
+    color: $theme-primary;
+}
+FilesScreen {
+    background: $theme-background;
+}
+FilesScreen .screen-header {
+    text-align: center;
+    color: $theme-success;
+    text-style: bold;
+    margin-bottom: 2;
+}
+FilesScreen .status-available {
+    color: $theme-success;
+    text-style: bold;
+}
+FilesScreen .status-unavailable {
+    color: $theme-error;
+    text-style: bold;
+}
+FilesScreen .description-text {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+FilesScreen .features-label {
+    color: $theme-warning;
+    text-style: bold;
+    margin-top: 1;
+}
+FilesScreen .action-hint {
+    color: $theme-success;
+    margin: 1 0;
+}
+FilesScreen .action-key {
+    color: $theme-primary;
+    text-style: bold;
+}
+FilesScreen .install-hint {
+    color: $theme-warning;
+    margin: 1 0;
+}
+FilesScreen .install-command {
+    color: $theme-primary;
+}
+.screen-header {
+    color: $theme-primary;
+    text-style: bold;
+    text-align: center;
+}
+.status-available {
+    color: $theme-success;
+    text-style: bold;
+}
+.status-unavailable {
+    color: $theme-error;
+    text-style: bold;
+}
+.description-text {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin: 1 0;
+}
+.features-label {
+    color: $theme-warning;
+    text-style: bold;
+    margin-top: 1;
+}
+.install-hint {
+    color: $theme-warning;
+    margin: 1 0;
+}
+.install-command {
+    color: $theme-primary;
+}
+ToolsMenuScreen {
+    background: $theme-background;
+}
+ToolsMenuScreen .tools-container {
+    width: 70;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: $theme-background;
+}
+ToolsMenuScreen .header-container {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border: round $theme-border;
+    background: $theme-surface;
+}
+ToolsMenuScreen .screen-header {
+    text-align: center;
+    color: $theme-primary;
+    text-style: bold;
+    margin: 0;
+    padding: 0;
+}
+ToolsMenuScreen .tools-availability-summary {
+    width: 100%;
+    height: 1;
+    margin: 0 2;
+    color: $theme-foreground-muted;
+    text-align: center;
+    text-style: dim;
+}
+ToolsMenuScreen .tools-grid {
+    layout: grid;
+    grid-size: 3;
+    grid-columns: 1fr 1fr 1fr;
+    grid-rows: auto;
+    grid-gutter: 1;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 1;
+}
+ToolsMenuScreen .tool-card {
+    width: 100%;
+    height: auto;
+    min-height: 5;
+    padding: 0 1;
+    margin: 0;
+    border: round $theme-border;
+    background: $theme-surface;
+}
+ToolsMenuScreen .tool-card:hover,
+ToolsMenuScreen .tool-card.hover {
+    background: $theme-primary 10%;
+    border: round $theme-primary;
+}
+ToolsMenuScreen .tool-card.selected {
+    background: $theme-primary 15%;
+    border: heavy $theme-secondary;
+}
+ToolsMenuScreen .tool-card.unavailable {
+    opacity: 0.6;
+}
+ToolsMenuScreen .tool-card.unavailable:hover,
+ToolsMenuScreen .tool-card.unavailable.hover {
+    background: $theme-error 10%;
+    border: round $theme-error;
+}
+ToolsMenuScreen .tool-icon-large {
+    width: 2;
+    height: 1;
+    text-align: center;
+    content-align: center middle;
+    margin-right: 0;
+    color: $theme-primary;
+    text-style: bold;
+}
+ToolsMenuScreen .tool-card.selected .tool-icon-large {
+    color: $theme-secondary;
+}
+ToolsMenuScreen .tool-card-name {
+    color: $theme-foreground;
+    text-style: bold;
+    margin-bottom: 0;
+    margin-top: 0;
+    width: 100%;
+    height: 1;
+}
+ToolsMenuScreen .tool-card.selected .tool-card-name {
+    color: $theme-secondary;
+}
+ToolsMenuScreen .tool-card-description {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin-bottom: 0;
+    margin-top: 0;
+    width: 100%;
+    height: 1;
+    text-align: left;
+}
+ToolsMenuScreen .tool-card-footer {
+    width: 100%;
+    height: 1;
+    margin-top: 0;
+    align: right middle;
+}
+ToolsMenuScreen .tool-status-badge {
+    padding: 0;
+    border: none;
+    text-style: bold;
+    width: auto;
+}
+ToolsMenuScreen .tool-status-badge.available {
+    color: $theme-success;
+}
+ToolsMenuScreen .tool-status-badge.unavailable {
+    color: $theme-error;
+}
+ToolsMenuScreen .action-hint {
+    text-align: center;
+    color: $theme-foreground-muted;
+    margin-top: 0;
+    padding: 0 1;
+    height: 1;
+}
+ToolsMenuScreen .action-hint-text {
+    width: auto;
+    height: 1;
+}
+ToolsMenuScreen .action-key {
+    width: auto;
+    height: 1;
+    color: $theme-secondary;
+    text-style: bold;
+    background: $theme-surface;
+    padding: 0;
+    border: none;
+}
+ToolsMenuScreen .status-available {
+    color: $theme-success;
+}
+ToolsMenuScreen .status-unavailable {
+    color: $theme-error;
+}
+DiffConfirmationScreen {
+    align: center middle;
+}
+DiffConfirmationScreen #diff-header {
+    height: 3;
+    border-bottom: solid $theme-border;
+    content-align: center middle;
+    background: $theme-surface;
+    padding: 0 1;
+}
+DiffConfirmationScreen #diff-header Label {
+    width: 100%;
+    text-align: center;
+    color: $theme-primary;
+    text-style: bold;
+}
+DiffConfirmationScreen #diff-stats {
+    height: 2;
+    padding: 0 1;
+    background: $theme-background-secondary;
+}
+DiffConfirmationScreen .stat-added {
+    color: $theme-success;
+    text-style: bold;
+}
+DiffConfirmationScreen .stat-removed {
+    color: $theme-error;
+    text-style: bold;
+}
+DiffConfirmationScreen #diff-display {
+    height: 1fr;
+    background: $theme-surface;
+    border: round $theme-border;
+    padding: 1;
+}
+DiffConfirmationScreen .diff-line {
+    margin-bottom: 0;
+}
+DiffConfirmationScreen .line-added {
+    color: $theme-diff-add-fg;
+    background: $theme-diff-add-bg;
+}
+DiffConfirmationScreen .line-removed {
+    color: $theme-diff-remove-fg;
+    background: $theme-diff-remove-bg;
+}
+DiffConfirmationScreen .line-header {
+    color: $theme-primary;
+    background: $theme-background-secondary;
+    text-style: bold;
+}
+DiffConfirmationScreen .line-context {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+DiffConfirmationScreen #button-bar {
+    height: 4;
+    align: center middle;
+    padding: 1;
+    background: $theme-surface;
+    border-top: solid $theme-primary;
+}
+DiffConfirmationScreen #button-bar Button {
+    margin: 0 1;
+    min-width: 16;
+}
+DiffConfirmationScreen Button.accept {
+    background: $theme-success;
+    color: white;
+}
+DiffConfirmationScreen Button.reject {
+    background: $theme-error;
+    color: white;
+}
+DiffConfirmationScreen Button.edit {
+    background: $theme-primary;
+    color: white;
+}
+DiffConfirmationScreen Button.accept-all {
+    background: $theme-warning;
+    color: white;
+}
+HistoryApp Screen, HistoryScreen, HistoryBrowserPanel {
+    background: $theme-background;
+}
+HistoryApp #search-container, HistoryScreen #search-container, HistoryBrowserPanel #search-container {
+    height: 4;
+    padding: 1;
+    background: $theme-surface;
+}
+HistoryApp #search-input, HistoryScreen #search-input, HistoryBrowserPanel #search-input {
+    width: 100%;
+}
+HistoryApp #content-container, HistoryScreen #content-container, HistoryBrowserPanel #content-container {
+    height: 1fr;
+}
+HistoryApp #session-table, HistoryScreen #session-table, HistoryBrowserPanel #session-table {
+    height: 2fr;
+}
+HistoryOption .history-timestamp {
+    color: $theme-primary;
+    text-style: bold;
+}
+HistoryOption .history-result {
+    color: $theme-success;
+    text-style: bold;
+}
+HistoryOption .history-result-error {
+    color: $theme-error;
+    text-style: bold;
+}
+HistoryOption .history-query {
+    color: $theme-foreground;
+    margin-top: 1;
+}
+HistoryOption .history-continuation {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin-top: 1;
+}
+HistoryApp #detail-panel, HistoryScreen #detail-panel, HistoryBrowserPanel #detail-panel {
+    height: 1fr;
+    border: solid $theme-border;
+    padding: 1;
+    background: $theme-surface;
+}
+HistoryApp #detail-panel .detail-path {
+    color: $theme-primary;
+    text-style: bold;
+}
+HistoryApp #detail-panel .detail-timestamp {
+    color: $theme-warning;
+}
+HistoryApp #detail-panel .detail-cwd {
+    color: $theme-success;
+}
+HistoryApp #detail-panel .detail-count {
+    color: $theme-foreground;
+}
+HistoryApp #detail-panel .detail-label {
+    color: $theme-primary;
+    text-style: bold;
+}
+HistoryApp #detail-panel .detail-content {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+HistoryApp #detail-panel .detail-separator {
+    height: 1;
+}
+HistoryApp #filter-status, HistoryScreen #filter-status, HistoryBrowserPanel #filter-status {
+    height: 2;
+    padding: 0 1;
+    background: $theme-background-secondary;
+}
+HistoryApp .highlight {
+    background: $theme-primary 20%;
+}
+HistoryApp DataTable > .datatable--header {
+    background: $theme-background-secondary;
+    color: $theme-foreground;
+}
+HistoryApp DataTable > .datatable--cursor {
+    background: $theme-primary 20%;
+}
+LLMSettingsPanel {
+    width: 100%;
+    height: 100%;
+    padding: 1;
+}
+LLMSettingsPanel .settings-header {
+    text-align: center;
+    color: $theme-primary;
+    text-style: bold;
+    padding: 1;
+    border-bottom: solid $theme-border;
+    margin-bottom: 1;
+}
+LLMSettingsPanel .settings-section {
+    margin: 1 0;
+    padding: 1;
+    border: round $theme-border;
+    background: $theme-surface;
+}
+LLMSettingsPanel .section-title {
+    color: $theme-primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+LLMSettingsPanel .field-row {
+    height: auto;
+    margin: 1 0;
+}
+LLMSettingsPanel .field-label {
+    width: 20;
+    color: $theme-foreground;
+}
+LLMSettingsPanel .field-help {
+    color: $theme-foreground-muted;
+    text-style: italic;
+    margin-left: 2;
+}
+LLMSettingsPanel .button-row {
+    margin-top: 2;
+    align: center middle;
+}
+LLMSettingsPanel .save-button {
+    margin-right: 2;
+}
+AutocompleteInput {
+    height: auto;
+}
+AutocompleteInput > Input {
+    width: 100%;
+}
+AutocompleteInput > .completion-list {
+    layer: overlay;
+    width: 100%;
+    max-height: 10;
+    background: $theme-surface;
+    border: round $theme-border;
+    padding: 0;
+}
+AutocompleteInput > .completion-list.-hidden {
+    display: none;
+}
+AutocompleteInput .completion-item {
+    padding: 0 1;
+}
+AutocompleteInput .completion-item:hover {
+    background: $theme-primary 20%;
+}
+AutocompleteInput .completion-hint {
+    height: 1;
+    color: $theme-foreground-muted;
+    padding: 0 1;
+    text-style: dim;
+}
+MonitorViewer .monitor-title-text {
+    text-style: bold;
+    color: $theme-primary;
+}
+MonitorViewer .monitor-status-text {
+    color: $theme-foreground-muted;
+}
+MonitorViewer .monitor-status-text.status-connected {
+    color: $theme-success;
+}
+MonitorViewer .monitor-status-text.status-checking {
+    color: $theme-warning;
+}
+MonitorViewer .monitor-info-content {
+    padding: 1;
+}
+MonitorViewer .monitor-url {
+    color: $theme-primary;
+    text-style: bold;
+}
+MonitorViewer .monitor-description {
+    color: $theme-foreground;
+}
+MonitorViewer .monitor-hint {
+    color: $theme-foreground-muted;
+}
+LSPManagerWidget .status-row {
+    width: 100%;
+    height: 2;
+    padding: 0 1;
+    color: $theme-foreground-muted;
+}
+LSPManagerWidget .status-row.status-success {
+    color: $theme-success;
+}
+LSPManagerWidget .status-row.status-error {
+    color: $theme-error;
+}
+LSPManagerWidget DataTable .datatable--cell:first-child {
+    text-align: center;
+}
+ShellConsoleWidget .console-status {
+    color: $theme-foreground-muted;
+}
+ShellConsoleWidget .console-status.status-running {
+    color: $theme-warning;
+}
+ShellConsoleWidget .console-status.status-ready {
+    color: $theme-success;
+}
+ShellConsoleWidget .monitor-status {
+    color: $theme-foreground-muted;
+}
+ShellConsoleWidget .monitor-status.stream-on {
+    color: $theme-success;
+}
+ShellConsoleWidget .monitor-status.stream-streaming {
+    color: $theme-success;
+}
+ShellConsoleWidget .monitor-status.stream-off {
+    color: $theme-foreground-muted;
+}
+ShellConsoleWidget #console-title {
+    text-style: bold;
+    color: $theme-primary;
+}
+ShellConsoleWidget #console-output.console-error-output {
+    color: $theme-error;
+}
+IntelliSenseCompletionWidget .completion-detail {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+IntelliSenseCompletionWidget .completion-kind {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+FileManagerScreen .quick-action-item {
+    color: $theme-foreground;
+}
+FileManagerScreen .quick-action-item .shortcut {
+    color: $theme-primary;
+    text-style: bold;
+}
+Footer {
+    background: $theme-background-secondary;
+    color: $theme-foreground;
+}
+FooterKey {
+    text-style: none;
+    background: $theme-background-secondary;
+    color: $theme-foreground;
+}
+FooterKey > .footer-key--key {
+    color: $theme-primary;
+    background: $theme-background-secondary;
+    text-style: bold;
+}
+FooterKey > .footer-key--description {
+    padding: 0 1 0 0;
+    color: $theme-foreground-muted;
+    background: $theme-background-secondary;
+}
+FooterKey:hover {
+    background: $theme-surface-hover;
+}
+FooterKey:hover > .footer-key--key {
+    background: $theme-surface-hover;
+}
+.-hidden {
+    display: none;
+}
+.panel-header {
+    text-align: center;
+    color: $theme-primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $theme-border;
+}
+Screen.-compact #main_grid {
+    grid-columns: 30% 1fr 0;
+}
+Screen.-compact CodeAnalysisPanel,
+Screen.-compact EventStreamPanel {
+    display: none;
+}
+Screen.-minimal #main_grid {
+    grid-columns: 0 1fr 0;
+}
+Screen.-minimal AuraStatusSidebar {
+    display: none;
+}
+Screen.-compact ImaginationPanel {
+    grid-columns: 100% 0;
+}
+Screen.-compact ImaginationPanel > .imag-right-pane {
+    display: none;
+}
+Screen.-minimal ImaginationPanel {
+    grid-rows: auto 1fr 0;
+}
+Screen.-minimal ImaginationPanel > .imag-footer {
+    display: none;
+}
+TextArea {
+    background: $theme-surface;
+    border: round $theme-border;
+}
+TextArea:focus {
+    border: round $theme-primary;
+}
+TextArea > .text-area--cursor {
+    color: white;
+    background: $theme-foreground;
+}
+RichLog {
+    background: $theme-surface;
+    scrollbar-gutter: stable;
+}
+RichLog:focus {
+    border: round $theme-primary;
+}
+LoadingIndicator {
+    background: $theme-surface;
+    color: $theme-primary;
+}
+Placeholder {
+    background: $theme-background-secondary;
+    color: $theme-foreground-muted;
+    border: dashed $theme-border;
+}
+Markdown {
+    background: transparent;
+    padding: 0 1;
+}
+Markdown .code_inline {
+    background: $theme-background-tertiary;
+    color: $theme-error;
+}
+MarkdownFence {
+    background: $theme-background-secondary;
+    border: round $theme-border;
+    padding: 1;
+    margin: 1 0;
+}
+MarkdownH1 {
+    color: $theme-foreground;
+    text-style: bold;
+    border-bottom: solid $theme-border;
+    padding-bottom: 1;
+    margin: 1 0;
+}
+MarkdownH2 {
+    color: $theme-foreground;
+    text-style: bold;
+    margin: 1 0;
+}
+MarkdownH3 {
+    color: $theme-foreground-muted;
+    text-style: bold;
+    margin: 1 0;
+}
+MarkdownBlockQuote {
+    border-left: wide $theme-primary;
+    padding-left: 1;
+    color: $theme-foreground-muted;
+    background: $theme-background-secondary;
+}
+MarkdownBulletList, MarkdownOrderedList {
+    margin: 0 0 0 2;
+}
+WorkflowMonitor {
+    width: 100%;
+    height: 100%;
+    layout: grid;
+    grid-size: 2 1;
+    grid-columns: 35% 1fr;
+}
+WorkflowMonitor .workflow-list-pane {
+    height: 100%;
+    border-right: solid $theme-border;
+    padding: 1;
+}
+WorkflowMonitor .workflow-detail-pane {
+    height: 100%;
+    padding: 1;
+}
+WorkflowMonitor .pane-header {
+    color: $theme-primary;
+    text-style: bold;
+    padding-bottom: 1;
+    border-bottom: solid $theme-border;
+    margin-bottom: 1;
+}
+WorkflowMonitor .workflow-table {
+    height: 40%;
+}
+WorkflowMonitor .step-tree {
+    height: 50%;
+    border-top: solid $theme-border;
+    margin-top: 1;
+    padding-top: 1;
+}
+WorkflowMonitor .detail-header {
+    height: auto;
+    padding: 1;
+    background: $theme-surface;
+    border: round $theme-border;
+    margin-bottom: 1;
+}
+WorkflowMonitor .progress-section {
+    height: 3;
+    margin-bottom: 1;
+}
+WorkflowMonitor .output-log {
+    height: 1fr;
+    background: $theme-background-secondary;
+    border: round $theme-border;
+    padding: 1;
+}
+WorkflowMonitor .log-entry {
+    margin-bottom: 1;
+}
+WorkflowMonitor .log-start {
+    color: $theme-primary;
+    text-style: bold;
+}
+WorkflowMonitor .log-success {
+    color: $theme-success;
+}
+WorkflowMonitor .log-error {
+    color: $theme-error;
+    text-style: bold;
+}
+WorkflowMonitor .log-warning {
+    color: $theme-warning;
+}
+WorkflowMonitor .log-info {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+WorkflowMonitor .action-bar {
+    height: 3;
+    margin-top: 1;
+    align: center middle;
+}
+WorkflowMonitor .sparkline-container {
+    height: 3;
+    margin: 1 0;
+}
+.completion-item {
+    padding: 0 1;
+}
+.completion-item:hover {
+    background: $theme-primary 20%;
+}
+.completion-hint {
+    height: 1;
+    color: $theme-foreground-muted;
+    padding: 0 1;
+}
+MonitorHeader {
+    width: 100%;
+    height: 3;
+    background: $theme-surface;
+    padding: 0 1;
+}
+MonitorHeader .nav-btn {
+    width: 3;
+    min-width: 3;
+    margin: 0;
+    padding: 0;
+}
+MonitorHeader .url-input {
+    width: 1fr;
+    margin: 0 1;
+}
+MonitorHeader .status-icon {
+    width: 3;
+    content-align: center middle;
+}
+MonitorContent {
+    width: 100%;
+    height: 1fr;
+    background: $theme-background;
+    padding: 1;
+}
+MonitorContent .content-display {
+    width: 100%;
+}
+MonitorFooter {
+    width: 100%;
+    height: 1;
+    background: $theme-primary;
+    color: white;
+    padding: 0 1;
+}
+MonitorFooter .status-text {
+    text-style: bold;
+}
+MonitorFooter .separator {
+    color: white 60%;
+    margin: 0 1;
+}
+MonitorFooter .key {
+    color: white;
+    text-style: bold;
+}
+MonitorFooter .action {
+    color: white 80%;
+    text-style: dim;
+}
+MonitorWidget {
+    width: 100%;
+    height: 100%;
+    background: $theme-background;
+    border: round $theme-primary;
+}
+MonitorWidget > Vertical {
+    width: 100%;
+    height: 100%;
+}
+MonitorCompact {
+    width: 100%;
+    height: auto;
+    min-height: 5;
+    padding: 1;
+    border: round $theme-primary;
+}
+MonitorCompact .monitor-header {
+    color: $theme-primary;
+    text-style: bold;
+    margin-bottom: 1;
+}
+MonitorCompact .monitor-status {
+    margin: 0 1;
+}
+MonitorCompact .status-idle {
+    color: $theme-foreground-muted;
+    text-style: dim;
+}
+MonitorCompact .status-loading {
+    color: $theme-warning;
+    text-style: bold;
+}
+MonitorCompact .status-ok {
+    color: $theme-success;
+}
+MonitorCompact .status-error {
+    color: $theme-error;
+    text-style: bold;
+}
+MonitorCompact .monitor-url {
+    color: $theme-foreground-muted;
+    text-style: dim;
+    margin-top: 1;
+}
+MonitorCompact .monitor-preview {
+    color: $theme-foreground-muted;
+    text-style: italic dim;
+    margin-top: 1;
+}
+TabBar Button {
+    min-width: auto;
+    height: 1;
+    margin-right: 0;
+    padding: 0 1;
+}
+ContentViewer .content-area {
+    width: 100%;
+}
+MonitorScreen > Vertical {
+    width: 100%;
+    height: 100%;
+}
+.unavailable-message {
+    width: 100%;
+    height: 100%;
+    content-align: center middle;
+    background: $theme-background;
+}
+.unavailable-message Static {
+    text-align: center;
+}
+LoadingSpinner {
+    width: auto;
+    height: 1;
+}
+LoadingSpinner > Horizontal {
+    width: auto;
+    height: 100%;
+}
+LoadingSpinner .spinner-frame {
+    width: 2;
+    color: $theme-primary;
+}
+LoadingSpinner .spinner-message {
+    padding-left: 1;
+    color: $theme-foreground-muted;
+}
+ProgressIndicator {
+    width: 100%;
+    height: auto;
+}
+ProgressIndicator .progress-label {
+    padding-bottom: 1;
+}
+ProgressIndicator ProgressBar {
+    width: 100%;
+}
+ProgressIndicator .progress-status {
+    padding-top: 1;
+    color: $theme-foreground-muted;
+    text-align: center;
+}
+PulseAnimation {
+    width: auto;
+    height: 1;
+}
+PulseAnimation .pulse-text {
+    color: $theme-primary;
+}
+PulseAnimation .pulse-dim {
+    color: $theme-foreground-muted;
+}
+StatusBar {
+    width: 100%;
+    height: 1;
+    background: $theme-surface;
+    color: $theme-foreground-muted;
+}
+StatusBar > Horizontal {
+    width: 100%;
+    height: 100%;
+}
+StatusBar .status-item {
+    padding: 0 1;
+}
+StatusBar .status-item-left {
+    content-align: left middle;
+}
+StatusBar .status-item-right {
+    content-align: right middle;
+}
+StatusBar .status-spacer {
+    width: 1fr;
+}
+MiniStatusBar {
+    width: 100%;
+    height: 1;
+    background: $theme-surface;
+    color: $theme-foreground-muted;
+    padding: 0 1;
+}
+MiniStatusBar .mini-status-icon {
+    width: auto;
+}
+MiniStatusBar .mini-status-text {
+    width: 1fr;
+}
+MiniStatusBar .mini-status-extra {
+    width: auto;
+    color: $theme-foreground-muted;
+}
+CollapsiblePanel {
+    width: 100%;
+    height: auto;
+    background: $theme-surface;
+    border: solid $theme-primary;
+}
+CollapsiblePanel .panel-header {
+    width: 100%;
+    height: 3;
+    background: $theme-surface;
+    border-bottom: solid $theme-primary;
+}
+CollapsiblePanel .panel-toggle {
+    width: 3;
+    min-width: 3;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+CollapsiblePanel .panel-title {
+    width: 1fr;
+    padding: 0 1;
+    text-style: bold;
+}
+CollapsiblePanel .panel-content {
+    width: 100%;
+    height: auto;
+    padding: 1;
+}
+CollapsiblePanel .panel-content-collapsed {
+    display: none;
+}
+CollapsiblePanel .panel-collapsed .panel-header {
+    border-bottom: none;
+}
+SplitPanel {
+    width: 100%;
+    height: 100%;
+}
+SplitPanel > Horizontal,
+SplitPanel > Vertical {
+    width: 100%;
+    height: 100%;
+}
+SplitPanel .split-pane {
+    overflow: auto;
+}
+SplitPanel .split-pane-first {
+    width: 1fr;
+    height: 1fr;
+}
+SplitPanel .split-pane-second {
+    width: 2fr;
+    height: 2fr;
+}
+SplitPanel .split-divider {
+    background: $theme-primary;
+}
+SplitPanel .split-divider-horizontal {
+    width: 1;
+    height: 100%;
+}
+SplitPanel .split-divider-vertical {
+    width: 100%;
+    height: 1;
+}
+SplitPanel .split-divider:hover {
+    background: $theme-primary;
+}
+Toast.toast-info {
+    border: solid $theme-primary;
+}
+Toast.toast-success {
+    border: solid $theme-success;
+}
+Toast.toast-warning {
+    border: solid $theme-warning;
+}
+Toast.toast-error {
+    border: solid $theme-error;
+}
+Toast .toast-header {
+    width: 100%;
+    height: 1;
+}
+Toast .toast-icon {
+    width: 3;
+}
+Toast .toast-title {
+    width: 1fr;
+    text-style: bold;
+}
+Toast .toast-close {
+    width: 3;
+    min-width: 3;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+Toast .toast-message {
+    padding-top: 1;
+}
+Toast .toast-action {
+    margin-top: 1;
+}
+NotificationCenter {
+    dock: right;
+    width: auto;
+    height: 100%;
+    layer: notification;
+}
+NotificationCenter > Vertical {
+    width: auto;
+    height: auto;
+    align: right top;
+    padding: 1;
+}
+KeyValueTable {
+    width: 100%;
+    height: auto;
+}
+KeyValueTable DataTable {
+    width: 100%;
+    height: auto;
+}
+TreeView {
+    width: 100%;
+    height: 100%;
+}
+TreeView Tree {
+    width: 100%;
+    height: 100%;
+}
+Breadcrumb {
+    width: 100%;
+    height: 1;
+    background: $theme-surface;
+}
+Breadcrumb > Horizontal {
+    width: 100%;
+    height: 100%;
+}
+Breadcrumb .breadcrumb-item {
+    padding: 0 1;
+    color: $theme-primary;
+}
+Breadcrumb .breadcrumb-item:hover {
+    background: $theme-primary 20%;
+    color: $theme-foreground;
+}
+Breadcrumb .breadcrumb-separator {
+    padding: 0;
+    color: $theme-foreground-muted;
+}
+Breadcrumb .breadcrumb-current {
+    color: $theme-foreground;
+    text-style: bold;
+}
+TabBar > Horizontal {
+    width: 100%;
+    height: 100%;
+}
+TabBar .tab {
+    padding: 0 1;
+    height: 1;
+    background: $theme-surface;
+    border: none;
+}
+TabBar .tab:hover {
+    background: $theme-surface-hover;
+}
+TabBar .tab-active {
+    background: $theme-primary;
+    color: white;
+    text-style: bold;
+    border: none;
+}
+TabBar .tab-close {
+    width: 2;
+    min-width: 2;
+    height: 1;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+TabBar .tab-close:hover {
+    color: $theme-error;
+}
+TabBar .tab-spacer {
+    width: 1fr;
+}
+BaseDialog > Container {
+    width: auto;
+    max-width: 80%;
+    height: auto;
+    max-height: 80%;
+    background: $theme-surface;
+    border: round $theme-border;
+    padding: 1 2;
+}
+BaseDialog .dialog-title {
+    text-style: bold;
+    color: $theme-foreground;
+    padding-bottom: 1;
+    border-bottom: solid $theme-border;
+    margin-bottom: 1;
+}
+BaseDialog .dialog-content {
+    padding: 1 0;
+}
+BaseDialog .dialog-buttons {
+    padding-top: 1;
+    border-top: solid $theme-border;
+    margin-top: 1;
+    align: center middle;
+}
+BaseDialog Button {
+    margin: 0 1;
+}
+InputDialog Input {
+    width: 100%;
+    margin: 1 0;
+}
+SelectDialog Select {
+    width: 100%;
+    margin: 1 0;
+}
+ProgressDialog ProgressBar {
+    width: 100%;
+    margin: 1 0;
+}
+.tree-header {
+    color: $theme-primary;
+    text-style: bold;
+    padding: 1;
+    border-bottom: solid $theme-border;
+}
+.tree-filter {
+    padding: 0 1;
+    margin-bottom: 1;
+}
+.file-tree {
+    height: 1fr;
+    padding: 0 1;
+}
+IssuesPanel {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+.issues-header {
+    height: 3;
+    padding: 1;
+    border-bottom: solid $theme-border;
+}
+.issues-summary {
+    color: $theme-foreground-muted;
+}
+.issues-table {
+    height: 1fr;
 }

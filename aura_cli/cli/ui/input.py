@@ -31,7 +31,6 @@ class InputManager:
     """Manages user input and prompts."""
 
     def __init__(self, console: Console, stats: StatsTracker, status_queue=None):
-        """Initialize the widget."""
         self.console = console
         self.stats = stats
         self.status_queue = status_queue
@@ -62,7 +61,9 @@ class InputManager:
         """Display collapsed view for large pasted input."""
         self._paste_counter += 1
         try:
-            from aura_cli.cli.ui.components.collapsed_text import CollapsedTextDisplay
+            from aura_cli.cli.ui.components.display.collapsed_text import (
+                CollapsedTextDisplay,
+            )
 
             collapsed_view = CollapsedTextDisplay().render_minimal(
                 user_input,
@@ -122,7 +123,7 @@ class InputManager:
                 prompt_tuples.extend([("class:accent", f"{layout.prompt_symbol} ")])
                 if self.stats.skip_confirmations:
                     prompt_tuples.extend(
-                        [("", " "), ("class:success", "(sem confirmação)")]
+                        [("", " "), ("class:success", "(no confirmation)")]
                     )
 
                 _toolbar_cache = [None, 0.0, self.console.width]
@@ -165,7 +166,7 @@ class InputManager:
                     ]
                     if self.stats.skip_confirmations:
                         segments.extend(
-                            [("class:muted", "│"), ("class:success", " ✦ Automático ")]
+                            [("class:muted", "│"), ("class:success", " ✦ Automatic ")]
                         )
                     _toolbar_cache[0] = segments
                     _toolbar_cache[1] = now
@@ -194,7 +195,7 @@ class InputManager:
                 )
                 if self.stats.skip_confirmations:
                     prompt_text += (
-                        f" [{UIStyles.SUCCESS}](sem confirmação)[/{UIStyles.SUCCESS}]"
+                        f" [{UIStyles.SUCCESS}](no confirmation)[/{UIStyles.SUCCESS}]"
                     )
                 user_input = Prompt.ask(prompt_text) or ""
 

@@ -187,7 +187,7 @@ class TestHandleCheckpoint:
         success, _state, message = handle_checkpoint("list", checkpoint_manager)
 
         assert success is True
-        assert "nenhum" in message.lower() or "none" in message.lower()
+        assert "no checkpoint" in message.lower() or "none" in message.lower()
 
     def test_checkpoint_list_with_limit(self):
         """Test checkpoint list with numeric limit."""

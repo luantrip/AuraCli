@@ -46,7 +46,6 @@ class Breadcrumb(Widget):
         """Message when breadcrumb item is clicked."""
 
         def __init__(self, item: BreadcrumbItem) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.item = item
 
@@ -56,7 +55,6 @@ class Breadcrumb(Widget):
         separator: str = " › ",
         **kwargs,
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._items = items or []
         self._separator = separator
@@ -141,7 +139,6 @@ class TabBar(Widget):
         """Message when a tab is selected."""
 
         def __init__(self, tab: Tab) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.tab = tab
 
@@ -149,7 +146,6 @@ class TabBar(Widget):
         """Message when a tab is closed."""
 
         def __init__(self, tab: Tab) -> None:
-            """Initialize the widget."""
             super().__init__()
             self.tab = tab
 
@@ -158,7 +154,6 @@ class TabBar(Widget):
     def __init__(
         self, tabs: Optional[List[Tab]] = None, active: Optional[str] = None, **kwargs
     ):
-        """Initialize the instance."""
         super().__init__(**kwargs)
         self._tabs = tabs or []
         self.active_tab = active or (self._tabs[0].id if self._tabs else "")

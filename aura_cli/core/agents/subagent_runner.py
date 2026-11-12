@@ -7,7 +7,7 @@ delegate focused tasks to.  Unlike AGI (heavy, multi-step planning) or Ops
 
 - Synchronous: blocks the caller, returns result inline
 - Autonomous: no user confirmations needed (auto-approve all operations)
-- Focused: limited tool set (12 essential tools)
+- Focused: limited tool set (11 essential tools)
 - Fast: max 8 turns, 60s timeout
 - Simple: uses NativeAgent directly, no planning/orchestration
 

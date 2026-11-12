@@ -58,18 +58,22 @@ class AuraTUIPluginBase(AuraPlugin, ABC):
 
     @property
     def name(self) -> str:
+        """Return the unique name of this plugin."""
         return self.PLUGIN_NAME
 
     @property
     def version(self) -> str:
+        """Return the version string of this plugin."""
         return self.PLUGIN_VERSION
 
     @property
     def author(self) -> str:
+        """Return the author identifier of this plugin."""
         return self.PLUGIN_AUTHOR
 
     @property
     def description(self) -> str:
+        """Return the human-readable description of this plugin."""
         return self.PLUGIN_DESCRIPTION
 
     @property
@@ -82,14 +86,17 @@ class AuraTUIPluginBase(AuraPlugin, ABC):
         return self.get_metadata()
 
     def get_ui_components(self) -> Dict[str, Type[Widget]]:
+        """Return the UI components contributed by this plugin."""
         return self.get_widgets()
 
     def initialize(self, context: dict[str, Any]) -> None:
+        """Initialise the plugin after it has been loaded."""
         super().initialize(context)
         self.app = context.get("app", self.app)
         self.on_load()
 
     def shutdown(self) -> None:
+        """Shut down the plugin and release its resources."""
         self.on_unload()
 
     @abstractmethod
@@ -169,7 +176,7 @@ class AuraTUIPluginWidget:
         WIDGET_PRIORITY: Layout priority (lower = higher priority)
     """
 
-    WIDGET_CLASS: Type[Widget] = None  # type: ignore[assignment]
+    WIDGET_CLASS: Type[Widget] = None  # type: ignore[assignment]  # sentinel, assigned by subclass
     WIDGET_NAME: str = "Unnamed Plugin Widget"
     WIDGET_LOCATION: str = "dashboard"
     WIDGET_PRIORITY: int = 100

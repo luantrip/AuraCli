@@ -220,7 +220,7 @@ class TUIErrorHandler:
             from aura_cli.tui.widgets.dialogs.error_dialog import FatalErrorDialog
 
             dialog = FatalErrorDialog(
-                error_info=error_info,  # type: ignore[arg-type]
+                error_info=error_info,  # type: ignore[arg-type]  # Dict[str,Any] → TypedDict narrowing
                 on_reset=self._reset_app,
                 on_report=lambda: self.open_github_issue(error_info),
                 on_exit=self._exit_app,
@@ -257,8 +257,8 @@ class TUIErrorHandler:
                 restore_focus()
 
             self.app.notify(
-                "Aplicação reiniciada. Parte do estado pode ter sido perdida.",
-                title="Reinicialização concluída",
+                "Application restarted. Some state may have been lost.",
+                title="Restart complete",
                 severity="warning",
             )
 
@@ -336,14 +336,14 @@ Expected Behavior
         try:
             webbrowser.open(url)
             self.app.notify(
-                "Abrindo a página de issue no GitHub...",
+                "Opening GitHub issue page...",
                 title="Relatar problema",
                 severity="information",
             )
         except Exception as e:
             logger.error(f"Failed to open browser: {e}")
             self.app.notify(
-                f"Não foi possível abrir o navegador. URL: {url}",
+                f"Could not open browser. URL: {url}",
                 title="Relatar problema",
                 severity="warning",
                 timeout=0,

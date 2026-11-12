@@ -45,11 +45,11 @@ def _load_model():
         duration = time.time() - start_time
         logger.info("Model loaded successfully in %.2f seconds.", duration)
     except ImportError as e:
-        logger.warning("fastembed não disponível (%s). Embeddings desativados.", e)
+        logger.warning("fastembed not available (%s). Embeddings disabled.", e)
         MODEL = None
     except Exception as e:
         logger.warning(
-            "Modelo de embeddings não carregou (%s). Servidor sobe com /embed retornando 503.",
+            "Embedding model failed to load (%s). Server starts with /embed returning 503.",
             e,
         )
         MODEL = None
@@ -239,7 +239,7 @@ def run_server(
     try:
         httpd.serve_forever()
     except KeyboardInterrupt as _e:
-        pass  # silenced: {_e}
+        logger.info("Embedding server stopped by interrupt.")
     finally:
         httpd.server_close()
         logger.info("Embedding server stopped.")

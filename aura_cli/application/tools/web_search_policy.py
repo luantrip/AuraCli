@@ -31,6 +31,6 @@ def format_web_search_results(results: Sequence[Mapping[str, Any]]) -> str:
     return "\n".join(
         f"{index}. {result.get('title', '')}\n"
         f"   Link: {result.get('url', '')}\n"
-        f"   Descrição: {result.get('description', '')}\n"
+        f"   Description: {result.get('description', '')}\n"
         for index, result in enumerate(results, 1)
     )

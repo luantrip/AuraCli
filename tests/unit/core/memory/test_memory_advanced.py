@@ -76,9 +76,9 @@ Dependências:
 
 import numpy as np
 
-from aura_cli.core.memory_advanced.embeddings import EmbeddingGenerator, EmbeddingModel
-from aura_cli.core.memory_advanced.semantic_search import SearchQuery, SemanticSearch
-from aura_cli.core.memory_advanced.vector_storage import VectorStorage
+from aura_cli.core.memory.embeddings import EmbeddingGenerator, EmbeddingModel
+from aura_cli.core.memory.semantic_search import SearchQuery, SemanticSearch
+from aura_cli.core.memory.vector_storage import VectorStorage
 
 
 class TestVectorStorage:

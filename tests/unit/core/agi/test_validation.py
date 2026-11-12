@@ -52,7 +52,7 @@ class TestValidateAndSanitizePrompt:
         v.constitution_validator.validate_prompt.return_value = (True, [], None)
         result = v.validate_and_sanitize_prompt("build api")
         assert "build api" in result
-        assert "Constituição" in result
+        assert "Constitution" in result
 
     def test_violations_emits_messages(self):
         v = _make_validator(constitution="rules")
@@ -96,21 +96,21 @@ class TestExtractLearnedRules:
             "decidimos usar pytest como framework de testes principal."
         )
         assert len(v.learned_rules) >= 1
-        assert v.learned_rules[0]["category"] == "decisão"
+        assert v.learned_rules[0]["category"] == "decision"
 
     def test_extracts_pattern(self):
         v = _make_validator(constitution="x")
         v.extract_learned_rules_from_response(
             "padrão Repository para acesso ao banco de dados."
         )
-        assert any(r["category"] == "padrão" for r in v.learned_rules)
+        assert any(r["category"] == "pattern" for r in v.learned_rules)
 
     def test_extracts_prohibition(self):
         v = _make_validator(constitution="x")
         v.extract_learned_rules_from_response(
             "evitar usar variáveis globais no código."
         )
-        assert any(r["category"] == "proibição" for r in v.learned_rules)
+        assert any(r["category"] == "prohibition" for r in v.learned_rules)
 
     def test_ignores_short_matches(self):
         v = _make_validator(constitution="x")
@@ -141,7 +141,7 @@ class TestConsolidateLearnedRules:
         mem = MagicMock()
         v = _make_validator(constitution="x", memory_service=mem)
         v.learned_rules = [
-            {"content": "use pytest", "category": "decisão"},
+            {"content": "use pytest", "category": "decision"},
             {"content": "snake_case naming", "category": "padrão"},
         ]
         config = MagicMock()

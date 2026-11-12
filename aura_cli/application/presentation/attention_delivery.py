@@ -112,7 +112,7 @@ def _enabled(category: str, preferences: AttentionPreferences) -> bool:
 
 def _title(category: str) -> str:
     return {
-        "awaiting": "ação necessária",
+        "awaiting": "action required",
         "failure": "falha",
         "completion": "completed",
     }[category]

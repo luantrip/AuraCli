@@ -3,8 +3,8 @@ import sys
 
 from rich.console import Console
 
-from aura_cli.cli.ui.components.confirmation import ask_confirmation
-from aura_cli.cli.ui.components.error_display import AuraErrorDisplay
+from aura_cli.cli.ui.components.input.confirmation import ask_confirmation
+from aura_cli.cli.ui.components.layout.error_display import AuraErrorDisplay
 
 
 def test_confirmation_accepts_portuguese_yes_without_leading_prompt_blank(
@@ -27,7 +27,7 @@ def test_confirmation_rejects_invalid_then_no(monkeypatch) -> None:
     monkeypatch.setattr(sys, "stdout", StringIO())
 
     assert ask_confirmation("Remover arquivo?", default=True) is False
-    assert "Entrada inválida" in console.export_text(clear=False)
+    assert "Invalid input" in console.export_text(clear=False)
 
 
 def test_error_display_has_details_suggestions_and_no_traceback_by_default() -> None:
@@ -46,5 +46,5 @@ def test_error_display_has_details_suggestions_and_no_traceback_by_default() -> 
 
     assert "Não foi possível concluir" in output
     assert "Detalhes: valor inválido" in output
-    assert "Sugestões" in output
+    assert "Suggestions" in output
     assert "Rastreamento" not in output

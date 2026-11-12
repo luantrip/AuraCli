@@ -59,7 +59,7 @@ class TestEditFileComprehensive:
         result = edit_file(str(test_file), "World", "Python")
 
         # Assert
-        assert "sucesso" in result.lower() or "editado" in result.lower()
+        assert "edited successfully" in result.lower()
         assert "Hello Python" in test_file.read_text(encoding="utf-8")
         assert "Hello World" not in test_file.read_text(encoding="utf-8")
 
@@ -77,7 +77,7 @@ class TestEditFileComprehensive:
         result = edit_file(str(test_file), "old text", "new text")
 
         # Assert
-        assert "sucesso" in result.lower() or "editado" in result.lower()
+        assert "edited successfully" in result.lower()
         content = test_file.read_text(encoding="utf-8")
         # edit_file pode substituir todas ou apenas a primeira ocorrência dependendo da implementação
         assert "new text" in content
@@ -97,7 +97,7 @@ class TestEditFileComprehensive:
         result = edit_file(str(test_file), "function_name", "new_function")
 
         # Assert
-        assert "sucesso" in result.lower() or "editado" in result.lower()
+        assert "edited successfully" in result.lower()
         content = test_file.read_text(encoding="utf-8")
         assert "new_function" in content
         # Verifica que substituição foi feita (pode substituir todas ou apenas exatas)
@@ -174,7 +174,7 @@ class TestEditFileComprehensive:
         result = edit_file(str(test_file), "Line 2", "Line 2 Modified")
 
         # Assert
-        assert "sucesso" in result.lower() or "editado" in result.lower()
+        assert "edited successfully" in result.lower()
         content = test_file.read_text(encoding="utf-8")
         assert "Line 1" in content
         assert "Line 2 Modified" in content

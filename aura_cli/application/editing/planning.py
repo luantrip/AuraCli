@@ -9,6 +9,7 @@ import uuid
 
 
 class EditStrategy(Enum):
+    """Strategy governing how edits are applied to a file."""
     SEQUENTIAL = "sequential"
     PARALLEL = "parallel"
     DEPENDENCY_ORDER = "dependency_order"
@@ -17,6 +18,7 @@ class EditStrategy(Enum):
 
 @dataclass
 class EditOperation:
+    """A single atomic edit operation (insert, replace, delete)."""
     id: str
     file_path: str
     old_content: str
@@ -28,6 +30,7 @@ class EditOperation:
 
 @dataclass
 class EditPlan:
+    """Ordered plan of edit operations for a file."""
     plan_id: str
     description: str
     strategy: EditStrategy

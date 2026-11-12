@@ -129,16 +129,16 @@ def create_security_warning(command: str, console_width: int = 80) -> Panel:
     )
     warning_text.append("  • Perda permanente de dados\n", style=UIStyles.MUTED)
     warning_text.append(
-        "  • Alterações irreversíveis no sistema\n", style=UIStyles.MUTED
+        "  • Irreversible system changes\n", style=UIStyles.MUTED
     )
-    warning_text.append("  • Danos a arquivos e diretórios\n\n", style=UIStyles.MUTED)
+    warning_text.append("  • Damage to files and directories\n\n", style=UIStyles.MUTED)
     warning_text.append(
-        "Confirmação explícita necessária!", style=UIStyles.ERROR + " bold"
+        "Explicit confirmation required!", style=UIStyles.ERROR + " bold"
     )
 
     return Panel(
         warning_text,
-        title=f"[{UIStyles.ERROR}]{UIIcons.WARNING} Aviso de segurança[/{UIStyles.ERROR}]",
+        title=f"[{UIStyles.ERROR}]{UIIcons.WARNING} Security warning[/{UIStyles.ERROR}]",
         border_style=UIStyles.BORDER_ERROR,
         padding=layout_for_width(console_width).focus_padding,
         box=rich.box.DOUBLE,

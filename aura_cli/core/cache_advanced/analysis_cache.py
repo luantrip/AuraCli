@@ -74,7 +74,7 @@ class AnalysisCache:
 
         result = self.cache.get(key)
         if result:
-            logger.debug(f"Cache hit para análise de {file_path} ({analysis_type})")
+            logger.debug(f"Cache hit for analysis of {file_path} ({analysis_type})")
         return result
 
     def set_analysis(
@@ -84,12 +84,12 @@ class AnalysisCache:
         key = self._get_file_key(file_path, analysis_type)
         if not key:
             logger.warning(
-                f"Não foi possível cachear análise: arquivo {file_path} não existe"
+                f"Could not cache analysis: file {file_path} does not exist"
             )
             return
 
         self.cache.set(key, analysis, ttl=self.ttl)
-        logger.debug(f"Análise de {file_path} ({analysis_type}) cacheada")
+        logger.debug(f"Analysis of {file_path} ({analysis_type}) cached")
 
     def invalidate(self, file_path: str):
         """Invalidate the cache for a specific file."""
@@ -105,7 +105,7 @@ class AnalysisCache:
             self.cache.delete(key)
 
         if keys_to_remove:
-            logger.debug(f"Invalidadas {len(keys_to_remove)} análises de {file_path}")
+            logger.debug(f"Invalidated {len(keys_to_remove)} analyses for {file_path}")
 
     def invalidate_directory(self, directory: str):
         """Invalidate all cached entries under a directory."""
@@ -120,7 +120,7 @@ class AnalysisCache:
             self.cache.delete(key)
 
         if keys_to_remove:
-            logger.debug(f"Invalidadas {len(keys_to_remove)} análises em {directory}")
+            logger.debug(f"Invalidated {len(keys_to_remove)} analyses in {directory}")
 
     def get_cached_files(self) -> List[str]:
         """Return a list of files with valid cache entries."""

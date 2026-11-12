@@ -15,7 +15,7 @@ platforms must be built locally.
 |--------|------|-------|
 | `imagination` | Filesystem scanner | Native accelerator for project indexing |
 | `nexus` | Static dependency analyser | Maps import graphs across source files |
-| `sentinel` | Real-time file watcher | Content-hash-based change detection |
+| `sentinel` | File change detector | Content-hash-based change detection (pull-based `scan_changes`, not a continuous watcher) |
 | `notebook` | Shared memory library (FFI) | Native notebook backend |
 | `forge` | Code validator / sanitiser | Validates and sanitises generated code |
 | `prism` | Semantic code chunker | Splits source into logical blocks for RAG |

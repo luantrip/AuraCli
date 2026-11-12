@@ -10,6 +10,7 @@ from aura_cli.core.agents.strategy_deck import AgentCard
 
 @dataclass
 class AgentStanding:
+    """Standing record of an agent in an arena match."""
     agent_id: str
     card: AgentCard
     solution: str = ""
@@ -19,6 +20,7 @@ class AgentStanding:
 
 @dataclass
 class MatchResult:
+    """Result of a completed arena match."""
     match_id: str
     round_number: int
     agent_a: str
@@ -30,6 +32,7 @@ class MatchResult:
 
 @dataclass
 class ArenaState:
+    """Full state snapshot of an arena evaluation run."""
     run_id: str
     task: str
     seed: int

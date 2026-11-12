@@ -9,20 +9,14 @@ surface for tool call display — do not import from ui_panel directly.
 """
 
 from aura_cli.core.ui_panel import (
-    disable_panel_mode,
     display_tool_call,
-    enable_panel_mode,
-    is_panel_mode,
     mark_tool_error,
     mark_tool_success,
     set_compact_mode,
 )
 
 __all__ = [
-    "disable_panel_mode",
     "display_tool_call",
-    "enable_panel_mode",
-    "is_panel_mode",
     "mark_tool_error",
     "mark_tool_success",
     "set_compact_mode",

@@ -63,13 +63,13 @@ class ContinuationController:
 
 def stop_message(reason: TurnStopReason) -> str:
     messages = {
-        TurnStopReason.TIME_LIMIT: "Execução interrompida: limite de tempo do turno atingido.",
-        TurnStopReason.STEP_LIMIT: "Execução interrompida: limite de etapas do turno atingido.",
-        TurnStopReason.BUDGET: "Execução interrompida: orçamento do turno esgotado.",
-        TurnStopReason.USER: "Execução interrompida pelo usuário.",
-        TurnStopReason.BLOCKED: "Execução bloqueada; é necessária uma condição externa.",
-        TurnStopReason.FAILED: "Execução encerrada após falha terminal.",
-        TurnStopReason.COMPLETED: "Execução concluída.",
+        TurnStopReason.TIME_LIMIT: "Execution interrupted: turn time limit reached.",
+        TurnStopReason.STEP_LIMIT: "Execution interrupted: turn step limit reached.",
+        TurnStopReason.BUDGET: "Execution interrupted: turn budget exhausted.",
+        TurnStopReason.USER: "Execution interrupted by user.",
+        TurnStopReason.BLOCKED: "Execution blocked; an external condition is required.",
+        TurnStopReason.FAILED: "Execution terminated after fatal failure.",
+        TurnStopReason.COMPLETED: "Execution completed.",
     }
     return messages[reason]
 

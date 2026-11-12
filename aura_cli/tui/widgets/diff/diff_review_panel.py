@@ -34,11 +34,11 @@ class DiffReviewPanel(Vertical):
 
     def compose(self) -> ComposeResult:
         with Horizontal(id="diff-header"):
-            yield Label(f"✎ Alterações em: {self.file_path}")
+            yield Label(f"✎ Changes in: {self.file_path}")
         with Horizontal(id="diff-stats"):
-            yield Static(f"+{self.additions} adições", classes="stat-added")
+            yield Static(f"+{self.additions} additions", classes="stat-added")
             yield Static("  ")
-            yield Static(f"-{self.deletions} remoções", classes="stat-removed")
+            yield Static(f"-{self.deletions} removals", classes="stat-removed")
         yield VerticalScroll(id="diff-display")
         with Horizontal(id="button-bar"):
             yield Button(
@@ -47,7 +47,7 @@ class DiffReviewPanel(Vertical):
             yield Button(
                 "✖ Rejeitar (R)", variant="error", id="reject", classes="reject"
             )
-            yield Button("✎ Editar (E)", variant="primary", id="edit", classes="edit")
+            yield Button("✎ Edit (E)", variant="primary", id="edit", classes="edit")
             yield Button(
                 "⟳ Aceitar Todos (Shift+A)",
                 variant="warning",

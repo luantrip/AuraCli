@@ -98,9 +98,9 @@ def _get_nim_library() -> Optional[ctypes.CDLL]:
                 str(p) for p in build_nim_candidates(LIB_NAME, [default_library_path])
             )
             logger.warning(
-                f"Biblioteca Nim notebook não encontrada (procurado em: {searched}). "
-                "Usando fallback Python puro para operações de memória. "
-                "Execute ./scripts/build_nim.sh para compilar os binários."
+                f"Nim notebook library not found (searched in: {searched}). "
+                "Using pure Python fallback for memory operations. "
+                "Run ./scripts/build_nim.sh to compile the binaries."
             )
             _nim_lib_configured = True
             return None
@@ -154,7 +154,7 @@ class NotebookManager:
             with _nim_access_lock:
                 result = self.lib.notebookInit(self._c_str(str(self.base_path)))
             if result != 0:
-                logger.warning("Nim notebookInit falhou; usando fallback Python.")
+                logger.warning("Nim notebookInit failed; falling back to Python.")
                 self.lib = None
 
     # Python fallback helpers (used when self.lib is None)
@@ -263,7 +263,7 @@ class NotebookManager:
                 self.lib.notebookReadPage(self._c_str(str(full_path)))
             )
             if result.startswith("ERRO:"):
-                if "não encontrada" not in result.lower():
+                if "not found" not in result.lower():
                     logger.warning(f"Erro no NotebookManager: {result}")
                 return None
             return result
@@ -325,8 +325,10 @@ class NotebookManager:
                         for path in dir_path.iterdir()
                         if path.is_file() and path.suffix == ".txt"
                     ]
-            except OSError:
-                pass
+            except OSError as exc:
+                logger.warning(
+                    "Cannot list memory pages at %s: %s", dir_path, exc
+                )
             total_size = sum(path.stat().st_size for path in page_paths)
             return {
                 "session": session_path,
@@ -375,7 +377,6 @@ class ImaginationManager:
     """Compatibility adapter for the Imagination bridge."""
 
     def __init__(self, project_root: Path):
-        """Initialize the instance."""
         self.project_root = project_root
         self._bridge = ImaginationBridge(project_root)
         self.executable_path = self._bridge.executable_path
@@ -446,7 +447,7 @@ class ImaginationManager:
             score = page.get("relevance_score", 0)
             snippet = page.get("content_snippet", "")
 
-            context_parts.append(f"\n**{file_path}** (relevância: {score}%)")
+            context_parts.append(f"\n**{file_path}** (relevance: {score}%)")
             if snippet:
                 context_parts.append(f"```\n{snippet}\n```")
 
@@ -457,11 +458,11 @@ if __name__ == "__main__":
     project_root = Path(__file__).parent.parent.parent.parent
     memory_root = project_root / "memory"
 
-    print(f"Raiz da memória: {memory_root}")
+    print(f"Memory root: {memory_root}")
 
     try:
         constitution_manager = NotebookManager(str(memory_root / "notebook"))
-        print(f"Versão da Lib: {constitution_manager.get_version()}")
+        print(f"Lib version: {constitution_manager.get_version()}")
 
         rule_content = "O projeto deve usar a biblioteca 'requests' para chamadas HTTP."
         constitution_manager.write_page(
@@ -474,7 +475,7 @@ if __name__ == "__main__":
         print(f"Regra lida: {read_rule}")
 
         pages = constitution_manager.list_pages("main_constitution")
-        print(f"Páginas da Constituição: {pages}")
+        print(f"Constitution pages: {pages}")
 
     except FileNotFoundError as e:
         print(e)

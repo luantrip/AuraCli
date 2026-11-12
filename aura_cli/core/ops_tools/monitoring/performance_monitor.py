@@ -82,7 +82,7 @@ class PerformanceMonitor:
                 "disk_percent", (disk.used / disk.total) * 100, "%", 90.0
             )
 
-            logger.debug("Métricas do sistema coletadas")
+            logger.debug("System metrics collected")
 
             return metrics
 
@@ -128,7 +128,7 @@ class PerformanceMonitor:
         self._record_metric(f"{operation_name}_memory", memory_delta, "bytes")
 
         logger.debug(
-            f"Operação '{operation_name}' monitorada: "
+            f"Operation '{operation_name}' monitored: "
             f"{duration:.2f}s, {memory_delta / 1024 / 1024:.2f}MB"
         )
 
@@ -153,7 +153,7 @@ class PerformanceMonitor:
 
         if threshold and value > threshold:
             logger.warning(
-                f"Métrica {name} excedeu threshold: {value}{unit} > {threshold}{unit}"
+                f"Metric {name} exceeded threshold: {value}{unit} > {threshold}{unit}"
             )
 
     def get_performance_summary(self, *, cpu_interval: float = 1.0) -> Dict[str, Any]:

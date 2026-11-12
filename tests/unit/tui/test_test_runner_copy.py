@@ -26,7 +26,7 @@ class TestRunnerHarness(App[None]):
 
 
 @pytest.mark.asyncio
-async def test_test_runner_uses_portuguese_controls_and_headers() -> None:
+async def test_test_runner_uses_english_controls_and_headers() -> None:
     app = TestRunnerHarness()
 
     async with app.run_test(size=(140, 32)) as pilot:
@@ -34,11 +34,11 @@ async def test_test_runner_uses_portuguese_controls_and_headers() -> None:
         panel = app.query_one(CopyOnlyTestRunnerPanel)
 
         headers = [widget.render().plain for widget in panel.query(".pane-header")]
-        assert any("Suíte de testes" in header for header in headers)
-        assert any("Saída dos testes" in header for header in headers)
+        assert any("Test suite" in header for header in headers)
+        assert any("Test output" in header for header in headers)
         assert panel.query_one("#test_tree", Tree).root.label.plain == "Testes"
-        assert str(panel.query_one("#stop_btn", Button).label) == "⏹ Parar"
-        assert str(panel.query_one("#clear_btn", Button).label) == "✖ Limpar"
+        assert str(panel.query_one("#stop_btn", Button).label) == "⏹ Stop"
+        assert str(panel.query_one("#clear_btn", Button).label) == "✖ Clear"
         assert str(panel.query_one("#export_btn", Button).label) == "⊞ Exportar"
 
         panel._show_test_detail(
@@ -58,9 +58,9 @@ async def test_test_runner_uses_portuguese_controls_and_headers() -> None:
         assert "Teste: test_example" in logs
         assert "Arquivo: tests/unit/test_example.py:12" in logs
         assert "Estado: ✖ falhou" in logs
-        assert "Duração: 18ms" in logs
+        assert "Duration: 18ms" in logs
         assert "Erro:" in logs
-        assert "Saída:" in logs
+        assert "Output:" in logs
 
 
 def test_test_runner_localizes_status_without_changing_enum_values() -> None:

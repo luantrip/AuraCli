@@ -1,6 +1,6 @@
 from rich.console import Console
 
-from aura_cli.cli.ui.components.status_bar import StatusBar
+from aura_cli.cli.ui.components.layout.status_bar import StatusBar
 from aura_cli.cli.ui.layout_contract import LayoutMetrics, layout_for_width
 from aura_cli.core.stats import get_stats
 

@@ -1,7 +1,7 @@
 from rich.console import Console
 
 from aura_cli.application.execution import TurnExecution
-from aura_cli.cli.ui.components.agent_workspace import AgentWorkspacePanel
+from aura_cli.cli.ui.components.agent.agent_workspace import AgentWorkspacePanel
 
 
 def test_workspace_projects_each_ledger_operation_once_at_supported_widths() -> None:

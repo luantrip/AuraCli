@@ -48,15 +48,18 @@ class TuiSurfaceState:
 
     @property
     def activity_attention(self) -> int:
+        """Return the current attention level for the activity feed."""
         return sum(self.unread.values())
 
 
 def toggle_drawer(state: TuiSurfaceState, drawer: TuiDrawer) -> TuiSurfaceState:
+    """Toggle the open/closed state of the specified drawer."""
     active = None if state.active_drawer is drawer else drawer
     return replace(state, active_drawer=active, spatial_focus=False)
 
 
 def set_spatial_focus(state: TuiSurfaceState, enabled: bool) -> TuiSurfaceState:
+    """Move the spatial focus to the specified surface panel."""
     return replace(
         state,
         spatial_focus=enabled,
@@ -65,6 +68,7 @@ def set_spatial_focus(state: TuiSurfaceState, enabled: bool) -> TuiSurfaceState:
 
 
 def set_task_filter(state: TuiSurfaceState, task_id: str | None) -> TuiSurfaceState:
+    """Apply a task filter to the work item display."""
     return replace(state, task_filter=task_id)
 
 
@@ -88,6 +92,7 @@ def select_activity(
     *,
     reveal: bool = True,
 ) -> TuiSurfaceState:
+    """Select the specified activity item in the feed."""
     unread = dict(state.unread)
     unread.pop(section, None)
     return replace(
@@ -100,6 +105,7 @@ def select_activity(
 
 
 def mark_activity(state: TuiSurfaceState, section: ActivitySection) -> TuiSurfaceState:
+    """Mark an activity item as read or actioned."""
     if state.active_drawer is TuiDrawer.ACTIVITY and state.activity_section is section:
         return state
     unread = dict(state.unread)

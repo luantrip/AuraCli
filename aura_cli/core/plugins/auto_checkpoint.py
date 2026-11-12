@@ -13,6 +13,9 @@ Behaviour:
 from __future__ import annotations
 
 from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 from pathlib import Path
 import shutil
 import subprocess
@@ -81,4 +84,4 @@ class AutoCheckpointPlugin(AuraPlugin):
                 check=False,
             )
         except OSError:
-            pass  # git unavailable or not a repo — fail silently
+            logger.debug("auto_checkpoint: git unavailable or not a repo — skipping")

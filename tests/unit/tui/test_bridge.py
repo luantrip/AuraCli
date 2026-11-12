@@ -307,7 +307,7 @@ class TestProcessEvent:
         assert request == SurfaceRequest(
             PresentationIntent.DECISION,
             "Run shell?",
-            title="Ação necessária",
+            title="Action required",
             task_id="task-1",
             key="task:task-1/execution:approval-1",
             tone="warning",

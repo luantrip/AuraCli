@@ -31,7 +31,7 @@ def test_focus_indicator_and_report_use_injected_console() -> None:
     output = console.export_text(clear=False)
 
     assert "Entrada atual" in output
-    assert "Relatório de acessibilidade" in output
+    assert "Accessibility" in output
     assert "avisos" in output
     assert "warnings" not in output
 
@@ -48,6 +48,6 @@ def test_security_warning_is_conservative_and_width_aware() -> None:
     console = Console(record=True, width=60)
     console.print(warning)
     output = console.export_text(clear=False)
-    assert "Aviso de segurança" in output
-    assert "Confirmação explícita necessária" in output
+    assert "Security warning" in output
+    assert "Explicit confirmation required" in output
     assert "⚠" not in output

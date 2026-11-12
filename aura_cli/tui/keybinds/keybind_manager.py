@@ -127,7 +127,7 @@ class LeaderKeyManager:
             logger.debug("Unable to preserve focus for leader mode: %s", error)
 
         self._cancel_timer()
-        self._timer = self.app.set_timer(self.timeout, self._on_timeout)  # type: ignore[assignment]
+        self._timer = self.app.set_timer(self.timeout, self._on_timeout)  # type: ignore[assignment]  # Textual Timer
 
         self.app.notify(
             "Leader mode: waiting for key...",
